@@ -7,6 +7,7 @@
 
 namespace TenUp\WPSnapshots\Commands;
 
+use WP_CLI;
 use TenUp\WPSnapshots\Config;
 
 /**
@@ -34,6 +35,11 @@ final class Configure extends WPSnapshotsCommand {
 	/**
 	 * Configures WP Snapshots for your environment.
 	 *
+	 * ## ARGUMENTS
+	 *
+	 * <repository>
+	 * : The name of the repository to configure.
+	 *
 	 * ## OPTIONS
 	 *
 	 * [--region]
@@ -53,8 +59,8 @@ final class Configure extends WPSnapshotsCommand {
 	 *
 	 * ## EXAMPLES
 	 *
-	 * wp snapshots configure
-	 * wp snapshots configure --region=us-west-1 --aws_key=123 --aws_secret=456 --user_name=John --user_email=john.doe@example.com
+	 * wp snapshots configure 10up
+	 * wp snapshots configure 10up --region=us-west-1 --aws_key=123 --aws_secret=456 --user_name=John --user_email=john.doe@example.com
 	 *
 	 * @param array $args Arguments passed to the command.
 	 * @param array $assoc_args Associative arguments passed to the command.
@@ -63,13 +69,22 @@ final class Configure extends WPSnapshotsCommand {
 		$this->args       = $args;
 		$this->assoc_args = $assoc_args;
 
-		$this->config->set( 'region', $this->get_arg_or_prompt( 'region', 'AWS region', $this->config->get_default( 'region' ) ) );
-		$this->config->set( 'aws_key', $this->get_arg_or_prompt( 'aws_key', 'AWS key' ) );
-		$this->config->set( 'aws_secret', $this->get_arg_or_prompt( 'aws_secret', 'AWS secret' ) );
-		$this->config->set( 'user_name', $this->get_arg_or_prompt( 'user_name', 'User name' ) );
-		$this->config->set( 'user_email', $this->get_arg_or_prompt( 'user_email', 'User email' ) );
+		if ( ! is_array( $this->args ) || empty( $this->args ) ) {
+			WP_CLI::error( 'Please provide a repository name.' );
+		}
 
-		$this->config->save();
+		$this->config->set( 'user_name', $this->get_arg_or_prompt( 'user_name', 'user name' ) );
+		$this->config->set( 'user_email', $this->get_arg_or_prompt( 'user_email', 'user email' ) );
+
+		$repository            = reset( $this->args );
+		$current_respositories = $this->config->get( 'repositories', [] );
+
+		$region            = $this->get_arg_or_prompt( 'region', 'AWS region', $this->config->get_default( 'region' ) );
+		$access_key_id     = $this->get_arg_or_prompt( 'aws_key', 'AWS key' );
+		$secret_access_key = $this->get_arg_or_prompt( 'aws_secret', 'AWS secret' );
+
+		$current_respositories[ $repository ] = compact( 'repository', 'access_key_id', 'secret_access_key', 'region' );
+
+		$this->config->set( 'repositories', $current_respositories );
 	}
-
 }

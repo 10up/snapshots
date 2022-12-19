@@ -66,9 +66,14 @@ final class Config {
 	public function set( string $key, $value ) {
 		$config = $this->get_config();
 
-		$config[ $key ] = $value;
+		if ( ! isset( $config[ $key ] ) || $value !== $config[ $key ] ) {
 
-		$this->config = $config;
+			$config[ $key ] = $value;
+
+			$this->config = $config;
+
+			$this->save();
+		}
 	}
 
 	/**
