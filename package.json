@@ -1,0 +1,42 @@
+{
+  "name": "@10up/wpsnapshots",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "env:start": "wp-env start",
+    "env:stop": "wp-env stop",
+    "env": "wp-env",
+    "install-wp-tests": "npm run shell -- tests-cli \"./wp-content/plugins/snapshots-command/bin/install-wp-tests.sh wpsnapshots_tests root password mysql\"",
+    "shell": "wp-env run",
+    "test": "shell -- tests-cli 'bash -c \"cd wp-content/plugins/snapshots-command && vendor/bin/phpunit .\"'",
+    "test:php": "npm run shell -- phpunit 'env WP_PHPUNIT__TESTS_CONFIG=/wordpress-phpunit/wp-tests-config.php WORDPRESS_TABLE_PREFIX=wptests_ WP_TESTS_DIR=/var/www/wordpress-develop/tests/phpunit /var/www/html/wp-content/plugins/snapshots-command/vendor/bin/phpunit -c /var/www/html/wp-content/plugins/snapshots-command/phpunit.xml.dist $npm_config_args'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/10up/snapshots-command.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/10up/snapshots-command/issues"
+  },
+  "homepage": "https://github.com/10up/snapshots-command#readme",
+  "dependencies": {
+    "@wordpress/env": "^5.8.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "devDependencies": {
+    "husky": "^8.0.2",
+    "lint-staged": "^13.1.0"
+  },
+  "lint-staged": {
+    "*.php": [
+      "./vendor/bin/phpcs --extensions=php --warning-severity=8 -s --runtime-set testVersion 8.0"
+    ]
+  }
+}
