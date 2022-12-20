@@ -39,4 +39,7 @@ if ( file_exists( WP_CLI_ROOT . '/php/utils.php' ) ) {
 	WP_CLI::set_logger( $logger );
 }
 
+// Start up the WP testing environment.
+require $_tests_dir . '/includes/bootstrap.php';
+
 require_once __DIR__ . '/utils/PrivateAccess.php';

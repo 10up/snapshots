@@ -98,8 +98,6 @@ final class Config {
 		$config = $this->config;
 
 		file_put_contents( $file, wp_json_encode( $config ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents
-
-		WP_CLI::debug( sprintf( 'Configuration saved to %s', $file ), 'wpsnapshots' );
 	}
 
 	/**
@@ -145,9 +143,7 @@ final class Config {
 	 * @return array $config Configuration defaults.
 	 */
 	private function get_defaults() : array {
-		return [
-			'region' => 'us-west-1',
-		];
+		return [];
 	}
 
 	/**

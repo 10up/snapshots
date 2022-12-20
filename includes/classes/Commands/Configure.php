@@ -78,10 +78,9 @@ final class Configure extends WPSnapshotsCommand {
 
 		$repository            = reset( $this->args );
 		$current_respositories = $this->config->get( 'repositories', [] );
-
-		$region            = $this->get_arg_or_prompt( 'region', 'AWS region', $this->config->get_default( 'region' ) );
-		$access_key_id     = $this->get_arg_or_prompt( 'aws_key', 'AWS key' );
-		$secret_access_key = $this->get_arg_or_prompt( 'aws_secret', 'AWS secret' );
+		$region                = $this->get_arg_or_prompt( 'region', 'AWS region', 'us-west-1' );
+		$access_key_id         = $this->get_arg_or_prompt( 'aws_key', 'AWS key' );
+		$secret_access_key     = $this->get_arg_or_prompt( 'aws_secret', 'AWS secret' );
 
 		$current_respositories[ $repository ] = compact( 'repository', 'access_key_id', 'secret_access_key', 'region' );
 
