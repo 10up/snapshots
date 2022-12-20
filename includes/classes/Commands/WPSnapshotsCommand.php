@@ -76,4 +76,19 @@ abstract class WPSnapshotsCommand {
 
 		return $line ? $line : $default;
 	}
+
+	/**
+	 * Gets a flag from associative args.
+	 *
+	 * @param string $key Key of the flag.
+	 * @param bool   $default Default value of the flag.
+	 * @return bool
+	 */
+	protected function get_flag( string $key, bool $default = false ) : bool {
+		if ( isset( $this->assoc_args[ $key ] ) ) {
+			return true;
+		}
+
+		return $default;
+	}
 }

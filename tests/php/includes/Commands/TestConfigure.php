@@ -71,6 +71,7 @@ class TestConfigure extends TestCase {
 				'region' => 'us-east-1',
 				'aws_key' => '123',
 				'aws_secret' => '456',
+				'skip_test' => true,
 			]
 		);
 

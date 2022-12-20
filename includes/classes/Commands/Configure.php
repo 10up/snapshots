@@ -58,6 +58,9 @@ final class Configure extends WPSnapshotsCommand {
 	 * [--user_email]
 	 * : The user email to use. If it's not provided, user will be prompted for it.
 	 *
+	 * [--skip_test]
+	 * : Whether to skip the test after configuration. Defaults to false.
+	 *
 	 * ## EXAMPLES
 	 *
 	 * wp snapshots configure 10up
@@ -74,31 +77,36 @@ final class Configure extends WPSnapshotsCommand {
 			WP_CLI::error( 'Please provide a repository name.' );
 		}
 
-		$repository = reset( $this->args );
+		$repository            = reset( $this->args );
+		$current_respositories = $this->config->get( 'repositories', [] );
 
-		$config = $this->config->get_config();
-
-		if ( ! empty( $config['repositories'][ $repository ] ) ) {
+		if ( ! empty( $current_respositories[ $repository ] ) ) {
 			WP_CLI::confirm( 'This repository is already configured. Do you want to overwrite the existing configuration?' );
 		}
 
 		$user_name  = $this->get_arg_or_prompt( 'user_name', 'Your name' );
 		$user_email = $this->get_arg_or_prompt( 'user_email', 'Your email' );
 
-		$current_respositories = $this->config->get( 'repositories', [] );
-		$region                = $this->get_arg_or_prompt( 'region', 'AWS region', 'us-west-1' );
-		$access_key_id         = $this->get_arg_or_prompt( 'aws_key', 'AWS key' );
-		$secret_access_key     = $this->get_arg_or_prompt( 'aws_secret', 'AWS secret' );
+		$region            = $this->get_arg_or_prompt( 'region', 'AWS region', 'us-west-1' );
+		$access_key_id     = $this->get_arg_or_prompt( 'aws_key', 'AWS key' );
+		$secret_access_key = $this->get_arg_or_prompt( 'aws_secret', 'AWS secret' );
 
 		$current_respositories[ $repository ] = compact( 'repository', 'access_key_id', 'secret_access_key', 'region' );
 
-		$this->test_credentials( $repository, $access_key_id, $secret_access_key, $region );
+		$skip_test = $this->get_flag( 'skip_test' );
+		if ( ! $skip_test ) {
+			$this->test_credentials( $repository, $access_key_id, $secret_access_key, $region );
+		}
 
 		$this->config->set( 'user_name', $user_name, false );
 		$this->config->set( 'user_email', $user_email, false );
 		$this->config->set( 'repositories', $current_respositories );
 
-		WP_CLI::success( 'WP Snapshots configuration verified and saved.' );
+		if ( ! $skip_test ) {
+			WP_CLI::success( 'WP Snapshots configuration verified and saved.' );
+		} else {
+			WP_CLI::success( 'WP Snapshots configuration saved.' );
+		}
 	}
 
 	/**

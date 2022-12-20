@@ -44,10 +44,7 @@ final class S3 {
 			[
 				'version'     => 'latest',
 				'region'      => $region,
-				'credentials' => [
-					'key'    => $key,
-					'secret' => $secret,
-				],
+				'credentials' => compact( 'key', 'secret' ),
 			]
 		);
 
@@ -61,7 +58,7 @@ final class S3 {
 	 */
 	public function test_connection() {
 		try {
-			$response = $this->client->listObjects( [ 'Bucket' => $this->get_bucket_name( $this->repository ) ] );
+			$this->client->listObjects( [ 'Bucket' => $this->get_bucket_name( $this->repository ) ] );
 		} catch ( Exception $e ) {
 			return false;
 		}
@@ -75,7 +72,7 @@ final class S3 {
 	 * @param  string $repository Repository name
 	 * @return string
 	 */
-	private function get_bucket_name( $repository ) {
+	private function get_bucket_name( string $repository ) : string {
 		return 'wpsnapshots-' . $repository;
 	}
 
