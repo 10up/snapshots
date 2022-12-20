@@ -13,6 +13,7 @@
 
 use TenUp\WPSnapshots\Commands\{Configure, Create, CreateRepository, Delete, Download, Pull, Push, Search};
 use TenUp\WPSnapshots\Config;
+use TenUp\WPSnapshots\Data\FromFileSystem;
 
 if ( ! class_exists( '\WP_CLI' ) ) {
 	return;
@@ -20,7 +21,8 @@ if ( ! class_exists( '\WP_CLI' ) ) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-$wpsnapshots_config = new Config();
+$wpsnapshots_snapshots_data_persistence = new FromFileSystem();
+$wpsnapshots_config                     = new Config( $wpsnapshots_snapshots_data_persistence );
 
 WP_CLI::add_command( 'wpsnapshots configure', [ new Configure( $wpsnapshots_config ), 'execute' ] );
 WP_CLI::add_command( 'wpsnapshots create', [ new Create(), 'execute' ] );

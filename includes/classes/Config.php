@@ -7,7 +7,7 @@
 
 namespace TenUp\WPSnapshots;
 
-use WP_CLI;
+use TenUp\WPSnapshots\Data\DataHandlerInterface;
 
 /**
  * Handle getting and setting of configuration values.
@@ -17,11 +17,27 @@ use WP_CLI;
 final class Config {
 
 	/**
+	 * Data instance.
+	 *
+	 * @var DataHandlerInterface
+	 */
+	private $data_handler;
+
+	/**
 	 * Configuration values.
 	 *
 	 * @var ?array
 	 */
 	private $config;
+
+	/**
+	 * Config constructor.
+	 *
+	 * @param DataHandlerInterface $data_handler Data instance.
+	 */
+	public function __construct( DataHandlerInterface $data_handler ) {
+		$this->data_handler = $data_handler;
+	}
 
 	/**
 	 * Gets a configuration value.
@@ -39,22 +55,6 @@ final class Config {
 		}
 
 		return $config[ $key ];
-	}
-
-	/**
-	 * Provides a single default.
-	 *
-	 * @param string $key Key to get.
-	 * @return mixed $value Value of the key.
-	 */
-	public function get_default( string $key ) {
-		$defaults = $this->get_defaults();
-
-		if ( ! isset( $defaults[ $key ] ) ) {
-			return null;
-		}
-
-		return $defaults[ $key ];
 	}
 
 	/**
@@ -77,54 +77,6 @@ final class Config {
 	}
 
 	/**
-	 * Saves the configuration to a file.
-	 */
-	public function save() {
-		$directory = $this->get_config_directory();
-		$file      = $this->get_config_file();
-
-		if ( ! file_exists( $directory ) ) {
-			if ( ! is_writable( dirname( $directory ) ) ) {
-				WP_CLI::error( sprintf( 'Unable to create directory %s', dirname( $directory ) ) );
-			}
-
-			$wrote_directory = mkdir( $directory, 0755, true ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.mkdir_mkdir
-
-			if ( ! $wrote_directory ) {
-				WP_CLI::error( sprintf( 'Unable to create directory %s', dirname( $file ) ) );
-			}
-		}
-
-		$config = $this->config;
-
-		file_put_contents( $file, wp_json_encode( $config ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents
-	}
-
-	/**
-	 * Loads configuration from a file.
-	 */
-	private function load() {
-		$file = $this->get_config_file();
-
-		if ( ! file_exists( $file ) ) {
-			// Create a new config file.
-			$this->config = $this->get_defaults();
-			$this->save();
-			return;
-		}
-
-		$config = json_decode( file_get_contents( $file ), true ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-
-		if ( ! is_array( $config ) ) {
-			WP_CLI::error( sprintf( 'Configuration file %s is not valid JSON.', $file ) );
-		}
-
-		$this->config = wp_parse_args( $config, $this->get_defaults() );
-
-		WP_CLI::debug( sprintf( 'Configuration loaded from %s', $file ), 'wpsnapshots' );
-	}
-
-	/**
 	 * Gets the configuration.
 	 *
 	 * @return array $config Configuration.
@@ -143,36 +95,32 @@ final class Config {
 	 * @return array $config Configuration defaults.
 	 */
 	private function get_defaults() : array {
-		return [];
+		return [
+			'user_name'    => '',
+			'user_email'   => '',
+			'repositories' => [],
+		];
 	}
 
 	/**
-	 * Gets the configuration file.
-	 *
-	 * @return string $file Configuration file.
+	 * Loads configuration from a file.
 	 */
-	private function get_config_directory() : string {
+	private function load() {
+		$config   = $this->data_handler->load_json( 'config' );
+		$defaults = $this->get_defaults();
 
-		/**
-		 * Filters the configuration file.
-		 *
-		 * @param string $file Configuration file.
-		 */
-		return apply_filters( 'wpsnapshots_config_directory', strlen( getenv( 'WPSNAPSHOTS_DIR' ) ) > 0 ? getenv( 'WPSNAPSHOTS_DIR' ) : $_SERVER['HOME'] . '/.wpsnapshots' );
+		if ( ! is_array( $config ) ) {
+			$config = $defaults;
+			$this->save();
+		}
+
+		$this->config = wp_parse_args( $config, $defaults );
 	}
 
 	/**
-	 * Gets the configuration file path.
-	 *
-	 * @return string $file Configuration file path.
+	 * Saves the configuration to a file.
 	 */
-	private function get_config_file() : string {
-
-		/**
-		 * Filters the configuration file.
-		 *
-		 * @param string $file Configuration file.
-		 */
-		return apply_filters( 'wpsnapshots_config_file', $this->get_config_directory() . '/config.json' );
+	private function save() {
+		$this->data_handler->save_json( 'config', $this->config );
 	}
 }

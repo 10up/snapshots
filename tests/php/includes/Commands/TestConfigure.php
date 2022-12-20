@@ -9,11 +9,12 @@ namespace TenUp\WPSnapshots\Tests\Commands;
 
 use TenUp\WPSnapshots\Config;
 use TenUp\WPSnapshots\Commands\{Configure, WPSnapshotsCommand};
+use TenUp\WPSnapshots\Data\FromFileSystem;
 use TenUp\WPSnapshots\Tests\Utils\PrivateAccess;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
- * Class ConfigureTest
+ * Class TestConfigure
  *
  * @package TenUp\WPSnapshots\Tests\Commands
  * 
@@ -36,7 +37,7 @@ class TestConfigure extends TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$config = new Config();
+		$config = new Config( new FromFileSystem() );
 		$this->configure = new Configure( $config );
 	}
 
