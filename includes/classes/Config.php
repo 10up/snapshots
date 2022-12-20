@@ -84,7 +84,7 @@ final class Config {
 	 *
 	 * @return array $config Configuration.
 	 */
-	private function get_config() : array {
+	public function get_config() : array {
 		if ( is_null( $this->config ) ) {
 			$this->load();
 		}

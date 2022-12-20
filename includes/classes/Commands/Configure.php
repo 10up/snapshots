@@ -74,10 +74,17 @@ final class Configure extends WPSnapshotsCommand {
 			WP_CLI::error( 'Please provide a repository name.' );
 		}
 
+		$repository = reset( $this->args );
+
+		$config = $this->config->get_config();
+
+		if ( ! empty( $config['repositories'][ $repository ] ) ) {
+			WP_CLI::confirm( 'This repository is already configured. Do you want to overwrite the existing configuration?' );
+		}
+
 		$user_name  = $this->get_arg_or_prompt( 'user_name', 'Your name' );
 		$user_email = $this->get_arg_or_prompt( 'user_email', 'Your email' );
 
-		$repository            = reset( $this->args );
 		$current_respositories = $this->config->get( 'repositories', [] );
 		$region                = $this->get_arg_or_prompt( 'region', 'AWS region', 'us-west-1' );
 		$access_key_id         = $this->get_arg_or_prompt( 'aws_key', 'AWS key' );
