@@ -7,7 +7,7 @@
 
 namespace TenUp\WPSnapshots;
 
-use TenUp\WPSnapshots\Data\DataHandlerInterface;
+use TenUp\WPSnapshots\Data\DataHandler;
 
 /**
  * Handle getting and setting of configuration values.
@@ -19,7 +19,7 @@ final class Config {
 	/**
 	 * Data instance.
 	 *
-	 * @var DataHandlerInterface
+	 * @var DataHandler
 	 */
 	private $data_handler;
 
@@ -33,9 +33,9 @@ final class Config {
 	/**
 	 * Config constructor.
 	 *
-	 * @param DataHandlerInterface $data_handler Data instance.
+	 * @param DataHandler $data_handler Data instance.
 	 */
-	public function __construct( DataHandlerInterface $data_handler ) {
+	public function __construct( DataHandler $data_handler ) {
 		$this->data_handler = $data_handler;
 	}
 
@@ -62,8 +62,9 @@ final class Config {
 	 *
 	 * @param string $key Key to set.
 	 * @param mixed  $value Value to set.
+	 * @param bool   $save Whether to save.
 	 */
-	public function set( string $key, $value ) {
+	public function set( string $key, $value, bool $save = true ) {
 		$config = $this->get_config();
 
 		if ( ! isset( $config[ $key ] ) || $value !== $config[ $key ] ) {
@@ -72,7 +73,9 @@ final class Config {
 
 			$this->config = $config;
 
-			$this->save();
+			if ( $save ) {
+				$this->save();
+			}
 		}
 	}
 

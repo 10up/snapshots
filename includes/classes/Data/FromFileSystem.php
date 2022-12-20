@@ -14,7 +14,7 @@ use function TenUp\WPSnapshots\Utils\error;
  *
  * @package TenUp\WPSnapshots
  */
-class FromFileSystem implements DataHandlerInterface {
+class FromFileSystem implements DataHandler {
 
 	/**
 	 * Saves data as JSON.

@@ -42,20 +42,37 @@ abstract class WPSnapshotsCommand {
 	 * Gets an argument from associative args or prompts for it if it is not set.
 	 *
 	 * @param string $key Key of the argument.
-	 * @param string $description Description of the argument.
+	 * @param string $prompt Prompt to display if the argument is not set.
 	 * @param string $default Default value of the argument.
 	 *
 	 * @return string
 	 */
-	protected function get_arg_or_prompt( string $key, string $description, string $default = '' ) : string {
+	protected function get_arg_or_prompt( string $key, string $prompt, string $default = '' ) : string {
 		if ( ! empty( $this->assoc_args[ $key ] ) ) {
 			return $this->assoc_args[ $key ];
 		}
 
-		WP_CLI::line( sprintf( 'Enter a value for %s (default "%s")', $description, $default ) );
-		$handle = fopen( 'php://stdin', 'r' );
-		$line   = trim( fgets( $handle ) );
-		fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fclose
+		$full_prompt = $prompt;
+		$append      = '';
+
+		if ( empty( $default ) ) {
+			$append = ' (enter x to cancel)';
+		}
+
+		if ( ! empty( $default ) ) {
+			$append = " (default $default; x to cancel)";
+		}
+
+		WP_CLI::line( $full_prompt . $append . ':' );
+		$line = trim( readline( '' ) );
+
+		if ( 'x' === $line ) {
+			WP_CLI::halt( 0 );
+		}
+
+		if ( ! $line && empty( $default ) ) {
+			return $this->get_arg_or_prompt( $key, $prompt, $default );
+		}
 
 		return $line ? $line : $default;
 	}

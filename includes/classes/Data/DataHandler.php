@@ -8,11 +8,11 @@
 namespace TenUp\WPSnapshots\Data;
 
 /**
- * Interface DataHandlerInterface
+ * Interface DataHandler
  *
  * @package TenUp\WPSnapshots
  */
-interface DataHandlerInterface {
+interface DataHandler {
 
 	/**
 	 * Saves data as JSON.

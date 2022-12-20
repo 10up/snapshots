@@ -9,6 +9,7 @@ namespace TenUp\WPSnapshots\Commands;
 
 use WP_CLI;
 use TenUp\WPSnapshots\Config;
+use TenUp\WPSnapshots\S3;
 
 /**
  * Configure command
@@ -73,8 +74,8 @@ final class Configure extends WPSnapshotsCommand {
 			WP_CLI::error( 'Please provide a repository name.' );
 		}
 
-		$this->config->set( 'user_name', $this->get_arg_or_prompt( 'user_name', 'user name' ) );
-		$this->config->set( 'user_email', $this->get_arg_or_prompt( 'user_email', 'user email' ) );
+		$user_name  = $this->get_arg_or_prompt( 'user_name', 'Your name' );
+		$user_email = $this->get_arg_or_prompt( 'user_email', 'Your email' );
 
 		$repository            = reset( $this->args );
 		$current_respositories = $this->config->get( 'repositories', [] );
@@ -84,6 +85,28 @@ final class Configure extends WPSnapshotsCommand {
 
 		$current_respositories[ $repository ] = compact( 'repository', 'access_key_id', 'secret_access_key', 'region' );
 
+		$this->test_credentials( $repository, $access_key_id, $secret_access_key, $region );
+
+		$this->config->set( 'user_name', $user_name, false );
+		$this->config->set( 'user_email', $user_email, false );
 		$this->config->set( 'repositories', $current_respositories );
+
+		WP_CLI::success( 'WP Snapshots configuration verified and saved.' );
+	}
+
+	/**
+	 * Test AWS credentials.
+	 *
+	 * @param string $repository Repository name.
+	 * @param string $access_key_id AWS key.
+	 * @param string $secret_access_key AWS secret.
+	 * @param string $region AWS region.
+	 */
+	private function test_credentials( $repository, $access_key_id, $secret_access_key, $region ) {
+		$s3 = new S3( $repository, $access_key_id, $secret_access_key, $region );
+
+		if ( ! $s3->test_connection() ) {
+			WP_CLI::error( 'Could not connect to S3. Please check your credentials.' );
+		}
 	}
 }

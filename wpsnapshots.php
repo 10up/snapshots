@@ -20,6 +20,7 @@ if ( ! class_exists( '\WP_CLI' ) ) {
 }
 
 require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/includes/utils.php';
 
 $wpsnapshots_snapshots_data_persistence = new FromFileSystem();
 $wpsnapshots_config                     = new Config( $wpsnapshots_snapshots_data_persistence );
