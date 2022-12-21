@@ -1,0 +1,25 @@
+{
+    "env": {
+        "tests": {
+            "phpVersion": "8.0",
+            "themes": [
+                "https://downloads.wordpress.org/theme/twentytwentytwo.zip"
+            ],
+            "plugins": [
+                "."
+            ],
+            "mappings": {
+                "../wordpress-develop": "WordPress/wordpress-develop#trunk"
+            }
+        },
+        "development": {
+            "phpVersion": "8.0",
+            "themes": [
+                "https://downloads.wordpress.org/theme/twentytwentytwo.zip"
+            ],
+            "plugins": [
+                "."
+            ]
+        }
+    }
+}

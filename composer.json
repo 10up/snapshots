@@ -1,0 +1,30 @@
+{
+    "name": "10up/wpsnapshots-command",
+    "type": "wordpress-plugin",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "TenUp\\WPSnapshots\\": "includes/classes/"
+        }
+    },
+    "require": {
+        "10up/phpcs-composer": "dev-master",
+        "phpunit/phpunit": "9.5.x-dev",
+        "yoast/phpunit-polyfills": "1.x-dev",
+        "yoast/wp-test-utils": "1.x-dev",
+        "wp-cli/wp-cli": "2.8.x-dev",
+        "aws/aws-sdk-php": "^3.254"
+    },
+    "scripts": {
+        "install-wp-tests": "./bin/install-wp-tests.sh wpsnapshots_tests root password mysql",
+        "lint": "phpcs .",
+        "lint-fix": "phpcbf .",
+        "test": "phpunit"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
+}
