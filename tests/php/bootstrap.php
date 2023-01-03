@@ -17,6 +17,12 @@ require_once TESTS_PLUGIN_DIR . '/vendor/yoast/wp-test-utils/src/WPIntegration/b
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 require_once $_tests_dir . '/includes/functions.php'; 
 
+if ( ! function_exists( 'tests_add_filter' ) ) {
+	function tests_add_filter() {}
+
+	throw new Exception( 'Unable to load the WP test suite.' );
+}
+
 /**
  * Manually load the plugin being tested.
  */
@@ -42,4 +48,7 @@ if ( file_exists( WP_CLI_ROOT . '/php/utils.php' ) ) {
 // Start up the WP testing environment.
 require $_tests_dir . '/includes/bootstrap.php';
 
-require_once __DIR__ . '/utils/PrivateAccess.php';
+// Require all files in the fixtures directory.
+foreach ( glob( __DIR__ . '/fixtures/*.php' ) as $file ) {
+	require_once $file;
+}

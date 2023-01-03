@@ -5,12 +5,12 @@
   "main": "index.js",
   "scripts": {
     "env:start": "wp-env start",
+    "env:start:xdebug": "wp-env start --xdebug",
     "env:stop": "wp-env stop",
     "env": "wp-env",
     "install-wp-tests": "npm run shell -- tests-cli \"./wp-content/plugins/snapshots-command/bin/install-wp-tests.sh wpsnapshots_tests root password mysql\"",
     "shell": "wp-env run",
-    "test": "shell -- tests-cli 'bash -c \"cd wp-content/plugins/snapshots-command && vendor/bin/phpunit .\"'",
-    "test:php": "npm run shell -- phpunit 'env WP_PHPUNIT__TESTS_CONFIG=/wordpress-phpunit/wp-tests-config.php WORDPRESS_TABLE_PREFIX=wptests_ WP_TESTS_DIR=/var/www/wordpress-develop/tests/phpunit /var/www/html/wp-content/plugins/snapshots-command/vendor/bin/phpunit -c /var/www/html/wp-content/plugins/snapshots-command/phpunit.xml.dist $npm_config_args'"
+    "test:php:coverage": "wp-env run tests-wordpress 'env XDEBUG_MODE=coverage' /var/www/html/wp-content/plugins/$(basename $(pwd))/vendor/bin/phpunit -c /var/www/html/wp-content/plugins/$(basename $(pwd))/phpunit.xml.dist --verbose --coverage-html /var/www/html/wp-content/plugins/$(basename $(pwd))/coverage"
   },
   "repository": {
     "type": "git",

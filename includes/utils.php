@@ -5,34 +5,48 @@
  * @package TenUp\WPSnapshots
  */
 
-namespace TenUp\WPSnapshots\Utils;
-
-use WP_CLI;
-
 /**
- * Throws a WP_CLI error or an exception.
+ * Provides an object wrapping WP_CLI and WP_CLI\Utils functions.
  *
- * @param string $message Error message.
+ * @see https://github.com/wp-cli/wp-cli/blob/main/php/class-wp-cli.php
+ * @see https://github.com/wp-cli/wp-cli/blob/main/php/utils.php
  *
- * @throws WPSnapshotsException If WP_CLI is not defined.
+ * @return object
  */
-function error( string $message ) {
-	if ( defined( 'WP_CLI' ) && WP_CLI ) {
-		WP_CLI::error( $message );
-	} else {
-		throw new WPSnapshotsException( $message );
-	}
-}
+function wp_cli() : object {
 
-/**
- * Shows a WP_CLI debug message if WP_CLI is available. Otherwise, logs it to the error log.
- *
- * @param string $message Debug message.
- */
-function debug( string $message ) {
-	if ( defined( 'WP_CLI' ) && WP_CLI ) {
-		WP_CLI::debug( $message );
-	} elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG && defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
-		error_log( $message ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- WP_DEBUG_LOG constant is checked.
-	}
+	/**
+	 * Filters the WP_CLI wrapper object.
+	 *
+	 * @param object $wp_cli Class that wraps WP_CLI and WP_CLI\Utils functions as static methods.
+	 */
+	return apply_filters(
+		'wpsnapshots_wpcli',
+		new class() {
+
+			/**
+			 * Magic method to call WP_CLI\Utils and WP_CLI functions.
+			 *
+			 * @param string $name      Function name.
+			 * @param array  $arguments Function arguments.
+			 *
+			 * @return mixed
+			 *
+			 * @throws WPSnapshotsException If the function does not exist.
+			 */
+			public static function __callStatic( string $name, array $arguments ) {
+				$util = '\\WP_CLI\\Utils\\' . $name;
+
+				if ( function_exists( $util ) ) {
+					return call_user_func_array( $util, $arguments );
+				}
+
+				if ( method_exists( WP_CLI::class, $name ) ) {
+					return call_user_func_array( [ WP_CLI::class, $name ], $arguments );
+				}
+
+				throw new WPSnapshotsException( sprintf( 'WP_CLI function %s does not exist.', $name ) );
+			}
+		}
+	);
 }

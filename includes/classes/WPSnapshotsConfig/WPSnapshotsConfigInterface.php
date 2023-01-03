@@ -1,0 +1,71 @@
+<?php
+/**
+ * Interface for classes that persist configuration values.
+ *
+ * @package TenUp\WPSnapshots
+ */
+
+namespace TenUp\WPSnapshots\WPSnapshotsConfig;
+
+/**
+ * Interface for classes that persist configuration values.
+ *
+ * @package TenUp\WPSnapshots\WPSnapshotsConfig
+ */
+interface WPSnapshotsConfigInterface {
+
+	/**
+	 * Gets the user name.
+	 *
+	 * @return string
+	 */
+	public function get_user_name() : string;
+
+	/**
+	 * Sets the user name.
+	 *
+	 * @param string $user_name User name.
+	 */
+	public function set_user_name( string $user_name );
+
+	/**
+	 * Gets the user email.
+	 *
+	 * @return string
+	 */
+	public function get_user_email() : string;
+
+	/**
+	 * Sets the user email.
+	 *
+	 * @param string $user_email User email.
+	 */
+	public function set_user_email( string $user_email );
+
+	/**
+	 * Gets repositories.
+	 *
+	 * @return array
+	 */
+	public function get_repositories() : array;
+
+	/**
+	 * Sets repositories.
+	 *
+	 * @param array $repositories Repositories.
+	 */
+	public function set_repositories( array $repositories );
+
+	/**
+	 * Gets settings for a repository.
+	 *
+	 * @param string $repository Repository name.
+	 * @return ?array
+	 */
+	public function get_repository_settings( string $repository ) : ?array;
+
+	/**
+	 * Saves the configuration.
+	 */
+	public function save();
+}
