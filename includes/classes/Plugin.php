@@ -38,7 +38,7 @@ final class Plugin extends Container {
 		 *
 		 * @param array $components Client components.
 		 */
-		return apply_filters( 'wpsnapshots_components', $components );
+		return (array) apply_filters( 'wpsnapshots_components', $components );
 	}
 
 	/**
@@ -62,6 +62,6 @@ final class Plugin extends Container {
 		 *
 		 * @param array $services Service modules.
 		 */
-		return apply_filters( 'wpsnapshots_services', $services );
+		return (array) apply_filters( 'wpsnapshots_services', $services );
 	}
 }

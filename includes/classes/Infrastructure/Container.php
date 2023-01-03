@@ -9,6 +9,7 @@ namespace TenUp\WPSnapshots\Infrastructure;
 
 use Error;
 use ReflectionClass;
+use ReflectionNamedType;
 use ReflectionParameter;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 
@@ -120,6 +121,12 @@ abstract class Container {
 	 * @throws WPSnapshotsException If an unknown module or service is encountered.
 	 */
 	private function get_instance_from_parameter( ReflectionParameter $parameter ) {
+
+		/**
+		 * Reflection named type.
+		 *
+		 * @var ReflectionNamedType $type
+		 */
 		$type = $parameter->getType();
 
 		try {

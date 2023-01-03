@@ -22,14 +22,14 @@ class S3StorageConnector implements StorageConnectorInterface, Service {
 	/**
 	 * Storage client.
 	 *
-	 * @var S3Client
+	 * @var ?S3Client
 	 */
 	private $client;
 
 	/**
 	 * Connection configuration.
 	 *
-	 * @var AWSAuthentication
+	 * @var ?AWSAuthentication
 	 */
 	private $configuration;
 
@@ -50,7 +50,7 @@ class S3StorageConnector implements StorageConnectorInterface, Service {
 	 * @throws WPSnapshotsException If no configuration is set.
 	 */
 	public function get_configuration() : object {
-		if ( ! $this->configuration ) {
+		if ( is_null( $this->configuration ) ) {
 			throw new WPSnapshotsException( 'No configuration set.' );
 		}
 

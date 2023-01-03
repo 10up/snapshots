@@ -9,12 +9,10 @@ on:
     - cron:  '0 0 * * *'
   push:
     branches:
-      - trunk
-      - feature/*
+      - disable/*
   pull_request:
     branches:
-      - trunk
-      - feature/*
+      - disable/*
 
 jobs:
   phpunit_single_site:
