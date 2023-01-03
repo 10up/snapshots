@@ -191,8 +191,9 @@ class SnapshotsFileSystem implements Shared, Service {
 
 			if ( ! function_exists( 'WP_Filesystem' ) ) {
 				require_once ABSPATH . 'wp-admin/includes/file.php';
-				WP_Filesystem( false, false, true );
 			}
+
+			WP_Filesystem( false, false, true );
 
 			$this->wp_filesystem = new WP_Filesystem_Direct( [] );
 		}
