@@ -22,7 +22,7 @@ class SnapshotsFileSystem implements Shared, Service {
 	/**
 	 * The WP_Filesystem_Direct instance.
 	 *
-	 * @var ?WP_FilesysWP_Filesystem_Basetem_Direct
+	 * @var ?WP_Filesystem_Base
 	 */
 	private $wp_filesystem;
 
