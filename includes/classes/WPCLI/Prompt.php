@@ -7,6 +7,7 @@
 
 namespace TenUp\WPSnapshots\WPCLI;
 
+use TenUp\WPSnapshots\Exceptions\WPSnapshotsInputValidationException;
 use TenUp\WPSnapshots\Infrastructure\{Service, Shared};
 
 /**

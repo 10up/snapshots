@@ -74,9 +74,9 @@ final class Configure extends WPCLICommand {
 			$this->set_args( $args );
 			$this->set_assoc_args( $assoc_args );
 
-			$this->config->set_user_name( $this->get_user_name(), false );
-			$this->config->set_user_email( $this->get_user_email(), false );
-			$this->config->set_repositories( $this->get_updated_repository_info(), false );
+			$this->config->set_user_name( $this->get_user_name() );
+			$this->config->set_user_email( $this->get_user_email() );
+			$this->config->set_repositories( $this->get_updated_repository_info() );
 
 			$this->maybe_test_credentials();
 
