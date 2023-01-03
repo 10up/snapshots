@@ -7,7 +7,7 @@ env:
 on:
   push:
     branches:
-      - disable/*
+      - feature/*
   pull_request:
     branches:
       - disable/*
@@ -21,8 +21,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Start MySQL
-      run: sudo systemctl start mysql.service
+    - name: Setup Node
+        uses: actions/setup-node@v3.5.1
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
 
     - name: Set standard 10up cache directories
       run: |
@@ -45,11 +48,16 @@ jobs:
     - name: Install dependencies
       run: composer install
 
-    - name: Setup WP Tests
-      run: |
-        bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1
-        sleep 10
+    - name: npm install
+      run: npm ci
+      env:
+        CI: true
 
-    - name: PHPUnit
-      run: |
-        composer run-script test
+    - name: npm run build
+      run: npm run build
+
+    - name: Start wp-env
+      run: npm run wp-env start
+
+    - name: Run PHPUnit
+      run: npm run test:php
