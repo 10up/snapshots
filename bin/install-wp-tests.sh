@@ -55,6 +55,11 @@ install_wp() {
     return;
   fi
 
+  if [ $SKIP_DOWNLOAD == 'true' ]; then
+    echo "Skipping download"
+    return;
+  fi
+
   mkdir -p $WP_CORE_DIR
 
   if [[ $WP_VERSION == 'nightly' || $WP_VERSION == 'trunk' ]]; then
@@ -92,6 +97,11 @@ install_wp() {
 }
 
 install_test_suite() {
+  if [ $SKIP_DOWNLOAD == 'true' ]; then
+    echo "Skipping download"
+    return;
+  fi
+
   # portable in-place argument for both GNU sed and Mac OSX sed
   if [[ $(uname -s) == 'Darwin' ]]; then
     local ioption='-i.bak'
@@ -121,6 +131,10 @@ install_test_suite() {
 }
 
 install_db() {
+  if [ $SKIP_DB_CREATE == 'true' ]; then
+    echo "Skipping download"
+    return;
+  fi
 
   # parse DB_HOST for port or socket references
   local PARTS=(${DB_HOST//\:/ })
@@ -141,17 +155,6 @@ install_db() {
   mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA || echo "Database already exists."
 }
 
-if [[ $SKIP_DB_CREATE == 1 ]]; then
-  echo "Skipping database creation"
-else
-  install_db
-fi
-
-if [[ $SKIP_DOWNLOAD == 1 ]]; then
-  echo "Skipping WordPress installation"
-else
-  install_wp
-  install_test_suite
-fi
-
-echo "Done!"
+install_wp
+install_test_suite
+install_db

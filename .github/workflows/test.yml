@@ -5,11 +5,9 @@ env:
   COMPOSER_CACHE: "${{ github.workspace }}/.composer-cache"
 
 on:
-  schedule:
-    - cron:  '0 0 * * *'
   push:
     branches:
-      - disable/*
+      - feature/*
   pull_request:
     branches:
       - disable/*
@@ -25,18 +23,6 @@ jobs:
 
     - name: Start MySQL
       run: sudo systemctl start mysql.service
-
-    - name: Configure sysctl limits
-      run: |
-        sudo swapoff -a
-        sudo sysctl -w vm.swappiness=1
-        sudo sysctl -w fs.file-max=262144
-        sudo sysctl -w vm.max_map_count=262144
-
-    - name: Setup Elasticsearch
-      uses: getong/elasticsearch-action@v1.2
-      with:
-        elasticsearch version: '7.5.0'
 
     - name: Set standard 10up cache directories
       run: |
