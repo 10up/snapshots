@@ -10,7 +10,7 @@ namespace TenUp\WPSnapshots;
 use Exception;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Infrastructure\{Shared, Service};
-use WP_Filesystem_Direct;
+use WP_Filesystem_Base;
 
 /**
  * SnapshotsFileSystem class.
@@ -22,7 +22,7 @@ class SnapshotsFileSystem implements Shared, Service {
 	/**
 	 * The WP_Filesystem_Direct instance.
 	 *
-	 * @var ?WP_Filesystem_Direct
+	 * @var ?WP_FilesysWP_Filesystem_Basetem_Direct
 	 */
 	private $wp_filesystem;
 
@@ -180,22 +180,17 @@ class SnapshotsFileSystem implements Shared, Service {
 	/**
 	 * Gets the WP_Filesystem instance.
 	 *
-	 * @return WP_Filesystem_Direct $wp_filesystem WP_Filesystem instance.
+	 * @return WP_Filesystem_Base $wp_filesystem WP_Filesystem instance.
 	 */
-	public function get_wp_filesystem() : WP_Filesystem_Direct {
-		if ( is_null( $this->wp_filesystem ) ) {
-			if ( ! class_exists( 'WP_Filesystem_Direct' ) ) {
-				require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
-				require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
+	public function get_wp_filesystem() {
+		global $wp_filesystem;
+
+		if ( ! $this->wp_filesystem ) {
+			if ( ! $wp_filesystem ) {
+				WP_Filesystem( null, null, true );
 			}
 
-			if ( ! function_exists( 'WP_Filesystem' ) ) {
-				require_once ABSPATH . 'wp-admin/includes/file.php';
-			}
-
-			WP_Filesystem( false, false, true );
-
-			$this->wp_filesystem = new WP_Filesystem_Direct( [] );
+			$this->wp_filesystem = $wp_filesystem;
 		}
 
 		return $this->wp_filesystem;
