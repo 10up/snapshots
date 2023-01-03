@@ -7,6 +7,7 @@
 
 namespace TenUp\WPSnapshots\Tests\Commands;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Plugin;
 use TenUp\WPSnapshots\Snapshots\S3StorageConnector;

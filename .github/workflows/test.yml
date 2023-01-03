@@ -6,11 +6,9 @@ env:
 
 on:
   push:
-    branches:
-      - feature/*
+    branches: [ "trunk", "feature/*" ]
   pull_request:
-    branches:
-      - disable/*
+    branches: [ "trunk" ]
 
 jobs:
   phpunit_single_site:
@@ -18,46 +16,43 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-    - name: Setup Node
+      - name: Setup Node
         uses: actions/setup-node@v3.5.1
         with:
-          node-version-file: '.nvmrc'
+          node-version-file: ".nvmrc"
           cache: npm
 
-    - name: Set standard 10up cache directories
-      run: |
-        composer config -g cache-dir "${{ env.COMPOSER_CACHE }}"
+      - name: Set standard 10up cache directories
+        run: |
+          composer config -g cache-dir "${{ env.COMPOSER_CACHE }}"
 
-    - name: Prepare composer cache
-      uses: actions/cache@v3
-      with:
-        path: ${{ env.COMPOSER_CACHE }}
-        key: composer-${{ env.COMPOSER_VERSION }}-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          composer-${{ env.COMPOSER_VERSION }}-
+      - name: Prepare composer cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.COMPOSER_CACHE }}
+          key: composer-${{ env.COMPOSER_VERSION }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            composer-${{ env.COMPOSER_VERSION }}-
 
-    - name: Set PHP version
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.0'
-        coverage: none
+      - name: Set PHP version
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.0"
+          coverage: none
 
-    - name: Install dependencies
-      run: composer install
+      - name: Install dependencies
+        run: composer install
 
-    - name: npm install
-      run: npm ci
-      env:
-        CI: true
+      - name: npm install
+        run: npm ci
+        env:
+          CI: true
 
-    - name: npm run build
-      run: npm run build
+      - name: Start wp-env
+        run: npm run env start
 
-    - name: Start wp-env
-      run: npm run wp-env start
-
-    - name: Run PHPUnit
-      run: npm run test:php
+      - name: Run PHPUnit
+        run: npm run test:php

@@ -17,7 +17,7 @@ trait WPCLIMocking {
 	/**
 	 * Mock object.
 	 * 
-	 * @var WPCLIMock
+	 * @var ?WPCLIMock
 	 */
 	protected $wpcli_mock;
 

@@ -22,23 +22,9 @@ class SnapshotsFileSystem implements Shared, Service {
 	/**
 	 * The WP_Filesystem_Direct instance.
 	 *
-	 * @var WP_Filesystem_Direct
+	 * @var ?WP_Filesystem_Direct
 	 */
 	private $wp_filesystem;
-
-	/**
-	 * SnapshotsFileSystem constructor.
-	 */
-	public function __construct() {
-		if ( ! function_exists( 'WP_Filesystem' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-		}
-
-		// Initialize the filesystem.
-		WP_Filesystem();
-
-		$this->wp_filesystem = new WP_Filesystem_Direct( [] );
-	}
 
 	/**
 	 * Deletes a file in the snapshot directory.
@@ -46,7 +32,7 @@ class SnapshotsFileSystem implements Shared, Service {
 	 * @param string $name Unique identifier for the file.
 	 * @param string $id   Snapshot ID.
 	 */
-	public function delete_file( string $name, string $id = ''  ) {
+	public function delete_file( string $name, string $id = '' ) {
 		$file = $this->get_file_path( $name, $id );
 
 		if ( file_exists( $file ) ) {
@@ -66,7 +52,7 @@ class SnapshotsFileSystem implements Shared, Service {
 		$file = $this->get_file_path( $name );
 
 		try {
-			$contents = $this->wp_filesystem->get_contents( $file );
+			$contents = $this->get_wp_filesystem()->get_contents( $file );
 			if ( false === $contents ) {
 				throw new WPSnapshotsException( 'Unable to read file: ' . $file );
 			}
@@ -90,14 +76,14 @@ class SnapshotsFileSystem implements Shared, Service {
 		$file = $this->get_file_path( $name );
 
 		if ( $append ) {
-			$existing_contents = $this->wp_filesystem->get_contents( $file );
+			$existing_contents = $this->get_wp_filesystem()->get_contents( $file );
 
 			if ( $existing_contents ) {
 				$contents = $existing_contents . $contents;
 			}
 		}
 
-		if ( ! $this->wp_filesystem->put_contents( $file, $contents ) ) {
+		if ( ! $this->get_wp_filesystem()->put_contents( $file, $contents ) ) {
 			throw new WPSnapshotsException( 'Unable to write to file: ' . $file );
 		}
 	}
@@ -163,13 +149,13 @@ class SnapshotsFileSystem implements Shared, Service {
 	 * @param string $file File name.
 	 * @param string $id  Snapshot ID.
 	 * @return array $lines File contents as lines.
-	 * 
+	 *
 	 * @throws WPSnapshotsException If unable to read file.
 	 */
 	public function get_file_lines( string $file, string $id = '' ) : array {
 		$file = $this->get_file_path( $file, $id );
 
-		$lines = $this->wp_filesystem->get_contents_array( $file );
+		$lines = $this->get_wp_filesystem()->get_contents_array( $file );
 
 		if ( ! is_array( $lines ) ) {
 			throw new WPSnapshotsException( 'Unable to read file: ' . $file );
@@ -188,7 +174,30 @@ class SnapshotsFileSystem implements Shared, Service {
 	public function get_file_size( string $name, string $id = '' ) : int {
 		$file = $this->get_file_path( $name, $id );
 
-		return $this->wp_filesystem->size( $file );
+		return $this->get_wp_filesystem()->size( $file );
+	}
+
+	/**
+	 * Gets the WP_Filesystem instance.
+	 *
+	 * @return WP_Filesystem_Direct $wp_filesystem WP_Filesystem instance.
+	 */
+	public function get_wp_filesystem() : WP_Filesystem_Direct {
+		if ( is_null( $this->wp_filesystem ) ) {
+			if ( ! class_exists( 'WP_Filesystem_Direct' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
+				require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
+			}
+
+			if ( ! function_exists( 'WP_Filesystem' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/file.php';
+				WP_Filesystem( false, false, true );
+			}
+
+			$this->wp_filesystem = new WP_Filesystem_Direct( [] );
+		}
+
+		return $this->wp_filesystem;
 	}
 
 	/**

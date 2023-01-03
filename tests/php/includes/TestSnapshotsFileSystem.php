@@ -52,7 +52,6 @@ class TestSnapshotsFileSystem extends TestCase {
 		$this->tear_down_directory_filtering();
 	}
 
-	/** @covers ::__construct */
 	public function test_constructor() {
 		$this->assertInstanceOf( SnapshotsFileSystem::class, $this->snapshots_fs );
 	}

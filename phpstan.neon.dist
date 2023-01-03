@@ -6,6 +6,7 @@ parameters:
 	inferPrivatePropertyTypeFromConstructor: true
 	paths:
 		- %currentWorkingDirectory%/includes/
+		- %currentWorkingDirectory%/tests/php/
 	bootstrapFiles:
 		- %currentWorkingDirectory%/vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
 		- %currentWorkingDirectory%/wpsnapshots.php

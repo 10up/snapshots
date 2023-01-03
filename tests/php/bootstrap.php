@@ -18,7 +18,7 @@ $_tests_dir = getenv( 'WP_TESTS_DIR' );
 require_once $_tests_dir . '/includes/functions.php'; 
 
 if ( ! function_exists( 'tests_add_filter' ) ) {
-	function tests_add_filter() {}
+	function tests_add_filter( ...$args ) {}
 
 	throw new Exception( 'Unable to load the WP test suite.' );
 }
