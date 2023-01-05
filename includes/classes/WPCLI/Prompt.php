@@ -10,6 +10,8 @@ namespace TenUp\WPSnapshots\WPCLI;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsInputValidationException;
 use TenUp\WPSnapshots\Infrastructure\{Service, Shared};
 
+use function TenUp\WPSnapshots\Utils\wp_cli;
+
 /**
  * Provides prompts via WP-CLI.
  *

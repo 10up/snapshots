@@ -8,10 +8,13 @@
 namespace TenUp\WPSnapshots;
 
 use TenUp\WPSnapshots\Infrastructure\Container;
+use TenUp\WPSnapshots\Log\WPCLILogger;
 use TenUp\WPSnapshots\Snapshots\AWSAuthenticationFactory;
+use TenUp\WPSnapshots\Snapshots\DBConnector;
 use TenUp\WPSnapshots\Snapshots\S3StorageConnector;
 use TenUp\WPSnapshots\WPCLI\Prompt;
 use TenUp\WPSnapshots\WPCLICommands\Configure;
+use TenUp\WPSnapshots\WPCLICommands\Search;
 use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
 
 /**
@@ -31,6 +34,7 @@ final class Plugin extends Container {
 	protected function get_modules(): array {
 		$components = [
 			Configure::class,
+			Search::class,
 		];
 
 		/**
@@ -51,9 +55,11 @@ final class Plugin extends Container {
 	protected function get_services(): array {
 		$services = [
 			AWSAuthenticationFactory::class,
+			DBConnector::class,
 			Prompt::class,
 			S3StorageConnector::class,
 			SnapshotsFileSystem::class,
+			WPCLILogger::class,
 			WPSnapshotsConfigFromFileSystem::class,
 		];
 

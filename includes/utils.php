@@ -5,7 +5,10 @@
  * @package TenUp\WPSnapshots
  */
 
+namespace TenUp\WPSnapshots\Utils;
+
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
+use WP_CLI;
 
 /**
  * Provides an object wrapping WP_CLI and WP_CLI\Utils functions.

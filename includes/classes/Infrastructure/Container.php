@@ -7,7 +7,6 @@
 
 namespace TenUp\WPSnapshots\Infrastructure;
 
-use Error;
 use ReflectionClass;
 use ReflectionNamedType;
 use ReflectionParameter;
@@ -98,8 +97,16 @@ abstract class Container {
 		$reflection  = new ReflectionClass( $class );
 		$constructor = $reflection->getConstructor();
 
+		// If the constructor is null, walk through parent classes to find a constructor.
+		if ( ! $constructor ) {
+			do {
+				$reflection  = $reflection->getParentClass();
+				$constructor = $reflection ? $reflection->getConstructor() : null;
+			} while ( ! $constructor && $reflection );
+		}
+
 		$dependency_instances = [];
-		if ( ! is_null( $constructor ) ) {
+		if ( $constructor ) {
 			$dependency_instances = array_map( [ $this, 'get_instance_from_parameter' ], $constructor->getParameters() );
 		}
 
@@ -121,20 +128,13 @@ abstract class Container {
 	 * @throws WPSnapshotsException If an unknown module or service is encountered.
 	 */
 	private function get_instance_from_parameter( ReflectionParameter $parameter ) {
-
-		/**
-		 * Reflection named type.
-		 *
-		 * @var ReflectionNamedType $type
-		 */
 		$type = $parameter->getType();
 
-		try {
-			$dependency_class = $type->getName();
-		} catch ( Error $e ) {
-			throw new WPSnapshotsException( sprintf( 'Unable to get class name for parameter: %s', $parameter->getName() ) );
+		if ( ! is_a( $type, ReflectionNamedType::class, true ) ) {
+			throw new WPSnapshotsException( sprintf( 'Unable to get type for parameter: %s', $parameter->getName() ) );
 		}
 
+		$dependency_class            = $type->getName();
 		$dependency_class_reflection = new ReflectionClass( $dependency_class );
 
 		if ( $dependency_class_reflection->isInterface() ) {

@@ -7,10 +7,10 @@
 
 namespace TenUp\WPSnapshots\WPCLICommands;
 
-use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigInterface;
-use TenUp\WPSnapshots\Snapshots\{StorageConnectorInterface, AWSAuthenticationFactory};
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\WPCLI\{Prompt, WPCLICommand};
+use TenUp\WPSnapshots\WPCLI\WPCLICommand;
+
+use function TenUp\WPSnapshots\Utils\wp_cli;
 
 /**
  * Configure command
@@ -20,48 +20,11 @@ use TenUp\WPSnapshots\WPCLI\{Prompt, WPCLICommand};
 final class Configure extends WPCLICommand {
 
 	/**
-	 * ConfigConnectorInterface instance.
-	 *
-	 * @var WPSnapshotsConfigInterface
-	 */
-	private $config;
-
-	/**
-	 * StorageConnectorInterface instance.
-	 *
-	 * @var StorageConnectorInterface
-	 */
-	private $storage;
-
-	/**
-	 * AWSAuthenticationFactory instance.
-	 *
-	 * @var AWSAuthenticationFactory
-	 */
-	private $aws_authentication_factory;
-
-	/**
 	 * Repository name.
 	 *
 	 * @var string
 	 */
 	private $repository_name;
-
-	/**
-	 * Configure constructor.
-	 *
-	 * @param Prompt                     $prompt Prompt instance.
-	 * @param WPSnapshotsConfigInterface $config ConfigConnectorInterface instance.
-	 * @param StorageConnectorInterface  $storage StorageConnectorInterface instance.
-	 * @param AWSAuthenticationFactory   $aws_authentication_factory AWSAuthenticationFactory instance.
-	 */
-	public function __construct( Prompt $prompt, WPSnapshotsConfigInterface $config, StorageConnectorInterface $storage, AWSAuthenticationFactory $aws_authentication_factory ) {
-		parent::__construct( $prompt );
-
-		$this->config                     = $config;
-		$this->storage                    = $storage;
-		$this->aws_authentication_factory = $aws_authentication_factory;
-	}
 
 	/**
 	 * Configures WP Snapshots for your environment.
@@ -268,7 +231,7 @@ final class Configure extends WPCLICommand {
 			return;
 		}
 
-		$this->storage->set_configuration(
+		$this->storage_connector->set_configuration(
 			$this->aws_authentication_factory->get(
 				[
 					'region'     => $this->get_region(),
@@ -278,6 +241,6 @@ final class Configure extends WPCLICommand {
 				]
 			)
 		);
-		$this->storage->test_connection();
+		$this->storage_connector->test_connection();
 	}
 }

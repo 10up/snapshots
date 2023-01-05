@@ -9,6 +9,7 @@ namespace TenUp\WPSnapshots\Tests\Infrastructure;
 
 use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
 use TenUp\WPSnapshots\Infrastructure\Container;
+use TenUp\WPSnapshots\Log\WPCLILogger;
 use TenUp\WPSnapshots\SnapshotsFileSystem;
 use TenUp\WPSnapshots\Plugin;
 use TenUp\WPSnapshots\Snapshots\AWSAuthenticationFactory;
@@ -70,7 +71,8 @@ class TestContainer extends TestCase {
 
 		$this->assertEquals(
 			[
-                Prompt::class,
+                WPCLILogger::class,
+				Prompt::class,
                 SnapshotsFileSystem::class,
                 WPSnapshotsConfigFromFileSystem::class,
                 AWSAuthenticationFactory::class,

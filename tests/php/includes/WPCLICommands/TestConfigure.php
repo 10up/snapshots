@@ -212,7 +212,7 @@ class TestConfigure extends TestCase {
 		$storage_mock = $this->createMock( S3StorageConnector::class );
 		$storage_mock->method( 'test_connection' );
 
-		$this->set_private_property( $this->command, 'storage', $storage_mock );
+		$this->set_private_property( $this->command, 'storage_connector', $storage_mock );
 
 		$this->command->execute(
 			[ '10up' ],
@@ -243,7 +243,7 @@ class TestConfigure extends TestCase {
 		$storage_mock->method( 'test_connection' )
 			->willThrowException( new WPSnapshotsException( 'WP Snapshots configuration verification failed.' ) );
 
-		$this->set_private_property( $this->command, 'storage', $storage_mock );
+		$this->set_private_property( $this->command, 'storage_connector', $storage_mock );
 
 		$this->command->execute(
 			[ '10up' ],
