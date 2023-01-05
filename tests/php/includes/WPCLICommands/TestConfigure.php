@@ -124,7 +124,7 @@ class TestConfigure extends TestCase {
 			->assertMethodCalled(
 				'success',
 				1,
-				[ 'WP Snapshots configuration saved.' ]
+				[ [ 'WP Snapshots configuration saved.' ] ]
 			);
 	}
 
@@ -150,7 +150,7 @@ class TestConfigure extends TestCase {
 			->assertMethodCalled(
 				'error',
 				1,
-				[ 'Please provide a repository name.' ]
+				[ [ 'Please provide a repository name.' ] ]
 			);
 	}
 
@@ -186,7 +186,7 @@ class TestConfigure extends TestCase {
 			->assertMethodCalled(
 				'confirm',
 				1,
-				[ 'This repository is already configured. Do you want to overwrite the existing configuration?' ]
+				[ [ 'This repository is already configured. Do you want to overwrite the existing configuration?' ] ]
 			);
 
 		// Check that the file has the expected output.
@@ -228,7 +228,7 @@ class TestConfigure extends TestCase {
 			->assertMethodCalled(
 				'success',
 				1,
-				[ 'WP Snapshots configuration verified and saved.' ]
+				[ [ 'WP Snapshots configuration verified and saved.' ] ]
 			);
 	}
 
@@ -265,7 +265,7 @@ class TestConfigure extends TestCase {
 			->assertMethodCalled(
 				'error',
 				1,
-				[ 'WP Snapshots configuration verification failed.' ]
+				[ [ 'WP Snapshots configuration verification failed.' ] ]
 			);
 	}
 

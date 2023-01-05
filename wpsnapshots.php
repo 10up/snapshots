@@ -22,6 +22,10 @@ if ( ! defined( 'WPSNAPSHOTS_DIR' ) ) {
 	define( 'WPSNAPSHOTS_DIR', __DIR__ );
 }
 
+if ( ! defined( 'WPSNAPSHOTS_USE_FILE_SYSTEM' ) ) {
+	define( 'WPSNAPSHOTS_USE_FILE_SYSTEM', true );
+}
+
 // FOR DEVELOPMENT ONLY. Writes the config file to this plugin's directory.
 add_filter(
 	'wpsnapshots_directory',

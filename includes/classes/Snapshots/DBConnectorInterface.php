@@ -12,13 +12,23 @@ namespace TenUp\WPSnapshots\Snapshots;
  *
  * @package TenUp\WPSnapshots
  */
-interface DBConnectorInterface extends ConnectorInterface {
+interface DBConnectorInterface {
 
 	/**
 	 * Searches the database.
 	 *
-	 * @param  string $query Search query string
+	 * @param  string|array      $query Search query string
+	 * @param  AWSAuthentication $aws_authentication Authentication object.
 	 * @return array
 	 */
-	public function search( string $query ) : array;
+	public function search( $query, AWSAuthentication $aws_authentication ) : array;
+
+	/**
+	 * Get a snapshot given an id
+	 *
+	 * @param  string            $id Snapshot ID
+	 * @param  AWSAuthentication $aws_authentication AWS authentication instance.
+	 * @return mixed
+	 */
+	public function get_snapshot( string $id, AWSAuthentication $aws_authentication );
 }

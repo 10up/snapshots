@@ -22,19 +22,6 @@ final class Search extends WPCLICommand {
 	/**
 	 * Search for snapshots within a repository.
 	 *
-	 * ## ARGUMENTS
-	 *
-	 * <search_text>
-	 * : Text to search against snapshots. If multiple queries are used, they must match exactly to project names or snapshot ids.
-	 *
-	 * ## OPTIONS
-	 *
-	 * [--repository=<repository>]
-	 * : The repository to search in. Defaults to the first repository set in the config file.
-	 *
-	 * [--format=<format>]
-	 * : Render output in a particular format. Available options: table and json. Defaults to table.
-	 *
 	 * @param array $args Arguments passed to the command.
 	 * @param array $assoc_args Associative arguments passed to the command.
 	 */
@@ -106,34 +93,12 @@ final class Search extends WPCLICommand {
 	}
 
 	/**
-	 * Gets the repository name.
-	 *
-	 * @return string
-	 */
-	private function get_repository_name() : string {
-		return $this->get_assoc_arg( 'repository' ) ?? '';
-	}
-
-	/**
 	 * Runs a search against the database.
 	 *
 	 * @return array
 	 */
 	private function search() {
-		$repository_name = $this->get_repository_name();
-
-		$repo_info = $this->config->get_repository_settings( $repository_name );
-		$s3_config = $this->aws_authentication_factory->get(
-			[
-				'key'        => $repo_info['access_key_id'],
-				'secret'     => $repo_info['secret_access_key'],
-				'region'     => $repo_info['region'],
-				'repository' => $repo_info['repository'],
-			]
-		);
-		$this->db_connector->set_configuration( $s3_config );
-
-		return $this->db_connector->search( $this->get_search_string() );
+		return $this->db_connector->search( $this->get_search_string(), $this->get_aws_authentication() );
 	}
 
 	/**
@@ -166,21 +131,6 @@ final class Search extends WPCLICommand {
 				'created',
 			]
 		);
-	}
-
-
-	/**
-	 * Format bytes to pretty file size
-	 *
-	 * @param  int $size     Number of bytes
-	 * @param  int $precision Decimal precision
-	 * @return string
-	 */
-	private function format_bytes( $size, $precision = 2 ) {
-		$base     = log( $size, 1024 );
-		$suffixes = [ '', 'KB', 'MB', 'GB', 'TB' ];
-
-		return round( pow( 1024, $base - floor( $base ) ), $precision ) . ' ' . $suffixes[ floor( $base ) ];
 	}
 
 	/**

@@ -99,6 +99,29 @@ class Prompt implements Shared, Service {
 	}
 
 	/**
+	 * Gets a flag value or prompts if it's not set.
+	 *
+	 * @param array  $assoc_args Associative array of arguments.
+	 * @param string $flag Flag to get.
+	 * @param string $prompt Prompt to display.
+	 *
+	 * @return bool
+	 */
+	public function get_flag_or_prompt( array $assoc_args, string $flag, string $prompt ) {
+		if ( isset( $assoc_args[ $flag ] ) ) {
+			return wp_cli()::get_flag_value( $assoc_args, $flag );
+		}
+
+		$answer = null;
+
+		while ( ! in_array( $answer, [ 'y', 'n', 'Y', 'N', '' ], true ) ) {
+			$answer = $this->readline( $prompt . ' (Y/n):' );
+		}
+
+		return in_array( $answer, [ 'y', 'Y', '' ], true );
+	}
+
+	/**
 	 * Wrapper for PHP readline.
 	 *
 	 * @param string $prompt Prompt to display.

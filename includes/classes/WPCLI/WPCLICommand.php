@@ -7,9 +7,10 @@
 
 namespace TenUp\WPSnapshots\WPCLI;
 
+use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Infrastructure\{Module, Conditional, Registerable};
 use TenUp\WPSnapshots\Log\{Logging, WPCLILogger};
-use TenUp\WPSnapshots\Snapshots\{AWSAuthenticationFactory, DBConnectorInterface, StorageConnectorInterface};
+use TenUp\WPSnapshots\Snapshots\{AWSAuthentication, AWSAuthenticationFactory, DBConnectorInterface, SnapshotMetaInterface, StorageConnectorInterface};
 use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigInterface;
 
 use function TenUp\WPSnapshots\Utils\wp_cli;
@@ -59,6 +60,13 @@ abstract class WPCLICommand implements Conditional, Registerable, Module {
 	protected $db_connector;
 
 	/**
+	 * SnapshotMetaInteface instance.
+	 *
+	 * @var SnapshotMetaInterface
+	 */
+	protected $snapshot_meta;
+
+	/**
 	 * Args passed to the command.
 	 *
 	 * @var array
@@ -90,6 +98,7 @@ abstract class WPCLICommand implements Conditional, Registerable, Module {
 	 * @param AWSAuthenticationFactory   $aws_authentication_factory AWSAuthenticationFactory instance.
 	 * @param StorageConnectorInterface  $storage_connector StorageConnectorInterface instance.
 	 * @param DBConnectorInterface       $db_connector DBConnectorInterface instance.
+	 * @param SnapshotMetaInterface      $snapshot_meta SnapshotMetaInterface instance.
 	 */
 	public function __construct(
 		WPCLILogger $logger,
@@ -98,12 +107,14 @@ abstract class WPCLICommand implements Conditional, Registerable, Module {
 		AWSAuthenticationFactory $aws_authentication_factory,
 		StorageConnectorInterface $storage_connector,
 		DBConnectorInterface $db_connector,
+		SnapshotMetaInterface $snapshot_meta
 	) {
 		$this->prompt                     = $prompt;
 		$this->config                     = $config;
 		$this->aws_authentication_factory = $aws_authentication_factory;
 		$this->storage_connector          = $storage_connector;
 		$this->db_connector               = $db_connector;
+		$this->snapshot_meta              = $snapshot_meta;
 		$this->set_logger( $logger );
 	}
 
@@ -173,6 +184,91 @@ abstract class WPCLICommand implements Conditional, Registerable, Module {
 	 */
 	public function set_assoc_arg( string $key, $value ) {
 		$this->assoc_args[ $key ] = $value;
+	}
+
+	/**
+	 * Gets the repository name.
+	 *
+	 * @param bool $required Whether the arg is required.
+	 * @param ?int $positional_arg_index Positional arg index. If null, the repository will be retrieved form assoc args.
+	 * @return string
+	 *
+	 * @throws WPSnapshotsException If no repository name is provided.
+	 */
+	protected function get_repository_name( bool $required = false, ?int $positional_arg_index = null ) : string {
+		if ( is_int( $positional_arg_index ) ) {
+			$args = $this->get_args();
+
+			$repository_name = $args[ $positional_arg_index ] ?? null;
+		} else {
+			$repository_name = $this->get_assoc_arg( 'repository' ) ?? null;
+		}
+
+		if ( $required && ! $repository_name ) {
+			throw new WPSnapshotsException( 'Please provide a repository name.' );
+		}
+
+		return $repository_name ?? '';
+	}
+
+	/**
+	 * Gets the repo info.
+	 *
+	 * @return array
+	 */
+	protected function get_repo_info() : array {
+		$repository_name = $this->get_repository_name();
+
+		return $this->config->get_repository_settings( $repository_name );
+	}
+
+	/**
+	 * Gets an Authentication instance.
+	 *
+	 * @return AWSAuthentication
+	 */
+	protected function get_aws_authentication() : AWSAuthentication {
+		$repo_info = $this->get_repo_info();
+		return $this->aws_authentication_factory->get(
+			[
+				'key'        => $repo_info['access_key_id'],
+				'secret'     => $repo_info['secret_access_key'],
+				'region'     => $repo_info['region'],
+				'repository' => $repo_info['repository'],
+			]
+		);
+	}
+
+	/**
+	 * Gets the default value for a given arg.
+	 *
+	 * @param string $arg Arg.
+	 * @return mixed
+	 */
+	protected function get_default_arg_value( string $arg ) {
+		$synopsis = $this->get_command_parameters()['synopsis'] ?? [];
+
+		foreach ( $synopsis as $synopsis_arg ) {
+			if ( $arg === $synopsis_arg['name'] ) {
+				return $synopsis_arg['default'] ?? null;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Format bytes to pretty file size
+	 *
+	 * @param  int $size     Number of bytes
+	 * @param  int $precision Decimal precision
+	 * @return string
+	 */
+	protected function format_bytes( $size, $precision = 2 ) {
+		$base     = log( $size, 1024 );
+		$suffixes = [ '', 'KB', 'MB', 'GB', 'TB' ];
+
+		return round( pow( 1024, $base - floor( $base ) ), $precision ) . ' ' . $suffixes[ floor( $base ) ];
 	}
 
 	/**

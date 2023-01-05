@@ -80,8 +80,8 @@ class WPCLIMock {
 		$this->test_case->assertCount( $times, $calls, "Method $method was called $times times." );
 
 		if ( ! is_null( $args ) ) {
-			foreach ( $calls as $call ) {
-				$this->test_case->assertEquals( $args, $call, "Method $method was called with the correct arguments." );
+			foreach ( $args as $index => $arg ) {
+				$this->test_case->assertEquals( $arg, $calls[$index], "Method $method was called with the correct arguments." );
 			}
 		}
 

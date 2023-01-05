@@ -10,7 +10,7 @@ namespace TenUp\WPSnapshots\Tests\Commands;
 use PHPUnit\Framework\MockObject\MockObject;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\Snapshots\DBConnector;
+use TenUp\WPSnapshots\Snapshots\DynamoDBConnector;
 use TenUp\WPSnapshots\Tests\Fixtures\{PrivateAccess, WPCLIMocking};
 use TenUp\WPSnapshots\WPCLI\WPCLICommand;
 use TenUp\WPSnapshots\WPCLICommands\Search;
@@ -85,7 +85,6 @@ class TestSearch extends TestCase {
 	}
 
 	/**
-	 * @covers ::get_repository_name
 	 * @covers ::set_assoc_arg
 	 */
 	public function test_get_repository_name() {
@@ -99,9 +98,9 @@ class TestSearch extends TestCase {
 		$return_array = [ 'test' ];
 
 		/**
-		 * @var DBConnector|MockObject $mock_db_connector
+		 * @var DynamoDBConnector|MockObject $mock_db_connector
 		 */
-		$mock_db_connector = $this->createMock( DBConnector::class );
+		$mock_db_connector = $this->createMock( DynamoDBConnector::class );
 		$mock_db_connector->method( 'search' )->willReturn( $return_array );
 		$this->set_private_property( $this->search, 'db_connector', $mock_db_connector );
 
@@ -160,30 +159,32 @@ class TestSearch extends TestCase {
 				'format_items',
 				1,
 				[
-					'table',
 					[
-						$time => [
-							'id' => '',
-							'project' => '',
-							'contains_files' => 'Yes',
-							'contains_db' => 'Yes',
-							'description' => '',
-							'author' => '',
-							'size' => '240.47 KB',
-							'multisite' => 'No',
-							'created' => gmdate( $date_format, $time ),
+						'table',
+						[
+							$time => [
+								'id' => '',
+								'project' => '',
+								'contains_files' => 'Yes',
+								'contains_db' => 'Yes',
+								'description' => '',
+								'author' => '',
+								'size' => '240.47 KB',
+								'multisite' => 'No',
+								'created' => gmdate( $date_format, $time ),
+							],
 						],
-					],
-					[
-						'id',
-						'project',
-						'contains_files',
-						'contains_db',
-						'description',
-						'author',
-						'size',
-						'multisite',
-						'created',
+						[
+							'id',
+							'project',
+							'contains_files',
+							'contains_db',
+							'description',
+							'author',
+							'size',
+							'multisite',
+							'created',
+						],
 					],
 				]
 			);
@@ -197,7 +198,7 @@ class TestSearch extends TestCase {
 			->assertMethodCalled(
 				'line',
 				1,
-				[ 'No snapshots found.' ]
+				[ [ 'No snapshots found.' ] ]
 			);
 	}
 }

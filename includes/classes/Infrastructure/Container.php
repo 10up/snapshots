@@ -50,7 +50,7 @@ abstract class Container {
 
 		$instances = [];
 
-		foreach ( $this->get_modules() as $module ) {
+		foreach ( $this->get_modules() as $key => $module ) {
 			$implements = class_implements( $module );
 			if ( is_array( $implements ) && in_array( Conditional::class, $implements, true ) && ! $module::is_needed() ) {
 				continue;

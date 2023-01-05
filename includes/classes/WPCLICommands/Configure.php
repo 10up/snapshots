@@ -20,13 +20,6 @@ use function TenUp\WPSnapshots\Utils\wp_cli;
 final class Configure extends WPCLICommand {
 
 	/**
-	 * Repository name.
-	 *
-	 * @var string
-	 */
-	private $repository_name;
-
-	/**
 	 * Configures WP Snapshots for your environment.
 	 *
 	 * @param array $args Arguments passed to the command.
@@ -119,34 +112,12 @@ final class Configure extends WPCLICommand {
 	}
 
 	/**
-	 * Gets the repository name.
-	 *
-	 * @return string
-	 *
-	 * @throws WPSnapshotsException If repository name is not provided.
-	 */
-	private function get_repository_name() {
-		if ( empty( $this->repository_name ) ) {
-
-			$args = $this->get_args();
-
-			if ( ! is_array( $args ) || empty( $args ) ) {
-				throw new WPSnapshotsException( 'Please provide a repository name.' );
-			}
-
-			$this->repository_name = reset( $args );
-		}
-
-		return $this->repository_name;
-	}
-
-	/**
 	 * Gets updated repository info.
 	 *
 	 * @return array
 	 */
 	private function get_updated_repository_info() : array {
-		$repository_name = $this->get_repository_name();
+		$repository_name = $this->get_repository_name( true, 0 );
 		$repositories    = $this->config->get_repositories();
 
 		if ( ! empty( $repositories[ $repository_name ] ) ) {
@@ -231,16 +202,14 @@ final class Configure extends WPCLICommand {
 			return;
 		}
 
-		$this->storage_connector->set_configuration(
-			$this->aws_authentication_factory->get(
-				[
-					'region'     => $this->get_region(),
-					'key'        => $this->get_aws_key(),
-					'secret'     => $this->get_aws_secret(),
-					'repository' => $this->get_repository_name(),
-				]
-			)
+		$aws_authentication = $this->aws_authentication_factory->get(
+			[
+				'region'     => $this->get_region(),
+				'key'        => $this->get_aws_key(),
+				'secret'     => $this->get_aws_secret(),
+				'repository' => $this->get_repository_name( true, 0 ),
+			]
 		);
-		$this->storage_connector->test_connection();
+		$this->storage_connector->test_connection( $aws_authentication );
 	}
 }

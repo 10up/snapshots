@@ -29,11 +29,11 @@ class SnapshotsFileSystem implements Shared, Service {
 	/**
 	 * Deletes a file in the snapshot directory.
 	 *
-	 * @param string $name Unique identifier for the file.
+	 * @param string $file_name Name for the file.
 	 * @param string $id   Snapshot ID.
 	 */
-	public function delete_file( string $name, string $id = '' ) {
-		$file = $this->get_file_path( $name, $id );
+	public function delete_file( string $file_name, string $id = '' ) {
+		$file = $this->get_file_path( $file_name, $id );
 
 		if ( file_exists( $file ) ) {
 			unlink( $file );
@@ -43,13 +43,14 @@ class SnapshotsFileSystem implements Shared, Service {
 	/**
 	 * Gets the contents of a file.
 	 *
-	 * @param string $name Unique identifier for the file.
+	 * @param string  $file_name Name for the file.
+	 * @param ?string $id   Snapshot ID.
 	 * @return string $contents File contents.
 	 *
 	 * @throws WPSnapshotsException If unable to read file.
 	 */
-	public function get_file_contents( string $name ) : string {
-		$file = $this->get_file_path( $name );
+	public function get_file_contents( string $file_name, string $id = null ) : string {
+		$file = $this->get_file_path( $file_name, $id );
 
 		try {
 			$contents = $this->get_wp_filesystem()->get_contents( $file );
@@ -66,14 +67,19 @@ class SnapshotsFileSystem implements Shared, Service {
 	/**
 	 * Puts contents into a file.
 	 *
-	 * @param string $name Unique identifier for the file.
-	 * @param string $contents File contents.
-	 * @param bool   $append Whether to append to the file.
+	 * @param string  $file_name Name for the file.
+	 * @param string  $contents File contents.
+	 * @param bool    $append Whether to append to the file.
+	 * @param ?string $id Snapshot ID.
 	 *
 	 * @throws WPSnapshotsException If unable to write to file.
 	 */
-	public function update_file_contents( string $name, string $contents, bool $append = false ) {
-		$file = $this->get_file_path( $name );
+	public function update_file_contents( string $file_name, string $contents, bool $append = false, string $id = null ) {
+		$file = $this->get_file_path( $file_name, $id );
+
+		if ( ! is_null( $id ) && ! $this->directory_exists( $id ) ) {
+			$this->create_directory( $id );
+		}
 
 		if ( $append ) {
 			$existing_contents = $this->get_wp_filesystem()->get_contents( $file );
@@ -96,6 +102,17 @@ class SnapshotsFileSystem implements Shared, Service {
 	 */
 	public function directory_exists( string $id ) : bool {
 		return is_dir( $this->get_directory( $id ) );
+	}
+
+	/**
+	 * Returns whether a file exists in the snapshot directory.
+	 *
+	 * @param string $file_name Name for the file.
+	 * @param string $id   Snapshot ID.
+	 * @return bool
+	 */
+	public function file_exists( string $file_name, string $id = '' ) : bool {
+		return file_exists( $this->get_file_path( $file_name, $id ) );
 	}
 
 	/**
@@ -167,12 +184,12 @@ class SnapshotsFileSystem implements Shared, Service {
 	/**
 	 * Gets the size of a file.
 	 *
-	 * @param string $name Unique identifier for the file.
+	 * @param string $file_name Name for the file.
 	 * @param string $id  Snapshot ID.
 	 * @return int $size File size.
 	 */
-	public function get_file_size( string $name, string $id = '' ) : int {
-		$file = $this->get_file_path( $name, $id );
+	public function get_file_size( string $file_name, string $id = '' ) : int {
+		$file = $this->get_file_path( $file_name, $id );
 
 		return $this->get_wp_filesystem()->size( $file );
 	}
@@ -199,25 +216,25 @@ class SnapshotsFileSystem implements Shared, Service {
 	/**
 	 * Gets the path to a file in the snapshot directory.
 	 *
-	 * @param string $name Unique identifier for the file.
-	 * @param string $id  Snapshot ID.
+	 * @param string  $file_name Name for the file.
+	 * @param ?string $id  Snapshot ID.
 	 * @return string $file Path to the file.
 	 */
-	private function get_file_path( string $name = '', string $id = '' ) : string {
+	public function get_file_path( string $file_name = '', ?string $id = null ) : string {
 		$directory = $this->get_directory( $id );
 
-		return $directory . '/' . $name;
+		return $directory . '/' . $file_name;
 	}
 
 	/**
 	 * Gets the snapshots directory.
 	 *
-	 * @param string $id Snapshot ID.
+	 * @param ?string $id Snapshot ID.
 	 * @return string $file Snapshots directory.
 	 *
 	 * @throws WPSnapshotsException If unable to create directory.
 	 */
-	private function get_directory( string $id = '' ) : string {
+	private function get_directory( ?string $id = null ) : string {
 
 		/**
 		 * Filters the configuration directory.
@@ -226,7 +243,7 @@ class SnapshotsFileSystem implements Shared, Service {
 		 */
 		$directory = apply_filters(
 			'wpsnapshots_directory',
-			strlen( getenv( 'WPSNAPSHOTS_DIR' ) ) > 0 ? getenv( 'WPSNAPSHOTS_DIR' ) : ABSPATH . '/.wpsnapshots'
+			defined( 'WPSNAPSHOTS_DIR' ) ? WPSNAPSHOTS_DIR : ABSPATH . '/.wpsnapshots'
 		);
 
 		if ( ! is_dir( $directory ) && ! mkdir( $directory, 0755, true ) ) {
