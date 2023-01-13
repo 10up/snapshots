@@ -11,7 +11,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Plugin;
 use TenUp\WPSnapshots\Snapshots\DynamoDBConnector;
-use TenUp\WPSnapshots\Tests\Fixtures\{PrivateAccess, WPCLIMocking};
+use TenUp\WPSnapshots\Tests\Fixtures\{CommandTests, PrivateAccess, WPCLIMocking};
 use TenUp\WPSnapshots\WPCLI\WPCLICommand;
 use TenUp\WPSnapshots\WPCLICommands\Search;
 use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
@@ -26,14 +26,14 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
  */
 class TestSearch extends TestCase {
 
-	use PrivateAccess, WPCLIMocking;
+	use PrivateAccess, WPCLIMocking, CommandTests;
 
 	/**
 	 * Search instance.
 	 * 
 	 * @var Search
 	 */
-	private $search;
+	private $command;
 
 	/**
 	 * Test setup.
@@ -41,7 +41,7 @@ class TestSearch extends TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->search = ( new Plugin() )->get_instance( Search::class );
+		$this->command = ( new Plugin() )->get_instance( Search::class );
 
 		$this->set_up_wp_cli_mock();
 	}
@@ -61,19 +61,20 @@ class TestSearch extends TestCase {
 	 * @covers ::__construct
 	 */
 	public function test_command_instance() {
-		$this->assertInstanceOf( WPCLICommand::class, $this->search );
+		$this->assertInstanceOf( WPCLICommand::class, $this->command );
+		$this->test_command_tests();
 	}
 
 	/** @covers ::get_command */
 	public function test_get_command() {
-		$this->assertEquals( 'search', $this->call_private_method( $this->search, 'get_command' ) );
+		$this->assertEquals( 'search', $this->call_private_method( $this->command, 'get_command' ) );
 	}
 
 	/** @covers ::get_search_string */
 	public function test_get_search_string() {
-		$this->search->set_args( [ 'test' ] );
+		$this->command->set_args( [ 'test' ] );
 
-		$this->assertEquals( 'test', $this->call_private_method( $this->search, 'get_search_string' ) );
+		$this->assertEquals( 'test', $this->call_private_method( $this->command, 'get_search_string' ) );
 	}
 
 	/** @covers ::get_search_string */
@@ -81,16 +82,16 @@ class TestSearch extends TestCase {
 		$this->expectException( WPSnapshotsException::class );
 		$this->expectExceptionMessage( 'Please provide a search string.' );
 
-		$this->call_private_method( $this->search, 'get_search_string' );
+		$this->call_private_method( $this->command, 'get_search_string' );
 	}
 
 	/**
 	 * @covers ::set_assoc_arg
 	 */
 	public function test_get_repository_name() {
-		$this->search->set_assoc_arg( 'repository', 'test' );
+		$this->command->set_assoc_arg( 'repository', 'test' );
 
-		$this->assertEquals( 'test', $this->call_private_method( $this->search, 'get_repository_name' ) );
+		$this->assertEquals( 'test', $this->call_private_method( $this->command, 'get_repository_name' ) );
 	}
 
 	/** @covers ::search */
@@ -102,7 +103,7 @@ class TestSearch extends TestCase {
 		 */
 		$mock_db_connector = $this->createMock( DynamoDBConnector::class );
 		$mock_db_connector->method( 'search' )->willReturn( $return_array );
-		$this->set_private_property( $this->search, 'db_connector', $mock_db_connector );
+		$this->set_private_property( $this->command, 'db_connector', $mock_db_connector );
 
 		/**
 		 * @var WPSnapshotsConfigFromFileSystem|MockObject $mock_wpsnapshots_config
@@ -116,12 +117,12 @@ class TestSearch extends TestCase {
 				'repository' => 'test',
 			]
 		);
-		$this->set_private_property( $this->search, 'config', $mock_wpsnapshots_config );
+		$this->set_private_property( $this->command, 'config', $mock_wpsnapshots_config );
 
-		$this->search->set_assoc_arg( 'repository', 'test' );
-		$this->search->set_args( [ 'test' ] );
+		$this->command->set_assoc_arg( 'repository', 'test' );
+		$this->command->set_args( [ 'test' ] );
 		
-		$actual_results = $this->call_private_method( $this->search, 'search' );
+		$actual_results = $this->call_private_method( $this->command, 'search', [ 'test-region' ] );
 
 		$this->assertEquals( $return_array, $actual_results );
 	}
@@ -136,7 +137,7 @@ class TestSearch extends TestCase {
 		$time = time();
 
 		$this->call_private_method(
-			$this->search,
+			$this->command,
 			'display_results',
 			[
 				[
@@ -192,7 +193,7 @@ class TestSearch extends TestCase {
 
 	/**  @covers ::display_results */
 	public function test_display_results_logs_message_if_no_results() {
-		$this->call_private_method( $this->search, 'display_results', [ [] ] );
+		$this->call_private_method( $this->command, 'display_results', [ [] ] );
 
 		$this->get_wp_cli_mock()
 			->assertMethodCalled(

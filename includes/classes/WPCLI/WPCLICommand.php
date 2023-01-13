@@ -39,13 +39,6 @@ abstract class WPCLICommand implements Conditional, Registerable, Module {
 	protected $config;
 
 	/**
-	 * AWSAuthenticationFactory instance.
-	 *
-	 * @var AWSAuthenticationFactory
-	 */
-	protected $aws_authentication_factory;
-
-	/**
 	 * StorageConnectorInterface instance.
 	 *
 	 * @var StorageConnectorInterface
@@ -95,7 +88,6 @@ abstract class WPCLICommand implements Conditional, Registerable, Module {
 	 * @param WPCLILogger                $logger WPCLILogger instance.
 	 * @param Prompt                     $prompt Prompt instance.
 	 * @param WPSnapshotsConfigInterface $config ConfigConnectorInterface instance.
-	 * @param AWSAuthenticationFactory   $aws_authentication_factory AWSAuthenticationFactory instance.
 	 * @param StorageConnectorInterface  $storage_connector StorageConnectorInterface instance.
 	 * @param DBConnectorInterface       $db_connector DBConnectorInterface instance.
 	 * @param SnapshotMetaInterface      $snapshot_meta SnapshotMetaInterface instance.
@@ -104,17 +96,15 @@ abstract class WPCLICommand implements Conditional, Registerable, Module {
 		WPCLILogger $logger,
 		Prompt $prompt,
 		WPSnapshotsConfigInterface $config,
-		AWSAuthenticationFactory $aws_authentication_factory,
 		StorageConnectorInterface $storage_connector,
 		DBConnectorInterface $db_connector,
 		SnapshotMetaInterface $snapshot_meta
 	) {
-		$this->prompt                     = $prompt;
-		$this->config                     = $config;
-		$this->aws_authentication_factory = $aws_authentication_factory;
-		$this->storage_connector          = $storage_connector;
-		$this->db_connector               = $db_connector;
-		$this->snapshot_meta              = $snapshot_meta;
+		$this->prompt            = $prompt;
+		$this->config            = $config;
+		$this->storage_connector = $storage_connector;
+		$this->db_connector      = $db_connector;
+		$this->snapshot_meta     = $snapshot_meta;
 		$this->set_logger( $logger );
 	}
 
@@ -155,7 +145,17 @@ abstract class WPCLICommand implements Conditional, Registerable, Module {
 			$this->assoc_args = $this->prompt->get_arg_or_prompt( $this->assoc_args, array_merge( $prompt_config, compact( 'key' ) ) );
 		}
 
-		return $this->assoc_args[ $key ] ?? null;
+		if ( ! isset( $this->assoc_args[ $key ] ) ) {
+			$value = $this->get_default_arg_value( $key );
+
+			if ( $value ) {
+				$this->assoc_args[ $key ] = $value;
+			}
+
+			return $value;
+		}
+
+		return $this->assoc_args[ $key ];
 	}
 
 	/**
@@ -208,7 +208,7 @@ abstract class WPCLICommand implements Conditional, Registerable, Module {
 			throw new WPSnapshotsException( 'Please provide a repository name.' );
 		}
 
-		return $repository_name ?? '';
+		return $repository_name ?? '10up';
 	}
 
 	/**
@@ -220,23 +220,6 @@ abstract class WPCLICommand implements Conditional, Registerable, Module {
 		$repository_name = $this->get_repository_name();
 
 		return $this->config->get_repository_settings( $repository_name );
-	}
-
-	/**
-	 * Gets an Authentication instance.
-	 *
-	 * @return AWSAuthentication
-	 */
-	protected function get_aws_authentication() : AWSAuthentication {
-		$repo_info = $this->get_repo_info();
-		return $this->aws_authentication_factory->get(
-			[
-				'key'        => $repo_info['access_key_id'],
-				'secret'     => $repo_info['secret_access_key'],
-				'region'     => $repo_info['region'],
-				'repository' => $repo_info['repository'],
-			]
-		);
 	}
 
 	/**

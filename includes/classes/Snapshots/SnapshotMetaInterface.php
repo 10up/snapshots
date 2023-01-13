@@ -8,7 +8,6 @@
 namespace TenUp\WPSnapshots\Snapshots;
 
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\Snapshots\AWSAuthentication;
 
 /**
  * Interface for napshot meta wrapper with support for downloading remote meta
@@ -29,11 +28,12 @@ interface SnapshotMetaInterface {
 	/**
 	 * Download meta from remote DB
 	 *
-	 * @param string            $id Snapshot ID
-	 * @param AWSAuthentication $aws_authentication AWS authentication instance.
+	 * @param string $id Snapshot ID
+	 * @param string $repository Repository name
+	 * @param string $region AWS region
 	 * @return array
 	 */
-	public function get_remote_meta( string $id, AWSAuthentication $aws_authentication );
+	public function get_remote_meta( string $id, string $repository, string $region ) : array;
 
 	/**
 	 * Get local snapshot meta

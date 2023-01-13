@@ -8,7 +8,6 @@
 namespace TenUp\WPSnapshots\Tests\Snapshots;
 
 use Aws\DynamoDb\DynamoDbClient;
-use TenUp\WPSnapshots\Snapshots\AWSAuthentication;
 use TenUp\WPSnapshots\Snapshots\DynamoDBConnector;
 use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
@@ -46,17 +45,8 @@ class TestDBConnector extends TestCase {
 
 	/** @covers ::get_client */
 	public function test_get_client() {
-		$client = $this->call_private_method( $this->connector, 'get_client', [ $this->get_valid_s3_config() ] );
+		$client = $this->call_private_method( $this->connector, 'get_client', [ 'test-repo' ] );
 
 		$this->assertInstanceOf( DynamoDbClient::class, $client );
-	}
-
-	private function get_valid_s3_config() {
-		return new AWSAuthentication( [
-			'repository' => 'test-repo',
-			'key'        => 'test-key',
-			'secret'     => 'test-secret',
-			'region'     => 'us-east-1',
-		] );
 	}
 }

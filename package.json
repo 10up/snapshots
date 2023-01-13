@@ -24,19 +24,5 @@
   "homepage": "https://github.com/10up/snapshots-command#readme",
   "dependencies": {
     "@wordpress/env": "^5.8.0"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "devDependencies": {
-    "husky": "^8.0.2",
-    "lint-staged": "^13.1.0"
-  },
-  "lint-staged": {
-    "*.php": [
-      "./vendor/bin/phpcs --extensions=php --warning-severity=8 -s --runtime-set testVersion 8.0"
-    ]
   }
 }

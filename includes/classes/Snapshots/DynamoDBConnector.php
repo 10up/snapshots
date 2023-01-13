@@ -9,7 +9,6 @@ namespace TenUp\WPSnapshots\Snapshots;
 
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Marshaler;
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Infrastructure\{Service, Shared};
 
 /**
@@ -20,15 +19,16 @@ class DynamoDBConnector implements Shared, Service, DBConnectorInterface {
 	/**
 	 * Searches the database.
 	 *
-	 * @param  string|array      $query Search query string
-	 * @param  AWSAuthentication $aws_authentication Authentication object.
+	 * @param  string|array $query Search query string
+	 * @param  string       $repository Repository name
+	 * @param string       $region AWS region
 	 * @return array
 	 */
-	public function search( $query, AWSAuthentication $aws_authentication ) : array {
+	public function search( $query, string $repository, string $region ) : array {
 		$marshaler = new Marshaler();
 
 		$args = [
-			'TableName' => 'wpsnapshots-' . $aws_authentication->get_repository(),
+			'TableName' => 'wpsnapshots-' . $repository,
 		];
 
 		if ( ! is_array( $query ) ) {
@@ -58,7 +58,7 @@ class DynamoDBConnector implements Shared, Service, DBConnectorInterface {
 			];
 		}
 
-		$search_scan = $this->get_client( $aws_authentication )->getIterator( 'Scan', $args );
+		$search_scan = $this->get_client( $region )->getIterator( 'Scan', $args );
 
 		$instances = [];
 
@@ -72,15 +72,16 @@ class DynamoDBConnector implements Shared, Service, DBConnectorInterface {
 	/**
 	 * Get a snapshot given an id
 	 *
-	 * @param  string            $id Snapshot ID
-	 * @param AWSAuthentication $aws_authentication AWS authentication instance.
+	 * @param  string $id Snapshot ID
+	 * @param string $repository Repository name.
+	 * @param string $region AWS region.
 	 * @return mixed
 	 */
-	public function get_snapshot( string $id, AWSAuthentication $aws_authentication ) {
-		$result = $this->get_client( $aws_authentication )->getItem(
+	public function get_snapshot( string $id, string $repository, string $region ) {
+		$result = $this->get_client( $region )->getItem(
 			[
 				'ConsistentRead' => true,
-				'TableName'      => 'wpsnapshots-' . $aws_authentication->get_repository(),
+				'TableName'      => 'wpsnapshots-' . $repository,
 				'Key'            => [
 					'id' => [
 						'S' => $id,
@@ -105,21 +106,15 @@ class DynamoDBConnector implements Shared, Service, DBConnectorInterface {
 	/**
 	 * Provides the client.
 	 *
-	 * @param  AWSAuthentication $aws_authentication AWS authentication instance.
-	 * @return DynamoDbClient
+	 * @param string $region AWS region.
 	 *
-	 * @throws WPSnapshotsException If no authentication is set.
+	 * @return DynamoDbClient
 	 */
-	private function get_client( AWSAuthentication $aws_authentication ) : DynamoDbClient {
+	private function get_client( string $region ) : DynamoDbClient {
 		return new DynamoDbClient(
 			[
-				'credentials' => [
-					'key'    => $aws_authentication->get_key(),
-					'secret' => $aws_authentication->get_secret(),
-				],
-				'region'      => $aws_authentication->get_region(),
-				'version'     => '2012-08-10',
-				'csm'         => false,
+				'version' => 'latest',
+				'region'  => $region,
 			]
 		);
 	}

@@ -9,7 +9,6 @@ namespace TenUp\WPSnapshots\Snapshots;
 
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Infrastructure\{Service, Shared};
-use TenUp\WPSnapshots\Snapshots\AWSAuthentication;
 use TenUp\WPSnapshots\Snapshots\DBConnectorInterface;
 
 /**
@@ -65,12 +64,13 @@ abstract class SnapshotMeta implements Shared, Service, SnapshotMetaInterface {
 	/**
 	 * Download meta from remote DB
 	 *
-	 * @param string            $id Snapshot ID
-	 * @param AWSAuthentication $aws_authentication AWS authentication instance.
+	 * @param string $id Snapshot ID
+	 * @param string $repository Repository name
+	 * @param string $region AWS region
 	 * @return array
 	 */
-	public function get_remote_meta( string $id, AWSAuthentication $aws_authentication ) {
-		$snapshot_meta = $this->db->get_snapshot( $id, $aws_authentication );
+	public function get_remote_meta( string $id, string $repository, string $region ) : array {
+		$snapshot_meta = $this->db->get_snapshot( $id, $repository, $region );
 
 		// Backwards compat since these previously were not set.
 		if ( ! isset( $snapshot_meta['contains_files'] ) ) {
@@ -79,7 +79,7 @@ abstract class SnapshotMeta implements Shared, Service, SnapshotMetaInterface {
 			$snapshot_meta['contains_db'] = true;
 		}
 
-		$snapshot_meta['repository'] = $aws_authentication->get_repository();
+		$snapshot_meta['repository'] = $repository;
 
 		return $snapshot_meta;
 	}

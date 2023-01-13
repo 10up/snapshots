@@ -12,7 +12,6 @@ use TenUp\WPSnapshots\Infrastructure\Container;
 use TenUp\WPSnapshots\Log\WPCLILogger;
 use TenUp\WPSnapshots\SnapshotsFileSystem;
 use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\Snapshots\AWSAuthenticationFactory;
 use TenUp\WPSnapshots\Snapshots\DynamoDBConnector;
 use TenUp\WPSnapshots\Snapshots\S3StorageConnector;
 use TenUp\WPSnapshots\Snapshots\SnapshotMetaFromFileSystem;
@@ -78,7 +77,6 @@ class TestContainer extends TestCase {
 				Prompt::class,
                 SnapshotsFileSystem::class,
                 WPSnapshotsConfigFromFileSystem::class,
-                AWSAuthenticationFactory::class,
 				S3StorageConnector::class,
 				DynamoDBConnector::class,
 				SnapshotMetaFromFileSystem::class,

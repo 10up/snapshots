@@ -36,7 +36,7 @@ final class Download extends WPCLICommand {
 
 			$this->log( 'Downloading snapshot' . $this->get_formatted_size( $meta ) . '...' );
 
-			$this->storage_connector->download_snapshot( $this->get_id(), $meta, $this->get_aws_authentication() );
+			$this->storage_connector->download_snapshot( $this->get_id(), $meta, $this->get_repository_name(), $this->get_assoc_arg( 'region' ) );
 			$this->snapshot_meta->save_local( $this->get_id(), $meta );
 
 			wp_cli()::success( 'Snapshot downloaded.' );
@@ -74,6 +74,13 @@ final class Download extends WPCLICommand {
 					'name'        => 'repository',
 					'description' => 'Repository to use. Defaults to first repository saved in config.',
 					'optional'    => true,
+				],
+				[
+					'type'        => 'assoc',
+					'name'        => 'region',
+					'description' => 'AWS region to use. Defaults to first region saved in config.',
+					'optional'    => true,
+					'default'     => 'us-west-1',
 				],
 				[
 					'type'        => 'flag',
@@ -126,7 +133,7 @@ final class Download extends WPCLICommand {
 	private function get_meta() : array {
 		$id = $this->get_id();
 
-		$meta = $this->snapshot_meta->get_remote_meta( $id, $this->get_aws_authentication() );
+		$meta = $this->snapshot_meta->get_remote_meta( $id, $this->get_repository_name(), $this->get_assoc_arg( 'region' ) );
 
 		if ( empty( $meta ) ) {
 			throw new WPSnapshotsException( 'Snapshot does not exist.' );
