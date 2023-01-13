@@ -21,7 +21,6 @@
         "php-stubs/wordpress-stubs": "dev-master"
     },
     "scripts": {
-        "install-wp-tests": "./bin/install-wp-tests.sh wpsnapshots_tests root password mysql",
         "lint": "phpcs .",
         "lint-fix": "phpcbf .",
         "static": "phpstan analyze --ansi --memory-limit=2G",

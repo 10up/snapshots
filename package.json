@@ -8,7 +8,6 @@
     "env:start:xdebug": "wp-env start --xdebug",
     "env:stop": "wp-env stop",
     "env": "wp-env",
-    "install-wp-tests": "npm run shell -- tests-cli \"./wp-content/plugins/snapshots-command/bin/install-wp-tests.sh wpsnapshots_tests root password mysql\"",
     "shell": "wp-env run",
     "test:php:coverage": "wp-env run tests-wordpress 'env XDEBUG_MODE=coverage' /var/www/html/wp-content/plugins/$(basename $(pwd))/vendor/bin/phpunit -c /var/www/html/wp-content/plugins/$(basename $(pwd))/phpunit.xml.dist --verbose --coverage-html /var/www/html/wp-content/plugins/$(basename $(pwd))/coverage",
     "test:php": "wp-env run tests-wordpress /var/www/html/wp-content/plugins/$(basename $(pwd))/vendor/bin/phpunit -c /var/www/html/wp-content/plugins/$(basename $(pwd))/phpunit.xml.dist --verbose"
