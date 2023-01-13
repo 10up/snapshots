@@ -67,12 +67,12 @@ final class Plugin extends Container {
 	 */
 	protected function get_services(): array {
 		$services = [
-			'snapshots_filesystem'                    => null, // @todo Create a class not reliant on file system.
+			'snapshots_filesystem'                    => null,
 			'snapshots/aws_authentication_factory'    => AWSAuthenticationFactory::class,
 			'snapshots/db_connector'                  => DynamoDBConnector::class,
-			'snapshots/snapshot_meta'                 => null, // @todo Create a class not reliant on file system.
+			'snapshots/snapshot_meta'                 => null,
 			'snapshots/storage_connector'             => S3StorageConnector::class,
-			'wp_snapshots_config/wp_snapshots_config' => null, // @todo Create a class not reliant on file system.
+			'wp_snapshots_config/wp_snapshots_config' => null,
 		];
 
 		/**
