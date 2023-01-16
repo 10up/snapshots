@@ -33,4 +33,12 @@ interface DBConnectorInterface {
 	 * @return mixed
 	 */
 	public function get_snapshot( string $id, string $repository, string $region );
+
+	/**
+	 * Create default DB tables. Only need to do this once ever for repo setup.
+	 *
+	 * @param string $repository Repository name
+	 * @param string $region AWS region
+	 */
+	public function create_tables( string $repository, string $region );
 }

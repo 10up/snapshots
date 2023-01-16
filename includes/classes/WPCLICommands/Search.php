@@ -7,6 +7,7 @@
 
 namespace TenUp\WPSnapshots\WPCLICommands;
 
+use Exception;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\WPCLI\WPCLICommand;
 
@@ -30,7 +31,7 @@ final class Search extends WPCLICommand {
 			$this->set_args( $args );
 			$this->set_assoc_args( $assoc_args );
 			$this->display_results( $this->search() );
-		} catch ( WPSnapshotsException $e ) {
+		} catch ( Exception $e ) {
 			wp_cli()::error( $e->getMessage() );
 		}
 	}

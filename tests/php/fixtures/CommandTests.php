@@ -35,4 +35,15 @@ trait CommandTests {
 
         $this->assertEquals( "wpsnapshots $command", $calls[0][0] );
     }
+
+    /** @covers ::get_command_parameters */
+	public function test_get_command_parameters() {
+		$this->assertEquals(
+			[
+				'shortdesc',
+				'synopsis',
+			],
+			array_keys( $this->call_private_method( $this->command, 'get_command_parameters' ) )
+		);
+	}
 }

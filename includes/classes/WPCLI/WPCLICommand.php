@@ -64,14 +64,14 @@ abstract class WPCLICommand implements Conditional, Registerable, Module {
 	 *
 	 * @var array
 	 */
-	private $args = [];
+	protected $args = [];
 
 	/**
 	 * Associative args passed to the command.
 	 *
 	 * @var array
 	 */
-	private $assoc_args = [];
+	protected $assoc_args = [];
 
 	/**
 	 * Returns whether the module is needed.
