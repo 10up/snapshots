@@ -60,8 +60,13 @@ class SnapshotMetaFromFileSystem extends SnapshotMeta {
 	 * @throws WPSnapshotsException Snapshot meta invalid.
 	 */
 	public function get_local( string $id, string $repository ) {
-		$meta_file_contents = $this->snapshots_file_system->get_file_contents( 'meta.json', $id );
-		$meta               = json_decode( $meta_file_contents, true );
+		try {
+			$meta_file_contents = $this->snapshots_file_system->get_file_contents( 'meta.json', $id );
+		} catch ( WPSnapshotsException $e ) {
+			return [];
+		}
+
+		$meta = json_decode( $meta_file_contents, true );
 
 		if ( $repository !== $meta['repository'] ) {
 			return false;

@@ -227,6 +227,17 @@ class SnapshotsFileSystem implements Shared, Service {
 	}
 
 	/**
+	 * Moves a directory.
+	 *
+	 * @param string $source Source directory.
+	 * @param string $destination Destination directory.
+	 * @return bool
+	 */
+	public function move_directory( string $source, string $destination ) : bool {
+		return $this->get_wp_filesystem()->move( $source, $destination, true );
+	}
+
+	/**
 	 * Gets the snapshots directory.
 	 *
 	 * @param ?string $id Snapshot ID.

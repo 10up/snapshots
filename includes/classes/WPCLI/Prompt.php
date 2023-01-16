@@ -104,10 +104,11 @@ class Prompt implements Shared, Service {
 	 * @param array  $assoc_args Associative array of arguments.
 	 * @param string $flag Flag to get.
 	 * @param string $prompt Prompt to display.
+	 * @param bool   $default Default bool result.
 	 *
 	 * @return bool
 	 */
-	public function get_flag_or_prompt( array $assoc_args, string $flag, string $prompt ) {
+	public function get_flag_or_prompt( array $assoc_args, string $flag, string $prompt, bool $default = true ) : bool {
 		if ( isset( $assoc_args[ $flag ] ) ) {
 			return wp_cli()::get_flag_value( $assoc_args, $flag );
 		}
@@ -115,7 +116,11 @@ class Prompt implements Shared, Service {
 		$answer = null;
 
 		while ( ! in_array( $answer, [ 'y', 'n', 'Y', 'N', '' ], true ) ) {
-			$answer = $this->readline( $prompt . ' (Y/n):' );
+			$answer = $this->readline( $prompt . ' ' . ( true === $default ? '(Y/n):' : '(y/N):' ) . ' ' );
+		}
+
+		if ( '' === $answer ) {
+			return $default;
 		}
 
 		return in_array( $answer, [ 'y', 'Y', '' ], true );

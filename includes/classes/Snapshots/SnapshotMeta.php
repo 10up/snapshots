@@ -69,8 +69,12 @@ abstract class SnapshotMeta implements Shared, Service, SnapshotMetaInterface {
 	 * @param string $region AWS region
 	 * @return array
 	 */
-	public function get_remote_meta( string $id, string $repository, string $region ) : array {
+	public function get_remote( string $id, string $repository, string $region ) : array {
 		$snapshot_meta = $this->db->get_snapshot( $id, $repository, $region );
+
+		if ( empty( $snapshot_meta ) ) {
+			return [];
+		}
 
 		// Backwards compat since these previously were not set.
 		if ( ! isset( $snapshot_meta['contains_files'] ) ) {

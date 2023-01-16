@@ -90,7 +90,7 @@ class TestDownload extends TestCase {
 		 * @var SnapshotMeta|MockObject $mock_snapshot_meta
 		 */
 		$mock_snapshot_meta = $this->createMock( SnapshotMeta::class );
-		$mock_snapshot_meta->method( 'get_remote_meta' )->willReturn(
+		$mock_snapshot_meta->method( 'get_remote' )->willReturn(
 			[
 				'project' => 'test-project',
 				'repository' => 'test-repository',

@@ -8,10 +8,12 @@
 namespace TenUp\WPSnapshots\WPCLI;
 
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
+use TenUp\WPSnapshots\FileZipper;
 use TenUp\WPSnapshots\Infrastructure\{Module, Conditional, Registerable};
 use TenUp\WPSnapshots\Log\{Logging, WPCLILogger};
-use TenUp\WPSnapshots\Snapshots\{AWSAuthentication, AWSAuthenticationFactory, DBConnectorInterface, SnapshotMetaInterface, StorageConnectorInterface};
+use TenUp\WPSnapshots\Snapshots\{DBConnectorInterface, SnapshotMetaInterface, StorageConnectorInterface};
 use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigInterface;
+use TenUp\WPSnapshots\SnapshotsFileSystem;
 
 use function TenUp\WPSnapshots\Utils\wp_cli;
 
@@ -60,6 +62,20 @@ abstract class WPCLICommand implements Conditional, Registerable, Module {
 	protected $snapshot_meta;
 
 	/**
+	 * SnapshotsFileSystem instance.
+	 *
+	 * @var SnapshotsFileSystem
+	 */
+	protected $snapshots_filesystem;
+
+	/**
+	 * FileZipper instance.
+	 *
+	 * @var FileZipper
+	 */
+	protected $file_zipper;
+
+	/**
 	 * Args passed to the command.
 	 *
 	 * @var array
@@ -91,6 +107,8 @@ abstract class WPCLICommand implements Conditional, Registerable, Module {
 	 * @param StorageConnectorInterface  $storage_connector StorageConnectorInterface instance.
 	 * @param DBConnectorInterface       $db_connector DBConnectorInterface instance.
 	 * @param SnapshotMetaInterface      $snapshot_meta SnapshotMetaInterface instance.
+	 * @param SnapshotsFileSystem        $snapshots_filesystem SnapshotsFileSystem instance.
+	 * @param FileZipper                 $file_zipper FileZipper instance.
 	 */
 	public function __construct(
 		WPCLILogger $logger,
@@ -98,13 +116,17 @@ abstract class WPCLICommand implements Conditional, Registerable, Module {
 		WPSnapshotsConfigInterface $config,
 		StorageConnectorInterface $storage_connector,
 		DBConnectorInterface $db_connector,
-		SnapshotMetaInterface $snapshot_meta
+		SnapshotMetaInterface $snapshot_meta,
+		SnapshotsFileSystem $snapshots_filesystem,
+		FileZipper $file_zipper
 	) {
-		$this->prompt            = $prompt;
-		$this->config            = $config;
-		$this->storage_connector = $storage_connector;
-		$this->db_connector      = $db_connector;
-		$this->snapshot_meta     = $snapshot_meta;
+		$this->prompt               = $prompt;
+		$this->config               = $config;
+		$this->storage_connector    = $storage_connector;
+		$this->db_connector         = $db_connector;
+		$this->snapshot_meta        = $snapshot_meta;
+		$this->snapshots_filesystem = $snapshots_filesystem;
+		$this->file_zipper          = $file_zipper;
 		$this->set_logger( $logger );
 	}
 

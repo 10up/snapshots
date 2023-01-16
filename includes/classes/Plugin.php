@@ -11,7 +11,7 @@ use TenUp\WPSnapshots\Infrastructure\Container;
 use TenUp\WPSnapshots\Log\WPCLILogger;
 use TenUp\WPSnapshots\Snapshots\{DynamoDBConnector, S3StorageConnector, SnapshotMetaFromFileSystem};
 use TenUp\WPSnapshots\WPCLI\Prompt;
-use TenUp\WPSnapshots\WPCLICommands\{CreateRepository, Download, Search};
+use TenUp\WPSnapshots\WPCLICommands\{CreateRepository, Download, Pull, Search};
 use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
 
 /**
@@ -47,6 +47,7 @@ final class Plugin extends Container {
 		$components = [
 			'wpcli_commands/create_repository' => CreateRepository::class,
 			'wpcli_commands/download'          => Download::class,
+			'wpcli_commands/pull'              => Pull::class,
 			'wpcli_commands/search'            => Search::class,
 		];
 
@@ -67,6 +68,7 @@ final class Plugin extends Container {
 	 */
 	protected function get_services(): array {
 		$services = [
+			'file_zipper'                             => null,
 			'snapshots_filesystem'                    => null,
 			'snapshots/db_connector'                  => DynamoDBConnector::class,
 			'snapshots/snapshot_meta'                 => null,
@@ -108,6 +110,7 @@ final class Plugin extends Container {
 	 */
 	public function add_file_system_services( array $services ): array {
 		$file_system_services = [
+			'file_zipper'                             => FileZipper::class,
 			'snapshots_filesystem'                    => SnapshotsFileSystem::class,
 			'snapshots/snapshot_meta'                 => SnapshotMetaFromFileSystem::class,
 			'wp_snapshots_config/wp_snapshots_config' => WPSnapshotsConfigFromFileSystem::class,
