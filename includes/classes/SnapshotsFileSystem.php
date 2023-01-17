@@ -249,37 +249,36 @@ class SnapshotsFileSystem implements Shared, Service {
 			throw new WPSnapshotsException( 'WP_CONTENT_DIR is not defined.' );
 		}
 
-		// Copy this plugin to a temporary location.
-		rename( WPSNAPSHOTS_DIR, '/tmp/wpsnapshots-plugin' );
-		
-		// Stash the wp-content directory temporarily.
-		rename( WP_CONTENT_DIR, '/tmp/wp-content' );
+		// Recursively delete everything in the wp-content directory except plugins/snapshots-command.
+		$files = $this->get_wp_filesystem()->dirlist( WP_CONTENT_DIR );
 
-		$clean_up = function () {
-			// Move the plugin back to its original location.
-			if ( $this->get_wp_filesystem()->exists( '/tmp/wpsnapshots-plugin' ) ) {
-				rename( '/tmp/wpsnapshots-plugin', dirname( WPSNAPSHOTS_DIR ) );
+		foreach ( $files as $file ) {
+			if ( 'snapshots-command' === $file['name'] ) {
+				continue;
 			}
 
-			// Delete the temporary wp-content directory.
-			if ( $this->get_wp_filesystem()->exists( '/tmp/wp-content' ) ) {
-				if ( $this->get_wp_filesystem()->exists( WP_CONTENT_DIR ) ) {
-					$this->get_wp_filesystem()->rmdir( '/tmp/wp-content', true );
-				} else {
-					rename( '/tmp/wp-content', WP_CONTENT_DIR );
-				}
+			if ( $this->get_wp_filesystem()->is_dir( WP_CONTENT_DIR . '/' . $file['name'] ) ) {
+				$this->get_wp_filesystem()->rmdir( WP_CONTENT_DIR . '/' . $file['name'], true );
+			} else {
+				$this->get_wp_filesystem()->delete( WP_CONTENT_DIR . '/' . $file['name'] );
 			}
-		};
-
-		register_shutdown_function( $clean_up );
-
-		$this->get_wp_filesystem()->delete( WP_CONTENT_DIR, true );
+		}
 
 		$zip_file = $this->get_file_path( 'files.tar.gz', $id );
 
-		unzip_file( $zip_file, WP_CONTENT_DIR );
+		$this->get_wp_filesystem()->mkdir( '/tmp/files' );
+		unzip_file( $zip_file, '/tmp/files' );
 
-		$clean_up();
+		// Move the files to the wp-content directory.
+		$files = $this->get_wp_filesystem()->dirlist( '/tmp/files' );
+
+		foreach ( $files as $file ) {
+			if ( $this->get_wp_filesystem()->is_dir( '/tmp/files/' . $file['name'] ) ) {
+				$this->get_wp_filesystem()->mkdir( WP_CONTENT_DIR . '/' . $file['name'] );
+			} else {
+				$this->get_wp_filesystem()->move( '/tmp/files/' . $file['name'], WP_CONTENT_DIR . '/' . $file['name'] );
+			}
+		}
 	}
 
 	/**
