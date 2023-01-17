@@ -8,7 +8,6 @@
 namespace TenUp\WPSnapshots\WPCLI;
 
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\FileZipper;
 use TenUp\WPSnapshots\Infrastructure\{Module, Conditional, Registerable};
 use TenUp\WPSnapshots\Log\{Logging, WPCLILogger};
 use TenUp\WPSnapshots\Snapshots\{DBConnectorInterface, SnapshotMetaInterface, StorageConnectorInterface};
@@ -69,13 +68,6 @@ abstract class WPCLICommand implements Conditional, Registerable, Module {
 	protected $snapshots_filesystem;
 
 	/**
-	 * FileZipper instance.
-	 *
-	 * @var FileZipper
-	 */
-	protected $file_zipper;
-
-	/**
 	 * Args passed to the command.
 	 *
 	 * @var array
@@ -108,7 +100,6 @@ abstract class WPCLICommand implements Conditional, Registerable, Module {
 	 * @param DBConnectorInterface       $db_connector DBConnectorInterface instance.
 	 * @param SnapshotMetaInterface      $snapshot_meta SnapshotMetaInterface instance.
 	 * @param SnapshotsFileSystem        $snapshots_filesystem SnapshotsFileSystem instance.
-	 * @param FileZipper                 $file_zipper FileZipper instance.
 	 */
 	public function __construct(
 		WPCLILogger $logger,
@@ -117,8 +108,7 @@ abstract class WPCLICommand implements Conditional, Registerable, Module {
 		StorageConnectorInterface $storage_connector,
 		DBConnectorInterface $db_connector,
 		SnapshotMetaInterface $snapshot_meta,
-		SnapshotsFileSystem $snapshots_filesystem,
-		FileZipper $file_zipper
+		SnapshotsFileSystem $snapshots_filesystem
 	) {
 		$this->prompt               = $prompt;
 		$this->config               = $config;
@@ -126,7 +116,6 @@ abstract class WPCLICommand implements Conditional, Registerable, Module {
 		$this->db_connector         = $db_connector;
 		$this->snapshot_meta        = $snapshot_meta;
 		$this->snapshots_filesystem = $snapshots_filesystem;
-		$this->file_zipper          = $file_zipper;
 		$this->set_logger( $logger );
 	}
 

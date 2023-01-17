@@ -266,8 +266,6 @@ final class Pull extends WPCLICommand {
 	 * @throws WPSnapshotsException If the snapshot does not exist or is not valid.
 	 */
 	protected function download_snapshot( bool $include_db = true, bool $include_files = true ) {
-		$this->log( 'Downloading snapshot...' );
-
 		$command = 'wpsnapshots download ' . $this->get_id() . ' --quiet --repository=' . $this->get_repository_name() . ' --region=' . $this->get_assoc_arg( 'region' );
 
 		if ( ! $include_db && ! $include_files ) {
@@ -292,13 +290,16 @@ final class Pull extends WPCLICommand {
 	 * Pulls the DB.
 	 */
 	protected function pull_db() {
-		$this->log( 'Pulling database...' );
+		$this->log( 'Importing database...' );
 
-		$command = 'db import ' . $this->snapshots_filesystem->get_file_path( 'data.sql.gz', $this->get_id() ) . ' --quiet';
+		// Unzip data.sql.gz
+		$this->snapshots_filesystem->unzip_file( $this->snapshots_filesystem->get_file_path( 'data.sql.gz', $this->get_id() ), $this->snapshots_filesystem->get_file_path( 'data.sql', $this->get_id() ) );
+
+		$command = 'db import ' . $this->snapshots_filesystem->get_file_path( 'data.sql', $this->get_id() ) . ' --quiet';
 
 		wp_cli()::runcommand( $command, [ 'launch' => false ] );
 
-		$this->log( 'Database pulled.', 'success' );
+		$this->log( 'Database imported.', 'success' );
 	}
 
 	/**
@@ -322,7 +323,7 @@ final class Pull extends WPCLICommand {
 	protected function pull_files() {
 		$this->log( 'Pulling files...' );
 
-		$this->file_zipper->unzip_snapshot_files( $this->get_id() );
+		$this->snapshots_filesystem->unzip_snapshot_files( $this->get_id() );
 
 		$this->log( 'Files pulled.', 'success' );
 	}

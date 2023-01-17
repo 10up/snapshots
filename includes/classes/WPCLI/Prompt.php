@@ -116,7 +116,7 @@ class Prompt implements Shared, Service {
 		$answer = null;
 
 		while ( ! in_array( $answer, [ 'y', 'n', 'Y', 'N', '' ], true ) ) {
-			$answer = $this->readline( $prompt . ' ' . ( true === $default ? '(Y/n):' : '(y/N):' ) . ' ' );
+			$answer = $this->readline( $prompt . ' ' . ( true === $default ? '[Y/n]:' : '[y/N]:' ) . ' ' );
 		}
 
 		if ( '' === $answer ) {

@@ -234,7 +234,64 @@ class SnapshotsFileSystem implements Shared, Service {
 	 * @return bool
 	 */
 	public function move_directory( string $source, string $destination ) : bool {
-		return $this->get_wp_filesystem()->move( $source, $destination, true );
+		return $this->get_wp_filesystem()->copy( $source, $destination, true );
+	}
+
+	/**
+	 * Unzips the files in the wp-content directory.
+	 *
+	 * @param string $id Snapshot ID.
+	 *
+	 * @throws WPSnapshotsException If ZipArchive class not found.
+	 */
+	public function unzip_snapshot_files( string $id ) {
+		if ( ! defined( 'WP_CONTENT_DIR' ) ) {
+			throw new WPSnapshotsException( 'WP_CONTENT_DIR is not defined.' );
+		}
+
+		// Copy this plugin to a temporary location.
+		$this->get_wp_filesystem()->copy( WPSNAPSHOTS_DIR, '/tmp/wpsnapshots-plugin' );
+
+		register_shutdown_function(
+			function () {
+				// Move the plugin back to its original location.
+				$this->get_wp_filesystem()->copy( '/tmp/wpsnapshots-plugin', dirname( WPSNAPSHOTS_DIR ) );
+			}
+		);
+
+		$this->get_wp_filesystem()->delete( WP_CONTENT_DIR, true );
+		$this->get_wp_filesystem()->mkdir( WP_CONTENT_DIR );
+
+		$zip_file = $this->get_file_path( 'files.tar.gz', $id );
+
+		$this->unzip_file( $zip_file, WP_CONTENT_DIR );
+	}
+
+	/**
+	 * Unzips a gz file. ZipArchive does not work.
+	 *
+	 * @param string $file File to unzip.
+	 * @param string $destination Destination to unzip to.
+	 *
+	 * @throws WPSnapshotsException If there is an error unzipping.
+	 */
+	public function unzip_file( string $file, string $destination ) {
+		$gzipped = gzopen( $file, 'rb' );
+		if ( ! $gzipped ) {
+			throw new WPSnapshotsException( 'Could not open gzipped file.' );
+		}
+
+		$data = '';
+		while ( ! gzeof( $gzipped ) ) {
+			$unzipped_content = gzread( $gzipped, 4096 );
+			if ( false === $unzipped_content ) {
+				throw new WPSnapshotsException( 'Could not read gzipped file.' );
+			}
+
+			$data .= $unzipped_content;
+		}
+
+		$this->get_wp_filesystem()->put_contents( $destination, $data );
 	}
 
 	/**
