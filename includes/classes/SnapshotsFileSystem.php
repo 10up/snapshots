@@ -8,7 +8,6 @@
 namespace TenUp\WPSnapshots;
 
 use Exception;
-use PhpParser\Builder\Function_;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Infrastructure\{Shared, Service};
 use WP_Filesystem_Base;
@@ -227,14 +226,33 @@ class SnapshotsFileSystem implements Shared, Service {
 	}
 
 	/**
-	 * Moves a directory.
+	 * Moves a directory and all of its contents recursively.
 	 *
 	 * @param string $source Source directory.
 	 * @param string $destination Destination directory.
 	 * @return bool
 	 */
 	public function move_directory( string $source, string $destination ) : bool {
-		return $this->get_wp_filesystem()->copy( $source, $destination, true );
+		$files = $this->get_wp_filesystem()->dirlist( $source );
+
+		var_dump( $files );
+		if ( ! $files ) {
+			return false;
+		}
+
+		$this->get_wp_filesystem()->mkdir( $destination );
+
+		foreach ( $files as $file ) {
+			if ( '.' === $file['name'] || '..' === $file['name'] ) {
+				continue;
+			}
+
+			if ( 'f' === $file['type'] ) {
+				$this->get_wp_filesystem()->move( $source . '/' . $file['name'], $destination . '/' . $file['name'] );
+			} elseif ( 'd' === $file['type'] ) {
+				$this->move_directory( $source . '/' . $file['name'], $destination . '/' . $file['name'] );
+			}
+		}
 	}
 
 	/**
@@ -250,49 +268,109 @@ class SnapshotsFileSystem implements Shared, Service {
 		}
 
 		// Recursively delete everything in the wp-content directory except plugins/snapshots-command.
-		$files = $this->get_wp_filesystem()->dirlist( WP_CONTENT_DIR );
-
-		foreach ( $files as $file ) {
-			if ( 'snapshots-command' === $file['name'] ) {
-				continue;
-			}
-
-			if ( $this->get_wp_filesystem()->is_dir( WP_CONTENT_DIR . '/' . $file['name'] ) ) {
-				$this->get_wp_filesystem()->rmdir( WP_CONTENT_DIR . '/' . $file['name'], true );
-			} else {
-				$this->get_wp_filesystem()->delete( WP_CONTENT_DIR . '/' . $file['name'] );
-			}
-		}
+		$this->delete_directory( WP_CONTENT_DIR, false, [ 'snapshots-command' ] );
 
 		$zip_file = $this->get_file_path( 'files.tar.gz', $id );
 
+		$gzipped_file = gzopen( $zip_file, 'rb' );
+		$contents     = gzread( $gzipped_file, filesize( $zip_file ) );
+		gzclose( $gzipped_file );
+
+		$this->get_wp_filesystem()->mkdir( '/tmp' );
 		$this->get_wp_filesystem()->mkdir( '/tmp/files' );
-		unzip_file( $zip_file, '/tmp/files' );
+		$this->get_wp_filesystem()->put_contents( '/tmp/files.tar', $contents );
+
+		if ( ! function_exists( 'unzip_file' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+
+		// Unzip the files.
+		unzip_file( '/tmp/files.tar', '/tmp/files' );
 
 		// Move the files to the wp-content directory.
-		$files = $this->get_wp_filesystem()->dirlist( '/tmp/files' );
+		$this->move_directory( '/tmp/files', WP_CONTENT_DIR );
+	}
+
+	/**
+	 * Recursively deletes files and subdirectories in a directory.
+	 *
+	 * @param string $directory Directory to delete.
+	 * @param bool   $delete_root Delete the root directory.
+	 * @param array  $excluded_files Files or directories to exclude from deletion.
+	 *
+	 * @return bool
+	 */
+	public function delete_directory( string $directory, bool $delete_root = true, array $excluded_files = [] ) : bool {
+		$files = $this->get_wp_filesystem()->dirlist( $directory );
 
 		foreach ( $files as $file ) {
-			if ( $this->get_wp_filesystem()->is_dir( '/tmp/files/' . $file['name'] ) ) {
-				$this->get_wp_filesystem()->mkdir( WP_CONTENT_DIR . '/' . $file['name'] );
+			if ( in_array( $file['name'], $excluded_files, true ) ) {
+				continue;
+			}
+
+			if ( $this->get_wp_filesystem()->is_dir( $directory . '/' . $file['name'] ) ) {
+				$this->delete_directory( $directory . '/' . $file['name'], true, $excluded_files );
 			} else {
-				$this->get_wp_filesystem()->move( '/tmp/files/' . $file['name'], WP_CONTENT_DIR . '/' . $file['name'] );
+				$this->get_wp_filesystem()->delete( $directory . '/' . $file['name'] );
 			}
 		}
+
+		if ( $delete_root ) {
+			$this->get_wp_filesystem()->rmdir( $directory );
+		}
+
+		return true;
 	}
 
 	/**
 	 * Unzips a file.
 	 *
 	 * @param string $file File to unzip.
-	 * @param string $destination Destination to unzip to.
+	 * @param string $destination_directory Destination directory to unzip to.
+	 *
+	 * @throws WPSnapshotsException If unable to unzip file.
 	 */
-	public function unzip_file( string $file, string $destination ) {
+	public function unzip_file( string $file, string $destination_directory ) {
 		if ( ! function_exists( 'unzip_file' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
 
-		return unzip_file( $file, $destination );
+		$result = unzip_file( $file, $destination_directory );
+
+		var_dump( $result );
+
+		if ( true === $result ) {
+			return;
+		}
+
+		if ( is_wp_error( $result ) && 'incompatible_archive' === $result->get_error_code() ) {
+			// Unzip gzipped files into destination directory.
+			$gzipped_file = gzopen( $file, 'rb' );
+			$contents     = gzread( $gzipped_file, filesize( $file ) );
+			$this->get_wp_filesystem()->put_contents( '/tmp/files.tar', $contents );
+
+			// Unzip tar file into destination directory.
+			$result = $this->unzip_file( '/tmp/files.tar', $destination_directory );
+
+			// Delete the gzipped file.
+			$this->get_wp_filesystem()->delete( '/tmp/files.tar' );
+
+			if ( true === $result ) {
+				return;
+			}
+
+			if ( is_wp_error( $result ) ) {
+				throw new WPSnapshotsException( $result->get_error_message() );
+			} else {
+				throw new WPSnapshotsException( 'Unable to unzip file.' );
+			}
+		} elseif ( is_wp_error( $result ) ) {
+			throw new WPSnapshotsException( $result->get_error_message() );
+		} else {
+			throw new WPSnapshotsException( 'Unable to unzip file.' );
+		}
+
+		return $result;
 	}
 
 	/**
