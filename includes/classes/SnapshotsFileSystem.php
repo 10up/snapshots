@@ -8,6 +8,7 @@
 namespace TenUp\WPSnapshots;
 
 use Exception;
+use PhpParser\Builder\Function_;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Infrastructure\{Shared, Service};
 use WP_Filesystem_Base;
@@ -126,9 +127,9 @@ class SnapshotsFileSystem implements Shared, Service {
 	public function create_directory( $id = null, $hard = false ) {
 		$snapshots_directory = trailingslashit( $this->get_directory() );
 
-		if ( ! file_exists( $snapshots_directory ) ) {
+		if ( ! $this->get_wp_filesystem()->exists( $snapshots_directory ) ) {
 			try {
-				if ( ! mkdir( $snapshots_directory, 0755 ) ) {
+				if ( ! $this->get_wp_filesystem()->mkdir( $snapshots_directory ) ) {
 					throw new WPSnapshotsException( 'Could not create snapshot directory' );
 				}
 			} catch ( Exception $e ) {
@@ -136,25 +137,24 @@ class SnapshotsFileSystem implements Shared, Service {
 			}
 		}
 
-		if ( ! is_writable( $snapshots_directory ) ) {
+		if ( ! $this->get_wp_filesystem()->is_writable( $snapshots_directory ) ) {
 			throw new WPSnapshotsException( 'Snapshot directory is not writable' );
 		}
 
 		if ( ! empty( $id ) ) {
-			if ( $hard && file_exists( $snapshots_directory . $id . '/' ) ) {
-				array_map( 'unlink', glob( $snapshots_directory . $id . '/*.*' ) );
-				if ( ! rmdir( $snapshots_directory . $id . '/' ) ) {
+			if ( $hard && $this->get_wp_filesystem()->exists( $snapshots_directory . $id . '/' ) ) {
+				if ( ! $this->get_wp_filesystem()->rmdir( $snapshots_directory . $id . '/', true ) ) {
 					throw new WPSnapshotsException( 'Could not remove existing snapshot directory' );
 				}
 			}
 
-			if ( ! file_exists( $snapshots_directory . $id . '/' ) ) {
-				if ( ! mkdir( $snapshots_directory . $id . '/', 0755 ) ) {
+			if ( ! $this->get_wp_filesystem()->exists( $snapshots_directory . $id . '/' ) ) {
+				if ( ! $this->get_wp_filesystem()->mkdir( $snapshots_directory . $id . '/' ) ) {
 					throw new WPSnapshotsException( 'Could not create snapshot directory' );
 				}
 			}
 
-			if ( ! is_writable( $snapshots_directory . $id . '/' ) ) {
+			if ( ! $this->get_wp_filesystem()->is_writable( $snapshots_directory . $id . '/' ) ) {
 				throw new WPSnapshotsException( 'Snapshot directory is not writable' );
 			}
 		}
@@ -250,48 +250,50 @@ class SnapshotsFileSystem implements Shared, Service {
 		}
 
 		// Copy this plugin to a temporary location.
-		$this->get_wp_filesystem()->copy( WPSNAPSHOTS_DIR, '/tmp/wpsnapshots-plugin' );
+		rename( WPSNAPSHOTS_DIR, '/tmp/wpsnapshots-plugin' );
+		
+		// Stash the wp-content directory temporarily.
+		rename( WP_CONTENT_DIR, '/tmp/wp-content' );
 
-		register_shutdown_function(
-			function () {
-				// Move the plugin back to its original location.
-				$this->get_wp_filesystem()->copy( '/tmp/wpsnapshots-plugin', dirname( WPSNAPSHOTS_DIR ) );
+		$clean_up = function () {
+			// Move the plugin back to its original location.
+			if ( $this->get_wp_filesystem()->exists( '/tmp/wpsnapshots-plugin' ) ) {
+				rename( '/tmp/wpsnapshots-plugin', dirname( WPSNAPSHOTS_DIR ) );
 			}
-		);
+
+			// Delete the temporary wp-content directory.
+			if ( $this->get_wp_filesystem()->exists( '/tmp/wp-content' ) ) {
+				if ( $this->get_wp_filesystem()->exists( WP_CONTENT_DIR ) ) {
+					$this->get_wp_filesystem()->rmdir( '/tmp/wp-content', true );
+				} else {
+					rename( '/tmp/wp-content', WP_CONTENT_DIR );
+				}
+			}
+		};
+
+		register_shutdown_function( $clean_up );
 
 		$this->get_wp_filesystem()->delete( WP_CONTENT_DIR, true );
-		$this->get_wp_filesystem()->mkdir( WP_CONTENT_DIR );
 
 		$zip_file = $this->get_file_path( 'files.tar.gz', $id );
 
-		$this->unzip_file( $zip_file, WP_CONTENT_DIR );
+		unzip_file( $zip_file, WP_CONTENT_DIR );
+
+		$clean_up();
 	}
 
 	/**
-	 * Unzips a gz file. ZipArchive does not work.
+	 * Unzips a file.
 	 *
 	 * @param string $file File to unzip.
 	 * @param string $destination Destination to unzip to.
-	 *
-	 * @throws WPSnapshotsException If there is an error unzipping.
 	 */
 	public function unzip_file( string $file, string $destination ) {
-		$gzipped = gzopen( $file, 'rb' );
-		if ( ! $gzipped ) {
-			throw new WPSnapshotsException( 'Could not open gzipped file.' );
+		if ( ! function_exists( 'unzip_file' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
 
-		$data = '';
-		while ( ! gzeof( $gzipped ) ) {
-			$unzipped_content = gzread( $gzipped, 4096 );
-			if ( false === $unzipped_content ) {
-				throw new WPSnapshotsException( 'Could not read gzipped file.' );
-			}
-
-			$data .= $unzipped_content;
-		}
-
-		$this->get_wp_filesystem()->put_contents( $destination, $data );
+		return unzip_file( $file, $destination );
 	}
 
 	/**

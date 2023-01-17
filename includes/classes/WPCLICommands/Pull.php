@@ -183,7 +183,6 @@ final class Pull extends WPCLICommand {
 		return $this->get_args()[0];
 	}
 
-
 	/**
 	 * Gets the actions required for the pull.
 	 *
@@ -231,9 +230,7 @@ final class Pull extends WPCLICommand {
 		}
 
 		if ( $should_download ) {
-			$pull_actions[] = function() {
-				$this->download_snapshot();
-			};
+			$pull_actions[] = [ $this, 'download_snapshot' ];
 		}
 
 		if ( $wp_version !== $meta['wp_version'] && $this->prompt->get_flag_or_prompt( $this->get_assoc_args(), 'update_wp', 'This snapshot is running WordPress version ' . $meta['wp_version'] . ', and you are running version ' . $wp_version . '. Do you want to change your version to match the snapshot?' ) ) {
@@ -243,15 +240,15 @@ final class Pull extends WPCLICommand {
 		}
 
 		if ( $include_db ) {
-			$pull_actions[] = function() {
-				$this->pull_db();
-			};
+			$pull_actions[] = [ $this, 'pull_db' ];
 		}
 
 		if ( $include_files ) {
-			$pull_actions[] = function() {
-				$this->pull_files();
-			};
+			$pull_actions[] = [ $this, 'pull_files' ];
+		}
+
+		if ( $include_db ) {
+			$pull_actions[] = [ $this, 'activate_this_plugin' ];
 		}
 
 		return $pull_actions;
@@ -326,6 +323,15 @@ final class Pull extends WPCLICommand {
 		$this->snapshots_filesystem->unzip_snapshot_files( $this->get_id() );
 
 		$this->log( 'Files pulled.', 'success' );
+	}
+
+	/**
+	 * Activates this plugin.
+	 */
+	protected function activate_this_plugin() {
+		$command = 'plugin activate snapshots-command';
+
+		wp_cli()::runcommand( $command, [ 'launch' => false ] );
 	}
 
 }
