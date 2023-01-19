@@ -7,12 +7,14 @@
 
 namespace TenUp\WPSnapshots\Snapshots;
 
+use TenUp\WPSnapshots\Infrastructure\SharedService;
+
 /**
  * Interface StorageConnectorInterface
  *
  * @package TenUp\WPSnapshots
  */
-interface DBConnectorInterface {
+interface DBConnectorInterface extends SharedService {
 
 	/**
 	 * Searches the database.

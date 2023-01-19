@@ -7,12 +7,14 @@
 
 namespace TenUp\WPSnapshots\WPSnapshotsConfig;
 
+use TenUp\WPSnapshots\Infrastructure\SharedService;
+
 /**
  * Interface for classes that persist configuration values.
  *
  * @package TenUp\WPSnapshots\WPSnapshotsConfig
  */
-interface WPSnapshotsConfigInterface {
+interface WPSnapshotsConfigInterface extends SharedService {
 
 	/**
 	 * Gets the user name.

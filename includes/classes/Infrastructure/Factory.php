@@ -12,7 +12,7 @@ namespace TenUp\WPSnapshots\Infrastructure;
  *
  * @package TenUp\WPSnapshots\Infrastructure
  */
-interface Factory {
+interface Factory extends SharedService {
 
 	/**
 	 * Gets an instance.

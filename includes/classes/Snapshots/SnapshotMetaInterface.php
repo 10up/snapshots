@@ -8,13 +8,14 @@
 namespace TenUp\WPSnapshots\Snapshots;
 
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
+use TenUp\WPSnapshots\Infrastructure\SharedService;
 
 /**
  * Interface for napshot meta wrapper with support for downloading remote meta
  *
  * @package TenUp\WPSnapshots\Snapshots
  */
-interface SnapshotMetaInterface {
+interface SnapshotMetaInterface extends SharedService {
 
 	/**
 	 * Save snapshot meta locally

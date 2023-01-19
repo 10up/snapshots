@@ -8,7 +8,6 @@
 namespace TenUp\WPSnapshots\Snapshots;
 
 use Aws\S3\S3Client;
-use TenUp\WPSnapshots\Infrastructure\{Service, Shared};
 use TenUp\WPSnapshots\SnapshotsFileSystem;
 
 /**
@@ -16,7 +15,7 @@ use TenUp\WPSnapshots\SnapshotsFileSystem;
  *
  * @package TenUp\WPSnapshots
  */
-class S3StorageConnector implements StorageConnectorInterface, Shared, Service {
+class S3StorageConnector implements StorageConnectorInterface {
 
 	/**
 	 * SnapshotsFileSystem instance.
