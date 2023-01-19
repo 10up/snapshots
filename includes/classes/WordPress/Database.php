@@ -7,7 +7,7 @@
 
 namespace TenUp\WPSnapshots\WordPress;
 
-use TenUp\WPSnapshots\Infrastructure\{Service, Shared};
+use TenUp\WPSnapshots\Infrastructure\SharedService;
 use wpdb;
 
 /**
@@ -15,7 +15,7 @@ use wpdb;
  *
  * @package TenUp\WPSnapshots\WordPress
  */
-final class Database implements Service, Shared {
+final class Database implements SharedService {
 
 	/**
 	 * Returns tables

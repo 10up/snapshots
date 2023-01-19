@@ -83,7 +83,7 @@ abstract class URLReplacer {
 	/**
 	 * Main domain.
 	 *
-	 * @var string
+	 * @var ?string
 	 */
 	protected $main_domain;
 
@@ -97,9 +97,18 @@ abstract class URLReplacer {
 	 * @param array               $site_mapping The site mapping.
 	 * @param array               $skip_table_search_replace The tables to skip.
 	 * @param bool                $update_multisite_constants Whether to update multisite constants.
-	 * @param string              $main_domain The main domain.
+	 * @param ?string             $main_domain The main domain.
 	 */
-	public function __construct( Prompt $prompt, SnapshotsFileSystem $snapshots_filesystem, Database $wordpress_database, array $meta, array $site_mapping, array $skip_table_search_replace = [], bool $update_multisite_constants = false, string $main_domain = '' ) {
+	public function __construct(
+		Prompt $prompt,
+		SnapshotsFileSystem $snapshots_filesystem,
+		Database $wordpress_database,
+		array $meta,
+		array $site_mapping,
+		array $skip_table_search_replace = [],
+		bool $update_multisite_constants = false,
+		?string $main_domain = null
+	) {
 		$this->prompt                     = $prompt;
 		$this->snapshots_filesystem       = $snapshots_filesystem;
 		$this->wordpress_database         = $wordpress_database;
@@ -123,17 +132,12 @@ abstract class URLReplacer {
 	 * @param string $search The search string.
 	 * @param string $replace The replace string.
 	 * @param array  $tables_to_update The tables to update.
-	 * @param array  $skip_table_search_replace The tables to skip.
 	 */
-	protected function run_search_and_replace( string $search, string $replace, array $tables_to_update, array $skip_table_search_replace = [] ) {
-		wp_cli()::runcommand(
-			'search-replace ' . $search . ' ' . $replace . ' --table=' . implode( ',', $tables_to_update ) . ' --skip-columns=guid --skip-tables=' . implode( ',', $skip_table_search_replace ) . ' --precise --recurse-objects --all-tables --allow-root --skip-themes --skip-plugins',
-			[
-				'return'     => true,
-				'launch'     => true,
-				'exit_error' => false,
-			]
-		);
+	protected function run_search_and_replace( string $search, string $replace, array $tables_to_update ) {
+		$command = 'search-replace ' . $search . ' ' . $replace . ' ' . implode( ' ', $tables_to_update ) . ' --quiet --skip-columns=guid --precise --skip-themes --skip-plugins --skip-packages --report=false';
+
+		// Run search and replace.
+		wp_cli()::runcommand( $command, [ 'launch' => false ] );
 	}
 
 	/**

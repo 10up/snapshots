@@ -65,10 +65,10 @@ final class SingleSiteURLReplacer extends URLReplacer {
 
 		$this->log( 'Search and replacing tables: ' . implode( ', ', $tables_to_update ), 1 );
 
-		$this->run_search_and_replace( $this->meta['sites'][0]['home_url'], $new_home_url, $tables_to_update, $this->skip_table_search_replace );
+		$this->run_search_and_replace( $this->meta['sites'][0]['home_url'], $new_home_url, $tables_to_update );
 
 		if ( $this->meta['sites'][0]['home_url'] !== $this->meta['sites'][0]['site_url'] ) {
-			$this->run_search_and_replace( $this->meta['sites'][0]['site_url'], $new_site_url, $tables_to_update, $this->skip_table_search_replace );
+			$this->run_search_and_replace( $this->meta['sites'][0]['site_url'], $new_site_url, $tables_to_update );
 		}
 
 		$this->log( 'URLs replaced.', 'success' );

@@ -239,29 +239,57 @@ class SnapshotsFileSystem implements SharedService {
 	 * @throws WPSnapshotsException If unable to sync files.
 	 */
 	public function sync_files( string $source, string $destination, bool $delete_source = false ) {
-		$iterator = new FileSystemIterator( $source );
-		foreach ( $iterator as $fileinfo ) {
-			$source_path      = $fileinfo->getRealPath();
-			$subpathname      = str_replace( $source . DIRECTORY_SEPARATOR, '', $fileinfo->getPathname() );
-			$destination_path = $destination . DIRECTORY_SEPARATOR . $subpathname;
-			if ( $fileinfo->isDir() ) {
-				if ( ! $this->get_wp_filesystem()->exists( $destination_path ) ) {
-					if ( ! $this->get_wp_filesystem()->mkdir( $destination_path ) ) {
-						throw new WPSnapshotsException( 'Could not create directory: ' . $destination_path );
-					}
+		$files = $this->get_wp_filesystem()->dirlist( $source );
 
-					$this->sync_files( $source_path, $destination_path );
-				}
-			} else {
-				if ( ! $this->get_wp_filesystem()->copy( $source_path, $destination_path ) ) {
-					throw new WPSnapshotsException( 'Could not copy file: ' . $source_path );
-				}
-			}
+		if ( ! $files ) {
+			throw new WPSnapshotsException( 'Unable to read source directory: ' . $source );
 		}
 
+		$this->sync_files_recursive( $files, $source, $destination );
+
 		if ( $delete_source ) {
-			// Delete the source.
-			$this->get_wp_filesystem()->rmdir( $source, true );
+			if ( ! $this->get_wp_filesystem()->rmdir( $source, true ) ) {
+				throw new WPSnapshotsException( 'Unable to delete source directory: ' . $source );
+			}
+		}
+	}
+
+	/**
+	 * Recursively syncs a list of files to another location.
+	 *
+	 * @param array[] $files List of files to sync.
+	 * @param string  $source Source directory.
+	 * @param string  $destination Destination directory.
+	 *
+	 * @return void
+	 *
+	 * @throws WPSnapshotsException If unable to sync files.
+	 */
+	private function sync_files_recursive( array $files, string $source, string $destination ) {
+		foreach ( $files as $file ) {
+			$source_file      = trailingslashit( $source ) . $file['name'];
+			$destination_file = trailingslashit( $destination ) . $file['name'];
+
+			if ( 'f' === $file['type'] ) {
+				// Copy the file.
+				$copied = $this->get_wp_filesystem()->copy( $source_file, $destination_file, true );
+
+				if ( ! $copied ) {
+					throw new WPSnapshotsException( 'Unable to copy file: ' . $source_file . ' to ' . $destination_file );
+				}
+			} elseif ( 'd' === $file['type'] ) {
+				// Create the directory.
+				$this->get_wp_filesystem()->mkdir( $destination_file );
+
+				// Sync the files in the directory.
+				$next_files = $this->get_wp_filesystem()->dirlist( $source_file );
+
+				if ( ! $next_files ) {
+					throw new WPSnapshotsException( 'Unable to read source directory: ' . $source );
+				}
+
+				$this->sync_files_recursive( $next_files, $source_file, $destination_file );
+			}
 		}
 	}
 
@@ -271,9 +299,11 @@ class SnapshotsFileSystem implements SharedService {
 	 * @param string $id Snapshot ID.
 	 * @param string $destination Destination directory.
 	 *
+	 * @return string[] Errors.
+	 *
 	 * @throws WPSnapshotsException If there is an error.
 	 */
-	public function unzip_snapshot_files( string $id, string $destination ) {
+	public function unzip_snapshot_files( string $id, string $destination ) : array {
 		// Recursively delete everything in the wp-content directory except plugins/snapshots-command.
 		$this->delete_directory_contents( $destination, false, [ 'snapshots-command' ] );
 
@@ -290,12 +320,26 @@ class SnapshotsFileSystem implements SharedService {
 		$unzip_result = unzip_file( $zip_file, '/tmp/files' );
 
 		if ( is_wp_error( $unzip_result ) ) {
-			$phar = new PharData( $zip_file );
-			$phar->extractTo( '/tmp/files' );
+			try {
+				$phar = new PharData( $zip_file );
+				$phar->extractTo( '/tmp/files' );
+			} catch ( Exception $e ) {
+				exec( 'tar -xzf ' . $zip_file . ' -C /tmp/files' ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.system_calls_exec -- This is the last resort.
+			}
 		}
 
 		// Move the files to the wp-content directory.
-		$this->sync_files( '/tmp/files', $destination, true );
+		$errors = [];
+		try {
+			$this->sync_files( '/tmp/files', $destination, true );
+		} catch ( WPSnapshotsException $e ) {
+			$errors[] = $e->getMessage();
+		}
+
+		// Delete /tmp/files
+		$this->get_wp_filesystem()->rmdir( '/tmp/files', true );
+
+		return $errors;
 	}
 
 	/**
@@ -318,7 +362,7 @@ class SnapshotsFileSystem implements SharedService {
 			}
 
 			if ( $this->get_wp_filesystem()->is_dir( $directory . '/' . $file['name'] ) ) {
-				$this->delete_directory_contents( $directory . '/' . $file['name'], true, $excluded_files );
+				$this->delete_directory_contents( $directory . '/' . $file['name'], $delete_root, $excluded_files );
 			} else {
 				$this->get_wp_filesystem()->delete( $directory . '/' . $file['name'] );
 			}
