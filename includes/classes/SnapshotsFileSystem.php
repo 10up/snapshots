@@ -11,7 +11,7 @@ use Exception;
 use FilesystemIterator;
 use PharData;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\Infrastructure\{Shared, Service};
+use TenUp\WPSnapshots\Infrastructure\SharedService;
 use WP_Filesystem_Base;
 
 /**
@@ -19,7 +19,7 @@ use WP_Filesystem_Base;
  *
  * @package TenUp\WPSnapshots
  */
-class SnapshotsFileSystem implements Shared, Service {
+class SnapshotsFileSystem implements SharedService {
 
 	/**
 	 * The WP_Filesystem_Direct instance.

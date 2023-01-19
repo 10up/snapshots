@@ -9,12 +9,11 @@ namespace TenUp\WPSnapshots\Snapshots;
 
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Marshaler;
-use TenUp\WPSnapshots\Infrastructure\{Service, Shared};
 
 /**
  * Class for handling Amazon dynamodb calls
  */
-class DynamoDBConnector implements Shared, Service, DBConnectorInterface {
+class DynamoDBConnector implements DBConnectorInterface {
 
 	/**
 	 * Clients keyed by region.

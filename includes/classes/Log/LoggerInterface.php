@@ -7,12 +7,14 @@
 
 namespace TenUp\WPSnapshots\Log;
 
+use TenUp\WPSnapshots\Infrastructure\SharedService;
+
 /**
  * Logger interface.
  *
  * @package TenUp\WPSnapshots\Log
  */
-interface LoggerInterface {
+interface LoggerInterface extends SharedService {
 
 	/**
 	 * Log a message.

@@ -8,7 +8,7 @@
 namespace TenUp\WPSnapshots\WPCLICommands\Pull;
 
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\Infrastructure\{Factory, Service, Shared};
+use TenUp\WPSnapshots\Infrastructure\Factory;
 use TenUp\WPSnapshots\Log\{LoggerInterface, Logging};
 use TenUp\WPSnapshots\SnapshotsFileSystem;
 use TenUp\WPSnapshots\WordPress\Database;
@@ -19,7 +19,7 @@ use TenUp\WPSnapshots\WPCLI\Prompt;
  *
  * @package TenUp\WPSnapshots\WPCLI\Pull
  */
-final class URLReplacerFactory implements Factory, Shared, Service {
+final class URLReplacerFactory implements Factory {
 
 	use Logging;
 

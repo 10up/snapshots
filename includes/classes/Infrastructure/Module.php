@@ -12,4 +12,12 @@ namespace TenUp\WPSnapshots\Infrastructure;
  *
  * @package TenUp\WPSnapshots
  */
-interface Module {}
+interface Module {
+
+	/**
+	 * Registers the component or service.
+	 *
+	 * @return void
+	 */
+	public function register();
+}

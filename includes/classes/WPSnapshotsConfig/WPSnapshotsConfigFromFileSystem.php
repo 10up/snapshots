@@ -8,7 +8,6 @@
 namespace TenUp\WPSnapshots\WPSnapshotsConfig;
 
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\Infrastructure\{Service, Shared};
 use TenUp\WPSnapshots\SnapshotsFileSystem;
 
 /**
@@ -16,7 +15,7 @@ use TenUp\WPSnapshots\SnapshotsFileSystem;
  *
  * @package TenUp\WPSnapshots\WPSnapshotsConfig
  */
-class WPSnapshotsConfigFromFileSystem implements Shared, Service, WPSnapshotsConfigInterface {
+class WPSnapshotsConfigFromFileSystem implements WPSnapshotsConfigInterface {
 
 	/**
 	 * Data instance.
