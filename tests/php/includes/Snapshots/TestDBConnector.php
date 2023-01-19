@@ -8,6 +8,7 @@
 namespace TenUp\WPSnapshots\Tests\Snapshots;
 
 use Aws\DynamoDb\DynamoDbClient;
+use PHPUnit\Framework\MockObject\MockObject;
 use TenUp\WPSnapshots\Snapshots\DynamoDBConnector;
 use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
@@ -39,6 +40,15 @@ class TestDBConnector extends TestCase {
 		$this->connector = new DynamoDBConnector();
 	}
 
+	/**
+	 * Test teardown.
+	 */
+	public function tear_down() {
+		parent::tear_down();
+
+		unset( $this->connector );
+	}
+
 	public function test_constructor() {
 		$this->assertInstanceOf( DynamoDBConnector::class, $this->connector );
 	}
@@ -48,5 +58,124 @@ class TestDBConnector extends TestCase {
 		$client = $this->call_private_method( $this->connector, 'get_client', [ 'test-repo' ] );
 
 		$this->assertInstanceOf( DynamoDbClient::class, $client );
+	}
+
+	/** @covers ::search */
+	public function test_search_client_is_called_with_expected_args() {
+		/**
+		 * DynamoDBClient mock.
+		 * 
+		 * @var MockObject $client
+		 */
+		$client = $this->createMock( DynamoDbClient::class );
+		$client->method( 'getIterator' )->willReturn( [] );
+
+		// Set client as private property.
+		$this->set_private_property( $this->connector, 'clients', [ 'test-region' => $client ] );
+
+		// Assert that client's getIterator method was called with expected args.
+		$client->expects( $this->once() )->method( 'getIterator' )->with(
+			'Scan',
+			[
+				'TableName' => 'wpsnapshots-test-repo',
+				'ConditionalOperator' => 'OR',
+				'ScanFilter' => [
+					'project' => [
+						'AttributeValueList' => [ [ 'S' => 'search term' ] ],
+						'ComparisonOperator' => 'CONTAINS',
+					],
+					'id' => [
+						'AttributeValueList' => [ [ 'S' => 'search term' ] ],
+						'ComparisonOperator' => 'EQ',
+					],
+				],
+			]
+		);
+
+		// Call search method.
+		$this->connector->search( 'search term', 'test-repo', 'test-region' );
+	}
+
+	/** @covers ::get_snapshot */
+	public function test_get_snapshot_client_is_called_with_expected_args() {
+		/**
+		 * DynamoDBClient mock.
+		 * 
+		 * @var MockObject $client
+		 */
+		$client = $this->getMockBuilder( DynamoDbClient::class )
+			->disableOriginalConstructor()
+			->addMethods( [ 'getItem' ] )
+			->getMock();
+		$client->method( 'getItem' )->willReturn( [] );
+
+		// Set client as private property.
+		$this->set_private_property( $this->connector, 'clients', [ 'test-region' => $client ] );
+
+		// Assert that client's getItem method was called with expected args.
+		$client->expects( $this->once() )->method( 'getItem' )->with(
+			[
+				'ConsistentRead' => true,
+				'TableName' => 'wpsnapshots-test-repo',
+				'Key' => [
+					'id' => [ 'S' => 'snapshot-id' ],
+				],
+			]
+		);
+
+		// Call get_snapshot method.
+		$this->connector->get_snapshot( 'snapshot-id', 'test-repo', 'test-region' );
+	}
+
+	/** @covers ::create_tables */
+	public function test_create_tables_client_is_called_with_expected_args() {
+		/**
+		 * DynamoDBClient mock.
+		 * 
+		 * @var MockObject $client
+		 */
+		$client = $this->getMockBuilder( DynamoDbClient::class )
+			->disableOriginalConstructor()
+			->addMethods( [ 'createTable' ] )
+			->onlyMethods( [ 'waitUntil' ] )
+			->getMock();
+		$client->method( 'createTable' )->willReturn( [] );
+		$client->method( 'waitUntil' )->willReturn( [] );
+
+		// Set client as private property.
+		$this->set_private_property( $this->connector, 'clients', [ 'test-region' => $client ] );
+
+		// Assert that client's createTable method was called with expected args.
+		$client->expects( $this->once() )->method( 'createTable' )->with(
+			[
+				'AttributeDefinitions' => [
+					[
+						'AttributeName' => 'id',
+						'AttributeType' => 'S',
+					],
+				],
+				'KeySchema' => [
+					[
+						'AttributeName' => 'id',
+						'KeyType' => 'HASH',
+					],
+				],
+				'ProvisionedThroughput' => [
+					'ReadCapacityUnits' => 10,
+					'WriteCapacityUnits' => 20,
+				],
+				'TableName' => 'wpsnapshots-test-repo',
+			]
+		);
+
+		$client->expects( $this->once() )->method( 'waitUntil' )->with(
+			'TableExists',
+			[
+				'TableName' => 'wpsnapshots-test-repo',
+			]
+		);
+
+		// Call create_tables method.
+		$this->connector->create_tables( 'test-repo', 'test-region' );
 	}
 }

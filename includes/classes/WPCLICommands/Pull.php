@@ -10,6 +10,7 @@ namespace TenUp\WPSnapshots\WPCLICommands;
 use Exception;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\WPCLI\WPCLICommand;
+use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacerFactory;
 
 use function TenUp\WPSnapshots\Utils\wp_cli;
 
@@ -19,6 +20,53 @@ use function TenUp\WPSnapshots\Utils\wp_cli;
  * @package TenUp\WPSnapshots\WPCLI
  */
 final class Pull extends WPCLICommand {
+
+	/**
+	 * URLReplacer instance.
+	 *
+	 * @var URLReplacerFactory
+	 */
+	private $url_replacer_factory;
+
+	/**
+	 * The new home URL.
+	 *
+	 * @var ?string
+	 */
+	private $new_home_url;
+
+	/**
+	 * Meta data for the snapshot.
+	 *
+	 * @var ?array
+	 */
+	private $meta;
+
+	/**
+	 * Whether to download the snapshot.
+	 *
+	 * @var ?bool
+	 */
+	private $should_download;
+
+	/**
+	 * Main domain.
+	 *
+	 * @var ?string
+	 */
+	private $main_domain;
+
+	/**
+	 * Class constructor.
+	 *
+	 * @param URLReplacerFactory $url_replacer URLReplacer instance.
+	 * @param array              ...$args Dependency injection arguments.
+	 */
+	public function __construct( URLReplacerFactory $url_replacer, ...$args ) {
+		parent::__construct( ...$args );
+
+		$this->url_replacer_factory = $url_replacer;
+	}
 
 	/**
 	 * Callback for the command.
@@ -45,7 +93,15 @@ final class Pull extends WPCLICommand {
 				$action();
 			}
 
-			wp_cli()::success( 'Snapshot pulled successfully.' );
+			$this->log( 'Snapshot pulled successfully.', 'success' );
+
+			$this->log( 'Visit in your browser: ' . $this->new_home_url, 'success' );
+
+			if ( 'localhost' !== wp_parse_url( $this->new_home_url, PHP_URL_HOST ) ) {
+				$this->log( 'Make sure the following entry is in your hosts file: "127.0.0.1 ' . wp_parse_url( $this->new_home_url, PHP_URL_HOST ) . '"', 'success' );
+			}
+
+			$this->log( 'Admin login: username - "wpsnapshots", password - "password"', 'success' );
 		} catch ( Exception $e ) {
 			wp_cli()::error( $e->getMessage() );
 		}
@@ -175,15 +231,6 @@ final class Pull extends WPCLICommand {
 	}
 
 	/**
-	 * Gets the snapshot ID.
-	 *
-	 * @return string
-	 */
-	private function get_id() : string {
-		return $this->get_args()[0];
-	}
-
-	/**
 	 * Gets the actions required for the pull.
 	 *
 	 * @return array
@@ -195,52 +242,28 @@ final class Pull extends WPCLICommand {
 
 		$pull_actions = [];
 
-		$id              = $this->get_id();
-		$repository_name = $this->get_repository_name();
-
-		$remote_meta = $this->snapshot_meta->get_remote( $id, $repository_name, $this->get_assoc_arg( 'region' ) );
-		$local_meta  = $this->snapshot_meta->get_local( $id, $repository_name );
-
-		switch ( true ) {
-			case ! empty( $remote_meta ) && ! empty( $local_meta ):
-				$should_download = $this->prompt->get_flag_or_prompt( $this->get_assoc_args(), 'overwrite_local_copy', 'Snapshot already exists locally. Overwrite?', $this->get_default_arg_value( 'overwrite_local_copy' ) );
-				$meta            = $should_download ? $remote_meta : $local_meta;
-				break;
-			case ! empty( $remote_meta ) && empty( $local_meta ):
-				$meta            = $remote_meta;
-				$should_download = true;
-				break;
-			case empty( $remote_meta ) && ! empty( $local_meta ):
-				$meta            = $local_meta;
-				$should_download = false;
-				break;
-			default:
-				throw new WPSnapshotsException( 'Snapshot does not exist.' );
-		}
-
-		if ( empty( $meta ) || ( empty( $meta['contains_files'] ) && empty( $meta['contains_db'] ) ) ) {
-			throw new WPSnapshotsException( 'Snapshot is not valid.' );
-		}
-
-		$include_db    = $meta['contains_db'] && $this->prompt->get_flag_or_prompt( $this->get_assoc_args(), 'include_db', 'Include database in snapshot?' );
-		$include_files = $meta['contains_files'] && $this->prompt->get_flag_or_prompt( $this->get_assoc_args(), 'include_files', 'Include files in snapshot?' );
+		$include_db    = $this->get_meta()['contains_db'] && $this->prompt->get_flag_or_prompt( $this->get_assoc_args(), 'include_db', 'Include database in snapshot?' );
+		$include_files = $this->get_meta()['contains_files'] && $this->prompt->get_flag_or_prompt( $this->get_assoc_args(), 'include_files', 'Include files in snapshot?' );
 
 		if ( ! $include_db && ! $include_files ) {
 			throw new WPSnapshotsException( 'You must include either the DB, the files, or both.' );
 		}
 
-		if ( $should_download ) {
+		if ( $this->get_should_download() ) {
 			$pull_actions[] = [ $this, 'download_snapshot' ];
 		}
 
-		if ( $wp_version !== $meta['wp_version'] && $this->prompt->get_flag_or_prompt( $this->get_assoc_args(), 'update_wp', 'This snapshot is running WordPress version ' . $meta['wp_version'] . ', and you are running version ' . $wp_version . '. Do you want to change your version to match the snapshot?' ) ) {
-			$pull_actions[] = function() use ( $meta ) {
-				$this->update_wp( $meta['wp_version'] );
-			};
+		if ( $wp_version !== $this->get_meta()['wp_version'] && $this->prompt->get_flag_or_prompt( $this->get_assoc_args(), 'update_wp', 'This snapshot is running WordPress version ' . $this->get_meta()['wp_version'] . ', and you are running version ' . $wp_version . '. Do you want to change your version to match the snapshot?' ) ) {
+			$pull_actions[] = [ $this, 'update_wp' ];
 		}
 
 		if ( $include_db ) {
+			$pull_actions[] = [ $this, 'rename_tables' ];
 			$pull_actions[] = [ $this, 'pull_db' ];
+
+			if ( ! wp_cli()::get_flag_value( $this->get_assoc_args(), 'skip_table_search_replace' ) ) {
+				$pull_actions[] = [ $this, 'replace_urls' ];
+			}
 		}
 
 		if ( $include_files ) {
@@ -251,7 +274,79 @@ final class Pull extends WPCLICommand {
 			$pull_actions[] = [ $this, 'activate_this_plugin' ];
 		}
 
+		$pull_actions[] = [ $this, 'create_wpsnapshots_user' ];
+
 		return $pull_actions;
+	}
+
+	/**
+	 * Gets the snapshot meta.
+	 *
+	 * @return array
+	 */
+	private function get_meta() {
+		if ( is_null( $this->meta ) ) {
+			$this->set_up_meta();
+		}
+
+		return $this->meta;
+	}
+
+	/**
+	 * Gets whether the snapshot should be downloaded.
+	 *
+	 * @return bool
+	 */
+	private function get_should_download() {
+		if ( is_null( $this->should_download ) ) {
+			$this->set_up_meta();
+		}
+
+		return $this->should_download;
+	}
+
+	/**
+	 * Gets the snapshot ID.
+	 *
+	 * @return string
+	 */
+	private function get_id() : string {
+		return $this->get_args()[0];
+	}
+
+
+	/**
+	 * Gets the snapshot meta.
+	 *
+	 * @throws WPSnapshotsException If the snapshot does not exist.
+	 */
+	private function set_up_meta() {
+		$id              = $this->get_id();
+		$repository_name = $this->get_repository_name();
+
+		$remote_meta = $this->snapshot_meta->get_remote( $id, $repository_name, $this->get_assoc_arg( 'region' ) );
+		$local_meta  = $this->snapshot_meta->get_local( $id, $repository_name );
+
+		switch ( true ) {
+			case ! empty( $remote_meta ) && ! empty( $local_meta ):
+				$this->should_download = $this->prompt->get_flag_or_prompt( $this->get_assoc_args(), 'overwrite_local_copy', 'Snapshot already exists locally. Overwrite?', $this->get_default_arg_value( 'overwrite_local_copy' ) );
+				$this->meta            = $this->should_download ? $remote_meta : $local_meta;
+				break;
+			case ! empty( $remote_meta ) && empty( $local_meta ):
+				$this->meta            = $remote_meta;
+				$this->should_download = true;
+				break;
+			case empty( $remote_meta ) && ! empty( $local_meta ):
+				$this->meta            = $local_meta;
+				$this->should_download = false;
+				break;
+			default:
+				throw new WPSnapshotsException( 'Snapshot does not exist.' );
+		}
+
+		if ( empty( $this->get_meta() ) || ( empty( $this->get_meta()['contains_files'] ) && empty( $this->get_meta()['contains_db'] ) ) ) {
+			throw new WPSnapshotsException( 'Snapshot is not valid.' );
+		}
 	}
 
 	/**
@@ -262,7 +357,7 @@ final class Pull extends WPCLICommand {
 	 *
 	 * @throws WPSnapshotsException If the snapshot does not exist or is not valid.
 	 */
-	protected function download_snapshot( bool $include_db = true, bool $include_files = true ) {
+	private function download_snapshot( bool $include_db = true, bool $include_files = true ) {
 		$command = 'wpsnapshots download ' . $this->get_id() . ' --quiet --repository=' . $this->get_repository_name() . ' --region=' . $this->get_assoc_arg( 'region' );
 
 		if ( ! $include_db && ! $include_files ) {
@@ -286,28 +381,51 @@ final class Pull extends WPCLICommand {
 	/**
 	 * Pulls the DB.
 	 */
-	protected function pull_db() {
+	private function pull_db() {
 		$this->log( 'Importing database...' );
 
 		// Unzip data.sql.gz
-		$this->snapshots_filesystem->unzip_file( $this->snapshots_filesystem->get_file_path( 'data.sql.gz', $this->get_id() ), $this->snapshots_filesystem->get_file_path( 'data.sql', $this->get_id() ) );
+		$this->snapshots_filesystem->unzip_file( $this->snapshots_filesystem->get_file_path( 'data.sql.gz', $this->get_id() ), $this->snapshots_filesystem->get_file_path( '', $this->get_id() ) );
 
-		$command = 'db import ' . $this->snapshots_filesystem->get_file_path( 'data.sql', $this->get_id() ) . ' --quiet';
+		$command = 'db import ' . $this->snapshots_filesystem->get_file_path( 'data.sql', $this->get_id() ) . ' --quiet --skip-themes --skip-plugins --skip-packages';
 
 		wp_cli()::runcommand( $command, [ 'launch' => false ] );
 
 		$this->log( 'Database imported.', 'success' );
+
+	}
+
+	/**
+	 * Renames the tables.
+	 */
+	private function rename_tables() {
+		$current_table_prefix = $this->wordpress_database->get_blog_prefix();
+
+		/**
+		 * Update table prefixes
+		 */
+		if ( ! empty( $this->get_meta()['table_prefix'] ) && ! empty( $current_table_prefix ) && $this->get_meta()['table_prefix'] !== $current_table_prefix ) {
+			foreach ( $this->wordpress_database->get_tables( false ) as $table ) {
+				if ( 0 === strpos( $table, $this->get_meta()['table_prefix'] ) ) {
+					/**
+					 * Update this table to use the current config prefix
+					 */
+					$new_table = $current_table_prefix . str_replace( $this->get_meta()['table_prefix'], '', $table );
+					$this->wordpress_database->rename_table( $table, $new_table );
+				}
+			}
+		}
 	}
 
 	/**
 	 * Updates WP.
-	 *
-	 * @param string $wp_version The WP version to update to.
 	 */
-	protected function update_wp( string $wp_version ) {
+	private function update_wp() {
+		$wp_version = $this->get_meta()['wp_version'];
+
 		$this->log( 'Updating WordPress to version ' . $wp_version . '...' );
 
-		$command = 'core update --version=' . $wp_version;
+		$command = 'core update --version=' . $wp_version . ' --quiet --skip-themes --skip-plugins --skip-packages';
 
 		wp_cli()::runcommand( $command, [ 'launch' => false ] );
 
@@ -316,11 +434,17 @@ final class Pull extends WPCLICommand {
 
 	/**
 	 * Pulls files from the snapshot into the environment.
+	 *
+	 * @throws WPSnapshotsException If WP_CONTENT_DIR is not defined.
 	 */
-	protected function pull_files() {
+	private function pull_files() {
+		if ( ! defined( 'WP_CONTENT_DIR' ) ) {
+			throw new WPSnapshotsException( 'WP_CONTENT_DIR is not defined.' );
+		}
+
 		$this->log( 'Pulling files...' );
 
-		$this->snapshots_filesystem->unzip_snapshot_files( $this->get_id() );
+		$this->snapshots_filesystem->unzip_snapshot_files( $this->get_id(), WP_CONTENT_DIR );
 
 		$this->log( 'Files pulled.', 'success' );
 	}
@@ -328,10 +452,128 @@ final class Pull extends WPCLICommand {
 	/**
 	 * Activates this plugin.
 	 */
-	protected function activate_this_plugin() {
-		$command = 'plugin activate snapshots-command';
+	private function activate_this_plugin() {
+		if ( is_plugin_active( 'snapshots-command/wpsnapshots.php' ) ) {
+			return;
+		}
+
+		$command = 'plugin activate snapshots-command --quiet --skip-themes --skip-plugins --skip-packages';
 
 		wp_cli()::runcommand( $command, [ 'launch' => false ] );
 	}
 
+	/**
+	 * Replaces urls in the database.
+	 */
+	private function replace_urls() {
+		$this->new_home_url = $this->url_replacer_factory->get(
+			$this->get_meta()['multisite'] ? 'multisite' : 'single',
+			$this->get_meta(),
+			$this->get_site_mapping(),
+			wp_cli()::get_flag_value( $this->get_assoc_args(), 'skip_table_search_replace' ),
+			$this->get_meta()['multisite'] && $this->prompt->get_flag_or_prompt( $this->get_assoc_args(), 'confirm_ms_constant_update', 'Constants need to be updated in your wp-config.php file. Want WP Snapshots to do this automatically?', true ),
+			$this->get_main_domain()
+		)->replace_urls();
+	}
+
+	/**
+	 * Creates the wpsnapshots user.
+	 */
+	private function create_wpsnapshots_user() {
+		$this->log( 'Creating wpsnapshots user...' );
+
+		$user = get_user_by( 'login', 'wpsnapshots' );
+
+		$user_args = [
+			'user_login' => 'wpsnapshots',
+			'user_pass'  => 'password',
+			'user_email' => 'wpsnapshots@wpsnapshots.test',
+			'role'       => 'administrator',
+		];
+
+		if ( ! empty( $user ) ) {
+			$user_args['ID']        = $user->ID;
+			$user_args['user_pass'] = wp_hash_password( 'password' );
+		}
+
+		wp_insert_user( $user_args );
+	}
+
+	/**
+	 * Gets the site mapping.
+	 *
+	 * @return array
+	 */
+	protected function get_site_mapping() : array {
+		$site_mapping     = [];
+		$site_mapping_raw = $this->get_assoc_arg( 'site_mapping' );
+
+		if ( ! empty( $site_mapping_raw ) ) {
+			$site_mapping_raw = json_decode( $site_mapping_raw, true );
+
+			foreach ( $site_mapping_raw as $site ) {
+				if ( ! empty( $site['blog_id'] ) ) {
+					$site_mapping[ (int) $site['blog_id'] ] = $site;
+				} else {
+					$site_mapping[] = $site;
+				}
+			}
+
+			if ( empty( $this->get_meta()['multisite'] ) ) {
+				$site_mapping = array_values( $site_mapping );
+			}
+		}
+
+		return $site_mapping;
+	}
+
+	/**
+	 * Returns whether multisite constants need to be updated.
+	 *
+	 * @return bool
+	 */
+	protected function needs_multisite_constants_update() : bool {
+		return ! defined( 'BLOG_ID_CURRENT_SITE' )
+		|| ( ! empty( $this->meta['blog_id_current_site'] ) && BLOG_ID_CURRENT_SITE !== (int) $this->meta['blog_id_current_site'] )
+		|| ! defined( 'SITE_ID_CURRENT_SITE' )
+		|| ( ! empty( $this->meta['site_id_current_site'] ) && SITE_ID_CURRENT_SITE !== (int) $this->meta['site_id_current_site'] )
+		|| ! defined( 'PATH_CURRENT_SITE' )
+		|| ( ! empty( $this->meta['path_current_site'] ) && PATH_CURRENT_SITE !== $this->meta['path_current_site'] )
+		|| ! defined( 'MULTISITE' )
+		|| ! MULTISITE
+		|| ! defined( 'DOMAIN_CURRENT_SITE' )
+		|| DOMAIN_CURRENT_SITE !== $this->get_main_domain()
+		|| ! defined( 'SUBDOMAIN_INSTALL' )
+		|| SUBDOMAIN_INSTALL !== $this->meta['subdomain_install'];
+	}
+
+	/**
+	 * Get the main domain from the snapshot.
+	 *
+	 * @return string
+	 */
+	private function get_main_domain() : string {
+		if ( is_null( $this->main_domain ) ) {
+			$this->main_domain = $this->get_assoc_arg( 'main_domain' );
+
+			if ( empty( $this->main_domain ) ) {
+
+				$snapshot_main_domain = ! empty( $this->meta['domain_current_site'] ) ? $this->meta['domain_current_site'] : '';
+
+				if ( ! empty( $snapshot_main_domain ) ) {
+					$this->main_domain = $this->prompt->readline( 'Main domain (defaults to main domain in the snapshot: ' . $snapshot_main_domain . '): ', $snapshot_main_domain, [ $this, 'domain_validator' ] );
+				} else {
+					$example_site = 'mysite.test';
+
+					if ( ! empty( $this->meta['sites'][0]['home_url'] ) ) {
+						$example_site = wp_parse_url( $this->meta['sites'][0]['home_url'], PHP_URL_HOST );
+					}
+
+					$this->main_domain = $this->prompt->readline( 'Main domain (' . $example_site . ' for example): ', '', [ $this, 'domain_validator' ] );
+				}
+			}
+		}
+
+		return $this->main_domain;
+	}
 }

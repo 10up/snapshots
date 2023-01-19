@@ -20,6 +20,13 @@ use TenUp\WPSnapshots\SnapshotsFileSystem;
 class S3StorageConnector implements StorageConnectorInterface, Shared, Service {
 
 	/**
+	 * Clients keyed by region.
+	 *
+	 * @var S3Client[]
+	 */
+	private $clients = [];
+
+	/**
 	 * SnapshotsFileSystem instance.
 	 *
 	 * @var SnapshotsFileSystem
@@ -111,12 +118,16 @@ class S3StorageConnector implements StorageConnectorInterface, Shared, Service {
 	 * @return S3Client
 	 */
 	private function get_client( string $region ) : S3Client {
-		return new S3Client(
-			[
-				'version' => 'latest',
-				'region'  => $region,
-			]
-		);
+		if ( ! isset( $this->clients[ $region ] ) ) {
+			$this->clients[ $region ] = new S3Client(
+				[
+					'version' => 'latest',
+					'region'  => $region,
+				]
+			);
+		}
+
+		return $this->clients[ $region ];
 	}
 
 	/**

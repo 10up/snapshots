@@ -10,8 +10,10 @@ namespace TenUp\WPSnapshots;
 use TenUp\WPSnapshots\Infrastructure\Container;
 use TenUp\WPSnapshots\Log\WPCLILogger;
 use TenUp\WPSnapshots\Snapshots\{DynamoDBConnector, S3StorageConnector, SnapshotMetaFromFileSystem};
+use TenUp\WPSnapshots\WordPress\Database;
 use TenUp\WPSnapshots\WPCLI\Prompt;
 use TenUp\WPSnapshots\WPCLICommands\{CreateRepository, Download, Pull, Search};
+use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacerFactory;
 use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
 
 /**
@@ -73,6 +75,7 @@ final class Plugin extends Container {
 			'snapshots/snapshot_meta'                 => null,
 			'snapshots/storage_connector'             => S3StorageConnector::class,
 			'wp_snapshots_config/wp_snapshots_config' => null,
+			'wordpress/database'                      => Database::class,
 		];
 
 		/**
@@ -91,8 +94,9 @@ final class Plugin extends Container {
 	 */
 	public function add_wp_cli_services( array $services ): array {
 		$wp_cli_services = [
-			'log/wpcli_logger' => WPCLILogger::class,
-			'wpcli/prompt'     => Prompt::class,
+			'log/wpcli_logger'           => WPCLILogger::class,
+			'wpcli/prompt'               => Prompt::class,
+			'wpcli/url_replacer_factory' => URLReplacerFactory::class,
 		];
 
 		return array_merge(

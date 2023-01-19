@@ -79,7 +79,9 @@ abstract class SnapshotMeta implements Shared, Service, SnapshotMetaInterface {
 		// Backwards compat since these previously were not set.
 		if ( ! isset( $snapshot_meta['contains_files'] ) ) {
 			$snapshot_meta['contains_files'] = true;
-		} if ( ! isset( $snapshot_meta['contains_db'] ) ) {
+		}
+
+		if ( ! isset( $snapshot_meta['contains_db'] ) ) {
 			$snapshot_meta['contains_db'] = true;
 		}
 

@@ -17,7 +17,9 @@ use TenUp\WPSnapshots\Snapshots\S3StorageConnector;
 use TenUp\WPSnapshots\Snapshots\SnapshotMetaFromFileSystem;
 use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
 use TenUp\WPSnapshots\Tests\Fixtures\WPCLIMocking;
+use TenUp\WPSnapshots\WordPress\Database;
 use TenUp\WPSnapshots\WPCLI\Prompt;
+use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacerFactory;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
@@ -80,6 +82,8 @@ class TestContainer extends TestCase {
 				S3StorageConnector::class,
 				DynamoDBConnector::class,
 				SnapshotMetaFromFileSystem::class,
+				Database::class,
+				URLReplacerFactory::class,
 			],
 			array_keys( $this->get_private_property( $this->container, 'shared_instances' ) )
 		);

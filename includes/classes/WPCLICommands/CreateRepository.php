@@ -7,9 +7,7 @@
 
 namespace TenUp\WPSnapshots\WPCLICommands;
 
-use Aws\Exception\AwsException;
 use Exception;
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\WPCLI\WPCLICommand;
 
 use function TenUp\WPSnapshots\Utils\wp_cli;
@@ -35,21 +33,8 @@ final class CreateRepository extends WPCLICommand {
 			$repository_name = $this->get_repository_name( true, 0 );
 			$region          = $this->get_assoc_arg( 'region' );
 
-			try {
-				$this->storage_connector->create_bucket( $repository_name, $region );
-			} catch ( WPSnapshotsException $e ) {
-				if ( $e->getMessage() === $this->storage_connector->get_bucket_already_exists_message() ) {
-					$this->log( $e->getMessage() );
-				}
-			}
-
-			try {
-				$this->db_connector->create_tables( $repository_name, $region );
-			} catch ( AwsException $e ) {
-				if ( $e->getAwsErrorCode() === 'ResourceInUseException' ) {
-					$this->log( $e->getMessage() );
-				}
-			}
+			$this->storage_connector->create_bucket( $repository_name, $region );
+			$this->db_connector->create_tables( $repository_name, $region );
 		} catch ( Exception $e ) {
 			wp_cli()::error( $e->getMessage() );
 		}

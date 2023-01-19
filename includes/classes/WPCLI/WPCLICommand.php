@@ -13,6 +13,7 @@ use TenUp\WPSnapshots\Log\{Logging, WPCLILogger};
 use TenUp\WPSnapshots\Snapshots\{DBConnectorInterface, SnapshotMetaInterface, StorageConnectorInterface};
 use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigInterface;
 use TenUp\WPSnapshots\SnapshotsFileSystem;
+use TenUp\WPSnapshots\WordPress\Database;
 
 use function TenUp\WPSnapshots\Utils\wp_cli;
 
@@ -68,6 +69,13 @@ abstract class WPCLICommand implements Conditional, Registerable, Module {
 	protected $snapshots_filesystem;
 
 	/**
+	 * Database instance.
+	 *
+	 * @var Database
+	 */
+	protected $wordpress_database;
+
+	/**
 	 * Args passed to the command.
 	 *
 	 * @var array
@@ -100,6 +108,7 @@ abstract class WPCLICommand implements Conditional, Registerable, Module {
 	 * @param DBConnectorInterface       $db_connector DBConnectorInterface instance.
 	 * @param SnapshotMetaInterface      $snapshot_meta SnapshotMetaInterface instance.
 	 * @param SnapshotsFileSystem        $snapshots_filesystem SnapshotsFileSystem instance.
+	 * @param Database                   $wordpress_database Database instance.
 	 */
 	public function __construct(
 		WPCLILogger $logger,
@@ -108,7 +117,8 @@ abstract class WPCLICommand implements Conditional, Registerable, Module {
 		StorageConnectorInterface $storage_connector,
 		DBConnectorInterface $db_connector,
 		SnapshotMetaInterface $snapshot_meta,
-		SnapshotsFileSystem $snapshots_filesystem
+		SnapshotsFileSystem $snapshots_filesystem,
+		Database $wordpress_database
 	) {
 		$this->prompt               = $prompt;
 		$this->config               = $config;
@@ -116,6 +126,7 @@ abstract class WPCLICommand implements Conditional, Registerable, Module {
 		$this->db_connector         = $db_connector;
 		$this->snapshot_meta        = $snapshot_meta;
 		$this->snapshots_filesystem = $snapshots_filesystem;
+		$this->wordpress_database   = $wordpress_database;
 		$this->set_logger( $logger );
 	}
 
@@ -220,17 +231,6 @@ abstract class WPCLICommand implements Conditional, Registerable, Module {
 		}
 
 		return $repository_name ?? '10up';
-	}
-
-	/**
-	 * Gets the repo info.
-	 *
-	 * @return array
-	 */
-	protected function get_repo_info() : array {
-		$repository_name = $this->get_repository_name();
-
-		return $this->config->get_repository_settings( $repository_name );
 	}
 
 	/**
