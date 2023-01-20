@@ -234,24 +234,26 @@ class SnapshotsFileSystem implements SharedService {
 	 * @param string $destination Destination directory.
 	 * @param bool   $delete_source Whether to delete the source directory after syncing.
 	 *
-	 * @return void
+	 * @return string[]
 	 *
 	 * @throws WPSnapshotsException If unable to sync files.
 	 */
-	public function sync_files( string $source, string $destination, bool $delete_source = false ) {
+	public function sync_files( string $source, string $destination, bool $delete_source = false ) : array {
 		$files = $this->get_wp_filesystem()->dirlist( $source );
 
 		if ( ! $files ) {
 			throw new WPSnapshotsException( 'Unable to read source directory: ' . $source );
 		}
 
-		$this->sync_files_recursive( $files, $source, $destination );
+		$errors = $this->sync_files_recursive( $files, $source, $destination );
 
 		if ( $delete_source ) {
 			if ( ! $this->get_wp_filesystem()->rmdir( $source, true ) ) {
 				throw new WPSnapshotsException( 'Unable to delete source directory: ' . $source );
 			}
 		}
+
+		return $errors;
 	}
 
 	/**
@@ -261,36 +263,52 @@ class SnapshotsFileSystem implements SharedService {
 	 * @param string  $source Source directory.
 	 * @param string  $destination Destination directory.
 	 *
-	 * @return void
+	 * @return string[]
 	 *
 	 * @throws WPSnapshotsException If unable to sync files.
 	 */
-	private function sync_files_recursive( array $files, string $source, string $destination ) {
+	private function sync_files_recursive( array $files, string $source, string $destination ) : array {
+		$errors = [];
+
 		foreach ( $files as $file ) {
-			$source_file      = trailingslashit( $source ) . $file['name'];
-			$destination_file = trailingslashit( $destination ) . $file['name'];
+			try {
+				$source_file      = trailingslashit( $source ) . $file['name'];
+				$destination_file = trailingslashit( $destination ) . $file['name'];
 
-			if ( 'f' === $file['type'] ) {
-				// Copy the file.
-				$copied = $this->get_wp_filesystem()->copy( $source_file, $destination_file, true );
+				if ( 'f' === $file['type'] ) {
+					if ( ! $this->get_wp_filesystem()->is_readable( $source_file ) ) {
+						continue;
+					}
 
-				if ( ! $copied ) {
-					throw new WPSnapshotsException( 'Unable to copy file: ' . $source_file . ' to ' . $destination_file );
+					// Copy the file.
+					$copied = $this->get_wp_filesystem()->copy( $source_file, $destination_file, true );
+
+					if ( ! $copied ) {
+						throw new WPSnapshotsException( 'Unable to copy file: ' . $source_file . ' to ' . $destination_file );
+					}
+				} elseif ( 'd' === $file['type'] ) {
+					// Create the directory.
+					$this->get_wp_filesystem()->mkdir( $destination_file );
+
+					// Sync the files in the directory.
+					$next_files = $this->get_wp_filesystem()->dirlist( $source_file );
+
+					if ( false === $next_files ) {
+						throw new WPSnapshotsException( 'Unable to read source directory: ' . $source );
+					}
+
+					$next_errors = $this->sync_files_recursive( $next_files, $source_file, $destination_file );
+
+					if ( ! empty( $next_errors ) ) {
+						$errors = array_merge( $errors, $next_errors );
+					}
 				}
-			} elseif ( 'd' === $file['type'] ) {
-				// Create the directory.
-				$this->get_wp_filesystem()->mkdir( $destination_file );
-
-				// Sync the files in the directory.
-				$next_files = $this->get_wp_filesystem()->dirlist( $source_file );
-
-				if ( ! $next_files ) {
-					throw new WPSnapshotsException( 'Unable to read source directory: ' . $source );
-				}
-
-				$this->sync_files_recursive( $next_files, $source_file, $destination_file );
+			} catch ( WPSnapshotsException $e ) {
+				$errors[] = $e->getMessage();
 			}
 		}
+
+		return $errors;
 	}
 
 	/**
@@ -328,16 +346,7 @@ class SnapshotsFileSystem implements SharedService {
 			}
 		}
 
-		// Move the files to the wp-content directory.
-		$errors = [];
-		try {
-			$this->sync_files( '/tmp/files', $destination, true );
-		} catch ( WPSnapshotsException $e ) {
-			$errors[] = $e->getMessage();
-		}
-
-		// Delete /tmp/files
-		$this->get_wp_filesystem()->rmdir( '/tmp/files', true );
+		$errors = $this->sync_files( '/tmp/files', $destination, true );
 
 		return $errors;
 	}

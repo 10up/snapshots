@@ -32,7 +32,7 @@ trait WPCLIMocking {
 		} );
 	
 		add_filter( 'wpsnapshots_readline', function() {
-			return [ $this, 'readline' ];
+			return [ $this->get_wp_cli_mock(), 'readline' ];
 		} );
 	}
 
@@ -46,10 +46,6 @@ trait WPCLIMocking {
 
 		$this->wpcli_mock->reset_wpcli_mock_calls();
 		$this->wpcli_mock = null;
-	}
-
-	public function readline( ...$args ) {
-		return 'Y';
 	}
 
 	/**

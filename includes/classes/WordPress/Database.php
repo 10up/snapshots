@@ -15,7 +15,7 @@ use wpdb;
  *
  * @package TenUp\WPSnapshots\WordPress
  */
-final class Database implements SharedService {
+class Database implements SharedService {
 
 	/**
 	 * Returns tables

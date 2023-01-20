@@ -19,7 +19,7 @@ use TenUp\WPSnapshots\WPCLI\Prompt;
  *
  * @package TenUp\WPSnapshots\WPCLI\Pull
  */
-final class URLReplacerFactory implements Factory {
+class URLReplacerFactory implements Factory {
 
 	use Logging;
 

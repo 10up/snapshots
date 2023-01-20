@@ -96,7 +96,9 @@ final class Pull extends WPCLICommand {
 				wp_cli()::confirm( 'Are you sure you want to pull this snapshot? This is a potentially destructive operation. Please run a backup first.' );
 			}
 
-			$this->handle_pull_actions( $include_db, $include_files );
+			foreach ( $this->get_pull_actions( $include_db, $include_files ) as $action ) {
+				$action();
+			}
 
 			$this->new_home_url = $this->new_home_url ? $this->new_home_url : home_url();
 
@@ -109,7 +111,6 @@ final class Pull extends WPCLICommand {
 
 			$this->log( 'Admin login: username - "wpsnapshots", password - "password"', 'success' );
 		} catch ( Exception $e ) {
-			$this->activate_this_plugin();
 			wp_cli()::error( $e->getMessage() );
 		}
 	}
@@ -302,34 +303,54 @@ final class Pull extends WPCLICommand {
 	}
 
 	/**
-	 * Gets the actions required for the pull.
+	 * Gets the actions required for the pull. These actions are collected ahead of time to ensure all checks are performed
+	 * before any modifications to the file system or database which might cause side effects.
 	 *
 	 * @param bool $include_db    Whether to include the DB in the pull.
 	 * @param bool $include_files Whether to include the files in the pull.
+	 *
+	 * @return callable[]
 	 */
-	private function handle_pull_actions( bool $include_db, bool $include_files ) {
+	private function get_pull_actions( bool $include_db, bool $include_files ) : array {
+		$pull_actions = [];
+
 		if ( $this->get_should_download() ) {
-			$this->download_snapshot( $include_db, $include_files );
+			$pull_actions[] = function() use ( $include_db, $include_files ) {
+				$this->download_snapshot( $include_db, $include_files );
+			};
 		}
 
 		if ( $include_files ) {
-			$this->pull_files();
+			$pull_actions[] = [ $this, 'pull_files' ];
 		}
 
 		if ( $include_db ) {
-			$this->rename_tables();
+			$pull_actions[] = [ $this, 'rename_tables' ];
 		}
 
 		if ( $this->get_should_update_wp() ) {
-			$this->update_wp();
+			$pull_actions[] = function() {
+				$this->update_wp( $this->get_meta()['wp_version'] );
+			};
 		}
 
 		if ( $include_db ) {
-			$this->pull_db();
-			$this->replace_urls();
-			$this->activate_this_plugin();
-			$this->create_wpsnapshots_user();
+			$pull_actions[] = [ $this, 'pull_db' ];
+			$pull_actions[] = [ $this, 'replace_urls' ];
+
+			$path_to_this_plugin_relative_to_plugins_directory = trailingslashit( basename( WPSNAPSHOTS_DIR ) ) . 'wpsnapshots.php';
+			if ( function_exists( 'is_plugin_active_for_network' ) && is_plugin_active_for_network( $path_to_this_plugin_relative_to_plugins_directory ) ) {
+				$pull_actions[] = function() {
+					$this->activate_this_plugin( true );
+				};
+			} elseif ( is_plugin_active( $path_to_this_plugin_relative_to_plugins_directory ) ) {
+				$pull_actions[] = [ $this, 'activate_this_plugin' ];
+			}
+
+			$pull_actions[] = [ $this, 'create_wpsnapshots_user' ];
 		}
+
+		return $pull_actions;
 	}
 
 	/**
@@ -441,10 +462,10 @@ final class Pull extends WPCLICommand {
 
 	/**
 	 * Updates WP.
+	 *
+	 * @param string $wp_version The version of WP to update to.
 	 */
-	private function update_wp() {
-		$wp_version = $this->get_meta()['wp_version'];
-
+	private function update_wp( string $wp_version ) {
 		$this->log( 'Updating WordPress to version ' . $wp_version . '...' );
 
 		$command = 'core update --version=' . $wp_version . ' --force --quiet --skip-themes --skip-plugins --skip-packages';
@@ -481,9 +502,15 @@ final class Pull extends WPCLICommand {
 
 	/**
 	 * Activates this plugin.
+	 *
+	 * @param bool $network_activate Whether to network activate the plugin.
 	 */
-	private function activate_this_plugin() {
+	private function activate_this_plugin( bool $network_activate = false ) {
 		$command = 'plugin activate snapshots-command --skip-themes --skip-plugins --skip-packages';
+
+		if ( $network_activate ) {
+			$command .= ' --network';
+		}
 
 		wp_cli()::runcommand(
 			$command,
@@ -500,7 +527,7 @@ final class Pull extends WPCLICommand {
 		$multisite = $this->get_meta()['multisite'];
 
 		$this->new_home_url = $this->url_replacer_factory->get(
-			$multisite ? 'multisite' : 'single',
+			$multisite ? 'multi' : 'single',
 			$this->get_meta(),
 			$this->get_site_mapping(),
 			$this->get_skip_table_search_replace(),
@@ -535,13 +562,17 @@ final class Pull extends WPCLICommand {
 	/**
 	 * Gets the site mapping.
 	 *
-	 * @return array
+	 * @return ?array
 	 */
-	protected function get_site_mapping() : array {
+	protected function get_site_mapping() : ?array {
 		$site_mapping     = [];
 		$site_mapping_raw = $this->get_assoc_arg( 'site_mapping' );
 
 		if ( ! empty( $site_mapping_raw ) ) {
+			if ( $this->snapshots_filesystem->get_wp_filesystem()->exists( $site_mapping_raw ) ) {
+				$site_mapping_raw = $this->snapshots_filesystem->get_wp_filesystem()->get_contents( $site_mapping_raw );
+			}
+
 			$site_mapping_raw = json_decode( $site_mapping_raw, true );
 
 			foreach ( $site_mapping_raw as $site ) {
@@ -591,7 +622,7 @@ final class Pull extends WPCLICommand {
 
 			if ( empty( $this->main_domain ) ) {
 
-				$snapshot_main_domain = ! empty( $this->meta['domain_current_site'] ) ? $this->meta['domain_current_site'] : '';
+				$snapshot_main_domain = ! empty( $this->get_meta()['domain_current_site'] ) ? $this->get_meta()['domain_current_site'] : '';
 
 				if ( ! empty( $snapshot_main_domain ) ) {
 					$this->main_domain = $this->prompt->readline( 'Main domain (defaults to main domain in the snapshot: ' . $snapshot_main_domain . '): ', $snapshot_main_domain, [ $this, 'domain_validator' ] );

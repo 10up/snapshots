@@ -37,7 +37,7 @@ class WPCLIMock {
 	}
 
 	public static function __callStatic( $name, $arguments ) {
-		if ( in_array( $name, [ 'success', 'error', 'confirm', 'halt', 'line', 'readline', 'add_command', 'format_items', 'prompt' ] ) ) {
+		if ( in_array( $name, [ 'success', 'error', 'confirm', 'halt', 'line', 'readline', 'add_command', 'format_items', 'prompt', 'runcommand' ] ) ) {
 			self::$wpcli_mock_calls[ $name ][] = $arguments;
 			return;
 		}
@@ -89,5 +89,11 @@ class WPCLIMock {
         return $calls;
 	}
 	
-
+	/**
+	 * Readline mock.
+	 */
+	public function readline( ...$args ) {
+		self::$wpcli_mock_calls['readline'][] = $args;
+		return 'Y';
+	}
 };

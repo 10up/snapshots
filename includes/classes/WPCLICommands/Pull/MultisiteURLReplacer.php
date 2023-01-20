@@ -90,7 +90,7 @@ define('BLOG_ID_CURRENT_SITE', " . ( ( ! empty( $this->meta['blog_id_current_sit
 				[
 					'WP_ALLOW_MULTISITE'   => true,
 					'MULTISITE'            => true,
-					'SUBDOMAIN_INSTALL'    => ( ! empty( $this->meta['subdomain_install'] ) ) ? true : false,
+					'SUBDOMAIN_INSTALL'    => ! empty( $this->meta['subdomain_install'] ) ? true : false,
 					'DOMAIN_CURRENT_SITE'  => $this->main_domain,
 					'PATH_CURRENT_SITE'    => ( ! empty( $this->meta['path_current_site'] ) ) ? $this->meta['path_current_site'] : '/',
 					'SITE_ID_CURRENT_SITE' => ( ! empty( $this->meta['site_id_current_site'] ) ) ? $this->meta['site_id_current_site'] : 1,
@@ -130,7 +130,6 @@ define('BLOG_ID_CURRENT_SITE', " . ( ( ! empty( $this->meta['blog_id_current_sit
 	 * @param  ?string $wp_config_path Path to wp-config.php
 	 */
 	private function write_constants_to_wp_config( array $constants, ?string $wp_config_path = null ) {
-
 		if ( empty( $wp_config_path ) ) {
 			$wp_config_path = trailingslashit( ABSPATH ) . 'wp-config.php';
 		}
@@ -144,11 +143,13 @@ define('BLOG_ID_CURRENT_SITE', " . ( ( ! empty( $this->meta['blog_id_current_sit
 				continue;
 			}
 
+			$line = trim( $line );
+
 			// Don't readd lines that contain constants we are defining
 			if ( preg_match( '#define\(.*?("|\')(.*?)("|\').*?\).*?;#', $line ) ) {
 				$constant_name = preg_replace( '#^.*?define\(.*?("|\')(.*?)("|\').*$#', '$2', $line );
 
-				if ( ! empty( $constants[ $constant_name ] ) ) {
+				if ( array_key_exists( trim( $constant_name ), $constants ) ) {
 					continue;
 				}
 			}
@@ -167,12 +168,14 @@ define('BLOG_ID_CURRENT_SITE', " . ( ( ! empty( $this->meta['blog_id_current_sit
 				$constant_value = "'$constant_value'";
 			}
 
-			array_unshift( $new_wp_config_code, 'define( "' . $constant_name . '", ' . $constant_value . ' ); // Auto added.' );
+			array_unshift( $new_wp_config_code, '}' );
+			array_unshift( $new_wp_config_code, '	define( "' . $constant_name . '", ' . $constant_value . ' ); // Auto added.' );
+			array_unshift( $new_wp_config_code, 'if ( ! defined( "' . $constant_name . '" ) ) {' );
 		}
 
 		array_unshift( $new_wp_config_code, '<?php' );
 
-		$this->snapshots_filesystem->get_wp_filesystem()->put_contents( $wp_config_path, implode( "\n", $new_wp_config_code ) );
+		$this->snapshots_filesystem->get_wp_filesystem()->put_contents( $wp_config_path, implode( PHP_EOL, $new_wp_config_code ) );
 	}
 
 	/**

@@ -22,14 +22,14 @@ abstract class Container {
 	/**
 	 * Associative array of shared service instances.
 	 *
-	 * @var array
+	 * @var array<Service|Module>
 	 */
 	protected $shared_instances = [];
 
 	/**
 	 * Provides names of modules to instantiate.
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	abstract protected function get_modules() : array;
 
@@ -38,14 +38,14 @@ abstract class Container {
 	 *
 	 * Services are classes that are instantiated on demand when modules are instantiated.
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	abstract protected function get_services() : array;
 
 	/**
 	 * Performs setup functions.
 	 */
-	public function register() {
+	public function register() : void {
 		$this->validate_classes();
 
 		$instances = [];
@@ -60,7 +60,9 @@ abstract class Container {
 		}
 
 		foreach ( $instances as $instance ) {
-			$instance->register();
+			if ( method_exists( $instance, 'register' ) ) {
+				$instance->register();
+			}
 		}
 	}
 
@@ -109,13 +111,13 @@ abstract class Container {
 	/**
 	 * Gets an instance for a given parameter.
 	 *
-	 * @param ReflectionParameter $parameter Parameter.
-	 * @param ReflectionClass     $class     Class.
+	 * @param ReflectionParameter             $parameter Parameter.
+	 * @param ReflectionClass<Service|Module> $class     Class.
 	 * @return object|array
 	 *
 	 * @throws WPSnapshotsException If an unknown module or service is encountered.
 	 */
-	private function get_instance_from_parameter( ReflectionParameter $parameter, ReflectionClass $class ) {
+	private function get_instance_from_parameter( ReflectionParameter $parameter, ReflectionClass $class ) : object|array {
 		$type = $parameter->getType();
 
 		// If the parameter is ...$args, get instances from the parent class's constructor.

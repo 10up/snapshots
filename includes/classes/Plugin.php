@@ -26,7 +26,7 @@ final class Plugin extends Container {
 	/**
 	 * Registers the plugin.
 	 */
-	public function register() {
+	public function register() : void {
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			add_filter( 'wpsnapshots_services', [ $this, 'add_wp_cli_services' ], -99 );
 		}
@@ -43,7 +43,7 @@ final class Plugin extends Container {
 	 *
 	 * Modules are classes that are instantiated and registered with the container.
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	protected function get_modules(): array {
 		$components = [
@@ -66,7 +66,7 @@ final class Plugin extends Container {
 	 *
 	 * Services are classes that are instantiated on demand when components are instantiated.
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	protected function get_services(): array {
 		$services = [
@@ -89,8 +89,8 @@ final class Plugin extends Container {
 	/**
 	 * Adds WP-CLI services.
 	 *
-	 * @param array $services Services.
-	 * @return array
+	 * @param string[] $services Services.
+	 * @return string[]
 	 */
 	public function add_wp_cli_services( array $services ): array {
 		$wp_cli_services = [
@@ -108,8 +108,8 @@ final class Plugin extends Container {
 	/**
 	 * Adds file system services.
 	 *
-	 * @param array $services Services.
-	 * @return array
+	 * @param string[] $services Services.
+	 * @return string[]
 	 */
 	public function add_file_system_services( array $services ): array {
 		$file_system_services = [
