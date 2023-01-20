@@ -51,7 +51,7 @@ final class SingleSiteURLReplacer extends URLReplacer {
 
 		$home_url = $new_home_url;
 
-		$this->log( 'Running replacement... This may take awhile depending on the size of the database.' );
+		$this->log( 'Running replacement... This may take a while depending on the size of the database.' );
 
 		$tables_to_update = [];
 

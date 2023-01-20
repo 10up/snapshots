@@ -98,6 +98,8 @@ final class Pull extends WPCLICommand {
 
 			$this->handle_pull_actions( $include_db, $include_files );
 
+			$this->new_home_url = $this->new_home_url ? $this->new_home_url : home_url();
+
 			$this->log( 'Snapshot pulled successfully.', 'success' );
 			$this->log( 'Visit in your browser: ' . $this->new_home_url, 'success' );
 
@@ -297,19 +299,6 @@ final class Pull extends WPCLICommand {
 		if ( empty( $this->meta ) || ( empty( $this->meta['contains_files'] ) && empty( $this->meta['contains_db'] ) ) ) {
 			throw new WPSnapshotsException( 'Snapshot is not valid.' );
 		}
-
-		$this->meta = array_merge(
-			[
-				'contains_db'    => false,
-				'contains_files' => false,
-				'multisite'      => false,
-				'project'        => '',
-				'repository'     => '',
-				'table_prefix'   => '',
-				'wp_version'     => '',
-			],
-			$this->meta
-		);
 	}
 
 	/**
@@ -320,11 +309,7 @@ final class Pull extends WPCLICommand {
 	 */
 	private function handle_pull_actions( bool $include_db, bool $include_files ) {
 		if ( $this->get_should_download() ) {
-			$this->download_snapshot();
-		}
-
-		if ( $this->get_should_update_wp() ) {
-			$this->update_wp();
+			$this->download_snapshot( $include_db, $include_files );
 		}
 
 		if ( $include_files ) {
@@ -333,6 +318,13 @@ final class Pull extends WPCLICommand {
 
 		if ( $include_db ) {
 			$this->rename_tables();
+		}
+
+		if ( $this->get_should_update_wp() ) {
+			$this->update_wp();
+		}
+
+		if ( $include_db ) {
 			$this->pull_db();
 			$this->replace_urls();
 			$this->activate_this_plugin();
@@ -390,10 +382,6 @@ final class Pull extends WPCLICommand {
 	 */
 	private function download_snapshot( bool $include_db = true, bool $include_files = true ) {
 		$command = 'wpsnapshots download ' . $this->get_id() . ' --quiet --repository=' . $this->get_repository_name() . ' --region=' . $this->get_assoc_arg( 'region' );
-
-		if ( ! $include_db && ! $include_files ) {
-			throw new WPSnapshotsException( 'You must include either the database or files in the snapshot.' );
-		}
 
 		if ( $include_db ) {
 			$command .= ' --include_db';
@@ -497,7 +485,12 @@ final class Pull extends WPCLICommand {
 	private function activate_this_plugin() {
 		$command = 'plugin activate snapshots-command --skip-themes --skip-plugins --skip-packages';
 
-		wp_cli()::runcommand( $command, [ 'launch' => false ] );
+		wp_cli()::runcommand(
+			$command,
+			[
+				'launch' => true,
+			]
+		);
 	}
 
 	/**
