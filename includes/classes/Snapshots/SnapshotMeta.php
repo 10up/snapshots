@@ -8,7 +8,6 @@
 namespace TenUp\WPSnapshots\Snapshots;
 
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\Infrastructure\{Service, Shared};
 use TenUp\WPSnapshots\Snapshots\DBConnectorInterface;
 
 /**
@@ -16,7 +15,7 @@ use TenUp\WPSnapshots\Snapshots\DBConnectorInterface;
  *
  * @package TenUp\WPSnapshots\Snapshots
  */
-abstract class SnapshotMeta implements Shared, Service, SnapshotMetaInterface {
+abstract class SnapshotMeta implements SnapshotMetaInterface {
 
 	/**
 	 * Database connector instance.

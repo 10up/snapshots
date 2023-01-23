@@ -7,8 +7,6 @@
 
 namespace TenUp\WPSnapshots\Log;
 
-use TenUp\WPSnapshots\Infrastructure\{Service, Shared};
-
 use function TenUp\WPSnapshots\Utils\wp_cli;
 
 /**
@@ -16,7 +14,7 @@ use function TenUp\WPSnapshots\Utils\wp_cli;
  *
  * @package TenUp\WPSnapshots\Log
  */
-class WPCLILogger implements LoggerInterface, Shared, Service {
+class WPCLILogger implements LoggerInterface {
 
 	/**
 	 * Logs a message.

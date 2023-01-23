@@ -8,13 +8,14 @@
 namespace TenUp\WPSnapshots\Snapshots;
 
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
+use TenUp\WPSnapshots\Infrastructure\SharedService;
 
 /**
  * Interface StorageConnectorInterface
  *
  * @package TenUp\WPSnapshots
  */
-interface StorageConnectorInterface {
+interface StorageConnectorInterface extends SharedService {
 
 	/**
 	 * Download a snapshot given an id. Must specify where to download files/data

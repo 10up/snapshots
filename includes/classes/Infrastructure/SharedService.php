@@ -12,4 +12,4 @@ namespace TenUp\WPSnapshots\Infrastructure;
  *
  * @package TenUp\WPSnapshots
  */
-interface Shared {}
+interface SharedService extends Service {};

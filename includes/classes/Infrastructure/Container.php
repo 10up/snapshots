@@ -74,7 +74,7 @@ abstract class Container {
 	 */
 	public function get_instance( string $class ) {
 		$class_implements = class_implements( $class );
-		$is_shared        = is_array( $class_implements ) && in_array( Shared::class, $class_implements, true );
+		$is_shared        = is_array( $class_implements ) && in_array( SharedService::class, $class_implements, true );
 
 		if ( $is_shared && isset( $this->shared_instances[ $class ] ) ) {
 			return $this->shared_instances[ $class ];

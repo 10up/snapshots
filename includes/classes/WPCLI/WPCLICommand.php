@@ -8,9 +8,9 @@
 namespace TenUp\WPSnapshots\WPCLI;
 
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\Infrastructure\{Module, Conditional, Registerable};
+use TenUp\WPSnapshots\Infrastructure\{Module, Conditional};
 use TenUp\WPSnapshots\Log\{Logging, WPCLILogger};
-use TenUp\WPSnapshots\Snapshots\{AWSAuthentication, AWSAuthenticationFactory, DBConnectorInterface, SnapshotMetaInterface, StorageConnectorInterface};
+use TenUp\WPSnapshots\Snapshots\{DBConnectorInterface, SnapshotMetaInterface, StorageConnectorInterface};
 use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigInterface;
 
 use function TenUp\WPSnapshots\Utils\wp_cli;
@@ -20,7 +20,7 @@ use function TenUp\WPSnapshots\Utils\wp_cli;
  *
  * @package TenUp\WPSnapshots\WPCLI
  */
-abstract class WPCLICommand implements Conditional, Registerable, Module {
+abstract class WPCLICommand implements Conditional, Module {
 
 	use Logging;
 

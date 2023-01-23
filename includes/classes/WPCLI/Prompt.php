@@ -8,7 +8,7 @@
 namespace TenUp\WPSnapshots\WPCLI;
 
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsInputValidationException;
-use TenUp\WPSnapshots\Infrastructure\{Service, Shared};
+use TenUp\WPSnapshots\Infrastructure\SharedService;
 
 use function TenUp\WPSnapshots\Utils\wp_cli;
 
@@ -17,7 +17,7 @@ use function TenUp\WPSnapshots\Utils\wp_cli;
  *
  * @package TenUp\WPSnapshots
  */
-class Prompt implements Shared, Service {
+class Prompt implements SharedService {
 
 	/**
 	 * Gets an argument from associative args or prompts for it if it is not set.
