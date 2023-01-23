@@ -131,7 +131,7 @@ define('BLOG_ID_CURRENT_SITE', " . ( ( ! empty( $this->meta['blog_id_current_sit
 	 */
 	private function write_constants_to_wp_config( array $constants, ?string $wp_config_path = null ) {
 		if ( empty( $wp_config_path ) ) {
-			$wp_config_path = trailingslashit( ABSPATH ) . 'wp-config.php';
+			$wp_config_path = ABSPATH . 'wp-config.php';
 		}
 
 		$wp_config_code     = $this->snapshots_filesystem->get_wp_filesystem()->get_contents_array( $wp_config_path );

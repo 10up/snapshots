@@ -12,7 +12,6 @@ parameters:
 		- %currentWorkingDirectory%/wpsnapshots.php
 	excludePaths:
 	ignoreErrors:
-		- 
 	earlyTerminatingMethodCalls:
 		\WP_CLI:
 			- WP_CLI::error

@@ -35,7 +35,7 @@ class FileSystem implements SharedService {
 
 		if ( ! $this->wp_filesystem ) {
 			if ( ! $wp_filesystem ) {
-				WP_Filesystem( null, null, true );
+				WP_Filesystem( false, false, true );
 			}
 
 			$this->wp_filesystem = $wp_filesystem;

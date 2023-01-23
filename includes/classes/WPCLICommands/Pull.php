@@ -60,10 +60,10 @@ final class Pull extends WPCLICommand {
 	 * Class constructor.
 	 *
 	 * @param URLReplacerFactory $url_replacer URLReplacer instance.
-	 * @param array              ...$args Dependency injection arguments.
+	 * @param array              ...$args      Arguments passed to the command.
 	 */
 	public function __construct( URLReplacerFactory $url_replacer, ...$args ) {
-		parent::__construct( ...$args );
+		parent::__construct( ...$args ); // @phpstan-ignore-line
 
 		$this->url_replacer_factory = $url_replacer;
 	}
