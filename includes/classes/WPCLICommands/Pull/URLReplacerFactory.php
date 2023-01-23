@@ -10,7 +10,7 @@ namespace TenUp\WPSnapshots\WPCLICommands\Pull;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Infrastructure\Factory;
 use TenUp\WPSnapshots\Log\{LoggerInterface, Logging};
-use TenUp\WPSnapshots\SnapshotsFileSystem;
+use TenUp\WPSnapshots\SnapshotsFiles;
 use TenUp\WPSnapshots\WordPress\Database;
 use TenUp\WPSnapshots\WPCLI\Prompt;
 
@@ -31,9 +31,9 @@ class URLReplacerFactory implements Factory {
 	protected $prompt;
 
 	/**
-	 * SnapshotsFileSystem instance.
+	 * SnapshotsFiles instance.
 	 *
-	 * @var SnapshotsFileSystem
+	 * @var SnapshotsFiles
 	 */
 	protected $snapshots_filesystem;
 
@@ -47,12 +47,12 @@ class URLReplacerFactory implements Factory {
 	/**
 	 * Constructor.
 	 *
-	 * @param Prompt              $prompt Prompt instance.
-	 * @param SnapshotsFileSystem $snapshots_filesystem SnapshotsFileSystem instance.
-	 * @param Database            $wordpress_database Database instance.
-	 * @param LoggerInterface     $logger WPCLILogger instance.
+	 * @param Prompt          $prompt Prompt instance.
+	 * @param SnapshotsFiles  $snapshots_filesystem SnapshotsFiles instance.
+	 * @param Database        $wordpress_database Database instance.
+	 * @param LoggerInterface $logger WPCLILogger instance.
 	 */
-	public function __construct( Prompt $prompt, SnapshotsFileSystem $snapshots_filesystem, Database $wordpress_database, LoggerInterface $logger ) {
+	public function __construct( Prompt $prompt, SnapshotsFiles $snapshots_filesystem, Database $wordpress_database, LoggerInterface $logger ) {
 		$this->prompt               = $prompt;
 		$this->snapshots_filesystem = $snapshots_filesystem;
 		$this->wordpress_database   = $wordpress_database;
@@ -81,12 +81,12 @@ class URLReplacerFactory implements Factory {
 		}
 
 		if ( 'single' === $single_or_multi ) {
-			$instance = new SingleSiteURLReplacer( $this->prompt, $this->snapshots_filesystem, $this->wordpress_database, ...$args );
+			$instance = new SingleSiteURLReplacer( $this->prompt, $this->snapshots_filesystem, $this->wordpress_database, $this->get_logger(), ...$args );
 		} else {
-			$instance = new MultisiteURLReplacer( $this->prompt, $this->snapshots_filesystem, $this->wordpress_database, ...$args );
+			require_once ABSPATH . 'wp-includes/ms-site.php';
+			require_once ABSPATH . 'wp-includes/class-wp-site.php';
+			$instance = new MultisiteURLReplacer( $this->prompt, $this->snapshots_filesystem, $this->wordpress_database, $this->get_logger(), ...$args );
 		}
-
-		$instance->set_logger( $this->get_logger() );
 
 		return $instance;
 	}

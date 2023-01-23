@@ -48,7 +48,7 @@ final class MultisiteURLReplacer extends URLReplacer {
 			];
 		}
 
-		$main_blog_id         = defined( 'BLOG_ID_CURRENT_SITE' ) ? BLOG_ID_CURRENT_SITE : null;
+		$main_blog_id         = defined( 'BLOG_ID_CURRENT_SITE' ) ? BLOG_ID_CURRENT_SITE : get_main_site_id();
 		$current_table_prefix = $this->wordpress_database->get_blog_prefix();
 
 		// Make WP realize we are in multisite now
@@ -189,9 +189,9 @@ define('BLOG_ID_CURRENT_SITE', " . ( ( ! empty( $this->meta['blog_id_current_sit
 	private function replace_urls_for_site( array $site, array $site_mapping, array $skip_table_search_replace, string $current_table_prefix ) {
 		$this->log( 'Replacing URLs for blog ' . $site['blog_id'] . '.' );
 
-		if ( ! empty( $site_mapping[ (int) $site['blog_id'] ] ) ) {
+		if ( ! empty( $site_mapping[ (int) $site['blog_id'] ]['home_url'] ) ) {
 			$new_home_url = $site_mapping[ (int) $site['blog_id'] ]['home_url'];
-			$new_site_url = $site_mapping[ (int) $site['blog_id'] ]['site_url'];
+			$new_site_url = $site_mapping[ (int) $site['blog_id'] ]['site_url'] ?? $new_home_url;
 		} else {
 			$new_home_url = null;
 			while ( ! $new_home_url ) {
@@ -247,10 +247,10 @@ define('BLOG_ID_CURRENT_SITE', " . ( ( ! empty( $this->meta['blog_id_current_sit
 		$tables_to_update = $this->get_tables_to_update( $site, $current_table_prefix, $skip_table_search_replace );
 
 		if ( ! empty( $tables_to_update ) ) {
-			$this->run_search_and_replace( $site['home_url'], $new_home_url, $tables_to_update, $skip_table_search_replace );
+			$this->run_search_and_replace( $site['home_url'], $new_home_url, $tables_to_update, true );
 
 			if ( $site['home_url'] !== $site['site_url'] ) {
-				$this->run_search_and_replace( $site['site_url'], $new_site_url, $tables_to_update, $skip_table_search_replace );
+				$this->run_search_and_replace( $site['site_url'], $new_site_url, $tables_to_update, true );
 			}
 		}
 	}

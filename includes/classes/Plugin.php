@@ -70,6 +70,7 @@ final class Plugin extends Container {
 	 */
 	protected function get_services(): array {
 		$services = [
+			'file_system'                             => null,
 			'snapshots_filesystem'                    => null,
 			'snapshots/db_connector'                  => DynamoDBConnector::class,
 			'snapshots/snapshot_meta'                 => null,
@@ -113,7 +114,8 @@ final class Plugin extends Container {
 	 */
 	public function add_file_system_services( array $services ): array {
 		$file_system_services = [
-			'snapshots_filesystem'                    => SnapshotsFileSystem::class,
+			'file_system'                             => FileSystem::class,
+			'snapshots_filesystem'                    => SnapshotsFiles::class,
 			'snapshots/snapshot_meta'                 => SnapshotMetaFromFileSystem::class,
 			'wp_snapshots_config/wp_snapshots_config' => WPSnapshotsConfigFromFileSystem::class,
 		];

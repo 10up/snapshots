@@ -12,7 +12,7 @@ use TenUp\WPSnapshots\Plugin;
 use TenUp\WPSnapshots\Snapshots\DynamoDBConnector;
 use TenUp\WPSnapshots\Snapshots\SnapshotMeta;
 use TenUp\WPSnapshots\Snapshots\SnapshotMetaFromFileSystem;
-use TenUp\WPSnapshots\SnapshotsFileSystem;
+use TenUp\WPSnapshots\SnapshotsFiles;
 use TenUp\WPSnapshots\Tests\Fixtures\DirectoryFiltering;
 use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
@@ -63,7 +63,7 @@ class TestSnapshotMetaFromFileSystem extends TestCase {
 		$this->assertInstanceOf( SnapshotMeta::class, $this->meta );
 
 		$this->assertInstanceOf( DynamoDBConnector::class, $this->get_private_property( $this->meta, 'db' ) );
-		$this->assertInstanceOf( SnapshotsFileSystem::class, $this->get_private_property( $this->meta, 'snapshots_file_system' ) );
+		$this->assertInstanceOf( SnapshotsFiles::class, $this->get_private_property( $this->meta, 'snapshots_file_system' ) );
 	}
 
 	/**

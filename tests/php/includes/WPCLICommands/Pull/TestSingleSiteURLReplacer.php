@@ -8,8 +8,9 @@
 namespace TenUp\WPSnapshots\Tests\WPCLICommands\Pull;
 
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsInputValidationException;
+use TenUp\WPSnapshots\Log\WPCLILogger;
 use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\SnapshotsFileSystem;
+use TenUp\WPSnapshots\SnapshotsFiles;
 use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
 use TenUp\WPSnapshots\Tests\Fixtures\WPCLIMocking;
 use TenUp\WPSnapshots\WordPress\Database;
@@ -47,8 +48,9 @@ class TestSingleSiteURLReplacer extends TestCase {
 		$plugin = new Plugin();
 		$this->url_replacer = new SingleSiteURLReplacer(
 			$plugin->get_instance( Prompt::class ),
-			$plugin->get_instance( SnapshotsFileSystem::class ),
+			$plugin->get_instance( SnapshotsFiles::class ),
 			$plugin->get_instance( Database ::class ),
+			$plugin->get_instance( WPCLILogger::class ),
 			[
 				'sites' => [
 					[
@@ -63,6 +65,12 @@ class TestSingleSiteURLReplacer extends TestCase {
 			false,
 			null
 		);
+
+		// Drop wp_blogs if it exists.
+		global $wpdb;
+		if ( $wpdb->get_var( "SHOW TABLES LIKE 'wp_blogs'" ) === 'wp_blogs' ) {
+			$wpdb->query( "DROP TABLE wp_blogs" );
+		}
 	}
 
 	/**
@@ -89,8 +97,12 @@ class TestSingleSiteURLReplacer extends TestCase {
 			1,
 			[
 				[
-					'search-replace http://search.com http://replace.com table1 table2 --quiet --skip-columns=guid --precise --skip-themes --skip-plugins --skip-packages --report=false',
-					[ 'launch' => false ]
+					'search-replace http://search.com http://replace.com table1 table2 --skip-columns=guid --precise --skip-themes --skip-plugins --skip-packages',
+					[
+						'launch' => true,
+						'exit_error' => false,
+						'return' => 'all',
+					],
 				],
 			]
 		);
@@ -119,12 +131,20 @@ class TestSingleSiteURLReplacer extends TestCase {
 			2,
 			[
 				[
-					'search-replace http://home-url.com Y wp_commentmeta wp_comments wp_links wp_options wp_postmeta wp_posts wp_termmeta wp_usermeta wp_users --quiet --skip-columns=guid --precise --skip-themes --skip-plugins --skip-packages --report=false',
-					[ 'launch' => false ]
+					'search-replace http://home-url.com readline2 wp_commentmeta wp_comments wp_links wp_options wp_postmeta wp_posts wp_termmeta wp_usermeta wp_users --skip-columns=guid --precise --skip-themes --skip-plugins --skip-packages',
+					[
+						'launch' => true,
+						'exit_error' => false,
+						'return' => 'all',
+					],
 				],
 				[
-					'search-replace http://site-url.com Y wp_commentmeta wp_comments wp_links wp_options wp_postmeta wp_posts wp_termmeta wp_usermeta wp_users --quiet --skip-columns=guid --precise --skip-themes --skip-plugins --skip-packages --report=false',
-					[ 'launch' => false ]
+					'search-replace http://site-url.com readline3 wp_commentmeta wp_comments wp_links wp_options wp_postmeta wp_posts wp_termmeta wp_usermeta wp_users --skip-columns=guid --precise --skip-themes --skip-plugins --skip-packages',
+					[
+						'launch' => true,
+						'exit_error' => false,
+						'return' => 'all',
+					],
 				],
 			]
 		);

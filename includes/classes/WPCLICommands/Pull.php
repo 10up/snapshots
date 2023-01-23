@@ -347,7 +347,9 @@ final class Pull extends WPCLICommand {
 				$pull_actions[] = [ $this, 'activate_this_plugin' ];
 			}
 
-			$pull_actions[] = [ $this, 'create_wpsnapshots_user' ];
+			$pull_actions[] = function() {
+				$this->create_wpsnapshots_user( $this->get_meta()['multisite'] );
+			};
 		}
 
 		return $pull_actions;
@@ -425,7 +427,7 @@ final class Pull extends WPCLICommand {
 		$this->log( 'Importing database...' );
 
 		// Unzip data.sql.gz
-		$this->snapshots_filesystem->unzip_file( $this->snapshots_filesystem->get_file_path( 'data.sql.gz', $this->get_id() ), $this->snapshots_filesystem->get_file_path( '', $this->get_id() ) );
+		$this->filesystem->unzip_file( $this->snapshots_filesystem->get_file_path( 'data.sql.gz', $this->get_id() ), $this->snapshots_filesystem->get_file_path( '', $this->get_id() ) );
 
 		$command = 'db import ' . $this->snapshots_filesystem->get_file_path( 'data.sql', $this->get_id() ) . ' --quiet --skip-themes --skip-plugins --skip-packages';
 
@@ -538,8 +540,10 @@ final class Pull extends WPCLICommand {
 
 	/**
 	 * Creates the wpsnapshots user.
+	 *
+	 * @param bool $multisite Whether this is a multisite install.
 	 */
-	private function create_wpsnapshots_user() {
+	private function create_wpsnapshots_user( bool $multisite ) : void {
 		$this->log( 'Creating wpsnapshots user...' );
 
 		$user = get_user_by( 'login', 'wpsnapshots' );
@@ -556,7 +560,18 @@ final class Pull extends WPCLICommand {
 			$user_args['user_pass'] = wp_hash_password( 'password' );
 		}
 
-		wp_insert_user( $user_args );
+		$user_id = wp_insert_user( $user_args );
+
+		if ( is_wp_error( $user_id ) ) {
+			$this->log( 'There was an error creating the wpsnapshots user.', 'error' );
+			$this->log( $user_id->get_error_message(), 'error' );
+		} else {
+			if ( $multisite && function_exists( 'grant_super_admin' ) ) {
+				grant_super_admin( $user_id );
+			}
+
+			$this->log( 'wpsnapshots user created.', 'success' );
+		}
 	}
 
 	/**

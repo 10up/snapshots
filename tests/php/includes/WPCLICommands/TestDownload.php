@@ -110,6 +110,12 @@ class TestDownload extends TestCase {
 		);
 		$this->set_private_property( $this->command, 'snapshot_meta', $mock_snapshot_meta );
 
+		add_filter( 'wpsnapshots_readline', function() {
+			return function() {
+				return 'Y';
+			};
+		} );
+
 		$this->assertEquals(
 			[
 				'project' => 'test-project',
@@ -201,6 +207,12 @@ class TestDownload extends TestCase {
 			'test-repo',
 			'test-region'
 		);
+
+		add_filter( 'wpsnapshots_readline', function() {
+			return function() {
+				return 'Y';
+			};
+		} );
 
 		$this->command->execute( [ 'test-id' ], [ 'region' => 'test-region', 'repository' => 'test-repo' ] );
 

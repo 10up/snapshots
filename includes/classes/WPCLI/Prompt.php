@@ -111,9 +111,16 @@ class Prompt implements SharedService {
 
 		$answer = null;
 
-		while ( ! in_array( $answer, [ 'y', 'n', 'Y', 'N', '' ], true ) ) {
+		/**
+		 * Filters acceptable get_flag_or_prompt_answers.
+		 *
+		 * @param array $answers Acceptable answers.
+		 */
+		$acceptable_answers = apply_filters( 'wpsnapshots_get_flag_or_prompt_answers', [ 'y', 'n', 'Y', 'N', '' ] );
+
+		do {
 			$answer = $this->readline( $prompt . ' ' . ( true === $default ? '[Y/n]:' : '[y/N]:' ) . ' ' );
-		}
+		} while ( is_array( $acceptable_answers ) && ! in_array( $answer, [ 'y', 'n', 'Y', 'N', '' ], true ) );
 
 		if ( '' === $answer ) {
 			return $default;

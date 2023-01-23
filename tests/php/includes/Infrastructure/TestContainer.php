@@ -7,10 +7,11 @@
 
 namespace TenUp\WPSnapshots\Tests\Infrastructure;
 
+use TenUp\WPSnapshots\FileSystem;
 use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
 use TenUp\WPSnapshots\Infrastructure\Container;
 use TenUp\WPSnapshots\Log\WPCLILogger;
-use TenUp\WPSnapshots\SnapshotsFileSystem;
+use TenUp\WPSnapshots\SnapshotsFiles;
 use TenUp\WPSnapshots\Plugin;
 use TenUp\WPSnapshots\Snapshots\DynamoDBConnector;
 use TenUp\WPSnapshots\Snapshots\S3StorageConnector;
@@ -77,7 +78,8 @@ class TestContainer extends TestCase {
 			[
                 WPCLILogger::class,
 				Prompt::class,
-                SnapshotsFileSystem::class,
+				FileSystem::class,
+                SnapshotsFiles::class,
                 WPSnapshotsConfigFromFileSystem::class,
 				S3StorageConnector::class,
 				DynamoDBConnector::class,

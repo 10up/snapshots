@@ -19,7 +19,7 @@ trait Logging {
 	 *
 	 * @var ?LoggerInterface
 	 */
-	private $logger;
+	protected $logger;
 
 	/**
 	 * Sets the logger instance.
@@ -33,9 +33,9 @@ trait Logging {
 	/**
 	 * Gets the logger instance.
 	 *
-	 * @return LoggerInterface
+	 * @return ?LoggerInterface
 	 */
-	public function get_logger(): LoggerInterface {
+	public function get_logger(): ?LoggerInterface {
 		return $this->logger;
 	}
 

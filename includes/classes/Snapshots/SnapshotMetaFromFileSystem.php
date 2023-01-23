@@ -9,7 +9,7 @@ namespace TenUp\WPSnapshots\Snapshots;
 
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Snapshots\DBConnectorInterface;
-use TenUp\WPSnapshots\SnapshotsFileSystem;
+use TenUp\WPSnapshots\SnapshotsFiles;
 
 /**
  * Snapshot meta wrapper with support for downloading remote meta
@@ -19,9 +19,9 @@ use TenUp\WPSnapshots\SnapshotsFileSystem;
 class SnapshotMetaFromFileSystem extends SnapshotMeta {
 
 	/**
-	 * SnapshotsFileSystem instance.
+	 * SnapshotsFiles instance.
 	 *
-	 * @var SnapshotsFileSystem
+	 * @var SnapshotsFiles
 	 */
 	private $snapshots_file_system;
 
@@ -29,9 +29,9 @@ class SnapshotMetaFromFileSystem extends SnapshotMeta {
 	 * Meta constructor
 	 *
 	 * @param DBConnectorInterface $db Database connector instance.
-	 * @param SnapshotsFileSystem  $snapshots_file_system SnapshotsFileSystem instance.
+	 * @param SnapshotsFiles  $snapshots_file_system SnapshotsFiles instance.
 	 */
-	public function __construct( DBConnectorInterface $db, SnapshotsFileSystem $snapshots_file_system ) {
+	public function __construct( DBConnectorInterface $db, SnapshotsFiles $snapshots_file_system ) {
 		parent::__construct( $db );
 
 		$this->snapshots_file_system = $snapshots_file_system;

@@ -8,8 +8,9 @@
 namespace TenUp\WPSnapshots\WPCLICommands\Pull;
 
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsInputValidationException;
+use TenUp\WPSnapshots\Log\LoggerInterface;
 use TenUp\WPSnapshots\Log\Logging;
-use TenUp\WPSnapshots\SnapshotsFileSystem;
+use TenUp\WPSnapshots\SnapshotsFiles;
 use TenUp\WPSnapshots\WordPress\Database;
 use TenUp\WPSnapshots\WPCLI\Prompt;
 
@@ -39,9 +40,9 @@ abstract class URLReplacer {
 	protected $prompt;
 
 	/**
-	 * SnapshotsFileSystem instance.
+	 * SnapshotsFiles instance.
 	 *
-	 * @var SnapshotsFileSystem
+	 * @var SnapshotsFiles
 	 */
 	protected $snapshots_filesystem;
 
@@ -90,19 +91,21 @@ abstract class URLReplacer {
 	/**
 	 * Constructor.
 	 *
-	 * @param Prompt              $prompt Prompt instance.
-	 * @param SnapshotsFileSystem $snapshots_filesystem SnapshotsFileSystem instance.
-	 * @param Database            $wordpress_database Database instance.
-	 * @param array               $meta The snapshot meta.
-	 * @param array               $site_mapping The site mapping.
-	 * @param array               $skip_table_search_replace The tables to skip.
-	 * @param bool                $update_multisite_constants Whether to update multisite constants.
-	 * @param ?string             $main_domain The main domain.
+	 * @param Prompt          $prompt Prompt instance.
+	 * @param SnapshotsFiles  $snapshots_filesystem SnapshotsFiles instance.
+	 * @param Database        $wordpress_database Database instance.
+	 * @param LoggerInterface $logger WPCLILogger instance.
+	 * @param array           $meta The snapshot meta.
+	 * @param array           $site_mapping The site mapping.
+	 * @param array           $skip_table_search_replace The tables to skip.
+	 * @param bool            $update_multisite_constants Whether to update multisite constants.
+	 * @param ?string         $main_domain The main domain.
 	 */
 	public function __construct(
 		Prompt $prompt,
-		SnapshotsFileSystem $snapshots_filesystem,
+		SnapshotsFiles $snapshots_filesystem,
 		Database $wordpress_database,
+		LoggerInterface $logger,
 		array $meta,
 		array $site_mapping,
 		array $skip_table_search_replace = [],
@@ -117,6 +120,7 @@ abstract class URLReplacer {
 		$this->skip_table_search_replace  = $skip_table_search_replace;
 		$this->update_multisite_constants = $update_multisite_constants;
 		$this->main_domain                = $main_domain;
+		$this->set_logger( $logger );
 	}
 
 	/**
@@ -132,12 +136,24 @@ abstract class URLReplacer {
 	 * @param string $search The search string.
 	 * @param string $replace The replace string.
 	 * @param array  $tables_to_update The tables to update.
+	 * @param bool   $multisite Whether to run multisite search and replace.
 	 */
-	protected function run_search_and_replace( string $search, string $replace, array $tables_to_update ) {
-		$command = 'search-replace ' . $search . ' ' . $replace . ' ' . implode( ' ', $tables_to_update ) . ' --quiet --skip-columns=guid --precise --skip-themes --skip-plugins --skip-packages --report=false';
+	protected function run_search_and_replace( string $search, string $replace, array $tables_to_update, bool $multisite = false ) : void {
+		$command = 'search-replace ' . $search . ' ' . $replace . ' ' . implode( ' ', $tables_to_update ) . ' --skip-columns=guid --precise --skip-themes --skip-plugins --skip-packages';
+
+		if ( $multisite ) {
+			$command .= ' --network';
+		}
 
 		// Run search and replace.
-		wp_cli()::runcommand( $command, [ 'launch' => false ] );
+		wp_cli()::runcommand(
+			$command,
+			[
+				'launch'     => true,
+				'exit_error' => false,
+				'return'     => 'all',
+			]
+		);
 	}
 
 	/**

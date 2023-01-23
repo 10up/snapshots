@@ -212,6 +212,12 @@ class TestPrompt extends TestCase {
 	public function test_returns_flag_if_already_present() {
 		$args = [ 'test' => true ];
 
+		add_filter( 'wpsnapshots_readline', function() {
+			return function() {
+				return 'Y';
+			};
+		} );
+
 		$this->assertEquals( true, $this->prompt->get_flag_or_prompt( $args, 'nonexistent_key', 'Prompt?', true ) );
 	}
 }
