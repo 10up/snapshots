@@ -9,7 +9,6 @@ namespace TenUp\WPSnapshots\Snapshots;
 
 use TenUp\WPSnapshots\Log\{LoggerInterface, Logging};
 use TenUp\WPSnapshots\SnapshotFiles;
-use TenUp\WPSnapshots\System;
 use TenUp\WPSnapshots\WordPress\Database;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use ZipArchive;

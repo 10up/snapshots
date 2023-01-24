@@ -194,6 +194,10 @@ abstract class Container {
 
 		// Validate services.
 		foreach ( $this->get_services() as $key => $service ) {
+			if ( is_null( $service ) ) {
+				continue;
+			}
+
 			if ( ! class_exists( $service ) ) {
 				throw new WPSnapshotsException( sprintf( 'Unknown service: %s with key %s', (string) $service, $key ) );
 			}

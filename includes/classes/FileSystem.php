@@ -93,10 +93,7 @@ class FileSystem implements SharedService {
 				$destination_file = trailingslashit( $destination ) . $file['name'];
 
 				if ( WPSNAPSHOTS_DIR === $destination_file ) {
-					continue;
-				}
-
-				if ( file_exists( $destination_file) ) {
+					var_dump( 'skipping' . $destination_file );
 					continue;
 				}
 
