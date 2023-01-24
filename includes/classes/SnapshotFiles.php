@@ -252,13 +252,16 @@ class SnapshotFiles implements SharedService {
 		$unzip_result = unzip_file( $zip_file, '/tmp/files' );
 
 		if ( is_wp_error( $unzip_result ) ) {
-			try {
-				$phar = new PharData( $zip_file );
-				$phar->decompress();
-				$phar->extractTo( '/tmp/files' );
-			} catch ( Exception $e ) {
-				exec( 'tar -xzf ' . $zip_file . ' -C /tmp/files' ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.system_calls_exec -- This is the last resort.
-			}
+			// Delete /tmp/files and re-create it.
+			$this->get_wp_filesystem()->rmdir( '/tmp/files', true );
+			$this->get_wp_filesystem()->mkdir( '/tmp/files' );
+
+			$phar = new PharData( $zip_file );
+			$phar->decompress();
+			$phar->extractTo( '/tmp/files' );
+
+			// Delete the uncompressed file.
+			$this->get_wp_filesystem()->delete( $zip_file );
 		}
 
 		$errors = $this->file_system->sync_files( '/tmp/files', $destination, true );
