@@ -11,11 +11,16 @@ use TenUp\WPSnapshots\FileSystem;
 use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
 use TenUp\WPSnapshots\Infrastructure\Container;
 use TenUp\WPSnapshots\Log\WPCLILogger;
-use TenUp\WPSnapshots\SnapshotsFiles;
+use TenUp\WPSnapshots\SnapshotFiles;
 use TenUp\WPSnapshots\Plugin;
 use TenUp\WPSnapshots\Snapshots\DynamoDBConnector;
+use TenUp\WPSnapshots\Snapshots\FileZipper;
 use TenUp\WPSnapshots\Snapshots\S3StorageConnector;
+use TenUp\WPSnapshots\Snapshots\ScrubberFactory;
+use TenUp\WPSnapshots\Snapshots\SnapshotCreator;
 use TenUp\WPSnapshots\Snapshots\SnapshotMetaFromFileSystem;
+use TenUp\WPSnapshots\Snapshots\Trimmer;
+use TenUp\WPSnapshots\Snapshots\WPCLIDumper;
 use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
 use TenUp\WPSnapshots\Tests\Fixtures\WPCLIMocking;
 use TenUp\WPSnapshots\WordPress\Database;
@@ -74,20 +79,30 @@ class TestContainer extends TestCase {
 	public function test_register() {
 		$this->container->register();
 
-		$this->assertEquals(
-			[
-                WPCLILogger::class,
-				Prompt::class,
-				FileSystem::class,
-                SnapshotsFiles::class,
-                WPSnapshotsConfigFromFileSystem::class,
-				S3StorageConnector::class,
-				DynamoDBConnector::class,
-				SnapshotMetaFromFileSystem::class,
-				Database::class,
-				URLReplacerFactory::class,
-			],
-			array_keys( $this->get_private_property( $this->container, 'shared_instances' ) )
-		);
+		$expected = [
+			Database::class,
+			DynamoDBConnector::class,
+			FileSystem::class,
+			FileZipper::class,
+			Prompt::class,
+			S3StorageConnector::class,
+			ScrubberFactory::class,
+			SnapshotCreator::class,
+			SnapshotFiles::class,
+			SnapshotMetaFromFileSystem::class,
+			Trimmer::class,
+			URLReplacerFactory::class,
+			WPCLIDumper::class,
+			WPCLILogger::class,
+			WPSnapshotsConfigFromFileSystem::class,
+		];
+
+		sort( $expected );
+
+		$actual = array_keys( $this->get_private_property( $this->container, 'shared_instances' ) );
+
+		sort( $actual );
+
+		$this->assertEquals( $expected, $actual );
 	}
 }

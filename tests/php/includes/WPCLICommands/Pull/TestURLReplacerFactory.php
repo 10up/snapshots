@@ -10,7 +10,7 @@ namespace TenUp\WPSnapshots\Tests\WPCLICommands\Pull;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsInputValidationException;
 use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\SnapshotsFiles;
+use TenUp\WPSnapshots\SnapshotFiles;
 use TenUp\WPSnapshots\WordPress\Database;
 use TenUp\WPSnapshots\WPCLI\Prompt;
 use TenUp\WPSnapshots\WPCLICommands\Pull\MultisiteURLReplacer;

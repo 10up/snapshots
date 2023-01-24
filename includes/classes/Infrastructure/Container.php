@@ -193,9 +193,9 @@ abstract class Container {
 		}
 
 		// Validate services.
-		foreach ( $this->get_services() as $service ) {
+		foreach ( $this->get_services() as $key => $service ) {
 			if ( ! class_exists( $service ) ) {
-				throw new WPSnapshotsException( sprintf( 'Unknown service: %s', $service ) );
+				throw new WPSnapshotsException( sprintf( 'Unknown service: %s with key %s', (string) $service, $key ) );
 			}
 
 			$service_implements = class_implements( $service );

@@ -1,6 +1,6 @@
 <?php
 /**
- * Tests for the SnapshotsFiles class.
+ * Tests for the SnapshotFiles class.
  * 
  * @package TenUp\WPSnapshots
  */
@@ -9,7 +9,7 @@ namespace TenUp\WPSnapshots\Tests;
 
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\SnapshotsFiles;
+use TenUp\WPSnapshots\SnapshotFiles;
 use TenUp\WPSnapshots\Tests\Fixtures\DirectoryFiltering;
 use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
@@ -20,16 +20,16 @@ use ZipArchive;
  *
  * @package TenUp\WPSnapshots\Tests
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\SnapshotsFiles
+ * @coversDefaultClass \TenUp\WPSnapshots\SnapshotFiles
  */
 class TestSnapshotsFileSystem extends TestCase {
 	
     use PrivateAccess, DirectoryFiltering;
 
 	/**
-	 * SnapshotsFiles instance.
+	 * SnapshotFiles instance.
 	 * 
-	 * @var SnapshotsFiles
+	 * @var SnapshotFiles
 	 */
 	private $snapshots_fs;
 
@@ -39,7 +39,7 @@ class TestSnapshotsFileSystem extends TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->snapshots_fs = ( new Plugin() )->get_instance( SnapshotsFiles::class );
+		$this->snapshots_fs = ( new Plugin() )->get_instance( SnapshotFiles::class );
 
 		$this->set_up_directory_filtering();
 	}
@@ -54,7 +54,7 @@ class TestSnapshotsFileSystem extends TestCase {
 	}
 
 	public function test_constructor() {
-		$this->assertInstanceOf( SnapshotsFiles::class, $this->snapshots_fs );
+		$this->assertInstanceOf( SnapshotFiles::class, $this->snapshots_fs );
 	}
 
 	/** @covers ::get_directory */

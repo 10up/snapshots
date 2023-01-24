@@ -1,6 +1,6 @@
 <?php
 /**
- * SnapshotsFiles class.
+ * SnapshotFiles class.
  *
  * @package TenUp\WPSnapshots
  */
@@ -14,11 +14,11 @@ use TenUp\WPSnapshots\Infrastructure\SharedService;
 use WP_Filesystem_Base;
 
 /**
- * SnapshotsFiles class.
+ * SnapshotFiles class.
  *
  * @package TenUp\WPSnapshots
  */
-class SnapshotsFiles implements SharedService {
+class SnapshotFiles implements SharedService {
 
 	/**
 	 * The FileSystem instance.
@@ -254,6 +254,7 @@ class SnapshotsFiles implements SharedService {
 		if ( is_wp_error( $unzip_result ) ) {
 			try {
 				$phar = new PharData( $zip_file );
+				$phar->decompress();
 				$phar->extractTo( '/tmp/files' );
 			} catch ( Exception $e ) {
 				exec( 'tar -xzf ' . $zip_file . ' -C /tmp/files' ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.system_calls_exec -- This is the last resort.

@@ -1,6 +1,6 @@
 <?php
 /**
- * SnapshotsFiles class.
+ * SnapshotFiles class.
  *
  * @package TenUp\WPSnapshots
  */
@@ -12,7 +12,7 @@ use TenUp\WPSnapshots\Infrastructure\SharedService;
 use WP_Filesystem_Base;
 
 /**
- * SnapshotsFiles class.
+ * SnapshotFiles class.
  *
  * @package TenUp\WPSnapshots
  */

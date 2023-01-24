@@ -23,6 +23,10 @@ if ( ! function_exists( 'tests_add_filter' ) ) {
 	throw new Exception( 'Unable to load the WP test suite.' );
 }
 
+if ( ! defined( 'WP_CLI' ) ) {
+	define( 'WP_CLI', true );
+}
+
 /**
  * Manually load the plugin being tested.
  */
