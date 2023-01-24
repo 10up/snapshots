@@ -27,7 +27,7 @@ final class Plugin extends Container {
 	 * Registers the plugin.
 	 */
 	public function register() : void {
-		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+		if ( defined( 'WP_CLI' ) ) {
 			add_filter( 'wpsnapshots_services', [ $this, 'add_wp_cli_services' ], -99 );
 		}
 

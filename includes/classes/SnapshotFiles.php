@@ -13,6 +13,8 @@ use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Infrastructure\SharedService;
 use WP_Filesystem_Base;
 
+use function TenUp\WPSnapshots\Utils\wpsnapshots_wp_content_dir;
+
 /**
  * SnapshotFiles class.
  *
@@ -237,7 +239,7 @@ class SnapshotFiles implements SharedService {
 	 */
 	public function unzip_snapshot_files( string $id, string $destination ) : array {
 		// Recursively delete everything in the wp-content directory except plugins/snapshots-command.
-		$this->file_system->delete_directory_contents( $destination, false, [ 'snapshots-command' ] );
+		$this->file_system->delete_directory_contents( $destination, true, [ WPSNAPSHOTS_DIR ] );
 
 		$zip_file = $this->get_file_path( 'files.tar.gz', $id );
 

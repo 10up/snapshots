@@ -103,7 +103,7 @@ abstract class WPCLICommand implements Conditional, Module {
 	 * @return bool
 	 */
 	public static function is_needed() : bool {
-		return defined( 'WP_CLI' ) && WP_CLI;
+		return defined( 'WP_CLI' );
 	}
 
 	/**

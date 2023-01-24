@@ -66,9 +66,7 @@ class FileZipper implements SharedService {
 			throw new WPSnapshotsException( 'PharData class not found.' );
 		}
 
-		$iterator = $this->get_build_from_iterator_iterator( $args, $id );
-
-		return;
+		$iterator = $this->get_build_from_iterator_iterator( $args );
 
 		$phar_file = $this->snapshot_files->get_file_path( 'files.tar', $id );
 		$phar      = new PharData( $phar_file );
@@ -104,8 +102,6 @@ class FileZipper implements SharedService {
 
 		$initial_files = $this->file_system->get_wp_filesystem()->dirlist( wpsnapshots_wp_content_dir() );
 		$file_list     = $this->build_file_list_recursively( $initial_files, wpsnapshots_wp_content_dir(), $excludes );
-
-		var_dump( $file_list );
 
 		return new ArrayIterator( $file_list );
 	}

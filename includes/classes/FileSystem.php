@@ -92,15 +92,13 @@ class FileSystem implements SharedService {
 				$source_file      = trailingslashit( $source ) . $file['name'];
 				$destination_file = trailingslashit( $destination ) . $file['name'];
 
-				var_dump( $destination_file );
-
-				if (WPSNAPSHOTS_DIR === $destination_file ) {
-
-					var_dump( '!!!skipping' . $destination_file );
+				if ( WPSNAPSHOTS_DIR === $destination_file ) {
 					continue;
 				}
 
-				continue;
+				if ( file_exists( $destination_file) ) {
+					continue;
+				}
 
 				if ( 'f' === $file['type'] ) {
 					if ( ! $this->get_wp_filesystem()->is_readable( $source_file ) ) {
@@ -114,8 +112,6 @@ class FileSystem implements SharedService {
 						throw new WPSnapshotsException( 'Unable to copy file: ' . $source_file . ' to ' . $destination_file );
 					}
 				} elseif ( 'd' === $file['type'] ) {
-
-
 
 					// Create the directory.
 					$this->get_wp_filesystem()->mkdir( $destination_file );
@@ -157,25 +153,27 @@ class FileSystem implements SharedService {
 
 		foreach ( $files as $file ) {
 			if ( in_array( $file['name'], $excluded_files, true ) || in_array( trailingslashit( $directory ) . $file['name'], $excluded_files, true ) ) {
-				var_dump( 'skipping file: ' . $directory . '/' . $file['name'] );
 				continue;
 			}
 
 			if ( $this->get_wp_filesystem()->is_dir( $directory . '/' . $file['name'] ) ) {
 				$this->delete_directory_contents( $directory . '/' . $file['name'], $delete_root, $excluded_files );
 			} else {
-				var_dump( 'deleting file: ' . $directory . '/' . $file['name'] );
 				$this->get_wp_filesystem()->delete( $directory . '/' . $file['name'] );
 			}
 		}
 
 		if ( $delete_root ) {
 			if ( ! empty( $excluded_files ) ) {
-				throw new WPSnapshotsException( 'Cannot delete root directory because files were excluded from deletion: ' . $directory );
+				// Don't delete the root directory if it contains any of the excluded files.
+				foreach ( $excluded_files as $excluded_file ) {
+					if ( $directory === $excluded_file || 0 === strpos( $excluded_file, $directory ) ) {
+						return true;
+					}
+				}
 			}
 
-			var_dump( 'deleting root directory: ' . $directory );
-		//	$this->get_wp_filesystem()->rmdir( $directory );
+			$this->get_wp_filesystem()->rmdir( $directory );
 		}
 
 		return true;
