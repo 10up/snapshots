@@ -9,6 +9,7 @@ namespace TenUp\WPSnapshots\Snapshots;
 
 use TenUp\WPSnapshots\Infrastructure\SharedService;
 use TenUp\WPSnapshots\Log\{LoggerInterface, Logging};
+use TenUp\WPSnapshots\WordPress\Database;
 use WP_Site;
 
 /**
@@ -21,11 +22,20 @@ class Trimmer implements SharedService {
 	use Logging;
 
 	/**
+	 * Database instance.
+	 *
+	 * @var Database
+	 */
+	private $wordpress_database;
+
+	/**
 	 * Class constructor.
 	 *
+	 * @param Database        $wordpress_database Database instance.
 	 * @param LoggerInterface $logger LoggerInterface instance.
 	 */
-	public function __construct( LoggerInterface $logger ) {
+	public function __construct( Database $wordpress_database, LoggerInterface $logger ) {
+		$this->wordpress_database = $wordpress_database;
 		$this->set_logger( $logger );
 	}
 
@@ -44,6 +54,8 @@ class Trimmer implements SharedService {
 	private function trim_database( ?array $sites = null ) {
 		global $wpdb;
 
+		$original_prefix = $wpdb->prefix;
+
 		if ( is_array( $sites ) ) {
 			if ( empty( $sites ) ) {
 				return;
@@ -55,7 +67,7 @@ class Trimmer implements SharedService {
 
 			switch_to_blog( (int) $site->blog_id );
 
-			$wpdb->prefix = $wpdb->get_blog_prefix( $site->blog_id );
+			$wpdb->prefix = $this->wordpress_database->get_blog_prefix( (int) $site->blog_id );
 		} else {
 			$this->log( 'Trimming snapshot data and files...' );
 		}
@@ -67,6 +79,7 @@ class Trimmer implements SharedService {
 
 		if ( is_array( $sites ) ) {
 			restore_current_blog();
+			$wpdb->prefix = $original_prefix;
 			$this->trim_database( $sites );
 		}
 	}
@@ -156,7 +169,7 @@ class Trimmer implements SharedService {
 
 		$this->log( 'Trimming comments...' );
 
-		$comments = $wpdb->get_results( "SELECT comment_ID FROM {$wpdb->prefix}comments ORDER BY comment_ID DESC LIMIT 500", defined( ARRAY_A ) ? ARRAY_A : 'ARRAY_A' );
+		$comments = $wpdb->get_results( "SELECT comment_ID FROM {$wpdb->prefix}comments ORDER BY comment_ID DESC LIMIT 500", 'ARRAY_A' );
 
 		// Delete comments
 		if ( ! empty( $comments ) ) {
@@ -200,7 +213,7 @@ class Trimmer implements SharedService {
 			)
 		);
 
-		$term_relationships = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}term_relationships ORDER BY term_taxonomy_id DESC", defined( ARRAY_A ) ? ARRAY_A : 'ARRAY_A' );
+		$term_relationships = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}term_relationships ORDER BY term_taxonomy_id DESC", 'ARRAY_A' );
 
 		if ( ! empty( $term_relationships ) ) {
 			$term_taxonomy_ids = [];
@@ -218,7 +231,7 @@ class Trimmer implements SharedService {
 
 		}
 
-		$term_taxonomy = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}term_taxonomy ORDER BY term_taxonomy_id DESC", defined( ARRAY_A ) ? ARRAY_A : 'ARRAY_A' );
+		$term_taxonomy = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}term_taxonomy ORDER BY term_taxonomy_id DESC", 'ARRAY_A' );
 
 		if ( ! empty( $term_taxonomy ) ) {
 			$term_ids = [];

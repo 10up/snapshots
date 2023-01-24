@@ -72,9 +72,11 @@ class SnapshotCreator implements SharedService {
 	 *
 	 * @param array $args List of arguments
 	 *
+	 * @return string Snapshot ID
+	 *
 	 * @throws WPSnapshotsException Throw exception if snapshot can't be created.
 	 */
-	public function create( array $args ) {
+	public function create( array $args ) : string {
 		if ( ! $args['contains_db'] && ! $args['contains_files'] ) {
 			throw new WPSnapshotsException( 'Snapshot must contain either database or files.' );
 		}
@@ -87,8 +89,10 @@ class SnapshotCreator implements SharedService {
 		$this->snapshot_files->create_directory( $id );
 
 		if ( $args['contains_db'] ) {
-	//		$this->dumper->dump( $id, $args );
-	//		$args['db_size'] = $this->snapshot_files->get_file_size( 'data.sql.zip' );
+			$this->log( 'Saving database...' );
+
+			$this->dumper->dump( $id, $args );
+			$args['db_size'] = $this->snapshot_files->get_file_size( 'data.sql.zip', $id );
 		}
 
 		if ( $args['contains_files'] ) {
@@ -102,5 +106,7 @@ class SnapshotCreator implements SharedService {
 		 * Finally save snapshot meta to meta.json
 		 */
 		$this->meta->generate( $id, $args );
+
+		return $id;
 	}
 }

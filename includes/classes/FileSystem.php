@@ -93,7 +93,6 @@ class FileSystem implements SharedService {
 				$destination_file = trailingslashit( $destination ) . $file['name'];
 
 				if ( WPSNAPSHOTS_DIR === $destination_file ) {
-					var_dump( 'skipping' . $destination_file );
 					continue;
 				}
 
@@ -111,7 +110,9 @@ class FileSystem implements SharedService {
 				} elseif ( 'd' === $file['type'] ) {
 
 					// Create the directory.
-					$this->get_wp_filesystem()->mkdir( $destination_file );
+					if ( ! $this->get_wp_filesystem()->mkdir( $destination_file ) ) {
+						throw new WPSnapshotsException( 'Unable to create directory: ' . $destination_file );
+					}
 
 					// Sync the files in the directory.
 					$next_files = $this->get_wp_filesystem()->dirlist( $source_file );

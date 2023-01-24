@@ -134,7 +134,7 @@ class WPCLIDumper implements DumperInterface {
 			$scrubber->scrub();
 		}
 
-		$this->log( 'Compressing database backup...', 1 );
+		$this->log( 'Compressing database backup...' );
 
 		if ( ! class_exists( 'ZipArchive' ) ) {
 			throw new WPSnapshotsException( 'ZipArchive class not found. Please install the PHP zip extension.' );
