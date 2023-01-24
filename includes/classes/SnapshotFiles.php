@@ -260,8 +260,8 @@ class SnapshotFiles implements SharedService {
 			$phar->decompress();
 			$phar->extractTo( '/tmp/files' );
 
-			// Delete the uncompressed file.
-			$this->get_wp_filesystem()->delete( $zip_file );
+			// Delete the nongzipped file file.
+			$this->get_wp_filesystem()->delete( str_replace( '.gz', '', $zip_file ) );
 		}
 
 		$errors = $this->file_system->sync_files( '/tmp/files', $destination, true );

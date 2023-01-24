@@ -13,6 +13,7 @@ use TenUp\WPSnapshots\WPCLI\WPCLICommand;
 use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacerFactory;
 
 use function TenUp\WPSnapshots\Utils\wp_cli;
+use function TenUp\WPSnapshots\Utils\wpsnapshots_wp_content_dir;
 
 /**
  * Pull command
@@ -483,13 +484,9 @@ final class Pull extends WPCLICommand {
 	 * @throws WPSnapshotsException If WP_CONTENT_DIR is not defined.
 	 */
 	private function pull_files() {
-		if ( ! defined( 'WP_CONTENT_DIR' ) ) {
-			throw new WPSnapshotsException( 'WP_CONTENT_DIR is not defined.' );
-		}
-
 		$this->log( 'Pulling files...' );
 
-		$errors = $this->snapshots_filesystem->unzip_snapshot_files( $this->get_id(), WP_CONTENT_DIR );
+		$errors = $this->snapshots_filesystem->unzip_snapshot_files( $this->get_id(), wpsnapshots_wp_content_dir() );
 
 		if ( ! empty( $errors ) ) {
 			$this->log( 'There were errors pulling files:', 'error' );

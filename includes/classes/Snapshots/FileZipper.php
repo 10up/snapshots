@@ -7,6 +7,8 @@
 
 namespace TenUp\WPSnapshots\Snapshots;
 
+use ArrayIterator;
+use Iterator;
 use Phar;
 use PharData;
 use TenUp\WPSnapshots\Log\Logging;
@@ -14,6 +16,8 @@ use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\FileSystem;
 use TenUp\WPSnapshots\Infrastructure\SharedService;
 use TenUp\WPSnapshots\SnapshotFiles;
+
+use function TenUp\WPSnapshots\Utils\wpsnapshots_wp_content_dir;
 
 /**
  * Class FileZipper
@@ -58,51 +62,95 @@ class FileZipper implements SharedService {
 	 * @throws WPSnapshotsException If could not create zip.
 	 */
 	public function zip_files( string $id, array $args ) {
-		if ( ! defined( 'WP_CONTENT_DIR' ) ) {
-			throw new WPSnapshotsException( 'WP_CONTENT_DIR is not defined.' );
-		}
-
 		if ( ! class_exists( 'PharData' ) ) {
 			throw new WPSnapshotsException( 'PharData class not found.' );
 		}
 
+		$iterator = $this->get_build_from_iterator_iterator( $args, $id );
+
+		return;
+
 		$phar_file = $this->snapshot_files->get_file_path( 'files.tar', $id );
 		$phar      = new PharData( $phar_file );
 
-		$excludes = $this->get_excludes_regex( $args );
-
-		$phar->buildFromDirectory( WP_CONTENT_DIR, $excludes );
+		$phar->buildFromIterator( $iterator );
 		$phar->compress( Phar::GZ );
 
 		$this->file_system->get_wp_filesystem()->delete( $phar_file );
 	}
 
 	/**
-	 * Gets the excludes regex
+	 * Gets an iterator of files to pass to buildFromIterator.
 	 *
 	 * @param array $args Snapshot arguments.
 	 *
-	 * @return string
+	 * @return Iterator
 	 */
-	private function get_excludes_regex( array $args ) : string {
+	private function get_build_from_iterator_iterator( array $args ) : Iterator {
 		$excludes = $args['excludes'] ?? [];
 
 		if ( $args['exclude_uploads'] ) {
 			$excludes[] = 'uploads';
 		}
 
-		// Build the regex string.
-		$excludes_regex = '';
+		$excludes = array_map(
+			function( $exclude ) {
+				$full_exclude = trailingslashit( wpsnapshots_wp_content_dir() ) . $exclude;
+				// Remove double slashes.
+				return preg_replace( '#/+#', '/', $full_exclude );
+			},
+			$excludes
+		);
 
-		foreach ( $excludes as $exclude ) {
-			$excludes_regex .= sprintf( '|%s', preg_quote( $exclude, '/' ) );
+		$initial_files = $this->file_system->get_wp_filesystem()->dirlist( wpsnapshots_wp_content_dir() );
+		$file_list     = $this->build_file_list_recursively( $initial_files, wpsnapshots_wp_content_dir(), $excludes );
+
+		var_dump( $file_list );
+
+		return new ArrayIterator( $file_list );
+	}
+
+	/**
+	 * Recursively builds a list of files to pass to buildFromIterator.
+	 *
+	 * @param array  $files    List of files.
+	 * @param string $base_dir Base directory.
+	 * @param array  $excludes List of files to exclude.
+	 *
+	 * @return array
+	 */
+	private function build_file_list_recursively( array $files, string $base_dir, array $excludes ) : array {
+		$file_list = [];
+
+		$wp_content_dir = wpsnapshots_wp_content_dir();
+
+		foreach ( $files as $file ) {
+			$full_path = trailingslashit( $base_dir ) . $file['name'];
+
+			if ( in_array( $full_path, $excludes, true ) || in_array( trailingslashit( $full_path ), $excludes, true ) ) {
+				continue;
+			}
+
+			foreach ( $excludes as $exclude ) {
+				$path_without_wp_content = str_replace( wpsnapshots_wp_content_dir(), '', $full_path );
+
+				if ( 0 === strpos( $path_without_wp_content, $exclude ) ) {
+					continue 2;
+				}
+
+				if ( 0 === strpos( $path_without_wp_content, '/' . $exclude ) ) {
+					continue 2;
+				}
+			}
+
+			if ( 'f' === $file['type'] ) {
+				$file_list[ str_replace( $wp_content_dir, '', $full_path ) ] = $full_path;
+			} elseif ( 'd' === $file['type'] ) {
+				$dir_files = $this->file_system->get_wp_filesystem()->dirlist( $full_path );
+				$file_list = array_merge( $file_list, $this->build_file_list_recursively( $dir_files, $full_path, $excludes ) );
+			}
 		}
 
-		// Remove the leading pipe.
-		if ( '' !== $excludes_regex ) {
-			$excludes_regex = substr( $excludes_regex, 1 );
-		}
-
-		return '/^((?!' . $excludes_regex . ').)*$/';
+		return $file_list;
 	}
 }
