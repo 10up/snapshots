@@ -29,6 +29,13 @@ class Trimmer implements SharedService {
 	private $wordpress_database;
 
 	/**
+	 * Limits on the number of posts and comments to keep.
+	 *
+	 * @var array
+	 */
+	private $limits;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @param Database        $wordpress_database Database instance.
@@ -37,6 +44,31 @@ class Trimmer implements SharedService {
 	public function __construct( Database $wordpress_database, LoggerInterface $logger ) {
 		$this->wordpress_database = $wordpress_database;
 		$this->set_logger( $logger );
+
+		/**
+		 * Filters the number of posts and comments to keep.
+		 *
+		 * @param array $limits {
+		 *    @type int $posts Number of posts to keep.
+		 *    @type int $comments Number of comments to keep.
+		 * }
+		 */
+		$this->limits = apply_filters(
+			'wpsnapshots_trimmer_limits',
+			[
+				'posts'    => 300,
+				'comments' => 500,
+			]
+		);
+	}
+
+	/**
+	 * Sets limits.
+	 *
+	 * @param array $limits Config.
+	 */
+	public function set_limits( array $limits ) {
+		$this->limits = $limits;
 	}
 
 	/**
@@ -91,7 +123,6 @@ class Trimmer implements SharedService {
 	 */
 	private function get_post_ids() {
 		// Trim posts
-		$post_ids   = [];
 		$post_types = get_post_types( [], 'names' );
 
 		if ( empty( $post_types ) ) {
@@ -100,27 +131,43 @@ class Trimmer implements SharedService {
 
 		$this->log( 'Trimming posts...' );
 
+		$post_ids       = [];
+		$posts_per_page = 100;
+
 		foreach ( $post_types as $post_type ) {
-			for ( $i = 1; $i <= 3; $i++ ) {
-				$next_post_ids = get_posts(
+			// Get the limit number of posts for the post type.
+			$paged               = 1;
+			$limit               = $this->limits['posts'];
+			$posts_for_post_type = [];
+
+			do {
+				$posts = get_posts(
 					[
-						'posts_per_page' => 100,
-						'paged'          => $i,
 						'post_type'      => $post_type,
+						'posts_per_page' => $posts_per_page,
+						'paged'          => $paged,
 						'fields'         => 'ids',
 						'orderby'        => 'ID',
 						'order'          => 'DESC',
+						'no_found_rows'  => true,
 					]
 				);
 
-				if ( ! empty( $next_post_ids ) ) {
-					$post_ids = array_merge( $post_ids, $next_post_ids );
-				}
-
-				if ( count( $next_post_ids ) < 100 ) {
+				if ( empty( $posts ) ) {
 					break;
 				}
-			}
+
+				$posts_for_post_type = array_merge( $posts_for_post_type, $posts );
+
+				if ( count( $posts_for_post_type ) >= $limit ) {
+					$posts_for_post_type = array_slice( $posts_for_post_type, 0, $limit );
+					break;
+				}
+
+				$paged++;
+			} while ( $paged * $posts_per_page < $limit );
+
+			$post_ids = array_merge( $post_ids, $posts_for_post_type );
 		}
 
 		return $post_ids;
@@ -169,7 +216,13 @@ class Trimmer implements SharedService {
 
 		$this->log( 'Trimming comments...' );
 
-		$comments = $wpdb->get_results( "SELECT comment_ID FROM {$wpdb->prefix}comments ORDER BY comment_ID DESC LIMIT 500", 'ARRAY_A' );
+		$comments = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT comment_ID FROM {$wpdb->prefix}comments ORDER BY comment_ID DESC LIMIT %d",
+				$this->limits['comments']
+			),
+			'ARRAY_A'
+		);
 
 		// Delete comments
 		if ( ! empty( $comments ) ) {

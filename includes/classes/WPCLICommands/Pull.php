@@ -515,6 +515,7 @@ final class Pull extends WPCLICommand {
 			$command,
 			[
 				'launch' => true,
+				'return' => 'all',
 			]
 		);
 	}

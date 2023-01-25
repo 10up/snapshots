@@ -9,10 +9,12 @@ namespace TenUp\WPSnapshots;
 
 use TenUp\WPSnapshots\Infrastructure\Container;
 use TenUp\WPSnapshots\Log\WPCLILogger;
-use TenUp\WPSnapshots\Snapshots\{DynamoDBConnector, FileZipper, S3StorageConnector, ScrubberFactory, SnapshotCreator, SnapshotMetaFromFileSystem, Trimmer, WPCLIDumper};
+use TenUp\WPSnapshots\Snapshots\{DynamoDBConnector, FileZipper, S3StorageConnector, SnapshotCreator, SnapshotMetaFromFileSystem, Trimmer};
 use TenUp\WPSnapshots\WordPress\Database;
 use TenUp\WPSnapshots\WPCLI\Prompt;
 use TenUp\WPSnapshots\WPCLICommands\{Create, CreateRepository, Download, Pull, Search};
+use TenUp\WPSnapshots\WPCLICommands\Create\ScrubberFactory;
+use TenUp\WPSnapshots\WPCLICommands\Create\WPCLIDumper;
 use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacerFactory;
 use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
 

@@ -176,7 +176,7 @@ class SnapshotMetaFromFileSystem extends SnapshotMeta {
 		$meta['table_prefix'] = $this->wordpress_database->get_blog_prefix( $main_blog_id );
 
 		if ( $args['contains_db'] ) {
-			$meta['db_size'] = $this->snapshot_files->get_file_size( 'data.sql.zip', $id );
+			$meta['db_size'] = $this->snapshot_files->get_file_size( 'data.sql.gz', $id );
 		}
 
 		if ( $args['contains_files'] ) {

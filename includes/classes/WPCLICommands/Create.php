@@ -62,7 +62,7 @@ final class Create extends WPCLICommand {
 				throw new WPSnapshotsException( 'You must include either the database or files in the snapshot.' );
 			}
 
-			$this->snapshot_creator->create(
+			$id = $this->snapshot_creator->create(
 				[
 					'author'          => [
 						'name'  => $this->get_assoc_arg(
@@ -116,11 +116,13 @@ final class Create extends WPCLICommand {
 				]
 			);
 
+			wp_cli()::success( sprintf( 'Snapshot %s created.', $id ) );
+
 		} catch ( Exception $e ) {
 			wp_cli()::error( $e->getMessage() );
 		}
 
-		wp_cli()::success( 'Snapshot created.' );
+		
 	}
 
 	/**

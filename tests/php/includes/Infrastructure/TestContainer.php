@@ -16,15 +16,15 @@ use TenUp\WPSnapshots\Plugin;
 use TenUp\WPSnapshots\Snapshots\DynamoDBConnector;
 use TenUp\WPSnapshots\Snapshots\FileZipper;
 use TenUp\WPSnapshots\Snapshots\S3StorageConnector;
-use TenUp\WPSnapshots\Snapshots\ScrubberFactory;
 use TenUp\WPSnapshots\Snapshots\SnapshotCreator;
 use TenUp\WPSnapshots\Snapshots\SnapshotMetaFromFileSystem;
 use TenUp\WPSnapshots\Snapshots\Trimmer;
-use TenUp\WPSnapshots\Snapshots\WPCLIDumper;
 use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
 use TenUp\WPSnapshots\Tests\Fixtures\WPCLIMocking;
 use TenUp\WPSnapshots\WordPress\Database;
 use TenUp\WPSnapshots\WPCLI\Prompt;
+use TenUp\WPSnapshots\WPCLICommands\Create\ScrubberFactory;
+use TenUp\WPSnapshots\WPCLICommands\Create\WPCLIDumper;
 use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacerFactory;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 

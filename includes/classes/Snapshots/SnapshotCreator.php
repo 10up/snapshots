@@ -92,7 +92,7 @@ class SnapshotCreator implements SharedService {
 			$this->log( 'Saving database...' );
 
 			$this->dumper->dump( $id, $args );
-			$args['db_size'] = $this->snapshot_files->get_file_size( 'data.sql.zip', $id );
+			$args['db_size'] = $this->snapshot_files->get_file_size( 'data.sql.gz', $id );
 		}
 
 		if ( $args['contains_files'] ) {

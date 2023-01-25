@@ -5,8 +5,9 @@
  * @package TenUp\WPSnapshots
  */
 
-namespace TenUp\WPSnapshots\Snapshots;
+namespace TenUp\WPSnapshots\WPCLICommands\Create;
 
+use TenUp\WPSnapshots\FileSystem;
 use TenUp\WPSnapshots\Infrastructure\SharedService;
 use TenUp\WPSnapshots\SnapshotFiles;
 use TenUp\WPSnapshots\Log\{LoggerInterface, Logging};
@@ -28,13 +29,22 @@ class ScrubberFactory implements SharedService {
 	private $snapshot_files;
 
 	/**
+	 * FileSystem instance.
+	 *
+	 * @var FileSystem
+	 */
+	private $file_system;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @param SnapshotFiles   $snapshot_files SnapshotFiles instance.
+	 * @param FileSystem      $file_system FileSystem instance.
 	 * @param LoggerInterface $logger LoggerInterface instance.
 	 */
-	public function __construct( SnapshotFiles $snapshot_files, LoggerInterface $logger ) {
+	public function __construct( SnapshotFiles $snapshot_files, FileSystem $file_system, LoggerInterface $logger ) {
 		$this->snapshot_files = $snapshot_files;
+		$this->file_system    = $file_system;
 		$this->set_logger( $logger );
 	}
 
@@ -49,7 +59,7 @@ class ScrubberFactory implements SharedService {
 
 		switch ( $type ) {
 			case 1:
-				return new ScrubberV1( $this->snapshot_files, $this->logger );
+				return new ScrubberV1( $this->snapshot_files, $this->file_system, $this->logger );
 			case 2:
 				return new ScrubberV2( $this->snapshot_files, $this->logger );
 			default:

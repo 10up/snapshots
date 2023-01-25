@@ -11,6 +11,8 @@ use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Infrastructure\SharedService;
 use WP_Filesystem_Base;
 
+use function TenUp\WPSnapshots\Utils\wpsnapshots_wp_content_dir;
+
 /**
  * SnapshotFiles class.
  *
@@ -110,7 +112,7 @@ class FileSystem implements SharedService {
 				} elseif ( 'd' === $file['type'] ) {
 
 					// Create the directory.
-					if ( ! $this->get_wp_filesystem()->mkdir( $destination_file ) ) {
+					if ( ! $this->get_wp_filesystem()->exists( $destination_file ) && ! $this->get_wp_filesystem()->mkdir( $destination_file ) ) {
 						throw new WPSnapshotsException( 'Unable to create directory: ' . $destination_file );
 					}
 

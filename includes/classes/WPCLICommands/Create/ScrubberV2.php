@@ -5,7 +5,7 @@
  * @package TenUp\WPSnapshots
  */
 
-namespace TenUp\WPSnapshots\Snapshots;
+namespace TenUp\WPSnapshots\WPCLICommands\Create;
 
 use TenUp\WPSnapshots\SnapshotFiles;
 use TenUp\WPSnapshots\Log\{LoggerInterface, Logging};
@@ -40,7 +40,7 @@ class ScrubberV2 implements ScrubberInterface {
 	/**
 	 * Scrubs the database dump.
 	 */
-	public function scrub() : void {
+	public function scrub( array $args, string $id ) : void {
 
 	}
 

@@ -5,13 +5,13 @@
  * @package TenUp\WPSnapshots
  */
 
-namespace TenUp\WPSnapshots\Snapshots;
+namespace TenUp\WPSnapshots\WPCLICommands\Create;
 
 use TenUp\WPSnapshots\Log\{LoggerInterface, Logging};
 use TenUp\WPSnapshots\SnapshotFiles;
 use TenUp\WPSnapshots\WordPress\Database;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use ZipArchive;
+use TenUp\WPSnapshots\Snapshots\{DumperInterface, Trimmer};
 
 use function TenUp\WPSnapshots\Utils\wp_cli;
 
@@ -78,17 +78,49 @@ class WPCLIDumper implements DumperInterface {
 	 * @throws WPSnapshotsException If an error occurs.
 	 */
 	public function dump( string $id, array $args ) {
-		global $wpdb;
-
 		if ( ! empty( $args['small'] ) ) {
 			$this->trimmer->trim();
 		}
 
-		$snapshot_directory = $this->snapshot_files->get_file_path( '', $id );
+		$this->snapshot_files->create_directory( $id );
 
-		if ( ! $this->snapshot_files->directory_exists( $id ) ) {
-			$this->snapshot_files->create_directory( $id );
+		$this->run_command( $id, $args );
+
+		$this->maybe_scrub( $id, $args );
+
+		$this->log( 'Compressing database backup...' );
+
+		if ( ! class_exists( 'PharData' ) ) {
+			throw new WPSnapshotsException( 'PharData class not found.' );
 		}
+
+		$sql_file = $this->snapshot_files->get_file_path( 'data.sql', $id );
+
+		// Gzip in pieces to avoid memory issues.
+		$file_handle = fopen( $sql_file, 'rb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fopen
+		$gzip_handle = gzopen( $sql_file . '.gz', 'wb' );
+
+		while ( ! feof( $file_handle ) ) {
+			$buffer = fread( $file_handle, 4096 ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fread
+			gzwrite( $gzip_handle, $buffer );
+		}
+
+		fclose( $file_handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fclose
+		gzclose( $gzip_handle );
+
+		$this->log( 'Removing uncompressed database backup...' );
+
+		$this->snapshot_files->delete_file( 'data.sql', $id );
+	}
+
+	/**
+	 * Runs the WP-CLI command to dump the database.
+	 *
+	 * @param string $id The snapshot ID.
+	 * @param array  $args The snapshot arguments.
+	 */
+	private function run_command( string $id, array $args ) {
+		global $wpdb;
 
 		$result_file = $this->snapshot_files->get_file_path( 'data.sql', $id );
 
@@ -103,7 +135,6 @@ class WPCLIDumper implements DumperInterface {
 		$tables = $this->wordpress_database->get_tables();
 
 		foreach ( $tables as $table ) {
-			// We separate the users/meta table for scrubbing
 			if ( 0 < $args['scrub'] && $wpdb->users === $table ) {
 				continue;
 			}
@@ -117,43 +148,39 @@ class WPCLIDumper implements DumperInterface {
 
 		$this->log( 'Exporting database...' );
 
-		$this->log(
-			wp_cli()::runcommand(
-				$command,
-				[
-					'launch'     => false,
-					'return'     => true,
-					'exit_error' => false,
-				]
-			)
+		wp_cli()::runcommand(
+			$command,
+			[
+				'launch'     => true,
+				'return'     => 'all',
+				'exit_error' => false,
+			]
 		);
+	}
 
-		$scrubber = $this->scrubber_factory->create( $args['scrub'] ?? 2 );
+	/**
+	 * Scrubs the database dump.
+	 *
+	 * @param string $id The snapshot ID.
+	 * @param array  $args The snapshot arguments.
+	 *
+	 * @throws WPSnapshotsException If an error occurs.
+	 */
+	private function maybe_scrub( string $id, array $args ) {
+		if ( in_array( $args['scrub'], [ 1, 2 ], true ) ) {
+			$scrubber = $this->scrubber_factory->create( $args['scrub'] );
 
-		if ( $scrubber ) {
-			$scrubber->scrub();
+			try {
+				$scrubber->scrub( $args, $id );
+			} catch ( WPSnapshotsException $e ) {
+
+				// Delete the file if it exists.
+				if ( $this->snapshot_files->file_exists( 'data.sql', $id ) ) {
+					$this->snapshot_files->delete_file( 'data.sql', $id );
+				}
+
+				throw $e;
+			}
 		}
-
-		$this->log( 'Compressing database backup...' );
-
-		if ( ! class_exists( 'ZipArchive' ) ) {
-			throw new WPSnapshotsException( 'ZipArchive class not found. Please install the PHP zip extension.' );
-		}
-
-		$zip = new ZipArchive();
-
-		if ( true !== $zip->open( $snapshot_directory . '/data.sql.zip', ZipArchive::CREATE ) ) {
-			throw new WPSnapshotsException( 'Could not create zip file.' );
-		}
-
-		$zip->addFile( $result_file, 'data.sql' );
-
-		if ( true !== $zip->close() ) {
-			throw new WPSnapshotsException( 'Could not close zip file.' );
-		}
-
-		$this->log( 'Removing uncompressed database backup...' );
-
-		$this->snapshot_files->delete_file( $id . '/data.sql' );
 	}
 }
