@@ -29,7 +29,7 @@ abstract class Container {
 	/**
 	 * Provides names of modules to instantiate.
 	 *
-	 * @return string[]
+	 * @return array<?string>
 	 */
 	abstract protected function get_modules() : array;
 
@@ -38,7 +38,7 @@ abstract class Container {
 	 *
 	 * Services are classes that are instantiated on demand when modules are instantiated.
 	 *
-	 * @return string[]
+	 * @return array<?string>
 	 */
 	abstract protected function get_services() : array;
 
