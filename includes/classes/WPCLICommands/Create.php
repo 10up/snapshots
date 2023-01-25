@@ -121,8 +121,6 @@ final class Create extends WPCLICommand {
 		} catch ( Exception $e ) {
 			wp_cli()::error( $e->getMessage() );
 		}
-
-		
 	}
 
 	/**
