@@ -22,14 +22,14 @@ abstract class Container {
 	/**
 	 * Associative array of shared service instances.
 	 *
-	 * @var array
+	 * @var array<Service|Module>
 	 */
 	protected $shared_instances = [];
 
 	/**
 	 * Provides names of modules to instantiate.
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	abstract protected function get_modules() : array;
 
@@ -38,14 +38,14 @@ abstract class Container {
 	 *
 	 * Services are classes that are instantiated on demand when modules are instantiated.
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	abstract protected function get_services() : array;
 
 	/**
 	 * Performs setup functions.
 	 */
-	public function register() {
+	public function register() : void {
 		$this->validate_classes();
 
 		$instances = [];
@@ -60,7 +60,9 @@ abstract class Container {
 		}
 
 		foreach ( $instances as $instance ) {
-			$instance->register();
+			if ( method_exists( $instance, 'register' ) ) {
+				$instance->register();
+			}
 		}
 	}
 
@@ -94,21 +96,8 @@ abstract class Container {
 			throw new WPSnapshotsException( sprintf( 'Modules should not be shared: %s', $class ) );
 		}
 
-		$reflection  = new ReflectionClass( $class );
-		$constructor = $reflection->getConstructor();
-
-		// If the constructor is null, walk through parent classes to find a constructor.
-		if ( ! $constructor ) {
-			do {
-				$reflection  = $reflection->getParentClass();
-				$constructor = $reflection ? $reflection->getConstructor() : null;
-			} while ( ! $constructor && $reflection );
-		}
-
-		$dependency_instances = [];
-		if ( $constructor ) {
-			$dependency_instances = array_map( [ $this, 'get_instance_from_parameter' ], $constructor->getParameters() );
-		}
+		$reflection           = new ReflectionClass( $class );
+		$dependency_instances = $this->get_dependency_instances_from_constructor( $reflection );
 
 		$instance = new $class( ...$dependency_instances );
 
@@ -122,13 +111,19 @@ abstract class Container {
 	/**
 	 * Gets an instance for a given parameter.
 	 *
-	 * @param ReflectionParameter $parameter Parameter.
-	 * @return object
+	 * @param ReflectionParameter             $parameter Parameter.
+	 * @param ReflectionClass<Service|Module> $class     Class.
+	 * @return object|array
 	 *
 	 * @throws WPSnapshotsException If an unknown module or service is encountered.
 	 */
-	private function get_instance_from_parameter( ReflectionParameter $parameter ) {
+	private function get_instance_from_parameter( ReflectionParameter $parameter, ReflectionClass $class ) : object|array {
 		$type = $parameter->getType();
+
+		// If the parameter is ...$args, get instances from the parent class's constructor.
+		if ( null === $type && $parameter->isVariadic() && $class->getParentClass() ) {
+			return $this->get_dependency_instances_from_constructor( $class->getParentClass() );
+		}
 
 		if ( ! is_a( $type, ReflectionNamedType::class, true ) ) {
 			throw new WPSnapshotsException( sprintf( 'Unable to get type for parameter: %s', $parameter->getName() ) );
@@ -142,6 +137,41 @@ abstract class Container {
 		}
 
 		return $this->get_instance( $dependency_class );
+	}
+
+	/**
+	 * Gets dependency instances from a constructor.
+	 *
+	 * @param ReflectionClass $reflection Class.
+	 * @return array
+	 */
+	private function get_dependency_instances_from_constructor( ReflectionClass $reflection ) {
+		$constructor = $reflection->getConstructor();
+
+		// If the constructor is null, walk through parent classes to find a constructor.
+		if ( ! $constructor ) {
+			do {
+				$reflection  = $reflection->getParentClass();
+				$constructor = $reflection ? $reflection->getConstructor() : null;
+			} while ( ! $constructor && $reflection );
+		}
+
+		if ( $constructor ) {
+			return array_reduce(
+				$constructor->getParameters(),
+				function( $instances, ReflectionParameter $parameter ) use ( $reflection ) {
+					$received_instances = $this->get_instance_from_parameter( $parameter, $reflection );
+					if ( ! is_array( $received_instances ) ) {
+						$received_instances = [ $received_instances ];
+					}
+
+					return array_merge( $instances, $received_instances );
+				},
+				[]
+			);
+		}
+
+		return [];
 	}
 
 	/**

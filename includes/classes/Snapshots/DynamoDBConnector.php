@@ -16,6 +16,13 @@ use Aws\DynamoDb\Marshaler;
 class DynamoDBConnector implements DBConnectorInterface {
 
 	/**
+	 * Clients keyed by region.
+	 *
+	 * @var DynamoDbClient[]
+	 */
+	private $clients = [];
+
+	/**
 	 * Searches the database.
 	 *
 	 * @param  string|array $query Search query string
@@ -150,11 +157,15 @@ class DynamoDBConnector implements DBConnectorInterface {
 	 * @return DynamoDbClient
 	 */
 	private function get_client( string $region ) : DynamoDbClient {
-		return new DynamoDbClient(
-			[
-				'version' => 'latest',
-				'region'  => $region,
-			]
-		);
+		if ( ! isset( $this->clients[ $region ] ) ) {
+			$this->clients[ $region ] = new DynamoDbClient(
+				[
+					'version' => 'latest',
+					'region'  => $region,
+				]
+			);
+		}
+
+		return $this->clients[ $region ];
 	}
 }

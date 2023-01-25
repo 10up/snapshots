@@ -9,6 +9,7 @@ namespace TenUp\WPSnapshots\Tests\Commands;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use TenUp\WPSnapshots\Plugin;
+use TenUp\WPSnapshots\Snapshots\S3StorageConnector;
 use TenUp\WPSnapshots\Snapshots\SnapshotMeta;
 use TenUp\WPSnapshots\Tests\Fixtures\{CommandTests, PrivateAccess, WPCLIMocking};
 use TenUp\WPSnapshots\WPCLI\WPCLICommand;
@@ -76,13 +77,22 @@ class TestDownload extends TestCase {
 		);
 	}
 
-	/** @covers ::get_id */
+	/**
+	 * @covers ::get_id
+	 * @covers ::get_args
+	 */
 	public function test_get_id() {
 		$this->set_private_property( $this->command, 'args', [ 'test-id' ] );
 		$this->assertEquals( 'test-id', $this->call_private_method( $this->command, 'get_id' ) );
 	}
 
-	/** @covers ::get_meta */
+	/**
+	 * @covers ::get_meta
+	 * @covers ::get_assoc_args
+	 * @covers ::get_assoc_arg
+	 * @covers ::get_repository_name
+	 * @covers ::get_default_arg_value
+	 */
 	public function test_get_meta() {
 		$this->set_private_property( $this->command, 'args', [ 'test-id' ] );
 		
@@ -90,7 +100,7 @@ class TestDownload extends TestCase {
 		 * @var SnapshotMeta|MockObject $mock_snapshot_meta
 		 */
 		$mock_snapshot_meta = $this->createMock( SnapshotMeta::class );
-		$mock_snapshot_meta->method( 'get_remote_meta' )->willReturn(
+		$mock_snapshot_meta->method( 'get_remote' )->willReturn(
 			[
 				'project' => 'test-project',
 				'repository' => 'test-repository',
@@ -99,6 +109,12 @@ class TestDownload extends TestCase {
 			]
 		);
 		$this->set_private_property( $this->command, 'snapshot_meta', $mock_snapshot_meta );
+
+		add_filter( 'wpsnapshots_readline', function() {
+			return function() {
+				return 'Y';
+			};
+		} );
 
 		$this->assertEquals(
 			[
@@ -157,5 +173,50 @@ class TestDownload extends TestCase {
 				]
 			]
 		) );
+	}
+
+	/** @covers ::execute */
+	public function test_execute() {
+		$meta = [
+			'project' => 'test-project',
+			'repository' => 'test-repository',
+			'contains_db' => true,
+			'contains_files' => true,
+			'size' => 1024,
+		];
+
+		/**
+		 * @var SnapshotMeta|MockObject $mock_snapshot_meta
+		 */
+		$mock_snapshot_meta = $this->createMock( SnapshotMeta::class );
+		$mock_snapshot_meta->method( 'get_remote' )->willReturn( $meta );
+		$this->set_private_property( $this->command, 'snapshot_meta', $mock_snapshot_meta );
+
+		/**
+		 * @var S3StorageConnector|MockObject $mock_storage_connector
+		 */
+		$mock_storage_connector = $this->createMock( S3StorageConnector::class );
+		$this->set_private_property( $this->command, 'storage_connector', $mock_storage_connector );
+
+		$mock_snapshot_meta->expects( $this->once() )->method( 'get_remote' )->with( 'test-id' );
+		$mock_snapshot_meta->expects( $this->once() )->method( 'save_local' )->with( 'test-id' );
+
+		$mock_storage_connector->expects( $this->once() )->method( 'download_snapshot' )->with(
+			'test-id',
+			$meta,
+			'test-repo',
+			'test-region'
+		);
+
+		add_filter( 'wpsnapshots_readline', function() {
+			return function() {
+				return 'Y';
+			};
+		} );
+
+		$this->command->execute( [ 'test-id' ], [ 'region' => 'test-region', 'repository' => 'test-repo' ] );
+
+		// Confirm success message.
+		$this->get_wp_cli_mock()->assertMethodCalled( 'success', 1, [ [ 'Snapshot downloaded.' ] ]);
 	}
 }

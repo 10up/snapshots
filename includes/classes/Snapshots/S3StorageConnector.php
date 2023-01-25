@@ -9,7 +9,7 @@ namespace TenUp\WPSnapshots\Snapshots;
 
 use Aws\S3\S3Client;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\SnapshotsFileSystem;
+use TenUp\WPSnapshots\SnapshotsFiles;
 
 /**
  * Class S3StorageConnector
@@ -19,18 +19,25 @@ use TenUp\WPSnapshots\SnapshotsFileSystem;
 class S3StorageConnector implements StorageConnectorInterface {
 
 	/**
-	 * SnapshotsFileSystem instance.
+	 * Clients keyed by region.
 	 *
-	 * @var SnapshotsFileSystem
+	 * @var S3Client[]
+	 */
+	private $clients = [];
+
+	/**
+	 * SnapshotsFiles instance.
+	 *
+	 * @var SnapshotsFiles
 	 */
 	private $snapshots_file_system;
 
 	/**
 	 * Class constructor.
 	 *
-	 * @param SnapshotsFileSystem $snapshots_file_system SnapshotsFileSystem instance.
+	 * @param SnapshotsFiles $snapshots_file_system SnapshotsFiles instance.
 	 */
-	public function __construct( SnapshotsFileSystem $snapshots_file_system ) {
+	public function __construct( SnapshotsFiles $snapshots_file_system ) {
 		$this->snapshots_file_system = $snapshots_file_system;
 	}
 
@@ -110,12 +117,16 @@ class S3StorageConnector implements StorageConnectorInterface {
 	 * @return S3Client
 	 */
 	private function get_client( string $region ) : S3Client {
-		return new S3Client(
-			[
-				'version' => 'latest',
-				'region'  => $region,
-			]
-		);
+		if ( ! isset( $this->clients[ $region ] ) ) {
+			$this->clients[ $region ] = new S3Client(
+				[
+					'version' => 'latest',
+					'region'  => $region,
+				]
+			);
+		}
+
+		return $this->clients[ $region ];
 	}
 
 	/**

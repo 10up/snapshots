@@ -1,6 +1,6 @@
 <?php
 /**
- * Tests for the SnapshotsFileSystem class.
+ * Tests for the SnapshotsFiles class.
  * 
  * @package TenUp\WPSnapshots
  */
@@ -9,26 +9,27 @@ namespace TenUp\WPSnapshots\Tests;
 
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\SnapshotsFileSystem;
+use TenUp\WPSnapshots\SnapshotsFiles;
 use TenUp\WPSnapshots\Tests\Fixtures\DirectoryFiltering;
 use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
+use ZipArchive;
 
 /**
  * Class TestSnapshotsFileSystem
  *
  * @package TenUp\WPSnapshots\Tests
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\SnapshotsFileSystem
+ * @coversDefaultClass \TenUp\WPSnapshots\SnapshotsFiles
  */
 class TestSnapshotsFileSystem extends TestCase {
 	
     use PrivateAccess, DirectoryFiltering;
 
 	/**
-	 * SnapshotsFileSystem instance.
+	 * SnapshotsFiles instance.
 	 * 
-	 * @var SnapshotsFileSystem
+	 * @var SnapshotsFiles
 	 */
 	private $snapshots_fs;
 
@@ -38,7 +39,7 @@ class TestSnapshotsFileSystem extends TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->snapshots_fs = ( new Plugin() )->get_instance( SnapshotsFileSystem::class );
+		$this->snapshots_fs = ( new Plugin() )->get_instance( SnapshotsFiles::class );
 
 		$this->set_up_directory_filtering();
 	}
@@ -53,7 +54,7 @@ class TestSnapshotsFileSystem extends TestCase {
 	}
 
 	public function test_constructor() {
-		$this->assertInstanceOf( SnapshotsFileSystem::class, $this->snapshots_fs );
+		$this->assertInstanceOf( SnapshotsFiles::class, $this->snapshots_fs );
 	}
 
 	/** @covers ::get_directory */
@@ -88,6 +89,7 @@ class TestSnapshotsFileSystem extends TestCase {
 	 * @covers ::get_file_contents
 	 * @covers ::get_file_size
 	 * @covers ::get_file_path
+	 * @covers ::file_exists
 	 */
 	public function test_delete_file() {
 		$filename = 'test.txt';
@@ -131,6 +133,18 @@ class TestSnapshotsFileSystem extends TestCase {
 		$this->assertEquals( $contents . $contents, $this->snapshots_fs->get_file_contents( $filename ) );
 	}
 
+	/** @covers ::file_exists */
+	public function test_file_exists() {
+		$filename = 'test.txt';
+		$contents = 'This is a test file.';
+		$directory = $this->call_private_method( $this->snapshots_fs, 'get_directory' );
+
+		$this->snapshots_fs->update_file_contents( $filename, $contents );
+
+		$this->assertFileExists( $directory . '/' . $filename );
+		$this->assertTrue( $this->snapshots_fs->file_exists( $filename ) );
+	}
+
 	/**
 	 * @covers ::create_directory
 	 */
@@ -160,7 +174,10 @@ class TestSnapshotsFileSystem extends TestCase {
 		$this->assertTrue( $this->snapshots_fs->directory_exists( $snapshot_id ) );
 	}
 
-	/** @covers ::get_file_lines */
+	/**
+	 * @covers ::get_file_lines
+	 * @covers ::get_wp_filesystem
+	 */
 	public function test_get_file_lines() {
 		$filename = 'test.txt';
 
@@ -185,5 +202,36 @@ class TestSnapshotsFileSystem extends TestCase {
 		$this->expectExceptionMessage( 'Unable to read file: /wpsnapshots-tmp/nonexistent.txt' );
 
 		$this->snapshots_fs->get_file_lines( 'nonexistent.txt' );
+	}
+
+	/** @covers ::unzip_snapshot_files */
+	public function test_unzip_snapshot_files() {
+		$snapshot_id = 'test-snapshot-id';
+		$destination_directory = $this->get_directory_path() . '/destination';
+
+		// Create the destination directory.
+		mkdir( $destination_directory );
+
+		// Create a zip file.
+		$zip_file = $this->snapshots_fs->get_file_path( 'files.tar.gz', $snapshot_id );
+		$this->snapshots_fs->create_directory( $snapshot_id );
+
+		$zip = new ZipArchive();
+		$zip->open( $zip_file, ZipArchive::CREATE );
+
+		for ( $i = 0; $i < 10; $i++ ) {
+			$zip->addFromString( 'test-' . $i . '.txt', 'This is a test file. ' . $i );
+		}
+
+		$zip->close();
+
+		$this->snapshots_fs->unzip_snapshot_files( $snapshot_id, $destination_directory );
+
+		for ( $i = 0; $i < 10; $i++ ) {
+			$destination = $destination_directory . '/test-' . $i . '.txt';
+
+			$this->assertTrue( file_exists( $destination ) );
+			$this->assertEquals( 'This is a test file. ' . $i, $this->snapshots_fs->get_wp_filesystem()->get_contents( $destination ) );
+		}
 	}
 }

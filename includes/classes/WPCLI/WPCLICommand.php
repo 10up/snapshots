@@ -8,10 +8,13 @@
 namespace TenUp\WPSnapshots\WPCLI;
 
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
+use TenUp\WPSnapshots\FileSystem;
 use TenUp\WPSnapshots\Infrastructure\{Module, Conditional};
 use TenUp\WPSnapshots\Log\{Logging, WPCLILogger};
 use TenUp\WPSnapshots\Snapshots\{DBConnectorInterface, SnapshotMetaInterface, StorageConnectorInterface};
 use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigInterface;
+use TenUp\WPSnapshots\SnapshotsFiles;
+use TenUp\WPSnapshots\WordPress\Database;
 
 use function TenUp\WPSnapshots\Utils\wp_cli;
 
@@ -60,6 +63,27 @@ abstract class WPCLICommand implements Conditional, Module {
 	protected $snapshot_meta;
 
 	/**
+	 * SnapshotsFiles instance.
+	 *
+	 * @var SnapshotsFiles
+	 */
+	protected $snapshots_filesystem;
+
+	/**
+	 * Database instance.
+	 *
+	 * @var Database
+	 */
+	protected $wordpress_database;
+
+	/**
+	 * FileSystem instance.
+	 *
+	 * @var FileSystem
+	 */
+	protected $filesystem;
+
+	/**
 	 * Args passed to the command.
 	 *
 	 * @var array
@@ -91,6 +115,9 @@ abstract class WPCLICommand implements Conditional, Module {
 	 * @param StorageConnectorInterface  $storage_connector StorageConnectorInterface instance.
 	 * @param DBConnectorInterface       $db_connector DBConnectorInterface instance.
 	 * @param SnapshotMetaInterface      $snapshot_meta SnapshotMetaInterface instance.
+	 * @param SnapshotsFiles             $snapshots_filesystem SnapshotsFiles instance.
+	 * @param Database                   $wordpress_database Database instance.
+	 * @param FileSystem                 $filesystem FileSystem instance.
 	 */
 	public function __construct(
 		WPCLILogger $logger,
@@ -98,13 +125,19 @@ abstract class WPCLICommand implements Conditional, Module {
 		WPSnapshotsConfigInterface $config,
 		StorageConnectorInterface $storage_connector,
 		DBConnectorInterface $db_connector,
-		SnapshotMetaInterface $snapshot_meta
+		SnapshotMetaInterface $snapshot_meta,
+		SnapshotsFiles $snapshots_filesystem,
+		Database $wordpress_database,
+		FileSystem $filesystem
 	) {
-		$this->prompt            = $prompt;
-		$this->config            = $config;
-		$this->storage_connector = $storage_connector;
-		$this->db_connector      = $db_connector;
-		$this->snapshot_meta     = $snapshot_meta;
+		$this->prompt               = $prompt;
+		$this->config               = $config;
+		$this->storage_connector    = $storage_connector;
+		$this->db_connector         = $db_connector;
+		$this->snapshot_meta        = $snapshot_meta;
+		$this->snapshots_filesystem = $snapshots_filesystem;
+		$this->wordpress_database   = $wordpress_database;
+		$this->filesystem           = $filesystem;
 		$this->set_logger( $logger );
 	}
 
@@ -209,17 +242,6 @@ abstract class WPCLICommand implements Conditional, Module {
 		}
 
 		return $repository_name ?? '10up';
-	}
-
-	/**
-	 * Gets the repo info.
-	 *
-	 * @return array
-	 */
-	protected function get_repo_info() : array {
-		$repository_name = $this->get_repository_name();
-
-		return $this->config->get_repository_settings( $repository_name );
 	}
 
 	/**

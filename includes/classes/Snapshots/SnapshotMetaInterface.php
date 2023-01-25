@@ -34,7 +34,7 @@ interface SnapshotMetaInterface extends SharedService {
 	 * @param string $region AWS region
 	 * @return array
 	 */
-	public function get_remote_meta( string $id, string $repository, string $region ) : array;
+	public function get_remote( string $id, string $repository, string $region ) : array;
 
 	/**
 	 * Get local snapshot meta

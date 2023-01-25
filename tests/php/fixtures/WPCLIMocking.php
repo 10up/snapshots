@@ -32,7 +32,11 @@ trait WPCLIMocking {
 		} );
 	
 		add_filter( 'wpsnapshots_readline', function() {
-			return [ $this, 'readline' ];
+			return [ $this->get_wp_cli_mock(), 'readline' ];
+		} );
+
+		add_filter( 'wpsnapshots_get_flag_or_prompt_answers', function() {
+			return null;
 		} );
 	}
 
@@ -43,13 +47,10 @@ trait WPCLIMocking {
 	public function tear_down_wp_cli_mock() {
 		remove_all_filters( 'wpsnapshots_wpcli' );
 		remove_all_filters( 'wpsnapshots_readline' );
+		remove_all_filters( 'wpsnapshots_get_flag_or_prompt_answers' );
 
 		$this->wpcli_mock->reset_wpcli_mock_calls();
 		$this->wpcli_mock = null;
-	}
-
-	public function readline( ...$args ) {
-		return 'Y';
 	}
 
 	/**

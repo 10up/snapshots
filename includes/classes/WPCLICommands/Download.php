@@ -71,13 +71,13 @@ final class Download extends WPCLICommand {
 				[
 					'type'        => 'assoc',
 					'name'        => 'repository',
-					'description' => 'Repository to use. Defaults to first repository saved in config.',
+					'description' => 'Repository to use. Defaults to 10up.',
 					'optional'    => true,
 				],
 				[
 					'type'        => 'assoc',
 					'name'        => 'region',
-					'description' => 'AWS region to use. Defaults to first region saved in config.',
+					'description' => 'AWS region to use. Defaults to us-west-1.',
 					'optional'    => true,
 					'default'     => 'us-west-1',
 				],
@@ -132,7 +132,7 @@ final class Download extends WPCLICommand {
 	private function get_meta() : array {
 		$id = $this->get_id();
 
-		$meta = $this->snapshot_meta->get_remote_meta( $id, $this->get_repository_name(), $this->get_assoc_arg( 'region' ) );
+		$meta = $this->snapshot_meta->get_remote( $id, $this->get_repository_name(), $this->get_assoc_arg( 'region' ) );
 
 		if ( empty( $meta ) ) {
 			throw new WPSnapshotsException( 'Snapshot does not exist.' );

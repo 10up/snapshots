@@ -37,7 +37,7 @@ class WPCLIMock {
 	}
 
 	public static function __callStatic( $name, $arguments ) {
-		if ( in_array( $name, [ 'success', 'error', 'confirm', 'halt', 'line', 'readline', 'add_command', 'format_items', 'prompt' ] ) ) {
+		if ( in_array( $name, [ 'success', 'error', 'confirm', 'halt', 'line', 'readline', 'add_command', 'format_items', 'prompt', 'runcommand' ] ) ) {
 			self::$wpcli_mock_calls[ $name ][] = $arguments;
 			return;
 		}
@@ -54,11 +54,15 @@ class WPCLIMock {
 	/**
 	 * Get the mock method calls.
 	 * 
-	 * @param string $method Method name to get calls for.
+	 * @param ?string $method Method name to get calls for.
 	 * 
 	 * @return array
 	 */
-	public function get_wpcli_mock_calls( string $method ) : array {
+	public function get_wpcli_mock_calls( ?string $method = null ) : array {
+		if ( is_null( $method ) ) {
+			return self::$wpcli_mock_calls;
+		}
+
 		return self::$wpcli_mock_calls[ $method ] ?? [];
 	}
 
@@ -89,5 +93,14 @@ class WPCLIMock {
         return $calls;
 	}
 	
+	/**
+	 * Readline mock.
+	 */
+	public function readline( ...$args ) {
+		static $readline_count = 0;
+	
+		self::$wpcli_mock_calls['readline'][] = $args;
 
+		return 'readline' . $readline_count++;
+	}
 };

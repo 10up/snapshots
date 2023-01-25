@@ -1,6 +1,6 @@
 <?php
 /**
- * SnapshotsFileSystem class.
+ * SnapshotsFiles class.
  *
  * @package TenUp\WPSnapshots
  */
@@ -8,23 +8,33 @@
 namespace TenUp\WPSnapshots;
 
 use Exception;
+use PharData;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Infrastructure\SharedService;
 use WP_Filesystem_Base;
 
 /**
- * SnapshotsFileSystem class.
+ * SnapshotsFiles class.
  *
  * @package TenUp\WPSnapshots
  */
-class SnapshotsFileSystem implements SharedService {
+class SnapshotsFiles implements SharedService {
 
 	/**
-	 * The WP_Filesystem_Direct instance.
+	 * The FileSystem instance.
 	 *
-	 * @var ?WP_Filesystem_Base
+	 * @var FileSystem
 	 */
-	private $wp_filesystem;
+	private $file_system;
+
+	/**
+	 * Class constructor.
+	 *
+	 * @param FileSystem $file_system The FileSystem instance.
+	 */
+	public function __construct( FileSystem $file_system ) {
+		$this->file_system = $file_system;
+	}
 
 	/**
 	 * Deletes a file in the snapshot directory.
@@ -35,8 +45,8 @@ class SnapshotsFileSystem implements SharedService {
 	public function delete_file( string $file_name, string $id = '' ) {
 		$file = $this->get_file_path( $file_name, $id );
 
-		if ( file_exists( $file ) ) {
-			unlink( $file );
+		if ( $this->get_wp_filesystem()->exists( $file ) ) {
+			$this->get_wp_filesystem()->delete( $file );
 		}
 	}
 
@@ -112,7 +122,7 @@ class SnapshotsFileSystem implements SharedService {
 	 * @return bool
 	 */
 	public function file_exists( string $file_name, string $id = '' ) : bool {
-		return file_exists( $this->get_file_path( $file_name, $id ) );
+		return $this->get_wp_filesystem()->exists( $this->get_file_path( $file_name, $id ) );
 	}
 
 	/**
@@ -126,9 +136,9 @@ class SnapshotsFileSystem implements SharedService {
 	public function create_directory( $id = null, $hard = false ) {
 		$snapshots_directory = trailingslashit( $this->get_directory() );
 
-		if ( ! file_exists( $snapshots_directory ) ) {
+		if ( ! $this->get_wp_filesystem()->exists( $snapshots_directory ) ) {
 			try {
-				if ( ! mkdir( $snapshots_directory, 0755 ) ) {
+				if ( ! $this->get_wp_filesystem()->mkdir( $snapshots_directory ) ) {
 					throw new WPSnapshotsException( 'Could not create snapshot directory' );
 				}
 			} catch ( Exception $e ) {
@@ -136,25 +146,24 @@ class SnapshotsFileSystem implements SharedService {
 			}
 		}
 
-		if ( ! is_writable( $snapshots_directory ) ) {
+		if ( ! $this->get_wp_filesystem()->is_writable( $snapshots_directory ) ) {
 			throw new WPSnapshotsException( 'Snapshot directory is not writable' );
 		}
 
 		if ( ! empty( $id ) ) {
-			if ( $hard && file_exists( $snapshots_directory . $id . '/' ) ) {
-				array_map( 'unlink', glob( $snapshots_directory . $id . '/*.*' ) );
-				if ( ! rmdir( $snapshots_directory . $id . '/' ) ) {
+			if ( $hard && $this->get_wp_filesystem()->exists( $snapshots_directory . $id . '/' ) ) {
+				if ( ! $this->get_wp_filesystem()->rmdir( $snapshots_directory . $id . '/', true ) ) {
 					throw new WPSnapshotsException( 'Could not remove existing snapshot directory' );
 				}
 			}
 
-			if ( ! file_exists( $snapshots_directory . $id . '/' ) ) {
-				if ( ! mkdir( $snapshots_directory . $id . '/', 0755 ) ) {
+			if ( ! $this->get_wp_filesystem()->exists( $snapshots_directory . $id . '/' ) ) {
+				if ( ! $this->get_wp_filesystem()->mkdir( $snapshots_directory . $id . '/' ) ) {
 					throw new WPSnapshotsException( 'Could not create snapshot directory' );
 				}
 			}
 
-			if ( ! is_writable( $snapshots_directory . $id . '/' ) ) {
+			if ( ! $this->get_wp_filesystem()->is_writable( $snapshots_directory . $id . '/' ) ) {
 				throw new WPSnapshotsException( 'Snapshot directory is not writable' );
 			}
 		}
@@ -200,17 +209,7 @@ class SnapshotsFileSystem implements SharedService {
 	 * @return WP_Filesystem_Base $wp_filesystem WP_Filesystem instance.
 	 */
 	public function get_wp_filesystem() {
-		global $wp_filesystem;
-
-		if ( ! $this->wp_filesystem ) {
-			if ( ! $wp_filesystem ) {
-				WP_Filesystem( null, null, true );
-			}
-
-			$this->wp_filesystem = $wp_filesystem;
-		}
-
-		return $this->wp_filesystem;
+		return $this->file_system->get_wp_filesystem();
 	}
 
 	/**
@@ -224,6 +223,46 @@ class SnapshotsFileSystem implements SharedService {
 		$directory = $this->get_directory( $id );
 
 		return $directory . '/' . $file_name;
+	}
+
+	/**
+	 * Unzips the files in the wp-content directory.
+	 *
+	 * @param string $id Snapshot ID.
+	 * @param string $destination Destination directory.
+	 *
+	 * @return string[] Errors.
+	 *
+	 * @throws WPSnapshotsException If there is an error.
+	 */
+	public function unzip_snapshot_files( string $id, string $destination ) : array {
+		// Recursively delete everything in the wp-content directory except plugins/snapshots-command.
+		$this->file_system->delete_directory_contents( $destination, false, [ 'snapshots-command' ] );
+
+		$zip_file = $this->get_file_path( 'files.tar.gz', $id );
+
+		$this->get_wp_filesystem()->mkdir( '/tmp' );
+		$this->get_wp_filesystem()->mkdir( '/tmp/files' );
+
+		if ( ! function_exists( 'unzip_file' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+
+		// Unzip the files.
+		$unzip_result = unzip_file( $zip_file, '/tmp/files' );
+
+		if ( is_wp_error( $unzip_result ) ) {
+			try {
+				$phar = new PharData( $zip_file );
+				$phar->extractTo( '/tmp/files' );
+			} catch ( Exception $e ) {
+				exec( 'tar -xzf ' . $zip_file . ' -C /tmp/files' ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.system_calls_exec -- This is the last resort.
+			}
+		}
+
+		$errors = $this->file_system->sync_files( '/tmp/files', $destination, true );
+
+		return $errors;
 	}
 
 	/**
@@ -246,7 +285,7 @@ class SnapshotsFileSystem implements SharedService {
 			defined( 'WPSNAPSHOTS_DIR' ) ? WPSNAPSHOTS_DIR : ABSPATH . '/.wpsnapshots'
 		);
 
-		if ( ! is_dir( $directory ) && ! mkdir( $directory, 0755, true ) ) {
+		if ( ! $this->get_wp_filesystem()->is_dir( $directory ) && ! $this->get_wp_filesystem()->mkdir( $directory ) ) {
 			throw new WPSnapshotsException( 'Unable to create ' . $directory );
 		}
 

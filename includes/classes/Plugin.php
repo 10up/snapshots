@@ -10,8 +10,10 @@ namespace TenUp\WPSnapshots;
 use TenUp\WPSnapshots\Infrastructure\Container;
 use TenUp\WPSnapshots\Log\WPCLILogger;
 use TenUp\WPSnapshots\Snapshots\{DynamoDBConnector, S3StorageConnector, SnapshotMetaFromFileSystem};
+use TenUp\WPSnapshots\WordPress\Database;
 use TenUp\WPSnapshots\WPCLI\Prompt;
-use TenUp\WPSnapshots\WPCLICommands\{CreateRepository, Download, Search};
+use TenUp\WPSnapshots\WPCLICommands\{CreateRepository, Download, Pull, Search};
+use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacerFactory;
 use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
 
 /**
@@ -24,7 +26,7 @@ final class Plugin extends Container {
 	/**
 	 * Registers the plugin.
 	 */
-	public function register() {
+	public function register() : void {
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			add_filter( 'wpsnapshots_services', [ $this, 'add_wp_cli_services' ], -99 );
 		}
@@ -41,12 +43,13 @@ final class Plugin extends Container {
 	 *
 	 * Modules are classes that are instantiated and registered with the container.
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	protected function get_modules(): array {
 		$components = [
 			'wpcli_commands/create_repository' => CreateRepository::class,
 			'wpcli_commands/download'          => Download::class,
+			'wpcli_commands/pull'              => Pull::class,
 			'wpcli_commands/search'            => Search::class,
 		];
 
@@ -63,15 +66,17 @@ final class Plugin extends Container {
 	 *
 	 * Services are classes that are instantiated on demand when components are instantiated.
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	protected function get_services(): array {
 		$services = [
+			'file_system'                             => null,
 			'snapshots_filesystem'                    => null,
 			'snapshots/db_connector'                  => DynamoDBConnector::class,
 			'snapshots/snapshot_meta'                 => null,
 			'snapshots/storage_connector'             => S3StorageConnector::class,
 			'wp_snapshots_config/wp_snapshots_config' => null,
+			'wordpress/database'                      => Database::class,
 		];
 
 		/**
@@ -85,13 +90,14 @@ final class Plugin extends Container {
 	/**
 	 * Adds WP-CLI services.
 	 *
-	 * @param array $services Services.
-	 * @return array
+	 * @param string[] $services Services.
+	 * @return string[]
 	 */
 	public function add_wp_cli_services( array $services ): array {
 		$wp_cli_services = [
-			'log/wpcli_logger' => WPCLILogger::class,
-			'wpcli/prompt'     => Prompt::class,
+			'log/wpcli_logger'           => WPCLILogger::class,
+			'wpcli/prompt'               => Prompt::class,
+			'wpcli/url_replacer_factory' => URLReplacerFactory::class,
 		];
 
 		return array_merge(
@@ -103,12 +109,13 @@ final class Plugin extends Container {
 	/**
 	 * Adds file system services.
 	 *
-	 * @param array $services Services.
-	 * @return array
+	 * @param string[] $services Services.
+	 * @return string[]
 	 */
 	public function add_file_system_services( array $services ): array {
 		$file_system_services = [
-			'snapshots_filesystem'                    => SnapshotsFileSystem::class,
+			'file_system'                             => FileSystem::class,
+			'snapshots_filesystem'                    => SnapshotsFiles::class,
 			'snapshots/snapshot_meta'                 => SnapshotMetaFromFileSystem::class,
 			'wp_snapshots_config/wp_snapshots_config' => WPSnapshotsConfigFromFileSystem::class,
 		];

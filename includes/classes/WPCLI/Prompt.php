@@ -49,34 +49,30 @@ class Prompt implements SharedService {
 		$validate_callback = $args['validate_callback'];
 		$sanitize_callback = $args['sanitize_callback'];
 
-		if ( ! empty( $assoc_args[ $key ] ) ) {
-			$result = $assoc_args[ $key ];
-		} else {
-			$full_prompt = $prompt;
-			$append      = '';
+		$full_prompt = $prompt;
+		$append      = '';
 
+		if ( empty( $default ) ) {
+			$append = ' (enter x to cancel)';
+		}
+
+		if ( ! empty( $default ) ) {
+			$append = " (default $default; x to cancel)";
+		}
+
+		wp_cli()::line( $full_prompt . $append . ':' );
+
+		$result = trim( $this->readline( '' ) );
+
+		if ( 'x' === $result ) {
+			wp_cli()::halt( 0 );
+		}
+
+		if ( ! $result ) {
 			if ( empty( $default ) ) {
-				$append = ' (enter x to cancel)';
-			}
-
-			if ( ! empty( $default ) ) {
-				$append = " (default $default; x to cancel)";
-			}
-
-			wp_cli()::line( $full_prompt . $append . ':' );
-
-			$result = trim( $this->readline( '' ) );
-
-			if ( 'x' === $result ) {
-				wp_cli()::halt( 0 );
-			}
-
-			if ( ! $result ) {
-				if ( empty( $default ) ) {
-					return $this->get_arg_or_prompt( $assoc_args, $args );
-				} else {
-					$result = $default;
-				}
+				return $this->get_arg_or_prompt( $assoc_args, $args );
+			} else {
+				$result = $default;
 			}
 		}
 
@@ -104,18 +100,30 @@ class Prompt implements SharedService {
 	 * @param array  $assoc_args Associative array of arguments.
 	 * @param string $flag Flag to get.
 	 * @param string $prompt Prompt to display.
+	 * @param bool   $default Default bool result.
 	 *
 	 * @return bool
 	 */
-	public function get_flag_or_prompt( array $assoc_args, string $flag, string $prompt ) {
+	public function get_flag_or_prompt( array $assoc_args, string $flag, string $prompt, bool $default = true ) : bool {
 		if ( isset( $assoc_args[ $flag ] ) ) {
 			return wp_cli()::get_flag_value( $assoc_args, $flag );
 		}
 
 		$answer = null;
 
-		while ( ! in_array( $answer, [ 'y', 'n', 'Y', 'N', '' ], true ) ) {
-			$answer = $this->readline( $prompt . ' (Y/n):' );
+		/**
+		 * Filters acceptable get_flag_or_prompt_answers.
+		 *
+		 * @param array $answers Acceptable answers.
+		 */
+		$acceptable_answers = apply_filters( 'wpsnapshots_get_flag_or_prompt_answers', [ 'y', 'n', 'Y', 'N', '' ] );
+
+		do {
+			$answer = $this->readline( $prompt . ' ' . ( true === $default ? '[Y/n]:' : '[y/N]:' ) . ' ' );
+		} while ( is_array( $acceptable_answers ) && ! in_array( $answer, [ 'y', 'n', 'Y', 'N', '' ], true ) );
+
+		if ( '' === $answer ) {
+			return $default;
 		}
 
 		return in_array( $answer, [ 'y', 'Y', '' ], true );
@@ -125,9 +133,11 @@ class Prompt implements SharedService {
 	 * Wrapper for PHP readline.
 	 *
 	 * @param string $prompt Prompt to display.
+	 * @param string $default Default value.
+	 * @param ?mixed $validator Validator function.
 	 * @return string
 	 */
-	public function readline( string $prompt = '' ) : string {
+	public function readline( string $prompt = '', $default = '', $validator = null ) : string {
 
 		/**
 		 * Filters the readline callable.
@@ -136,6 +146,21 @@ class Prompt implements SharedService {
 		 */
 		$readline = apply_filters( 'wpsnapshots_readline', 'readline' );
 
-		return $readline( $prompt );
+		$result = $readline( $prompt );
+
+		if ( empty( trim( $result ) ) ) {
+			$result = $default;
+		}
+
+		if ( is_callable( $validator ) ) {
+			try {
+				$result = call_user_func( $validator, $result );
+			} catch ( WPSnapshotsInputValidationException $e ) {
+				wp_cli()::line( $e->getMessage() );
+				return $this->readline( $prompt, $validator );
+			}
+		}
+
+		return $result;
 	}
 }
