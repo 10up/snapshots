@@ -103,6 +103,46 @@ class DynamoDBConnector implements DBConnectorInterface {
 	}
 
 	/**
+	 * Create default DB tables. Only need to do this once ever for repo setup.
+	 *
+	 * @param string $repository Repository name.
+	 * @param string $region AWS region.
+	 */
+	public function create_tables( string $repository, string $region ) {
+		$table_name = 'wpsnapshots-' . $repository;
+		$client     = $this->get_client( $region );
+
+		$client->createTable(
+			[
+				'TableName'             => $table_name,
+				'AttributeDefinitions'  => [
+					[
+						'AttributeName' => 'id',
+						'AttributeType' => 'S',
+					],
+				],
+				'KeySchema'             => [
+					[
+						'AttributeName' => 'id',
+						'KeyType'       => 'HASH',
+					],
+				],
+				'ProvisionedThroughput' => [
+					'ReadCapacityUnits'  => 10,
+					'WriteCapacityUnits' => 20,
+				],
+			]
+		);
+
+		$client->waitUntil(
+			'TableExists',
+			[
+				'TableName' => $table_name,
+			]
+		);
+	}
+
+	/**
 	 * Provides the client.
 	 *
 	 * @param string $region AWS region.

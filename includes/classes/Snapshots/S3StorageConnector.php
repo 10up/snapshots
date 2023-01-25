@@ -8,6 +8,7 @@
 namespace TenUp\WPSnapshots\Snapshots;
 
 use Aws\S3\S3Client;
+use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\SnapshotsFileSystem;
 
 /**
@@ -64,6 +65,43 @@ class S3StorageConnector implements StorageConnectorInterface {
 			);
 		}
 	}
+
+	/**
+	 * Create WP Snapshots S3 bucket
+	 *
+	 * @param string $repository Repository name.
+	 * @param string $region AWS region.
+	 *
+	 * @throws WPSnapshotsException If bucket already exists.
+	 */
+	public function create_bucket( string $repository, string $region ) {
+		$client              = $this->get_client( $region );
+		$list_buckets_result = $client->listBuckets();
+		$bucket_name         = $this->get_bucket_name( $repository );
+
+		foreach ( $list_buckets_result['Buckets'] as $bucket ) {
+			if ( $bucket_name === $bucket['Name'] ) {
+				throw new WPSnapshotsException( $this->get_bucket_already_exists_message() );
+			}
+		}
+
+		$client->createBucket(
+			[
+				'Bucket'             => $bucket_name,
+				'LocationConstraint' => $region,
+			]
+		);
+	}
+
+	/**
+	 * Gets the bucket already exists error message.
+	 *
+	 * @return string
+	 */
+	public function get_bucket_already_exists_message() : string {
+		return 'S3 bucket already exists.';
+	}
+
 
 	/**
 	 * Configures the client.

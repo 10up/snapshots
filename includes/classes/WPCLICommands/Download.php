@@ -7,6 +7,7 @@
 
 namespace TenUp\WPSnapshots\WPCLICommands;
 
+use Exception;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\WPCLI\WPCLICommand;
 
@@ -24,8 +25,6 @@ final class Download extends WPCLICommand {
 	 *
 	 * @param array $args Arguments passed to the command.
 	 * @param array $assoc_args Associative arguments passed to the command.
-	 *
-	 * @throws WPSnapshotsException If the command fails.
 	 */
 	public function execute( array $args, array $assoc_args ) {
 		try {
@@ -34,13 +33,13 @@ final class Download extends WPCLICommand {
 
 			$meta = $this->get_meta();
 
-			$this->log( 'Downloading snapshot' . $this->get_formatted_size( $meta ) . '...' );
+			$this->log( 'Downloading snapshot (' . $this->get_formatted_size( $meta ) . ')...' );
 
 			$this->storage_connector->download_snapshot( $this->get_id(), $meta, $this->get_repository_name(), $this->get_assoc_arg( 'region' ) );
 			$this->snapshot_meta->save_local( $this->get_id(), $meta );
 
 			wp_cli()::success( 'Snapshot downloaded.' );
-		} catch ( WPSnapshotsException $e ) {
+		} catch ( Exception $e ) {
 			wp_cli()::error( $e->getMessage() );
 		}
 	}
@@ -108,7 +107,7 @@ final class Download extends WPCLICommand {
 	 */
 	private function get_local_meta( string $id ) : array {
 		try {
-			return $this->snapshot_meta->get_local( $id, $this->get_repository_name() );
+			return $this->snapshot_meta->get_local( $id, $this->get_repository_name() ) ?? [];
 		} catch ( WPSnapshotsException $e ) {
 			return [];
 		}
@@ -189,12 +188,12 @@ final class Download extends WPCLICommand {
 
 		if ( empty( $meta['files_size'] ) && empty( $meta['db_size'] ) ) {
 			if ( $meta['contains_files'] && $meta['contains_db'] ) {
-				$formatted_size = ' (' . $this->format_bytes( $meta['size'] ) . ')';
+				$formatted_size = $this->format_bytes( $meta['size'] );
 			}
 		} else {
 			$size = (int) ( $meta['files_size'] ?? 0 ) + (int) ( $meta['db_size'] ?? 0 );
 
-			$formatted_size = ' (' . $this->format_bytes( $size ) . ')';
+			$formatted_size = $this->format_bytes( $size );
 		}
 
 		return $formatted_size;

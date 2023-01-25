@@ -49,7 +49,7 @@ trait WPCLIMocking {
 	}
 
 	public function readline( ...$args ) {
-		return 'test';
+		return 'Y';
 	}
 
 	/**

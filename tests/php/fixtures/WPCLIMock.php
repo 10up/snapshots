@@ -37,8 +37,9 @@ class WPCLIMock {
 	}
 
 	public static function __callStatic( $name, $arguments ) {
-		if ( in_array( $name, [ 'success', 'error', 'confirm', 'halt', 'line', 'readline', 'add_command', 'format_items' ] ) ) {
-			return self::$wpcli_mock_calls[ $name ][] = $arguments;
+		if ( in_array( $name, [ 'success', 'error', 'confirm', 'halt', 'line', 'readline', 'add_command', 'format_items', 'prompt' ] ) ) {
+			self::$wpcli_mock_calls[ $name ][] = $arguments;
+			return;
 		}
 
 		if ( method_exists( 'WP_CLI', $name ) ) {

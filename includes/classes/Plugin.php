@@ -11,7 +11,7 @@ use TenUp\WPSnapshots\Infrastructure\Container;
 use TenUp\WPSnapshots\Log\WPCLILogger;
 use TenUp\WPSnapshots\Snapshots\{DynamoDBConnector, S3StorageConnector, SnapshotMetaFromFileSystem};
 use TenUp\WPSnapshots\WPCLI\Prompt;
-use TenUp\WPSnapshots\WPCLICommands\{Download, Search};
+use TenUp\WPSnapshots\WPCLICommands\{CreateRepository, Download, Search};
 use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
 
 /**
@@ -45,8 +45,9 @@ final class Plugin extends Container {
 	 */
 	protected function get_modules(): array {
 		$components = [
-			'wpcli_commands/download' => Download::class,
-			'wpcli_commands/search'   => Search::class,
+			'wpcli_commands/create_repository' => CreateRepository::class,
+			'wpcli_commands/download'          => Download::class,
+			'wpcli_commands/search'            => Search::class,
 		];
 
 		/**
