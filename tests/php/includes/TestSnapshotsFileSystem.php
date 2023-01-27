@@ -230,7 +230,7 @@ class TestSnapshotsFileSystem extends TestCase {
 		for ( $i = 0; $i < 10; $i++ ) {
 			$destination = $destination_directory . '/test-' . $i . '.txt';
 
-			$this->assertTrue( file_exists( $destination ) );
+			$this->assertFileExists( $destination );
 			$this->assertEquals( 'This is a test file. ' . $i, $this->snapshots_fs->get_wp_filesystem()->get_contents( $destination ) );
 		}
 	}

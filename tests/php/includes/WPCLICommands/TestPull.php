@@ -13,13 +13,15 @@ use TenUp\WPSnapshots\FileSystem;
 use TenUp\WPSnapshots\Plugin;
 use TenUp\WPSnapshots\Snapshots\SnapshotMeta;
 use TenUp\WPSnapshots\SnapshotFiles;
-use TenUp\WPSnapshots\Tests\Fixtures\{CommandTests, PrivateAccess, WPCLIMocking};
+use TenUp\WPSnapshots\Tests\Fixtures\{CommandTests, DirectoryFiltering, PrivateAccess, WPCLIMocking};
 use TenUp\WPSnapshots\WordPress\Database;
 use TenUp\WPSnapshots\WPCLI\WPCLICommand;
 use TenUp\WPSnapshots\WPCLICommands\Pull;
 use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacer;
 use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacerFactory;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
+
+use function TenUp\WPSnapshots\Utils\wpsnapshots_wp_content_dir;
 
 /**
  * Class TestPull
@@ -30,7 +32,7 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
  */
 class TestPull extends TestCase {
 
-	use PrivateAccess, WPCLIMocking, CommandTests;
+	use PrivateAccess, WPCLIMocking, CommandTests, DirectoryFiltering;
 
 	/**
 	 * Pull instance.
@@ -50,6 +52,7 @@ class TestPull extends TestCase {
 		$this->set_up_wp_cli_mock();
 
 		$this->command->set_args( [ 'test-id' ] );
+		$this->set_up_directory_filtering();
 	}
 
 	/**
@@ -59,6 +62,7 @@ class TestPull extends TestCase {
 		parent::tear_down();
 
 		$this->tear_down_wp_cli_mock();
+		$this->tear_down_directory_filtering();
 	}
 
 	/**
@@ -397,7 +401,7 @@ class TestPull extends TestCase {
 
 		$snapshots_filesystem_mock->expects( $this->once() )
 			->method( 'unzip_snapshot_files' )
-			->with( 'test-id', defined( 'WP_CONTENT_DIR' ) ? WP_CONTENT_DIR : ABSPATH . 'wp-content' );
+			->with( 'test-id', wpsnapshots_wp_content_dir() );
 
 		$this->set_private_property( $this->command, 'snapshots_filesystem', $snapshots_filesystem_mock );
 
@@ -449,7 +453,7 @@ class TestPull extends TestCase {
 			1,
 			[
 				[
-					'plugin activate snapshots-command --skip-themes --skip-plugins --skip-packages', [ 'launch' => true ]
+					'plugin activate snapshots-command --skip-themes --skip-plugins --skip-packages', [ 'launch' => true, 'return' => 'all' ]
 				],
 			]
 		);

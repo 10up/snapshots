@@ -100,8 +100,6 @@ class ScrubberV2 implements ScrubberInterface {
 		$users_sql_path = $this->snapshot_files->get_file_path( 'data-users.sql', $id );
 		$this->export_temp_table( $users_sql_path, $wpdb->users . '_temp' );
 
-		$users_sql = $this->snapshot_files->get_file_contents( 'data-users.sql', $id );
-
 		$this->log( 'Duplicating user meta table...' );
 
 		$wpdb->query( "CREATE TABLE {$wpdb->usermeta}_temp LIKE $wpdb->usermeta" );
@@ -152,6 +150,8 @@ class ScrubberV2 implements ScrubberInterface {
 		$usermeta_sql = $this->snapshot_files->get_file_contents( 'data-usermeta.sql', $id );
 
 		$this->log( 'Appending scrubbed SQL to dump file...' );
+
+		$users_sql = $this->snapshot_files->get_file_contents( 'data-users.sql', $id );
 
 		file_put_contents( $this->snapshot_files->get_file_path( 'data.sql', $id ), preg_replace( '#`' . $wpdb->users . '_temp`#', $wpdb->users, $users_sql ) . preg_replace( '#`' . $wpdb->usermeta . '_temp`#', $wpdb->usermeta, $usermeta_sql ), FILE_APPEND ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents
 

@@ -57,7 +57,11 @@ class TestFileSystem extends TestCase {
 		$this->assertInstanceOf( FileSystem::class, $this->filesystem );
 	}
 
-	/** @covers ::sync_files */
+	/**
+	 * @covers ::sync_files
+	 * @covers ::get_wp_filesystem
+	 * @covers ::sync_files_recursive
+	 */
 	public function test_sync_files() {
 		$source_directory = $this->get_directory_path() . '/source';
 		$destination_directory = $this->get_directory_path() . '/destination';
@@ -86,9 +90,15 @@ class TestFileSystem extends TestCase {
 
 		// Confirm the source directory was deleted.
 		$this->assertFalse( file_exists( $source_directory ) );
+
+		$this->filesystem->get_wp_filesystem()->delete( $destination_directory, true );
 	}
 
-	/** @covers ::sync_files */
+	/**
+	 * @covers ::sync_files
+	 * @covers ::get_wp_filesystem
+	 * @covers ::sync_files_recursive
+	 */
 	public function test_sync_files_with_multiple_layers_of_subdirectories() {
 		$source_directory = $this->get_directory_path() . '/source';
 		$destination_directory = $this->get_directory_path() . '/destination';
@@ -96,8 +106,6 @@ class TestFileSystem extends TestCase {
 		// Create the source directory.
 		mkdir( $source_directory );
 
-		// Create the destination directory.
-		mkdir( $destination_directory );
 
 		for ( $i = 0; $i < 10; $i++ ) {
 			$source = $source_directory . '/test-' . $i . '.txt';
@@ -133,6 +141,8 @@ class TestFileSystem extends TestCase {
 			$this->assertTrue( file_exists( $destination ), 'File ' . $destination . ' does not exist.' );
 			$this->assertEquals( 'This is a test file. ' . $i, $this->filesystem->get_wp_filesystem()->get_contents( $destination ) );
 		}
+
+		$this->filesystem->get_wp_filesystem()->delete( $destination_directory, true );
 	}
 
 	/** @covers ::delete_directory_contents */
@@ -161,12 +171,16 @@ class TestFileSystem extends TestCase {
 		$this->filesystem->get_wp_filesystem()->put_contents( $directory . '/subdirectory/sub-subdirectory/test-0.txt', 'This is a test file.' );
 		$this->filesystem->get_wp_filesystem()->put_contents( $directory . '/subdirectory/sub-subdirectory/test-1.txt', 'This is a test file.' );
 
-
-		// Expect WPSnapshotsException to be thrown.
-		$this->expectException( WPSnapshotsException::class );
-		$this->expectExceptionMessage( 'Cannot delete root directory because files were excluded from deletion: ' . $directory );
-
-		$this->filesystem->delete_directory_contents( $directory, true, [ $directory . '/test-8.txt', $directory . '/subdirectory/test-1.txt', '/subdirectory/sub-subdirectory' ] );
+		$this->filesystem->delete_directory_contents(
+			$directory,
+			true,
+			[
+				$directory . '/test-8.txt',
+				$directory . '/subdirectory/test-1.txt',
+				'/subdirectory/sub-subdirectory',
+				'test-6.txt'
+			]
+		);
 
 		$this->assertFileDoesNotExist( $directory . '/test-0.txt' );
 		$this->assertFileDoesNotExist( $directory . '/test-1.txt' );
@@ -174,7 +188,7 @@ class TestFileSystem extends TestCase {
 		$this->assertFileDoesNotExist( $directory . '/test-3.txt' );
 		$this->assertFileDoesNotExist( $directory . '/test-4.txt' );
 		$this->assertFileDoesNotExist( $directory . '/test-5.txt' );
-		$this->assertFileDoesNotExist( $directory . '/test-6.txt' );
+		$this->assertFileExists( $directory . '/test-6.txt' );
 		$this->assertFileDoesNotExist( $directory . '/test-7.txt' );
 		$this->assertFileExists( $directory . '/test-8.txt' );
 		$this->assertFileDoesNotExist( $directory . '/test-9.txt' );
@@ -185,8 +199,11 @@ class TestFileSystem extends TestCase {
 		$this->assertFileExists( $directory . '/subdirectory/sub-subdirectory/test-1.txt' );
 
 
-		// Confirm root no longer exists.
-		$this->assertFileDoesNotExist( $directory );
+		// Confirm root still exists becuase it contains excluded files.
+		$this->assertFileExists( $directory );
+
+		$this->filesystem->get_wp_filesystem()->delete( $directory, true );
+		
 	}
 
 	/** @covers ::delete_directory_contents */
@@ -220,6 +237,8 @@ class TestFileSystem extends TestCase {
 
 		// Confirm root no longer exists.
 		$this->assertFileDoesNotExist( $directory );
+
+		$this->filesystem->get_wp_filesystem()->delete( $directory, true );
 	}
 
 	/** @covers ::unzip_file */
@@ -248,6 +267,8 @@ class TestFileSystem extends TestCase {
 			$this->assertTrue( file_exists( $destination ) );
 			$this->assertEquals( 'This is a test file. ' . $i, $this->filesystem->get_wp_filesystem()->get_contents( $destination ) );
 		}
+
+		$this->filesystem->get_wp_filesystem()->delete( $destination_directory, true );
 	}
 
 	/** @covers ::unzip_file */
@@ -272,6 +293,8 @@ class TestFileSystem extends TestCase {
 		$this->filesystem->unzip_file( $gzipped_sql_file, $destination );
 
 		$this->assertTrue( file_exists( $destination . '/test.sql' ) );
+
+		$this->filesystem->get_wp_filesystem()->delete( $destination, true );
 	}
 
 	/** @covers ::unzip_file */
@@ -285,5 +308,7 @@ class TestFileSystem extends TestCase {
 		$this->expectExceptionMessage( 'Incompatible Archive' );
 
 		$this->filesystem->unzip_file( 'nonexistent-file', $destination_directory, );
+
+		$this->filesystem->get_wp_filesystem()->delete( $destination_directory, true );
 	}
 }

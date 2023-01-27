@@ -7,7 +7,9 @@
 
 namespace TenUp\WPSnapshots;
 
+use BadMethodCallException;
 use Exception;
+use Phar;
 use PharData;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Infrastructure\SharedService;
@@ -260,7 +262,11 @@ class SnapshotFiles implements SharedService {
 
 			$phar = new PharData( $zip_file );
 			$phar->decompress();
+
 			$phar->extractTo( '/tmp/files' );
+
+			unset( $phar );
+			Phar::unlinkArchive( $zip_file );
 
 			// Delete the nongzipped file file.
 			$this->get_wp_filesystem()->delete( str_replace( '.gz', '', $zip_file ) );

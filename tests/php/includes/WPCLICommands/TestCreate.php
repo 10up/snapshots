@@ -169,7 +169,7 @@ class TestCreate extends TestCase {
 			1,
 			[
 				[
-					'Snapshot created.'
+					'Snapshot  created.'
 				]
 			]
 		);

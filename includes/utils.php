@@ -68,5 +68,10 @@ function wpsnapshots_wp_content_dir() : string {
 		throw new WPSnapshotsException( 'WP_CONTENT_DIR is not defined.' );
 	}
 
-	return WP_CONTENT_DIR;
+	/**
+	 * Filters the path to the wp-content directory.
+	 *
+	 * @param string $wp_content_dir Path to the wp-content directory.
+	 */
+	return apply_filters( 'wpsnapshots_wp_content_dir', WP_CONTENT_DIR );
 }
