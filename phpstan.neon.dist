@@ -10,7 +10,9 @@ parameters:
 	bootstrapFiles:
 		- %currentWorkingDirectory%/vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
 		- %currentWorkingDirectory%/wpsnapshots.php
-		- %currentWorkingDirectory%/tests/php/bootstrap.php
+		- %currentWorkingDirectory%/vendor/wordpress/wordpress-develop/tests/phpunit/includes/phpunit-adapter-testcase.php
+		- %currentWorkingDirectory%/vendor/wordpress/wordpress-develop/tests/phpunit/includes/abstract-testcase.php
+		- %currentWorkingDirectory%/vendor/wordpress/wordpress-develop/tests/phpunit/includes/testcase.php
 	excludePaths:
 	ignoreErrors:
 	earlyTerminatingMethodCalls:

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0685e17144bc242c1257ebfbb783bb9f",
+    "content-hash": "aaa6f4ef65ae3f2014f2e5d9620bd2d0",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -826,12 +826,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "fd9e963bb80ccbf5d83ce813f9058aacc67cdb98"
+                "reference": "f9c7affe77a00ae32ca127ca6833d034e6d33f25"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/fd9e963bb80ccbf5d83ce813f9058aacc67cdb98",
-                "reference": "fd9e963bb80ccbf5d83ce813f9058aacc67cdb98",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/f9c7affe77a00ae32ca127ca6833d034e6d33f25",
+                "reference": "f9c7affe77a00ae32ca127ca6833d034e6d33f25",
                 "shasum": ""
             },
             "require": {
@@ -902,7 +902,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-01-26T09:26:14+00:00"
+            "time": "2023-01-30T17:25:47+00:00"
         }
     ],
     "packages-dev": [
@@ -2311,12 +2311,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "7dafaa1b799d8f6140cc8df1a004c4c28cc40850"
+                "reference": "e13cc26dde17c6d17b6257cea5847e5e600d181f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/7dafaa1b799d8f6140cc8df1a004c4c28cc40850",
-                "reference": "7dafaa1b799d8f6140cc8df1a004c4c28cc40850",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e13cc26dde17c6d17b6257cea5847e5e600d181f",
+                "reference": "e13cc26dde17c6d17b6257cea5847e5e600d181f",
                 "shasum": ""
             },
             "require": {
@@ -2405,7 +2405,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-01-30T09:12:25+00:00"
+            "time": "2023-01-30T15:11:11+00:00"
         },
         {
             "name": "rmccue/requests",
@@ -3328,12 +3328,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/type.git",
-                "reference": "4d34b23933f255b0822758a44272222cac593eb4"
+                "reference": "dd52163b81c8723409607f481ac6edb1c3e7c062"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/type/zipball/4d34b23933f255b0822758a44272222cac593eb4",
-                "reference": "4d34b23933f255b0822758a44272222cac593eb4",
+                "url": "https://api.github.com/repos/sebastianbergmann/type/zipball/dd52163b81c8723409607f481ac6edb1c3e7c062",
+                "reference": "dd52163b81c8723409607f481ac6edb1c3e7c062",
                 "shasum": ""
             },
             "require": {
@@ -3376,7 +3376,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-10-01T05:56:17+00:00"
+            "time": "2023-01-30T14:46:43+00:00"
         },
         {
             "name": "sebastian/version",
@@ -3695,6 +3695,16 @@
             "time": "2019-04-19T19:16:58+00:00"
         },
         {
+            "name": "wordpress/wordpress-develop",
+            "version": "dev-trunk",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/WordPress/wordpress-develop",
+                "reference": "trunk"
+            },
+            "type": "library"
+        },
+        {
             "name": "wp-cli/mustangostang-spyc",
             "version": "0.6.3",
             "source": {
@@ -3815,12 +3825,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/wp-cli/wp-cli.git",
-                "reference": "a584b19db7d6f813ed0e321f74c952875affcb30"
+                "reference": "e62f6f4615eedc6150ffb451fb99b96cf8590cba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wp-cli/wp-cli/zipball/a584b19db7d6f813ed0e321f74c952875affcb30",
-                "reference": "a584b19db7d6f813ed0e321f74c952875affcb30",
+                "url": "https://api.github.com/repos/wp-cli/wp-cli/zipball/e62f6f4615eedc6150ffb451fb99b96cf8590cba",
+                "reference": "e62f6f4615eedc6150ffb451fb99b96cf8590cba",
                 "shasum": ""
             },
             "require": {
@@ -3879,7 +3889,7 @@
                 "issues": "https://github.com/wp-cli/wp-cli/issues",
                 "source": "https://github.com/wp-cli/wp-cli"
             },
-            "time": "2023-01-18T14:00:47+00:00"
+            "time": "2023-01-30T19:25:25+00:00"
         },
         {
             "name": "wp-coding-standards/wpcs",
@@ -4070,7 +4080,8 @@
     "stability-flags": {
         "10up/phpcs-composer": 20,
         "wp-cli/wp-cli": 20,
-        "civicrm/composer-downloads-plugin": 20
+        "civicrm/composer-downloads-plugin": 20,
+        "wordpress/wordpress-develop": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

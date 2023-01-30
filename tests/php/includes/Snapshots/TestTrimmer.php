@@ -111,7 +111,7 @@ class TestTrimmer extends TestCase {
 			'post_title' => 'Test post',
 		] );
 
-		wp_set_post_terms( $post->ID, $term, 'category' );
+		wp_set_post_terms( $post->ID, (int) $term, 'category' );
 
 		// Create 20 posts.
 		$posts = $this->factory()->post->create_many( 20, [

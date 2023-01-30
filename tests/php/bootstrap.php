@@ -12,6 +12,10 @@ define( 'TESTS_PLUGIN_DIR', dirname( dirname( __DIR__ ) ) );
 
 define( 'PROJECT_ROOT', dirname( dirname( __DIR__ ) ) );
 
+if ( ! defined( 'WP_TESTS_CONFIG_FILE_PATH' ) && false !== getenv( 'WP_PHPUNIT__TESTS_CONFIG' ) ) {
+    define( 'WP_TESTS_CONFIG_FILE_PATH', getenv( 'WP_PHPUNIT__TESTS_CONFIG' ) );
+}
+
 require_once PROJECT_ROOT . '/vendor/autoload.php';
 require_once PROJECT_ROOT . '/vendor/yoast/wp-test-utils/src/WPIntegration/bootstrap-functions.php';
 
