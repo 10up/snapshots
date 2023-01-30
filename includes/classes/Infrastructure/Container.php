@@ -29,7 +29,7 @@ abstract class Container {
 	/**
 	 * Provides names of modules to instantiate.
 	 *
-	 * @return string[]
+	 * @return array<?string>
 	 */
 	abstract protected function get_modules() : array;
 
@@ -38,7 +38,7 @@ abstract class Container {
 	 *
 	 * Services are classes that are instantiated on demand when modules are instantiated.
 	 *
-	 * @return string[]
+	 * @return array<?string>
 	 */
 	abstract protected function get_services() : array;
 
@@ -193,9 +193,13 @@ abstract class Container {
 		}
 
 		// Validate services.
-		foreach ( $this->get_services() as $service ) {
+		foreach ( $this->get_services() as $key => $service ) {
+			if ( is_null( $service ) ) {
+				continue;
+			}
+
 			if ( ! class_exists( $service ) ) {
-				throw new WPSnapshotsException( sprintf( 'Unknown service: %s', $service ) );
+				throw new WPSnapshotsException( sprintf( 'Unknown service: %s with key %s', (string) $service, $key ) );
 			}
 
 			$service_implements = class_implements( $service );

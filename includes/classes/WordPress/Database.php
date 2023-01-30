@@ -55,7 +55,7 @@ class Database implements SharedService {
 	public function rename_table( string $old_name, string $new_name ) {
 		$wpdb = $this->get_wpdb();
 
-		$wpdb->query( $wpdb->prepare( 'RENAME TABLE %s TO %s', $old_name, $new_name ) );
+		$wpdb->query( $wpdb->prepare( 'RENAME TABLE ' . $old_name . ' TO ' . $new_name ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 	}
 
 	/**

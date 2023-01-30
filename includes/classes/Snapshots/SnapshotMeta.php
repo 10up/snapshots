@@ -25,13 +25,6 @@ abstract class SnapshotMeta implements SnapshotMetaInterface {
 	protected $db;
 
 	/**
-	 * Snapshot meta data
-	 *
-	 * @var array
-	 */
-	protected $meta = [];
-
-	/**
 	 * Meta constructor
 	 *
 	 * @param DBConnectorInterface $db Database connector instance.

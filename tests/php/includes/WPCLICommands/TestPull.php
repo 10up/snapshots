@@ -12,14 +12,16 @@ use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\FileSystem;
 use TenUp\WPSnapshots\Plugin;
 use TenUp\WPSnapshots\Snapshots\SnapshotMeta;
-use TenUp\WPSnapshots\SnapshotsFiles;
-use TenUp\WPSnapshots\Tests\Fixtures\{CommandTests, PrivateAccess, WPCLIMocking};
+use TenUp\WPSnapshots\SnapshotFiles;
+use TenUp\WPSnapshots\Tests\Fixtures\{CommandTests, DirectoryFiltering, PrivateAccess, WPCLIMocking};
 use TenUp\WPSnapshots\WordPress\Database;
 use TenUp\WPSnapshots\WPCLI\WPCLICommand;
 use TenUp\WPSnapshots\WPCLICommands\Pull;
 use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacer;
 use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacerFactory;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
+
+use function TenUp\WPSnapshots\Utils\wpsnapshots_wp_content_dir;
 
 /**
  * Class TestPull
@@ -30,7 +32,7 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
  */
 class TestPull extends TestCase {
 
-	use PrivateAccess, WPCLIMocking, CommandTests;
+	use PrivateAccess, WPCLIMocking, CommandTests, DirectoryFiltering;
 
 	/**
 	 * Pull instance.
@@ -50,6 +52,7 @@ class TestPull extends TestCase {
 		$this->set_up_wp_cli_mock();
 
 		$this->command->set_args( [ 'test-id' ] );
+		$this->set_up_directory_filtering();
 	}
 
 	/**
@@ -59,6 +62,7 @@ class TestPull extends TestCase {
 		parent::tear_down();
 
 		$this->tear_down_wp_cli_mock();
+		$this->tear_down_directory_filtering();
 	}
 
 	/**
@@ -242,6 +246,7 @@ class TestPull extends TestCase {
 		$snapshot_meta_mock->method( 'get_local' )->willReturn( [] );
 
 		$this->set_private_property( $this->command, 'snapshot_meta', $snapshot_meta_mock );
+		$this->command->set_assoc_arg( 'repository', '10up' );
 
 		$this->assertFalse( $this->call_private_method( $this->command, 'get_should_update_wp' ) );
 	}
@@ -287,9 +292,9 @@ class TestPull extends TestCase {
 		/**
 		 * Mock the snapshots_filesystem variable.
 		 * 
-		 * @var MockObject|SnapshotsFiles $snapshots_filesystem_mock
+		 * @var MockObject|SnapshotFiles $snapshots_filesystem_mock
 		 */
-		$snapshots_filesystem_mock = $this->createMock( SnapshotsFiles::class );
+		$snapshots_filesystem_mock = $this->createMock( SnapshotFiles::class );
 		$snapshots_filesystem_mock->method( 'get_file_path' )->willReturn( 'test' );
 
 		$this->set_private_property( $this->command, 'snapshots_filesystem', $snapshots_filesystem_mock );
@@ -392,12 +397,12 @@ class TestPull extends TestCase {
 		 * 
 		 * @var MockObject $snapshots_filesystem_mock
 		 */
-		$snapshots_filesystem_mock = $this->createMock( SnapshotsFiles::class );
+		$snapshots_filesystem_mock = $this->createMock( SnapshotFiles::class );
 		$snapshots_filesystem_mock->method( 'unzip_snapshot_files' )->willReturn( [] );
 
 		$snapshots_filesystem_mock->expects( $this->once() )
 			->method( 'unzip_snapshot_files' )
-			->with( 'test-id', defined( 'WP_CONTENT_DIR' ) ? WP_CONTENT_DIR : ABSPATH . 'wp-content' );
+			->with( 'test-id', wpsnapshots_wp_content_dir() );
 
 		$this->set_private_property( $this->command, 'snapshots_filesystem', $snapshots_filesystem_mock );
 
@@ -421,7 +426,7 @@ class TestPull extends TestCase {
 		 * 
 		 * @var MockObject $snapshots_filesystem_mock
 		 */
-		$snapshots_filesystem_mock = $this->createMock( SnapshotsFiles::class );
+		$snapshots_filesystem_mock = $this->createMock( SnapshotFiles::class );
 		$snapshots_filesystem_mock->method( 'unzip_snapshot_files' )->willReturn( [ 'test-error' ] );
 
 		$this->set_private_property( $this->command, 'snapshots_filesystem', $snapshots_filesystem_mock );
@@ -449,7 +454,7 @@ class TestPull extends TestCase {
 			1,
 			[
 				[
-					'plugin activate snapshots-command --skip-themes --skip-plugins --skip-packages', [ 'launch' => true ]
+					'plugin activate snapshots-command --skip-themes --skip-plugins --skip-packages', [ 'launch' => true, 'return' => 'all' ]
 				],
 			]
 		);
@@ -580,6 +585,7 @@ class TestPull extends TestCase {
 		];
 
 		$this->command->set_assoc_arg( 'site_mapping', json_encode( $to_encode ) );
+		$this->command->set_assoc_arg( 'repository', '10up' );
 
 		$this->assertEquals(
 			[
@@ -611,6 +617,7 @@ class TestPull extends TestCase {
 		file_put_contents( $filename, json_encode( $to_encode ) );
 
 		$this->command->set_assoc_arg( 'site_mapping', $filename );
+		$this->command->set_assoc_arg( 'repository', '10up' );
 
 		$this->assertEquals(
 			[
@@ -636,6 +643,7 @@ class TestPull extends TestCase {
 		];
 
 		$this->command->set_assoc_arg( 'site_mapping', json_encode( $to_encode ) );
+		$this->command->set_assoc_arg( 'repository', '10up' );
 
 		$this->mock_snapshot_meta( $test_local_meta );
 
@@ -676,6 +684,8 @@ class TestPull extends TestCase {
 			'domain_current_site' => 'http://example.org',
 		];
 
+		$this->command->set_assoc_arg( 'repository', '10up' );
+
 		$this->mock_snapshot_meta( $test_local_meta );
 
 		$this->call_private_method( $this->command, 'get_main_domain' );
@@ -696,6 +706,8 @@ class TestPull extends TestCase {
 			'contains_db' => true,
 			'multisite' => true,
 		];
+
+		$this->command->set_assoc_arg( 'repository', '10up' );
 
 		$this->mock_snapshot_meta( $test_local_meta );
 

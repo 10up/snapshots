@@ -1,24 +1,28 @@
 <?php
 /**
- * SnapshotsFiles class.
+ * SnapshotFiles class.
  *
  * @package TenUp\WPSnapshots
  */
 
 namespace TenUp\WPSnapshots;
 
+use BadMethodCallException;
 use Exception;
+use Phar;
 use PharData;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Infrastructure\SharedService;
 use WP_Filesystem_Base;
 
+use function TenUp\WPSnapshots\Utils\wpsnapshots_wp_content_dir;
+
 /**
- * SnapshotsFiles class.
+ * SnapshotFiles class.
  *
  * @package TenUp\WPSnapshots
  */
-class SnapshotsFiles implements SharedService {
+class SnapshotFiles implements SharedService {
 
 	/**
 	 * The FileSystem instance.
@@ -237,7 +241,7 @@ class SnapshotsFiles implements SharedService {
 	 */
 	public function unzip_snapshot_files( string $id, string $destination ) : array {
 		// Recursively delete everything in the wp-content directory except plugins/snapshots-command.
-		$this->file_system->delete_directory_contents( $destination, false, [ 'snapshots-command' ] );
+		$this->file_system->delete_directory_contents( $destination, true, [ WPSNAPSHOTS_DIR ] );
 
 		$zip_file = $this->get_file_path( 'files.tar.gz', $id );
 
@@ -252,12 +256,20 @@ class SnapshotsFiles implements SharedService {
 		$unzip_result = unzip_file( $zip_file, '/tmp/files' );
 
 		if ( is_wp_error( $unzip_result ) ) {
-			try {
-				$phar = new PharData( $zip_file );
-				$phar->extractTo( '/tmp/files' );
-			} catch ( Exception $e ) {
-				exec( 'tar -xzf ' . $zip_file . ' -C /tmp/files' ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.system_calls_exec -- This is the last resort.
-			}
+			// Delete /tmp/files and re-create it.
+			$this->get_wp_filesystem()->rmdir( '/tmp/files', true );
+			$this->get_wp_filesystem()->mkdir( '/tmp/files' );
+
+			$phar = new PharData( $zip_file );
+			$phar->decompress();
+
+			$phar->extractTo( '/tmp/files' );
+
+			unset( $phar );
+			Phar::unlinkArchive( $zip_file );
+
+			// Delete the nongzipped file file.
+			$this->get_wp_filesystem()->delete( str_replace( '.gz', '', $zip_file ) );
 		}
 
 		$errors = $this->file_system->sync_files( '/tmp/files', $destination, true );

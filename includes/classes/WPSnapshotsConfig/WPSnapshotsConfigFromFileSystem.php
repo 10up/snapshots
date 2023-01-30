@@ -8,7 +8,7 @@
 namespace TenUp\WPSnapshots\WPSnapshotsConfig;
 
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\SnapshotsFiles;
+use TenUp\WPSnapshots\SnapshotFiles;
 
 /**
  * Handle getting and setting of configuration values.
@@ -20,7 +20,7 @@ class WPSnapshotsConfigFromFileSystem implements WPSnapshotsConfigInterface {
 	/**
 	 * Data instance.
 	 *
-	 * @var SnapshotsFiles
+	 * @var SnapshotFiles
 	 */
 	private $snapshots_file_system;
 
@@ -34,18 +34,18 @@ class WPSnapshotsConfigFromFileSystem implements WPSnapshotsConfigInterface {
 	/**
 	 * Config constructor.
 	 *
-	 * @param SnapshotsFiles $snapshots_file_system SnapshotsFiles instance.
+	 * @param SnapshotFiles $snapshots_file_system SnapshotFiles instance.
 	 */
-	public function __construct( SnapshotsFiles $snapshots_file_system ) {
+	public function __construct( SnapshotFiles $snapshots_file_system ) {
 		$this->snapshots_file_system = $snapshots_file_system;
 	}
 
 	/**
 	 * Gets the user name.
 	 *
-	 * @return string $user_name User name.
+	 * @return ?string $user_name User name.
 	 */
-	public function get_user_name() : string {
+	public function get_user_name() : ?string {
 		return $this->get_config()['user_name'];
 	}
 
@@ -68,9 +68,9 @@ class WPSnapshotsConfigFromFileSystem implements WPSnapshotsConfigInterface {
 	/**
 	 * Gets the user email.
 	 *
-	 * @return string $user_email User email.
+	 * @return ?string $user_email User email.
 	 */
-	public function get_user_email() : string {
+	public function get_user_email() : ?string {
 		return $this->get_config()['user_email'];
 	}
 
@@ -138,6 +138,21 @@ class WPSnapshotsConfigFromFileSystem implements WPSnapshotsConfigInterface {
 	}
 
 	/**
+	 * Gets the default repository name.
+	 *
+	 * @return ?string $repository Default repository name.
+	 */
+	public function get_default_repository_name() : ?string {
+		$repository = $this->get_repository_settings();
+
+		if ( is_array( $repository ) ) {
+			return $repository['repository'];
+		}
+
+		return null;
+	}
+
+	/**
 	 * Gets the configuration.
 	 *
 	 * @return array $config Configuration.
@@ -157,8 +172,8 @@ class WPSnapshotsConfigFromFileSystem implements WPSnapshotsConfigInterface {
 	 */
 	private function get_defaults() : array {
 		return [
-			'user_name'    => '',
-			'user_email'   => '',
+			'user_name'    => null,
+			'user_email'   => null,
 			'repositories' => [],
 		];
 	}

@@ -10,7 +10,7 @@ namespace TenUp\WPSnapshots\WPCLICommands\Pull;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Infrastructure\Factory;
 use TenUp\WPSnapshots\Log\{LoggerInterface, Logging};
-use TenUp\WPSnapshots\SnapshotsFiles;
+use TenUp\WPSnapshots\SnapshotFiles;
 use TenUp\WPSnapshots\WordPress\Database;
 use TenUp\WPSnapshots\WPCLI\Prompt;
 
@@ -31,9 +31,9 @@ class URLReplacerFactory implements Factory {
 	protected $prompt;
 
 	/**
-	 * SnapshotsFiles instance.
+	 * SnapshotFiles instance.
 	 *
-	 * @var SnapshotsFiles
+	 * @var SnapshotFiles
 	 */
 	protected $snapshots_filesystem;
 
@@ -48,11 +48,11 @@ class URLReplacerFactory implements Factory {
 	 * Constructor.
 	 *
 	 * @param Prompt          $prompt Prompt instance.
-	 * @param SnapshotsFiles  $snapshots_filesystem SnapshotsFiles instance.
+	 * @param SnapshotFiles   $snapshots_filesystem SnapshotFiles instance.
 	 * @param Database        $wordpress_database Database instance.
 	 * @param LoggerInterface $logger WPCLILogger instance.
 	 */
-	public function __construct( Prompt $prompt, SnapshotsFiles $snapshots_filesystem, Database $wordpress_database, LoggerInterface $logger ) {
+	public function __construct( Prompt $prompt, SnapshotFiles $snapshots_filesystem, Database $wordpress_database, LoggerInterface $logger ) {
 		$this->prompt               = $prompt;
 		$this->snapshots_filesystem = $snapshots_filesystem;
 		$this->wordpress_database   = $wordpress_database;

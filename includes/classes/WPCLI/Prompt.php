@@ -29,6 +29,10 @@ class Prompt implements SharedService {
 	 */
 	public function get_arg_or_prompt( array $assoc_args, array $config ) : array {
 		if ( isset( $config['key'] ) && isset( $assoc_args[ $config['key'] ] ) && ! empty( $assoc_args[ $config['key'] ] ) ) {
+			if ( isset( $config['sanitize_callback'] ) ) {
+				$assoc_args[ $config['key'] ] = call_user_func( $config['sanitize_callback'], $assoc_args[ $config['key'] ] );
+			}
+
 			return $assoc_args;
 		}
 
@@ -105,7 +109,7 @@ class Prompt implements SharedService {
 	 * @return bool
 	 */
 	public function get_flag_or_prompt( array $assoc_args, string $flag, string $prompt, bool $default = true ) : bool {
-		if ( isset( $assoc_args[ $flag ] ) ) {
+		if ( array_key_exists( $flag, $assoc_args ) ) {
 			return wp_cli()::get_flag_value( $assoc_args, $flag );
 		}
 

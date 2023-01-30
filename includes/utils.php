@@ -55,3 +55,23 @@ function wp_cli() : object {
 		}
 	);
 }
+
+/**
+ * Returns the path to the wp-content directory.
+ *
+ * @return string
+ *
+ * @throws WPSnapshotsException If WP_CONTENT_DIR is not defined.
+ */
+function wpsnapshots_wp_content_dir() : string {
+	if ( ! defined( 'WP_CONTENT_DIR' ) ) {
+		throw new WPSnapshotsException( 'WP_CONTENT_DIR is not defined.' );
+	}
+
+	/**
+	 * Filters the path to the wp-content directory.
+	 *
+	 * @param string $wp_content_dir Path to the wp-content directory.
+	 */
+	return apply_filters( 'wpsnapshots_wp_content_dir', WP_CONTENT_DIR );
+}

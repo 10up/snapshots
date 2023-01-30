@@ -1,18 +1,21 @@
 <?php
 /**
- * SnapshotsFiles class.
+ * SnapshotFiles class.
  *
  * @package TenUp\WPSnapshots
  */
 
 namespace TenUp\WPSnapshots;
 
+use Exception;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Infrastructure\SharedService;
 use WP_Filesystem_Base;
 
+use function TenUp\WPSnapshots\Utils\wpsnapshots_wp_content_dir;
+
 /**
- * SnapshotsFiles class.
+ * SnapshotFiles class.
  *
  * @package TenUp\WPSnapshots
  */
@@ -87,25 +90,41 @@ class FileSystem implements SharedService {
 	private function sync_files_recursive( array $files, string $source, string $destination ) : array {
 		$errors = [];
 
+		if ( ! $this->get_wp_filesystem()->exists( $destination ) ) {
+			if ( ! $this->get_wp_filesystem()->mkdir( $destination ) ) {
+				$errors[] = 'Unable to create directory: ' . $destination;
+			}
+		}
+
 		foreach ( $files as $file ) {
 			try {
 				$source_file      = trailingslashit( $source ) . $file['name'];
 				$destination_file = trailingslashit( $destination ) . $file['name'];
+
+				if ( WPSNAPSHOTS_DIR === $destination_file ) {
+					continue;
+				}
 
 				if ( 'f' === $file['type'] ) {
 					if ( ! $this->get_wp_filesystem()->is_readable( $source_file ) ) {
 						continue;
 					}
 
-					// Copy the file.
-					$copied = $this->get_wp_filesystem()->copy( $source_file, $destination_file, true );
+					try {
+						$copied = $this->get_wp_filesystem()->copy( $source_file, $destination_file, true );
+					} catch ( Exception $e ) {
+						$copied = false;
+					}
 
 					if ( ! $copied ) {
 						throw new WPSnapshotsException( 'Unable to copy file: ' . $source_file . ' to ' . $destination_file );
 					}
 				} elseif ( 'd' === $file['type'] ) {
+
 					// Create the directory.
-					$this->get_wp_filesystem()->mkdir( $destination_file );
+					if ( ! $this->get_wp_filesystem()->exists( $destination_file ) && ! $this->get_wp_filesystem()->mkdir( $destination_file ) ) {
+						throw new WPSnapshotsException( 'Unable to create directory: ' . $destination_file );
+					}
 
 					// Sync the files in the directory.
 					$next_files = $this->get_wp_filesystem()->dirlist( $source_file );
@@ -143,22 +162,42 @@ class FileSystem implements SharedService {
 		$files = $this->get_wp_filesystem()->dirlist( $directory );
 
 		foreach ( $files as $file ) {
-			if ( in_array( $file['name'], $excluded_files, true ) || in_array( trailingslashit( $directory ) . $file['name'], $excluded_files, true ) ) {
+			if ( in_array( $file['name'], $excluded_files, true ) ) {
+				continue;
+			}
+
+			if ( in_array( trailingslashit( $directory ) . $file['name'], $excluded_files, true ) ) {
 				continue;
 			}
 
 			if ( $this->get_wp_filesystem()->is_dir( $directory . '/' . $file['name'] ) ) {
 				$this->delete_directory_contents( $directory . '/' . $file['name'], $delete_root, $excluded_files );
 			} else {
+				foreach ( $excluded_files as $excluded_file ) {
+					// If the file is within an excluded directory, skip it.
+					if ( false !== strpos( $directory . '/' . $file['name'], $excluded_file ) ) {
+						continue 2;
+					}
+				}
+
 				$this->get_wp_filesystem()->delete( $directory . '/' . $file['name'] );
 			}
 		}
 
 		if ( $delete_root ) {
 			if ( ! empty( $excluded_files ) ) {
-				throw new WPSnapshotsException( 'Cannot delete root directory because files were excluded from deletion: ' . $directory );
-			}
+				// Don't delete the root directory if it contains any of the excluded files.
+				foreach ( $excluded_files as $excluded_file ) {
+					if ( $directory === $excluded_file || strpos( $excluded_file, $directory ) === 0 ) {
+						return true;
+					}
 
+					// Skip if directory contains excluded directory.
+					if ( false !== strpos( $directory, $excluded_file ) ) {
+						return true;
+					}
+				}
+			}
 			$this->get_wp_filesystem()->rmdir( $directory );
 		}
 

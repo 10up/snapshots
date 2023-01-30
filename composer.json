@@ -8,23 +8,41 @@
             "TenUp\\WPSnapshots\\": "includes/classes/"
         }
     },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "wordpress/wordpress-develop",
+                "version": "dev-trunk",
+                "source": {
+                    "type": "git",
+                    "url": "https://github.com/WordPress/wordpress-develop",
+                    "reference": "trunk"
+                }
+            }
+        }
+    ],
     "require": {
         "aws/aws-sdk-php": "^3.254"
     },
     "require-dev": {
         "10up/phpcs-composer": "dev-master",
-        "phpunit/phpunit": "9.5.x-dev",
-        "yoast/phpunit-polyfills": "1.x-dev",
-        "yoast/wp-test-utils": "1.x-dev",
+        "yoast/wp-test-utils": "^1.1",
         "wp-cli/wp-cli": "2.8.x-dev",
         "civicrm/composer-downloads-plugin": "dev-master",
-        "php-stubs/wordpress-stubs": "dev-master"
+        "php-stubs/wordpress-stubs": "^6.1",
+        "php-stubs/wordpress-tests-stubs": "^6.1",
+        "php": ">=8.0",
+        "wordpress/wordpress-develop": "dev-trunk"
     },
     "scripts": {
         "lint": "phpcs .",
         "lint-fix": "phpcbf .",
-        "static": "phpstan analyze --ansi --memory-limit=2G",
-        "test": "phpunit"
+        "static": "WP_TESTS_DIR=vendor/wordpress/wordpress-develop/tests/phpunit phpstan analyze --ansi --memory-limit=2G",
+        "test": "phpunit",
+        "post-install-cmd": [
+            "php -r \"copy('vendor/wordpress/wordpress-develop/wp-tests-config-sample.php', 'vendor/wordpress/wordpress-develop/wp-tests-config.php');\""
+        ]
     },
     "config": {
         "allow-plugins": {
@@ -35,10 +53,10 @@
     "extra": {
         "downloads": {
             "phpstan": {
-              "path": "vendor/bin/phpstan",
-              "type": "phar",
-              "url": "https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar"
+                "path": "vendor/bin/phpstan",
+                "type": "phar",
+                "url": "https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar"
             }
-          }
+        }
     }
 }

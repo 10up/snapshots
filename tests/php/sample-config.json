@@ -4,8 +4,6 @@
     "repositories": {
         "10up": {
             "repository": "10up",
-            "access_key_id": "123",
-            "secret_access_key": "456",
             "region": "us-west-1"
         }
     }

@@ -11,6 +11,7 @@ use Aws\S3\S3Client;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Plugin;
 use TenUp\WPSnapshots\Snapshots\S3StorageConnector;
+use TenUp\WPSnapshots\Tests\Fixtures\DirectoryFiltering;
 use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
@@ -23,7 +24,7 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
  */
 class TestS3StorageConnector extends TestCase {
 
-	use PrivateAccess;
+	use PrivateAccess, DirectoryFiltering;
 
 	/**
 	 * S3StorageConnector instance.
@@ -39,6 +40,17 @@ class TestS3StorageConnector extends TestCase {
 		parent::set_up();
 
 		$this->connector = ( new Plugin() )->get_instance( S3StorageConnector::class );
+
+		$this->set_up_directory_filtering();
+	}
+
+	/**
+	 * Test teardown.
+	 */
+	public function tear_down() {
+		parent::tear_down();
+
+		$this->tear_down_directory_filtering();
 	}
 
 	public function test_constructor() {
@@ -62,7 +74,7 @@ class TestS3StorageConnector extends TestCase {
 			->with( [
 				'Bucket' => 'wpsnapshots-test-repo',
 				'Key'    => 'test-project/test-id/data.sql.gz',
-				'SaveAs' => ABSPATH . 'wp-content/plugins/snapshots-command/.wpsnapshots/test-id/data.sql.gz',
+				'SaveAs' => '/wpsnapshots-tmp/test-id/data.sql.gz',
 			] );
 
 		$this->set_private_property( $this->connector, 'clients', [ 'test-region' => $client ] );
@@ -91,7 +103,7 @@ class TestS3StorageConnector extends TestCase {
 			->with( [
 				'Bucket' => 'wpsnapshots-test-repo',
 				'Key'    => 'test-project/test-id/files.tar.gz',
-				'SaveAs' => ABSPATH . 'wp-content/plugins/snapshots-command/.wpsnapshots/test-id/files.tar.gz',
+				'SaveAs' => '/wpsnapshots-tmp/test-id/files.tar.gz',
 			] );
 
 		$this->set_private_property( $this->connector, 'clients', [ 'test-region' => $client ] );
@@ -122,14 +134,14 @@ class TestS3StorageConnector extends TestCase {
 					[
 						'Bucket' => 'wpsnapshots-test-repo',
 						'Key'    => 'test-project/test-id/data.sql.gz',
-						'SaveAs' => ABSPATH . 'wp-content/plugins/snapshots-command/.wpsnapshots/test-id/data.sql.gz',
+						'SaveAs' => '/wpsnapshots-tmp/test-id/data.sql.gz',
 					]
 				],
 				[
 					[
 						'Bucket' => 'wpsnapshots-test-repo',
 						'Key'    => 'test-project/test-id/files.tar.gz',
-						'SaveAs' => ABSPATH . 'wp-content/plugins/snapshots-command/.wpsnapshots/test-id/files.tar.gz',
+						'SaveAs' => '/wpsnapshots-tmp/test-id/files.tar.gz',
 					]
 				]
 			);

@@ -46,4 +46,12 @@ interface SnapshotMetaInterface extends SharedService {
 	 * @throws WPSnapshotsException Snapshot meta invalid.
 	 */
 	public function get_local( string $id, string $repository );
+
+	/**
+	 * Generates snapshot meta
+	 *
+	 * @param string $id Snapshot ID.
+	 * @param array  $args Snapshot data.
+	 */
+	public function generate( string $id, array $args ) : void;
 }

@@ -6,21 +6,31 @@
  *
  */
 
+use Yoast\WPTestUtils\WPIntegration;
+
 define( 'TESTS_PLUGIN_DIR', dirname( dirname( __DIR__ ) ) );
 
-// When run in wp-env context, set the test config file path.
+define( 'PROJECT_ROOT', dirname( dirname( __DIR__ ) ) );
+
 if ( ! defined( 'WP_TESTS_CONFIG_FILE_PATH' ) && false !== getenv( 'WP_PHPUNIT__TESTS_CONFIG' ) ) {
     define( 'WP_TESTS_CONFIG_FILE_PATH', getenv( 'WP_PHPUNIT__TESTS_CONFIG' ) );
 }
 
-require_once TESTS_PLUGIN_DIR . '/vendor/yoast/wp-test-utils/src/WPIntegration/bootstrap-functions.php';
-$_tests_dir = getenv( 'WP_TESTS_DIR' );
-require_once $_tests_dir . '/includes/functions.php'; 
+require_once PROJECT_ROOT . '/vendor/autoload.php';
+require_once PROJECT_ROOT . '/vendor/yoast/wp-test-utils/src/WPIntegration/bootstrap-functions.php';
+
+$_tests_dir = WPIntegration\get_path_to_wp_test_dir();
+
+require_once $_tests_dir . '/includes/functions.php';
 
 if ( ! function_exists( 'tests_add_filter' ) ) {
 	function tests_add_filter( ...$args ) {}
 
 	throw new Exception( 'Unable to load the WP test suite.' );
+}
+
+if ( ! defined( 'WP_CLI' ) ) {
+	define( 'WP_CLI', true );
 }
 
 /**
@@ -45,10 +55,9 @@ if ( file_exists( WP_CLI_ROOT . '/php/utils.php' ) ) {
 	WP_CLI::set_logger( $logger );
 }
 
-// Start up the WP testing environment.
-require $_tests_dir . '/includes/bootstrap.php';
-
 // Require all files in the fixtures directory.
 foreach ( glob( __DIR__ . '/fixtures/*.php' ) as $file ) {
 	require_once $file;
 }
+
+WPIntegration\bootstrap_it();

@@ -9,7 +9,7 @@ namespace TenUp\WPSnapshots\Snapshots;
 
 use Aws\S3\S3Client;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\SnapshotsFiles;
+use TenUp\WPSnapshots\SnapshotFiles;
 
 /**
  * Class S3StorageConnector
@@ -26,18 +26,18 @@ class S3StorageConnector implements StorageConnectorInterface {
 	private $clients = [];
 
 	/**
-	 * SnapshotsFiles instance.
+	 * SnapshotFiles instance.
 	 *
-	 * @var SnapshotsFiles
+	 * @var SnapshotFiles
 	 */
 	private $snapshots_file_system;
 
 	/**
 	 * Class constructor.
 	 *
-	 * @param SnapshotsFiles $snapshots_file_system SnapshotsFiles instance.
+	 * @param SnapshotFiles $snapshots_file_system SnapshotFiles instance.
 	 */
-	public function __construct( SnapshotsFiles $snapshots_file_system ) {
+	public function __construct( SnapshotFiles $snapshots_file_system ) {
 		$this->snapshots_file_system = $snapshots_file_system;
 	}
 
