@@ -7,17 +7,18 @@
 
 namespace TenUp\WPSnapshots\WPCLICommands\Create;
 
+use TenUp\WPSnapshots\Infrastructure\SharedService;
 use TenUp\WPSnapshots\SnapshotFiles;
 use TenUp\WPSnapshots\Log\{LoggerInterface, Logging};
 
 use function TenUp\WPSnapshots\Utils\wp_cli;
 
 /**
- * Class ScrubberV1
+ * Class Scrubber
  *
  * @package TenUp\WPSnapshots
  */
-class ScrubberV2 implements ScrubberInterface {
+class Scrubber implements SharedService {
 
 	use Logging;
 
@@ -42,10 +43,9 @@ class ScrubberV2 implements ScrubberInterface {
 	/**
 	 * Scrubs the database dump.
 	 *
-	 * @param array  $args Snapshot arguments.
 	 * @param string $id Snapshot ID.
 	 */
-	public function scrub( array $args, string $id ) : void {
+	public function scrub( string $id ) : void {
 		global $wpdb;
 
 		$this->log( 'Scrubbing users...' );

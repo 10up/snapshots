@@ -100,8 +100,9 @@ class SnapshotMetaFromFileSystem extends SnapshotMeta {
 	 *
 	 * @param string $id Snapshot ID.
 	 * @param array  $args Snapshot meta arguments.
+	 * @param ?bool  $is_multisite Whether or not the snapshot is a multisite.
 	 */
-	public function generate( string $id, array $args ) : void {
+	public function generate( string $id, array $args, ?bool $is_multisite = null ) : void {
 		global $wp_version;
 
 		$meta = [
@@ -126,7 +127,11 @@ class SnapshotMetaFromFileSystem extends SnapshotMeta {
 
 		$meta_sites = [];
 
-		if ( is_multisite() ) {
+		if ( is_null( $is_multisite ) ) {
+			$is_multisite = is_multisite();
+		}
+
+		if ( $is_multisite ) {
 			$meta['multisite'] = true;
 
 			if ( defined( 'SUBDOMAIN_INSTALL' ) && SUBDOMAIN_INSTALL ) {
@@ -149,7 +154,11 @@ class SnapshotMetaFromFileSystem extends SnapshotMeta {
 				$meta['blog_id_current_site'] = BLOG_ID_CURRENT_SITE;
 			}
 
-			$sites = get_sites( [ 'number' => 500 ] );
+			if ( function_exists( 'get_sites' ) ) {
+				$sites = get_sites( [ 'number' => 500 ] );
+			} else {
+				$sites = [];
+			}
 
 			foreach ( $sites as $site ) {
 				$meta_sites[] = [

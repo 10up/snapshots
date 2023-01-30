@@ -13,12 +13,12 @@
     },
     "require-dev": {
         "10up/phpcs-composer": "dev-master",
-        "phpunit/phpunit": "9.5.x-dev",
-        "yoast/phpunit-polyfills": "1.x-dev",
-        "yoast/wp-test-utils": "1.x-dev",
+        "yoast/wp-test-utils": "^1.1",
         "wp-cli/wp-cli": "2.8.x-dev",
         "civicrm/composer-downloads-plugin": "dev-master",
-        "php-stubs/wordpress-stubs": "dev-master"
+        "php-stubs/wordpress-stubs": "^6.1",
+        "php-stubs/wordpress-tests-stubs": "^6.1",
+        "php": ">=8.0"
     },
     "scripts": {
         "lint": "phpcs .",

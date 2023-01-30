@@ -39,11 +39,11 @@ class WPCLIDumper implements DumperInterface {
 	private $snapshot_files;
 
 	/**
-	 * ScrubberFactory instance.
+	 * Scrubber instance.
 	 *
-	 * @var ScrubberFactory
+	 * @var Scrubber
 	 */
-	private $scrubber_factory;
+	private $scrubber;
 
 	/**
 	 * Database instance.
@@ -57,14 +57,14 @@ class WPCLIDumper implements DumperInterface {
 	 *
 	 * @param Trimmer         $trimmer Trimmer instance.
 	 * @param SnapshotFiles   $snapshot_files SnapshotFiles instance.
-	 * @param ScrubberFactory $scrubber_factory ScrubberFactory instance.
+	 * @param Scrubber        $scrubber Scrubber instance.
 	 * @param Database        $wordpress_database Database instance.
 	 * @param LoggerInterface $logger LoggerInterface instance.
 	 */
-	public function __construct( Trimmer $trimmer, SnapshotFiles $snapshot_files, ScrubberFactory $scrubber_factory, Database $wordpress_database, LoggerInterface $logger ) {
+	public function __construct( Trimmer $trimmer, SnapshotFiles $snapshot_files, Scrubber $scrubber, Database $wordpress_database, LoggerInterface $logger ) {
 		$this->trimmer            = $trimmer;
 		$this->snapshot_files     = $snapshot_files;
-		$this->scrubber_factory   = $scrubber_factory;
+		$this->scrubber           = $scrubber;
 		$this->wordpress_database = $wordpress_database;
 		$this->set_logger( $logger );
 	}
@@ -79,14 +79,14 @@ class WPCLIDumper implements DumperInterface {
 	 */
 	public function dump( string $id, array $args ) {
 		if ( ! empty( $args['small'] ) ) {
-			$this->trimmer->trim();
+			$this->trimmer->trim( is_multisite() ? get_sites() : null );
 		}
 
 		$this->snapshot_files->create_directory( $id );
 
 		$this->run_command( $id, $args );
 
-		$this->maybe_scrub( $id, $args );
+		$this->scrub( $id );
 
 		$this->log( 'Compressing database backup...' );
 
@@ -135,11 +135,11 @@ class WPCLIDumper implements DumperInterface {
 		$tables = $this->wordpress_database->get_tables();
 
 		foreach ( $tables as $table ) {
-			if ( 0 < $args['scrub'] && $wpdb->users === $table ) {
+			if ( $wpdb->users === $table ) {
 				continue;
 			}
 
-			if ( 2 === $args['scrub'] && $wpdb->usermeta === $table ) {
+			if ( $wpdb->usermeta === $table ) {
 				continue;
 			}
 
@@ -162,25 +162,20 @@ class WPCLIDumper implements DumperInterface {
 	 * Scrubs the database dump.
 	 *
 	 * @param string $id The snapshot ID.
-	 * @param array  $args The snapshot arguments.
 	 *
 	 * @throws WPSnapshotsException If an error occurs.
 	 */
-	private function maybe_scrub( string $id, array $args ) {
-		if ( in_array( $args['scrub'], [ 1, 2 ], true ) ) {
-			$scrubber = $this->scrubber_factory->create( $args['scrub'] );
+	private function scrub( string $id ) {
+		try {
+			$this->scrubber->scrub( $id );
+		} catch ( WPSnapshotsException $e ) {
 
-			try {
-				$scrubber->scrub( $args, $id );
-			} catch ( WPSnapshotsException $e ) {
-
-				// Delete the file if it exists.
-				if ( $this->snapshot_files->file_exists( 'data.sql', $id ) ) {
-					$this->snapshot_files->delete_file( 'data.sql', $id );
-				}
-
-				throw $e;
+			// Delete the file if it exists.
+			if ( $this->snapshot_files->file_exists( 'data.sql', $id ) ) {
+				$this->snapshot_files->delete_file( 'data.sql', $id );
 			}
+
+			throw $e;
 		}
 	}
 }

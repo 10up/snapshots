@@ -109,6 +109,7 @@ class TestDownload extends TestCase {
 			]
 		);
 		$this->set_private_property( $this->command, 'snapshot_meta', $mock_snapshot_meta );
+		$this->command->set_assoc_arg( 'repository', '10up' );
 
 		add_filter( 'wpsnapshots_readline', function() {
 			return function() {

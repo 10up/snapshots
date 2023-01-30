@@ -138,4 +138,106 @@ class TestSnapshotMetaFromFileSystem extends TestCase {
 		$this->assertEquals( [ 'test' => 'data', 'contains_files' => false, 'contains_db' => false, 'repository' => 'test-repo' ], $this->meta->get_remote( 'test-id', 'test-repo', 'test-region' ) );
 	}
 
+	/** @covers ::generate */
+	public function test_generate() {
+		global $wp_version;
+
+		$this->meta->generate(
+			'test-id',
+			[
+				'author' => [
+					'name' => 'Test Author',
+					'email' => 'e@ma.il',
+				],
+				'repository' => 'test-repo',
+				'description' => 'Test description',
+				'project' => 'test-project',
+				'contains_files' => true,
+				'contains_db' => true,
+			]
+		);
+
+		$this->assertFileExists( $this->get_directory_path() . '/test-id/meta.json' );
+
+		$this->assertEquals(
+			[
+				'author' => [
+					'name' => 'Test Author',
+					'email' => 'e@ma.il',
+				],
+				'repository' => 'test-repo',
+				'description' => 'Test description',
+				'project' => 'test-project',
+				'contains_files' => true,
+				'contains_db' => true,
+				'multisite' => false,
+				'subdomain_install' => false,
+				'domain_current_site' => false,
+				'path_current_site' => false,
+				'site_id_current_site' => false,
+				'blog_id_current_site' => false,
+				'wp_version' => $wp_version,
+				'sites' => [
+					[
+						'site_url' => home_url(),
+						'home_url' => home_url(),
+						'blogname' => 'Test Blog',
+					]
+				],
+				'table_prefix' => 'wp_',
+				'db_size' => 0,
+				'files_size' => 0,
+			],
+			json_decode( file_get_contents( $this->get_directory_path() . '/test-id/meta.json' ), true )
+		);
+	}
+
+	/** @covers ::generate */
+	public function test_generate_when_multisite() {
+		global $wp_version;
+
+		$this->meta->generate(
+			'test-id-2',
+			[
+				'author' => [
+					'name' => 'Test Author',
+					'email' => 'e@ma.il',
+				],
+				'repository' => 'test-repo',
+				'description' => 'Test description',
+				'project' => 'test-project',
+				'contains_files' => true,
+				'contains_db' => true,
+			],
+			true,
+		);
+
+		$this->assertFileExists( $this->get_directory_path() . '/test-id-2/meta.json' );
+
+		$this->assertEquals(
+			[
+				'author' => [
+					'name' => 'Test Author',
+					'email' => 'e@ma.il',
+				],
+				'repository' => 'test-repo',
+				'description' => 'Test description',
+				'project' => 'test-project',
+				'contains_files' => true,
+				'contains_db' => true,
+				'multisite' => true,
+				'subdomain_install' => false,
+				'domain_current_site' => false,
+				'path_current_site' => false,
+				'site_id_current_site' => false,
+				'blog_id_current_site' => false,
+				'wp_version' => $wp_version,
+				'sites' => [],
+				'table_prefix' => 'wp_',
+				'db_size' => 0,
+				'files_size' => 0,
+			],
+			json_decode( file_get_contents( $this->get_directory_path() . '/test-id-2/meta.json' ), true )
+		);
+	}
 }

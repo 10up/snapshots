@@ -23,7 +23,7 @@ use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
 use TenUp\WPSnapshots\Tests\Fixtures\WPCLIMocking;
 use TenUp\WPSnapshots\WordPress\Database;
 use TenUp\WPSnapshots\WPCLI\Prompt;
-use TenUp\WPSnapshots\WPCLICommands\Create\ScrubberFactory;
+use TenUp\WPSnapshots\WPCLICommands\Create\Scrubber;
 use TenUp\WPSnapshots\WPCLICommands\Create\WPCLIDumper;
 use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacerFactory;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
@@ -86,7 +86,7 @@ class TestContainer extends TestCase {
 			FileZipper::class,
 			Prompt::class,
 			S3StorageConnector::class,
-			ScrubberFactory::class,
+			Scrubber::class,
 			SnapshotCreator::class,
 			SnapshotFiles::class,
 			SnapshotMetaFromFileSystem::class,

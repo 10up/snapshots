@@ -111,8 +111,6 @@ class TestSearch extends TestCase {
 		$mock_wpsnapshots_config = $this->createMock( WPSnapshotsConfigFromFileSystem::class );
 		$mock_wpsnapshots_config->method( 'get_repository_settings' )->willReturn(
 			[
-				'access_key_id' => 'test',
-				'secret_access_key' => 'test',
 				'region' => 'test',
 				'repository' => 'test',
 			]

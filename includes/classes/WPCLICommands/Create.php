@@ -65,14 +65,14 @@ final class Create extends WPCLICommand {
 			$id = $this->snapshot_creator->create(
 				[
 					'author'          => [
-						'name'  => $this->get_assoc_arg(
+						'name'  => $this->config->get_user_name() ?? $this->get_assoc_arg(
 							'author_name',
 							[
 								'key'    => 'author_name',
 								'prompt' => 'Your name',
 							]
 						),
-						'email' => $this->get_assoc_arg(
+						'email' => $this->config->get_user_email() ?? $this->get_assoc_arg(
 							'author_email',
 							[
 								'key'    => 'author_email',
@@ -110,7 +110,6 @@ final class Create extends WPCLICommand {
 							'validate_callback' => [ $this, 'validate_slug' ],
 						]
 					),
-					'scrub'           => (int) $this->get_assoc_arg( 'scrub' ),
 					'small'           => $this->get_assoc_arg( 'small' ),
 					'wp_version'      => $this->get_assoc_arg( 'wp_version' ),
 				]
@@ -203,13 +202,6 @@ final class Create extends WPCLICommand {
 					'description' => 'Description of snapshot.',
 					'optional'    => true,
 					'default'     => '',
-				],
-				[
-					'type'        => 'assoc',
-					'name'        => 'scrub',
-					'description' => 'Scrubbing to do on data. 2 is the most aggressive and replaces all user information with dummy data; 1 only replaces passwords; 0 is no scrubbing. Defaults to 2.',
-					'optional'    => true,
-					'default'     => 2,
 				],
 				[
 					'type'        => 'assoc',

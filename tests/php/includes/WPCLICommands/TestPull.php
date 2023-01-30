@@ -246,6 +246,7 @@ class TestPull extends TestCase {
 		$snapshot_meta_mock->method( 'get_local' )->willReturn( [] );
 
 		$this->set_private_property( $this->command, 'snapshot_meta', $snapshot_meta_mock );
+		$this->command->set_assoc_arg( 'repository', '10up' );
 
 		$this->assertFalse( $this->call_private_method( $this->command, 'get_should_update_wp' ) );
 	}
@@ -584,6 +585,7 @@ class TestPull extends TestCase {
 		];
 
 		$this->command->set_assoc_arg( 'site_mapping', json_encode( $to_encode ) );
+		$this->command->set_assoc_arg( 'repository', '10up' );
 
 		$this->assertEquals(
 			[
@@ -615,6 +617,7 @@ class TestPull extends TestCase {
 		file_put_contents( $filename, json_encode( $to_encode ) );
 
 		$this->command->set_assoc_arg( 'site_mapping', $filename );
+		$this->command->set_assoc_arg( 'repository', '10up' );
 
 		$this->assertEquals(
 			[
@@ -640,6 +643,7 @@ class TestPull extends TestCase {
 		];
 
 		$this->command->set_assoc_arg( 'site_mapping', json_encode( $to_encode ) );
+		$this->command->set_assoc_arg( 'repository', '10up' );
 
 		$this->mock_snapshot_meta( $test_local_meta );
 
@@ -680,6 +684,8 @@ class TestPull extends TestCase {
 			'domain_current_site' => 'http://example.org',
 		];
 
+		$this->command->set_assoc_arg( 'repository', '10up' );
+
 		$this->mock_snapshot_meta( $test_local_meta );
 
 		$this->call_private_method( $this->command, 'get_main_domain' );
@@ -700,6 +706,8 @@ class TestPull extends TestCase {
 			'contains_db' => true,
 			'multisite' => true,
 		];
+
+		$this->command->set_assoc_arg( 'repository', '10up' );
 
 		$this->mock_snapshot_meta( $test_local_meta );
 

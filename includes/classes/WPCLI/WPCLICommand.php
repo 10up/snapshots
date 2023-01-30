@@ -237,11 +237,11 @@ abstract class WPCLICommand implements Conditional, Module {
 			$repository_name = $this->get_assoc_arg( 'repository' ) ?? null;
 		}
 
-		if ( $required && ! $repository_name ) {
-			throw new WPSnapshotsException( 'Please provide a repository name.' );
+		if ( ! $repository_name ) {
+			throw new WPSnapshotsException( 'A repository name is required. Please run the configure command or pass a --repository argument.' );
 		}
 
-		return $repository_name ?? '10up';
+		return $repository_name;
 	}
 
 	/**

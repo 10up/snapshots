@@ -10,6 +10,7 @@ parameters:
 	bootstrapFiles:
 		- %currentWorkingDirectory%/vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
 		- %currentWorkingDirectory%/wpsnapshots.php
+		- %currentWorkingDirectory%/tests/php/bootstrap.php
 	excludePaths:
 	ignoreErrors:
 	earlyTerminatingMethodCalls:

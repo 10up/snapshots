@@ -72,18 +72,11 @@ class Trimmer implements SharedService {
 	}
 
 	/**
-	 * Trims the database
-	 */
-	public function trim() {
-		$this->trim_database( is_multisite() ? get_sites() : null );
-	}
-
-	/**
 	 * Makes the database small.
 	 *
 	 * @param ?WP_Site[] $sites Sites to trim.
 	 */
-	private function trim_database( ?array $sites = null ) {
+	public function trim( ?array $sites = null ) {
 		global $wpdb;
 
 		$original_prefix = $wpdb->prefix;
@@ -112,7 +105,7 @@ class Trimmer implements SharedService {
 		if ( is_array( $sites ) ) {
 			restore_current_blog();
 			$wpdb->prefix = $original_prefix;
-			$this->trim_database( $sites );
+			$this->trim( $sites );
 		}
 	}
 
@@ -184,26 +177,17 @@ class Trimmer implements SharedService {
 		if ( ! empty( $post_ids ) ) {
 			// Delete other posts.
 			$wpdb->query(
-				$wpdb->prepare(
-					"DELETE FROM {$wpdb->prefix}posts WHERE ID NOT IN (%s)",
-					implode( ',', $post_ids )
-				)
+				"DELETE FROM {$wpdb->prefix}posts WHERE ID NOT IN (" . implode( ',', $post_ids ) . ')' // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			);
 
 			// Delete orphan comments.
 			$wpdb->query(
-				$wpdb->prepare(
-					"DELETE FROM {$wpdb->prefix}comments WHERE comment_post_ID NOT IN (%s)",
-					implode( ',', $post_ids )
-				)
+				"DELETE FROM {$wpdb->prefix}comments WHERE comment_post_ID NOT IN (" . implode( ',', $post_ids ) . ')' // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			);
 
 			// Delete orphan meta
 			$wpdb->query(
-				$wpdb->prepare(
-					"DELETE FROM {$wpdb->prefix}postmeta WHERE post_id NOT IN (%s)",
-					implode( ',', $post_ids )
-				)
+				"DELETE FROM {$wpdb->prefix}postmeta WHERE post_id NOT IN (" . implode( ',', $post_ids ) . ')' // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			);
 		}
 	}
@@ -229,21 +213,15 @@ class Trimmer implements SharedService {
 			$comment_ids = [];
 
 			foreach ( $comments as $comment ) {
-				$comment_ids[] = (int) $comment['ID'];
+				$comment_ids[] = (int) $comment['comment_ID'];
 			}
 
 			$wpdb->query(
-				$wpdb->prepare(
-					"DELETE FROM {$wpdb->prefix}comments WHERE comment_ID NOT IN (%s)",
-					implode( ',', $comment_ids )
-				)
+				"DELETE FROM {$wpdb->prefix}comments WHERE comment_ID NOT IN (" . implode( ',', $comment_ids ) . ')' // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			);
 
 			$wpdb->query(
-				$wpdb->prepare(
-					"DELETE FROM {$wpdb->prefix}commentmeta WHERE comment_id NOT IN (%s)",
-					implode( ',', $comment_ids )
-				)
+				"DELETE FROM {$wpdb->prefix}commentmeta WHERE comment_id NOT IN (" . implode( ',', $comment_ids ) . ')' // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			);
 		}
 	}
@@ -260,10 +238,7 @@ class Trimmer implements SharedService {
 		$this->log( 'Trimming terms...' );
 
 		$wpdb->query(
-			$wpdb->prepare(
-				"DELETE FROM {$wpdb->prefix}term_relationships WHERE object_id NOT IN (%s)",
-				implode( ',', array_unique( $post_ids ) )
-			)
+			"DELETE FROM {$wpdb->prefix}term_relationships WHERE object_id NOT IN (" . implode( ',', $post_ids ) . ')' // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		);
 
 		$term_relationships = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}term_relationships ORDER BY term_taxonomy_id DESC", 'ARRAY_A' );
@@ -276,10 +251,7 @@ class Trimmer implements SharedService {
 			}
 
 			$wpdb->query(
-				$wpdb->prepare(
-					"DELETE FROM {$wpdb->prefix}term_taxonomy WHERE term_taxonomy_id NOT IN (%s)",
-					implode( ',', array_unique( $term_taxonomy_ids ) )
-				)
+				"DELETE FROM {$wpdb->prefix}term_taxonomy WHERE term_taxonomy_id NOT IN (" . implode( ',', $term_taxonomy_ids ) . ')' // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			);
 
 		}
@@ -295,18 +267,12 @@ class Trimmer implements SharedService {
 
 			// Delete excess terms
 			$wpdb->query(
-				$wpdb->prepare(
-					"DELETE FROM {$wpdb->prefix}terms WHERE term_id NOT IN (%s)",
-					implode( ',', array_unique( $term_ids ) )
-				)
+				"DELETE FROM {$wpdb->prefix}terms WHERE term_id NOT IN (" . implode( ',', $term_ids ) . ')' // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			);
 
 			// Delete excess term meta
 			$wpdb->query(
-				$wpdb->prepare(
-					"DELETE FROM {$wpdb->prefix}termmeta WHERE term_id NOT IN (%s)",
-					implode( ',', array_unique( $term_ids ) )
-				)
+				"DELETE FROM {$wpdb->prefix}termmeta WHERE term_id NOT IN (" . implode( ',', $term_ids ) . ')' // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			);
 		}
 	}

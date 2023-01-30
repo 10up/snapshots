@@ -70,21 +70,24 @@ class SnapshotCreator implements SharedService {
 	/**
 	 * Create a snapshot.
 	 *
-	 * @param array $args List of arguments
+	 * @param array   $args List of arguments
+	 * @param ?string $id A snapshot ID to use. If not provided, a random one will be generated.
 	 *
 	 * @return string Snapshot ID
 	 *
 	 * @throws WPSnapshotsException Throw exception if snapshot can't be created.
 	 */
-	public function create( array $args ) : string {
-		if ( ! $args['contains_db'] && ! $args['contains_files'] ) {
+	public function create( array $args, ?string $id = null ) : string {
+		if ( empty( $args['contains_db'] ) && empty( $args['contains_files'] ) ) {
 			throw new WPSnapshotsException( 'Snapshot must contain either database or files.' );
 		}
 
 		/**
 		 * Define snapshot ID
 		 */
-		$id = md5( time() . wp_rand() );
+		if ( ! $id ) {
+			$id = md5( time() . wp_rand() );
+		}
 
 		$this->snapshot_files->create_directory( $id );
 

@@ -80,18 +80,17 @@ class TestCreate extends TestCase {
 			->with(
 				[
 					'author' => [
-						'name'  => 'readline5',
-						'email' => 'readline6',
+						'name'  => 'readline8',
+						'email' => 'readline9',
 					],
 					'contains_db' => true,
 					'contains_files' => false,
-					'description' => 'readline7',
+					'description' => 'readline10',
 					'exclude_uploads' => false,
 					'excludes' => [],
-					'project' => 'readline8',
+					'project' => 'readline11',
 					'region' => 'us-west-1',
-					'repository' => 'readline9',
-					'scrub' => 2,
+					'repository' => 'readline12',
 					'small' => false,
 					'wp_version' => '',
 				]
@@ -146,7 +145,6 @@ class TestCreate extends TestCase {
 					'project' => 'slug3',
 					'region' => 'us-west-1',
 					'repository' => 'my-repo',
-					'scrub' => 2,
 					'small' => true,
 					'wp_version' => '',
 				]

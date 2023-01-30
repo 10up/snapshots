@@ -12,9 +12,8 @@ use TenUp\WPSnapshots\Log\WPCLILogger;
 use TenUp\WPSnapshots\Snapshots\{DynamoDBConnector, FileZipper, S3StorageConnector, SnapshotCreator, SnapshotMetaFromFileSystem, Trimmer};
 use TenUp\WPSnapshots\WordPress\Database;
 use TenUp\WPSnapshots\WPCLI\Prompt;
-use TenUp\WPSnapshots\WPCLICommands\{Create, CreateRepository, Download, Pull, Search};
-use TenUp\WPSnapshots\WPCLICommands\Create\ScrubberFactory;
-use TenUp\WPSnapshots\WPCLICommands\Create\WPCLIDumper;
+use TenUp\WPSnapshots\WPCLICommands\{Configure, Create, CreateRepository, Download, Pull, Search};
+use TenUp\WPSnapshots\WPCLICommands\Create\{Scrubber, WPCLIDumper};
 use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacerFactory;
 use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
 
@@ -49,6 +48,7 @@ final class Plugin extends Container {
 	 */
 	protected function get_modules(): array {
 		$components = [
+			'wpcli_commands/configure'         => Configure::class,
 			'wpcli_commands/create'            => Create::class,
 			'wpcli_commands/create_repository' => CreateRepository::class,
 			'wpcli_commands/download'          => Download::class,
@@ -79,7 +79,7 @@ final class Plugin extends Container {
 			'snapshots/snapshot_creator'              => SnapshotCreator::class,
 			'snapshots_filesystem'                    => null,
 			'snapshots/db_connector'                  => DynamoDBConnector::class,
-			'snapshots/scrubber_factory'              => ScrubberFactory::class,
+			'snapshots/scrubber'                      => Scrubber::class,
 			'snapshots/snapshot_meta'                 => null,
 			'snapshots/storage_connector'             => S3StorageConnector::class,
 			'snapshots/trimmer'                       => Trimmer::class,

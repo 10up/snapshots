@@ -19,9 +19,9 @@ interface WPSnapshotsConfigInterface extends SharedService {
 	/**
 	 * Gets the user name.
 	 *
-	 * @return string
+	 * @return ?string
 	 */
-	public function get_user_name() : string;
+	public function get_user_name() : ?string;
 
 	/**
 	 * Sets the user name.
@@ -33,9 +33,9 @@ interface WPSnapshotsConfigInterface extends SharedService {
 	/**
 	 * Gets the user email.
 	 *
-	 * @return string
+	 * @return ?string
 	 */
-	public function get_user_email() : string;
+	public function get_user_email() : ?string;
 
 	/**
 	 * Sets the user email.
@@ -43,6 +43,13 @@ interface WPSnapshotsConfigInterface extends SharedService {
 	 * @param string $user_email User email.
 	 */
 	public function set_user_email( string $user_email );
+
+	/**
+	 * Gets the default repository name.
+	 *
+	 * @return ?string
+	 */
+	public function get_default_repository_name() : ?string;
 
 	/**
 	 * Gets repositories.
