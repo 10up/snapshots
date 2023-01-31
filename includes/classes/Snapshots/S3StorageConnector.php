@@ -174,6 +174,35 @@ class S3StorageConnector implements StorageConnectorInterface {
 	}
 
 	/**
+	 * Delete a snapshot given an id
+	 *
+	 * @param  string $id Snapshot id
+	 * @param  string $project Project name
+	 * @param  string $repository Repository name
+	 * @param  string $region AWS region
+	 */
+	public function delete_snapshot( string $id, string $project, string $repository, string $region ) : void {
+		$this->get_client( $region )->deleteObjects(
+			[
+				'Bucket' => $this->get_bucket_name( $repository ),
+				'Delete' => [
+					'Objects' => [
+						[
+							'Key' => $project . '/' . $id . '/files.tar.gz',
+						],
+						[
+							'Key' => $project . '/' . $id . '/data.sql',
+						],
+						[
+							'Key' => $project . '/' . $id . '/data.sql.gz',
+						],
+					],
+				],
+			]
+		);
+	}
+
+	/**
 	 * Configures the client.
 	 *
 	 * @param string $region AWS region.

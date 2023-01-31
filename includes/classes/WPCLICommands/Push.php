@@ -32,11 +32,16 @@ final class Push extends Create {
 	 * @return string
 	 */
 	public function run( bool $contains_db, bool $contains_files ) : string {
+		// Run the parent run method.
 		$id = parent::run( $contains_db, $contains_files );
 
 		$this->log( 'Pushing snapshot to remote repository...' );
 
-		$this->storage_connector->put_snapshot( $id, $this->get_repository_name(), $this->get_assoc_arg( 'region' ) );
+		$repository_name = $this->get_repository_name();
+		$region          = $this->get_assoc_arg( 'region' );
+
+		$this->storage_connector->put_snapshot( $id, $repository_name, $region );
+		$this->db_connector->insert_snapshot( $id, $repository_name, $region, $this->snapshot_meta->get_local( $id, $repository_name ) );
 
 		return $id;
 	}

@@ -52,4 +52,14 @@ interface StorageConnectorInterface extends SharedService {
 	 * @param string $region AWS region.
 	 */
 	public function put_snapshot( string $id, string $repository, string $region ) : void;
+
+	/**
+	 * Delete a snapshot given an id
+	 *
+	 * @param  string $id Snapshot id
+	 * @param  string $project Project name
+	 * @param  string $repository Repository name
+	 * @param  string $region AWS region
+	 */
+	public function delete_snapshot( string $id, string $project, string $repository, string $region ) : void;
 }

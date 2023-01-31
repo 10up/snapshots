@@ -150,6 +150,54 @@ class DynamoDBConnector implements DBConnectorInterface {
 	}
 
 	/**
+	 * Insert a snapshot into the DB
+	 *
+	 * @param  string $id Snapshot ID
+	 * @param  string $repository Repository name.
+	 * @param string $region AWS region.
+	 * @param array  $meta Snapshot meta.
+	 */
+	public function insert_snapshot( string $id, string $repository, string $region, array $meta ) : void {
+		$marshaler = new Marshaler();
+
+		$snapshot_item = [
+			'project' => strtolower( $meta['project'] ),
+			'id'      => $id,
+			'time'    => time(),
+		];
+
+		$snapshot_item = array_merge( $snapshot_item, $meta );
+		$snapshot_json = wp_json_encode( $snapshot_item );
+
+		$this->get_client( $region )->putItem(
+			[
+				'TableName' => 'wpsnapshots-' . $repository,
+				'Item'      => $marshaler->marshalJson( $snapshot_json ),
+			]
+		);
+	}
+
+	/**
+	 * Delete a snapshot given an id
+	 *
+	 * @param  string $id Snapshot ID
+	 * @param string $repository Repository name.
+	 * @param string $region AWS region.
+	 */
+	public function delete_snapshot( string $id, string $repository, string $region ) : void {
+		$this->get_client( $region )->deleteItem(
+			[
+				'TableName' => 'wpsnapshots-' . $repository,
+				'Key'       => [
+					'id' => [
+						'S' => $id,
+					],
+				],
+			]
+		);
+	}
+
+	/**
 	 * Provides the client.
 	 *
 	 * @param string $region AWS region.

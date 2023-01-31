@@ -143,7 +143,7 @@ final class Pull extends WPCLICommand {
 				[
 					'type'        => 'assoc',
 					'name'        => 'repository',
-					'description' => 'Repository to use. Defaults to 10up.',
+					'description' => 'Repository to use.',
 					'optional'    => true,
 				],
 				[

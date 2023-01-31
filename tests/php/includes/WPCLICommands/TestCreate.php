@@ -70,7 +70,11 @@ class TestCreate extends TestCase {
 		$this->assertEquals( 'create', $this->call_private_method( $this->command, 'get_command' ) );
 	}
 
-	/** @covers ::execute */
+	/**
+	 * @covers ::execute
+	 * @covers ::get_create_args
+	 * @covers ::run
+	 */
 	public function test_execute() {
 		$snapshot_creator = $this->get_snapshot_creator_mock();
 
@@ -121,7 +125,12 @@ class TestCreate extends TestCase {
 		);
 	}
 
-	/** @covers ::execute */
+	/**
+	 * @covers ::execute
+	 * @covers ::run
+	 * @covers ::get_create_args
+	 * @covers ::get_success_message
+	 */
 	public function test_execute_with_args_passed_in() {
 		$snapshot_creator = $this->get_snapshot_creator_mock();
 
