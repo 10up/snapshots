@@ -33,12 +33,21 @@ class S3StorageConnector implements StorageConnectorInterface {
 	private $snapshots_file_system;
 
 	/**
+	 * Snapshot meta instance.
+	 *
+	 * @var SnapshotMetaInterface
+	 */
+	private $snapshot_meta;
+
+	/**
 	 * Class constructor.
 	 *
-	 * @param SnapshotFiles $snapshots_file_system SnapshotFiles instance.
+	 * @param SnapshotFiles         $snapshots_file_system SnapshotFiles instance.
+	 * @param SnapshotMetaInterface $snapshot_meta SnapshotMeta instance.
 	 */
-	public function __construct( SnapshotFiles $snapshots_file_system ) {
+	public function __construct( SnapshotFiles $snapshots_file_system, SnapshotMetaInterface $snapshot_meta ) {
 		$this->snapshots_file_system = $snapshots_file_system;
+		$this->snapshot_meta         = $snapshot_meta;
 	}
 
 	/**
@@ -109,6 +118,60 @@ class S3StorageConnector implements StorageConnectorInterface {
 		return 'S3 bucket already exists.';
 	}
 
+	/**
+	 * Upload a snapshot to S3
+	 *
+	 * @param  string $id Snapshot ID
+	 * @param string $repository Repository name.
+	 * @param string $region AWS region.
+	 */
+	public function put_snapshot( string $id, string $repository, string $region ) : void {
+		$meta   = $this->snapshot_meta->get_local( $id, $repository );
+		$client = $this->get_client( $region );
+
+		if ( $meta['contains_db'] ) {
+			$client->putObject(
+				[
+					'Bucket'     => $this->get_bucket_name( $repository ),
+					'Key'        => $meta['project'] . '/' . $id . '/data.sql.gz',
+					'SourceFile' => realpath( $this->snapshots_file_system->get_file_path( 'data.sql.gz', $id ) ),
+				]
+			);
+		}
+
+		if ( $meta['contains_files'] ) {
+			$client->putObject(
+				[
+					'Bucket'     => $this->get_bucket_name( $repository ),
+					'Key'        => $meta['project'] . '/' . $id . '/files.tar.gz',
+					'SourceFile' => realpath( $this->snapshots_file_system->get_file_path( 'files.tar.gz', $id ) ),
+				]
+			);
+		}
+
+		/**
+		 * Wait for files first since that will probably take longer
+		 */
+		if ( $meta['contains_files'] ) {
+			$client->waitUntil(
+				'ObjectExists',
+				[
+					'Bucket' => $this->get_bucket_name( $repository ),
+					'Key'    => $meta['project'] . '/' . $id . '/files.tar.gz',
+				]
+			);
+		}
+
+		if ( $meta['contains_db'] ) {
+			$client->waitUntil(
+				'ObjectExists',
+				[
+					'Bucket' => $this->get_bucket_name( $repository ),
+					'Key'    => $meta['project'] . '/' . $id . '/data.sql.gz',
+				]
+			);
+		}
+	}
 
 	/**
 	 * Configures the client.

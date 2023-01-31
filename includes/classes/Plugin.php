@@ -12,7 +12,7 @@ use TenUp\WPSnapshots\Log\WPCLILogger;
 use TenUp\WPSnapshots\Snapshots\{DynamoDBConnector, FileZipper, S3StorageConnector, SnapshotCreator, SnapshotMetaFromFileSystem, Trimmer};
 use TenUp\WPSnapshots\WordPress\Database;
 use TenUp\WPSnapshots\WPCLI\Prompt;
-use TenUp\WPSnapshots\WPCLICommands\{Configure, Create, CreateRepository, Download, Pull, Search};
+use TenUp\WPSnapshots\WPCLICommands\{Configure, Create, CreateRepository, Download, Pull, Push, Search};
 use TenUp\WPSnapshots\WPCLICommands\Create\{Scrubber, WPCLIDumper};
 use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacerFactory;
 use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
@@ -53,6 +53,7 @@ final class Plugin extends Container {
 			'wpcli_commands/create_repository' => CreateRepository::class,
 			'wpcli_commands/download'          => Download::class,
 			'wpcli_commands/pull'              => Pull::class,
+			'wpcli_commands/push'              => Push::class,
 			'wpcli_commands/search'            => Search::class,
 		];
 

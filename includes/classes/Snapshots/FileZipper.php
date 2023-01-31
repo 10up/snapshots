@@ -80,6 +80,8 @@ class FileZipper implements SharedService {
 		Phar::unlinkArchive( $phar_file );
 
 		$this->file_system->get_wp_filesystem()->delete( $phar_file );
+
+		$this->log( 'Created files zip.' );
 	}
 
 	/**
@@ -96,6 +98,9 @@ class FileZipper implements SharedService {
 			$excludes[] = 'uploads';
 		}
 
+		$excludes[] = trailingslashit( str_replace( wpsnapshots_wp_content_dir(), '', WPSNAPSHOTS_DIR ) ) . '.wpsnapshots';
+		$excludes[] = trailingslashit( str_replace( wpsnapshots_wp_content_dir(), '', WPSNAPSHOTS_DIR ) ) . 'vendor/wordpress';
+
 		$excludes = array_map(
 			function( $exclude ) {
 				$full_exclude = trailingslashit( wpsnapshots_wp_content_dir() ) . $exclude;
@@ -107,6 +112,8 @@ class FileZipper implements SharedService {
 
 		$initial_files = $this->file_system->get_wp_filesystem()->dirlist( wpsnapshots_wp_content_dir() );
 		$file_list     = $this->build_file_list_recursively( $initial_files, wpsnapshots_wp_content_dir(), $excludes );
+
+		$this->log( 'Files to zip: ' . count( $file_list ) );
 
 		return new ArrayIterator( $file_list );
 	}

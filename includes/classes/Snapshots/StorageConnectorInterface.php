@@ -43,4 +43,13 @@ interface StorageConnectorInterface extends SharedService {
 	 * @return string
 	 */
 	public function get_bucket_already_exists_message();
+
+	/**
+	 * Upload a snapshot to S3
+	 *
+	 * @param  string $id Snapshot ID
+	 * @param string $repository Repository name.
+	 * @param string $region AWS region.
+	 */
+	public function put_snapshot( string $id, string $repository, string $region ) : void;
 }

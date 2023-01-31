@@ -20,7 +20,7 @@ use function TenUp\WPSnapshots\Utils\wp_cli;
  *
  * @package TenUp\WPSnapshots\WPCLI
  */
-final class Create extends WPCLICommand {
+class Create extends WPCLICommand {
 
 	/**
 	 * SnapshotCreator instance.
@@ -62,61 +62,9 @@ final class Create extends WPCLICommand {
 				throw new WPSnapshotsException( 'You must include either the database or files in the snapshot.' );
 			}
 
-			$id = $this->snapshot_creator->create(
-				[
-					'author'          => [
-						'name'  => $this->config->get_user_name() ?? $this->get_assoc_arg(
-							'author_name',
-							[
-								'key'    => 'author_name',
-								'prompt' => 'Your name',
-							]
-						),
-						'email' => $this->config->get_user_email() ?? $this->get_assoc_arg(
-							'author_email',
-							[
-								'key'    => 'author_email',
-								'prompt' => 'Your email',
-							]
-						),
-					],
-					'contains_db'     => $contains_db,
-					'contains_files'  => $contains_files,
-					'description'     => $this->get_assoc_arg(
-						'description',
-						[
-							'key'    => 'description',
-							'prompt' => 'Snapshot Description (e.g. Local environment)',
-						]
-					),
-					'exclude_uploads' => ! ! wp_cli()::get_flag_value( $this->get_assoc_args(), 'exclude_uploads' ),
-					'excludes'        => array_filter( array_map( 'trim', explode( ',', $this->get_assoc_arg( 'exclude' ) ) ) ),
-					'project'         => $this->get_assoc_arg(
-						'slug',
-						[
-							'key'               => 'project',
-							'prompt'            => 'Project Slug (letters, numbers, _, and - only)',
-							'sanitize_callback' => 'strtolower',
-							'validate_callback' => [ $this, 'validate_slug' ],
-						]
-					),
-					'region'          => $this->get_assoc_arg( 'region' ),
-					'repository'      => $this->get_assoc_arg(
-						'repository',
-						[
-							'key'               => 'repository',
-							'prompt'            => 'Repository Slug (letters, numbers, _, and - only)',
-							'sanitize_callback' => 'strtolower',
-							'validate_callback' => [ $this, 'validate_slug' ],
-						]
-					),
-					'small'           => $this->get_assoc_arg( 'small' ),
-					'wp_version'      => $this->get_assoc_arg( 'wp_version' ),
-				]
-			);
+			$id = $this->run( $contains_db, $contains_files );
 
-			wp_cli()::success( sprintf( 'Snapshot %s created.', $id ) );
-
+			wp_cli()::success( $this->get_success_message( $id ) );
 		} catch ( Exception $e ) {
 			wp_cli()::error( $e->getMessage() );
 		}
@@ -229,6 +177,84 @@ final class Create extends WPCLICommand {
 	}
 
 	/**
+	 * Runs the command.
+	 *
+	 * @param bool $contains_db Whether the snapshot contains a database.
+	 * @param bool $contains_files Whether the snapshot contains files.
+	 *
+	 * @return string
+	 *
+	 * @throws WPSnapshotsException If the snapshot cannot be created.
+	 */
+	public function run( bool $contains_db, bool $contains_files ) : string {
+		return $this->snapshot_creator->create( $this->get_create_args( $contains_db, $contains_files ) );
+	}
+
+	/**
+	 * Returns the arguments for creating a snapshot.
+	 *
+	 * @param bool $contains_db Whether the snapshot contains a database.
+	 * @param bool $contains_files Whether the snapshot contains files.
+	 *
+	 * @return array
+	 *
+	 * @throws WPSnapshotsException If the snapshot cannot be created.
+	 */
+	protected function get_create_args( bool $contains_db, bool $contains_files ) : array {
+		return [
+			'author'          => [
+				'name'  => $this->config->get_user_name() ?? $this->get_assoc_arg(
+					'author_name',
+					[
+						'key'    => 'author_name',
+						'prompt' => 'Your name',
+					]
+				),
+				'email' => $this->config->get_user_email() ?? $this->get_assoc_arg(
+					'author_email',
+					[
+						'key'    => 'author_email',
+						'prompt' => 'Your email',
+					]
+				),
+			],
+			'contains_db'     => $contains_db,
+			'contains_files'  => $contains_files,
+			'description'     => $this->get_assoc_arg(
+				'description',
+				[
+					'key'    => 'description',
+					'prompt' => 'Snapshot Description (e.g. Local environment)',
+				]
+			),
+			'exclude_uploads' => ! ! wp_cli()::get_flag_value( $this->get_assoc_args(), 'exclude_uploads' ),
+			'excludes'        => array_filter( array_map( 'trim', explode( ',', $this->get_assoc_arg( 'exclude' ) ) ) ),
+			'project'         => $this->get_assoc_arg(
+				'slug',
+				[
+					'key'               => 'project',
+					'prompt'            => 'Project Slug (letters, numbers, _, and - only)',
+					'sanitize_callback' => 'strtolower',
+					'validate_callback' => [ $this, 'validate_slug' ],
+				]
+			),
+			'region'          => $this->get_assoc_arg( 'region' ),
+			'repository'      => $this->get_assoc_arg(
+				'repository',
+				[
+					'key'               => 'repository',
+					'prompt'            => 'Repository Slug (letters, numbers, _, and - only)',
+					'sanitize_callback' => 'strtolower',
+					'validate_callback' => [ $this, 'validate_slug' ],
+				]
+			),
+			'small'           => $this->get_assoc_arg( 'small' ),
+			'wp_version'      => $this->get_assoc_arg( 'wp_version' ),
+		];
+	}
+
+
+	/**
 	 * Validates a slug.
 	 *
 	 * @param string $slug The slug to validate.
@@ -243,5 +269,14 @@ final class Create extends WPCLICommand {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Returns the success message.
+	 *
+	 * @param string $id The snapshot ID.
+	 */
+	protected function get_success_message( string $id ) : string {
+		return sprintf( 'Snapshot %s created.', $id );
 	}
 }

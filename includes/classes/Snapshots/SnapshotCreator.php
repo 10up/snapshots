@@ -65,6 +65,7 @@ class SnapshotCreator implements SharedService {
 		$this->dumper         = $dumper;
 		$this->file_zipper    = $file_zipper;
 		$this->set_logger( $logger );
+		$this->file_zipper->set_logger( $logger );
 	}
 
 	/**
