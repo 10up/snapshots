@@ -100,20 +100,6 @@ final class Download extends WPCLICommand {
 	}
 
 	/**
-	 * Gets local.
-	 *
-	 * @param string $id Snapshot ID.
-	 * @return array
-	 */
-	private function get_local_meta( string $id ) : array {
-		try {
-			return $this->snapshot_meta->get_local( $id, $this->get_repository_name() ) ?? [];
-		} catch ( WPSnapshotsException $e ) {
-			return [];
-		}
-	}
-
-	/**
 	 * Gets the snapshot ID.
 	 *
 	 * @return string
@@ -163,12 +149,6 @@ final class Download extends WPCLICommand {
 
 		if ( ! $include_files && ! $include_db ) {
 			throw new WPSnapshotsException( 'You must include either files or database in the download.' );
-		}
-
-		$local_meta = $this->get_local_meta( $id );
-
-		if ( ! empty( $local_meta ) && $local_meta['contains_files'] === $include_files && $local_meta['contains_db'] === $include_db ) {
-			wp_cli()::confirm( 'This snapshot exists locally. Do you want to overwrite it?' );
 		}
 
 		$meta['contains_files'] = $include_files;

@@ -7,15 +7,13 @@
 
 namespace TenUp\WPSnapshots;
 
-use BadMethodCallException;
 use Exception;
 use Phar;
 use PharData;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Infrastructure\SharedService;
 use WP_Filesystem_Base;
-
-use function TenUp\WPSnapshots\Utils\wpsnapshots_wp_content_dir;
+use ZipArchive;
 
 /**
  * SnapshotFiles class.
@@ -240,41 +238,80 @@ class SnapshotFiles implements SharedService {
 	 * @throws WPSnapshotsException If there is an error.
 	 */
 	public function unzip_snapshot_files( string $id, string $destination ) : array {
+		$errors = [];
+
 		// Recursively delete everything in the wp-content directory except plugins/snapshots-command.
 		$this->file_system->delete_directory_contents( $destination, true, [ WPSNAPSHOTS_DIR ] );
 
-		$zip_file = $this->get_file_path( 'files.tar.gz', $id );
+		$gzipped_tar_file = $this->get_file_path( 'files.tar.gz', $id );
+		$tar_file         = str_replace( '.gz', '', $gzipped_tar_file );
+		$zip_file         = str_replace( '.tar', '.zip', $tar_file );
 
-		$this->get_wp_filesystem()->mkdir( '/tmp' );
-		$this->get_wp_filesystem()->mkdir( '/tmp/files' );
+		$files_dir = $this->get_tmp_dir( '/files' );
+
+		// Delete /tmp/files and re-create it.
+		$this->get_wp_filesystem()->rmdir( $files_dir, true );
+		$this->get_wp_filesystem()->mkdir( $files_dir );
 
 		if ( ! function_exists( 'unzip_file' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
 
-		// Unzip the files.
-		$unzip_result = unzip_file( $zip_file, '/tmp/files' );
+		try {
+			// Unzip the files.
+			$unzip_result = unzip_file( $gzipped_tar_file, $files_dir );
 
-		if ( is_wp_error( $unzip_result ) ) {
-			// Delete /tmp/files and re-create it.
-			$this->get_wp_filesystem()->rmdir( '/tmp/files', true );
-			$this->get_wp_filesystem()->mkdir( '/tmp/files' );
+			if ( is_wp_error( $unzip_result ) ) {
+				// Delete /tmp/files and re-create it.
+				$this->get_wp_filesystem()->rmdir( $files_dir, true );
+				$this->get_wp_filesystem()->mkdir( $files_dir );
 
-			$phar = new PharData( $zip_file );
-			$phar->decompress();
+				$phar = new PharData( $gzipped_tar_file );
+				$phar->convertToData( Phar::ZIP );
 
-			$phar->extractTo( '/tmp/files' );
+				$unzip_result = unzip_file( $zip_file, $files_dir );
 
-			unset( $phar );
-			Phar::unlinkArchive( $zip_file );
+				if ( is_wp_error( $unzip_result ) ) {
+					throw new WPSnapshotsException( 'Unable to unzip files: ' . $unzip_result->get_error_message() );
+				}
 
-			// Delete the nongzipped file file.
-			$this->get_wp_filesystem()->delete( str_replace( '.gz', '', $zip_file ) );
+				unset( $phar );
+				Phar::unlinkArchive( $gzipped_tar_file );
+			}
+
+			$errors = $this->file_system->sync_files( $files_dir, $destination, true );
+		} catch ( Exception $e ) {
+			throw new WPSnapshotsException( 'Unzip file error: ' . $e->getMessage() );
+		} finally {
+		//	$this->get_wp_filesystem()->delete( $tar_file );
+		//	$this->get_wp_filesystem()->delete( $zip_file );
+			$this->get_wp_filesystem()->rmdir( $files_dir, true );
 		}
 
-		$errors = $this->file_system->sync_files( '/tmp/files', $destination, true );
-
 		return $errors;
+	}
+
+	/**
+	 * Returns the path to the tmp directory to use for WP snapshots.
+	 *
+	 * @param string $subpath Optional. Subpath to append to the tmp directory path.
+	 * @return string
+	 */
+	public function get_tmp_dir( string $subpath = '' ) : string {
+		$wpsnapshots_directory = $this->get_directory();
+
+		/**
+		 * Filters the path to the tmp directory to use for WP snapshots.
+		 *
+		 * @param string $tmp_dir Path to the tmp directory to use for WP snapshots.
+		 */
+		$tmp_dir = apply_filters( 'wpsnapshots_tmp_dir', trailingslashit( $wpsnapshots_directory ) . 'tmp' );
+
+		if ( ! empty( $subpath ) ) {
+			$tmp_dir = trailingslashit( $tmp_dir ) . preg_replace( '/^\//', '', $subpath );
+		}
+
+		return $tmp_dir;
 	}
 
 	/**
@@ -287,20 +324,20 @@ class SnapshotFiles implements SharedService {
 	 */
 	private function get_directory( ?string $id = null ) : string {
 
+		$directory = getenv( 'WPSNAPSHOTS_DIR' );
+		$directory = ! empty( $directory ) ? rtrim( $directory, '/' ) . '/' : rtrim( $_SERVER['HOME'], '/' ) . '/.wpsnapshots/';
+
 		/**
-		 * Filters the configuration directory.
+		 * Filters the wpsnapshots directory.
 		 *
 		 * @param string $file Snapshots directory.
 		 */
-		$directory = apply_filters(
-			'wpsnapshots_directory',
-			defined( 'WPSNAPSHOTS_DIR' ) ? WPSNAPSHOTS_DIR : ABSPATH . '/.wpsnapshots'
-		);
+		$directory = apply_filters( 'wpsnapshots_directory', $directory );
 
 		if ( ! $this->get_wp_filesystem()->is_dir( $directory ) && ! $this->get_wp_filesystem()->mkdir( $directory ) ) {
 			throw new WPSnapshotsException( 'Unable to create ' . $directory );
 		}
 
-		return untrailingslashit( $directory . ( ! empty( $id ) ? '/' . $id : '' ) );
+		return untrailingslashit( $directory . ( ! empty( $id ) ? '/' . preg_replace( '/^\//', '', $id ) : '' ) );
 	}
 }

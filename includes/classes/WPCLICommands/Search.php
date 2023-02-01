@@ -147,7 +147,7 @@ final class Search extends WPCLICommand {
 	 * @return string
 	 */
 	private function get_output_format() {
-		return $this->get_assoc_arg( 'format' ) ?? 'table';
+		return $this->get_assoc_arg( 'format' ) ?? 'yaml';
 	}
 
 	/**

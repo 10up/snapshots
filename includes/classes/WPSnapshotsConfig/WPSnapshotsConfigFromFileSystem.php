@@ -119,7 +119,7 @@ class WPSnapshotsConfigFromFileSystem implements WPSnapshotsConfigInterface {
 	 * Gets settings for a repository.
 	 *
 	 * @param string $repository Repository name.
-	 * @return array $settings Repository settings.
+	 * @return ?array $settings Repository settings.
 	 *
 	 * @throws WPSnapshotsException If the repository does not exist.
 	 */
@@ -131,7 +131,7 @@ class WPSnapshotsConfigFromFileSystem implements WPSnapshotsConfigInterface {
 		}
 
 		if ( ! isset( $repositories[ $repository ] ) ) {
-			throw new WPSnapshotsException( sprintf( 'Repository %s does not exist.', $repository ) );
+			return null;
 		}
 
 		return $repositories[ $repository ];

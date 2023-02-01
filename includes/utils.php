@@ -8,6 +8,7 @@
 namespace TenUp\WPSnapshots\Utils;
 
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
+use TenUp\WPSnapshots\SnapshotFiles;
 use WP_CLI;
 
 /**
@@ -75,3 +76,4 @@ function wpsnapshots_wp_content_dir() : string {
 	 */
 	return apply_filters( 'wpsnapshots_wp_content_dir', WP_CONTENT_DIR );
 }
+

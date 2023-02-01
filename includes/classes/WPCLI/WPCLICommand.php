@@ -11,10 +11,11 @@ use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\FileSystem;
 use TenUp\WPSnapshots\Infrastructure\{Module, Conditional};
 use TenUp\WPSnapshots\Log\{Logging, WPCLILogger};
-use TenUp\WPSnapshots\Snapshots\{DBConnectorInterface, SnapshotMetaInterface, StorageConnectorInterface};
+use TenUp\WPSnapshots\Snapshots\{DBConnectorInterface, SnapshotMetaFromFileSystem, SnapshotMetaInterface, StorageConnectorInterface};
 use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigInterface;
 use TenUp\WPSnapshots\SnapshotFiles;
 use TenUp\WPSnapshots\WordPress\Database;
+use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
 
 use function TenUp\WPSnapshots\Utils\wp_cli;
 
@@ -228,7 +229,7 @@ abstract class WPCLICommand implements Conditional, Module {
 	 *
 	 * @throws WPSnapshotsException If no repository name is provided.
 	 */
-	protected function get_repository_name( bool $required = false, ?int $positional_arg_index = null ) : string {
+	protected function get_repository_name( bool $required = true, ?int $positional_arg_index = null ) : string {
 		if ( is_int( $positional_arg_index ) ) {
 			$args = $this->get_args();
 
@@ -238,6 +239,11 @@ abstract class WPCLICommand implements Conditional, Module {
 		}
 
 		if ( ! $repository_name ) {
+			// Attempt to load from configuration file.
+			$repository_name = $this->config->get_default_repository_name();
+		}
+
+		if ( ! $repository_name && $required ) {
 			throw new WPSnapshotsException( 'A repository name is required. Please run the configure command or pass a --repository argument.' );
 		}
 
