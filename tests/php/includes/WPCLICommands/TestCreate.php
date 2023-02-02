@@ -10,10 +10,12 @@ namespace TenUp\WPSnapshots\Tests\Commands;
 use PHPUnit\Framework\MockObject\MockObject;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\Snapshots\SnapshotCreator;
+use TenUp\WPSnapshots\Snapshots\FileZipper;
+use TenUp\WPSnapshots\Snapshots\SnapshotMeta;
 use TenUp\WPSnapshots\Tests\Fixtures\{CommandTests, PrivateAccess, WPCLIMocking};
 use TenUp\WPSnapshots\WPCLI\WPCLICommand;
 use TenUp\WPSnapshots\WPCLICommands\Create;
+use TenUp\WPSnapshots\WPCLICommands\Create\WPCLIDumper;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
@@ -76,35 +78,42 @@ class TestCreate extends TestCase {
 	 * @covers ::run
 	 */
 	public function test_execute() {
-		$snapshot_creator = $this->get_snapshot_creator_mock();
+		/**
+		 * FileZipper mock
+		 * 
+		 * @var MockObject $mock_file_zipper
+		 */
+		$mock_file_zipper = $this->createMock( FileZipper::class );
 
-		$this->set_private_property( $this->command, 'snapshot_creator', $snapshot_creator );
+		/**
+		 * DBDumper mock.
+		 * 
+		 * @var MockObject $mock_dumper
+		 */
+		$mock_dumper = $this->createMock( WPCLIDumper::class );
 
-		$snapshot_creator->expects( $this->once() )->method( 'create' )
-			->with(
-				[
-					'author' => [
-						'name'  => 'readline8',
-						'email' => 'readline9',
-					],
-					'contains_db' => true,
-					'contains_files' => false,
-					'description' => 'readline10',
-					'exclude_uploads' => false,
-					'excludes' => [],
-					'project' => 'readline11',
-					'region' => 'us-west-1',
-					'repository' => 'readline12',
-					'small' => false,
-					'wp_version' => '',
-				]
-			);
+		/**
+		 * SnapshotMeta mock.
+		 * 
+		 * @var MockObject $mock_snapshot_meta
+		 */
+		$mock_snapshot_meta = $this->createMock( SnapshotMeta::class );
+
+		$this->set_private_property( $this->command, 'file_zipper', $mock_file_zipper );
+		$this->set_private_property( $this->command, 'dumper', $mock_dumper );
+		$this->set_private_property( $this->command, 'snapshot_meta', $mock_snapshot_meta );
+
+		$mock_dumper->expects( $this->once() )
+			->method( 'dump' );
+
+		$mock_snapshot_meta->expects( $this->once() )
+			->method( 'generate' );
 
 		$this->command->execute( [], [ 'include_db' => true ] );
 
 		$this->get_wp_cli_mock()->assertMethodCalled(
 			'line',
-			5,
+			6,
 			[
 				[
 					'Your name (enter x to cancel):'
@@ -120,6 +129,9 @@ class TestCreate extends TestCase {
 				],
 				[
 					'Repository Slug (letters, numbers, _, and - only) (enter x to cancel):',
+				],
+				[
+					'Saving database...'
 				]
 			]
 		);
@@ -132,32 +144,30 @@ class TestCreate extends TestCase {
 	 * @covers ::get_success_message
 	 */
 	public function test_execute_with_args_passed_in() {
-		$snapshot_creator = $this->get_snapshot_creator_mock();
+		/**
+		 * FileZipper mock
+		 * 
+		 * @var MockObject $mock_file_zipper
+		 */
+		$mock_file_zipper = $this->createMock( FileZipper::class );
 
-		$this->set_private_property( $this->command, 'snapshot_creator', $snapshot_creator );
+		/**
+		 * DBDumper mock.
+		 * 
+		 * @var MockObject $mock_dumper
+		 */
+		$mock_dumper = $this->createMock( WPCLIDumper::class );
 
-		$snapshot_creator->expects( $this->once() )->method( 'create' )
-			->with(
-				[
-					'author' => [
-						'name'  => 'Test Author',
-						'email' => 'email@email.com',
-					],
-					'contains_db' => true,
-					'contains_files' => true,
-					'description' => 'Description!',
-					'exclude_uploads' => false,
-					'excludes' => [
-						'files',
-						'directory/file.txt',
-					],
-					'project' => 'slug3',
-					'region' => 'us-west-1',
-					'repository' => 'my-repo',
-					'small' => true,
-					'wp_version' => '',
-				]
-			);
+		/**
+		 * SnapshotMeta mock.
+		 * 
+		 * @var MockObject $mock_snapshot_meta
+		 */
+		$mock_snapshot_meta = $this->createMock( SnapshotMeta::class );
+
+		$this->set_private_property( $this->command, 'file_zipper', $mock_file_zipper );
+		$this->set_private_property( $this->command, 'dumper', $mock_dumper );
+		$this->set_private_property( $this->command, 'snapshot_meta', $mock_snapshot_meta );
 
 		$this->command->execute( [], [
 			'author_name' => 'Test Author',
@@ -173,21 +183,12 @@ class TestCreate extends TestCase {
 
 		$this->get_wp_cli_mock()->assertMethodCalled(
 			'success',
-			1,
-			[
-				[
-					'Snapshot  created.'
-				]
-			]
+			1
 		);
 	}
 
 	/** @covers ::execute */
 	public function test_execute_throws_when_db_and_files_not_included() {
-		$snapshot_creator = $this->get_snapshot_creator_mock();
-
-		$this->set_private_property( $this->command, 'snapshot_creator', $snapshot_creator );
-
 		$this->command->execute( [], [ 'include_db' => false, 'include_files' => false ] );
 
 		$this->get_wp_cli_mock()->assertMethodCalled(
@@ -211,22 +212,60 @@ class TestCreate extends TestCase {
 		$this->call_private_method( $this->command, 'validate_slug', [ 'slug!' ] );
 	}
 
+	/**
+	 * @covers ::create
+	 */
+	public function test_create() {
+		/**
+		 * FileZipper mock
+		 * 
+		 * @var MockObject $mock_file_zipper
+		 */
+		$mock_file_zipper = $this->createMock( FileZipper::class );
+
+		/**
+		 * DBDumper mock.
+		 * 
+		 * @var MockObject $mock_dumper
+		 */
+		$mock_dumper = $this->createMock( WPCLIDumper::class );
+
+		/**
+		 * SnapshotMeta mock.
+		 * 
+		 * @var MockObject $mock_snapshot_meta
+		 */
+		$mock_snapshot_meta = $this->createMock( SnapshotMeta::class );
+
+		$this->set_private_property( $this->command, 'file_zipper', $mock_file_zipper );
+		$this->set_private_property( $this->command, 'dumper', $mock_dumper );
+		$this->set_private_property( $this->command, 'snapshot_meta', $mock_snapshot_meta );
+
+		$test_id = 'test-id';
+		$test_args = ['contains_db' => true, 'contains_files' => true];
+
+		$mock_file_zipper->expects( $this->once() )
+			->method( 'zip_files' )
+			->with( $test_id, array_merge( $test_args, [ 'db_size' => 0 ] ) );
+
+		$mock_dumper->expects( $this->once() )
+			->method( 'dump' )
+			->with( $test_id, $test_args );
+
+		$mock_snapshot_meta->expects( $this->once() )
+			->method( 'generate' )
+			->with( $test_id, array_merge( $test_args, [ 'db_size' => 0, 'files_size' => 0 ] ) );
+
+		$this->command->create( $test_args, $test_id );
+	}
 
 	/**
-	 * Gets snapshot creator mock.
-	 * 
-	 * @return SnapshotCreator|MockObject
+	 * @covers ::create
 	 */
-	private function get_snapshot_creator_mock() {
-		/**
-		 * SnapshotCreator Mock
-		 * 
-		 * @var SnapshotCreator|MockObject $snapshot_creator
-		 */
-		$snapshot_creator = $this->createMock( SnapshotCreator::class );
-		$snapshot_creator->method( 'create' );
+	public function test_create_will_throw_exception_if_nothing_to_create() {
+		$this->expectException( WPSnapshotsException::class );
+		$this->expectExceptionMessage( 'Snapshot must contain either database or files.' );
 
-		return $snapshot_creator;
-	}
-	
+		$this->command->create( [], 'test-id' );
+	}	
 }

@@ -10,7 +10,8 @@ namespace TenUp\WPSnapshots\WPCLICommands;
 use Exception;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Infrastructure\Service;
-use TenUp\WPSnapshots\Snapshots\SnapshotCreator;
+use TenUp\WPSnapshots\Snapshots\DBExportInterface;
+use TenUp\WPSnapshots\Snapshots\FileZipper;
 use TenUp\WPSnapshots\WPCLI\WPCLICommand;
 
 use function TenUp\WPSnapshots\Utils\wp_cli;
@@ -23,22 +24,31 @@ use function TenUp\WPSnapshots\Utils\wp_cli;
 class Create extends WPCLICommand {
 
 	/**
-	 * SnapshotCreator instance.
+	 * DBExportInterface instance.
 	 *
-	 * @var SnapshotCreator
+	 * @var DBExportInterface
 	 */
-	protected $snapshot_creator;
+	private $dumper;
+
+	/**
+	 * FileZipper instance.
+	 *
+	 * @var FileZipper
+	 */
+	private $file_zipper;
 
 	/**
 	 * Create constructor.
 	 *
-	 * @param SnapshotCreator $snapshot_creator SnapshotCreator instance.
-	 * @param array<Service>  ...$args             Additional dependencies to pass to the parent.
+	 * @param DBExportInterface $dumper           DBExportInterface instance.
+	 * @param FileZipper        $file_zipper      FileZipper instance.
+	 * @param array<Service>    ...$args             Additional dependencies to pass to the parent.
 	 */
-	public function __construct( SnapshotCreator $snapshot_creator, ...$args ) {
+	public function __construct( DBExportInterface $dumper, FileZipper $file_zipper, ...$args ) {
 		parent::__construct( ...$args ); // @phpstan-ignore-line
 
-		$this->snapshot_creator = $snapshot_creator;
+		$this->dumper      = $dumper;
+		$this->file_zipper = $file_zipper;
 	}
 
 
@@ -189,7 +199,49 @@ class Create extends WPCLICommand {
 	public function run( bool $contains_db, bool $contains_files ) : string {
 		$id = md5( time() . wp_rand() );
 		$this->snapshots_filesystem->create_directory( $id );
-		return $this->snapshot_creator->create( $this->get_create_args( $contains_db, $contains_files ), $id );
+		return $this->create( $this->get_create_args( $contains_db, $contains_files ), $id );
+	}
+
+	/**
+	 * Create a snapshot.
+	 *
+	 * @param array   $args List of arguments
+	 * @param ?string $id A snapshot ID to use. If not provided, a random one will be generated.
+	 *
+	 * @return string Snapshot ID
+	 *
+	 * @throws WPSnapshotsException Throw exception if snapshot can't be created.
+	 */
+	public function create( array $args, ?string $id = null ) : string {
+		if ( empty( $args['contains_db'] ) && empty( $args['contains_files'] ) ) {
+			throw new WPSnapshotsException( 'Snapshot must contain either database or files.' );
+		}
+
+		/**
+		 * Define snapshot ID
+		 */
+		if ( ! $id ) {
+			$id = md5( time() . wp_rand() );
+		}
+
+		if ( $args['contains_db'] ) {
+			$this->log( 'Saving database...' );
+
+			$args['db_size'] = $this->dumper->dump( $id, $args );
+		}
+
+		if ( $args['contains_files'] ) {
+			$this->log( 'Saving files...' );
+
+			$args['files_size'] = $this->file_zipper->zip_files( $id, $args );
+		}
+
+		/**
+		 * Finally save snapshot meta to meta.json
+		 */
+		$this->snapshot_meta->generate( $id, $args );
+
+		return $id;
 	}
 
 	/**

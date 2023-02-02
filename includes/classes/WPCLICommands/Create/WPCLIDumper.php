@@ -11,7 +11,7 @@ use TenUp\WPSnapshots\Log\{LoggerInterface, Logging};
 use TenUp\WPSnapshots\SnapshotFiles;
 use TenUp\WPSnapshots\WordPress\Database;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\Snapshots\{DumperInterface, Trimmer};
+use TenUp\WPSnapshots\Snapshots\{DBExportInterface, Trimmer};
 
 use function TenUp\WPSnapshots\Utils\wp_cli;
 
@@ -20,7 +20,7 @@ use function TenUp\WPSnapshots\Utils\wp_cli;
  *
  * @package TenUp\WPSnapshots
  */
-class WPCLIDumper implements DumperInterface {
+class WPCLIDumper implements DBExportInterface {
 
 	use Logging;
 
@@ -144,6 +144,11 @@ class WPCLIDumper implements DumperInterface {
 			}
 
 			if ( $wpdb->usermeta === $table ) {
+				continue;
+			}
+
+			// Skip if table ends with _temp
+			if ( substr( $table, -5 ) === '_temp' ) {
 				continue;
 			}
 

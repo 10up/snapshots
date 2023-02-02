@@ -114,6 +114,10 @@ class TestMultisiteURLReplacer extends TestCase {
 	public function test_replace_urls() : void {
 		global $wpdb;
 
+		// Drop tables if they exist.
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->usermeta}_temp" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->users}_temp" );
+
 		$meta = [
 			'sites' => [
 				[

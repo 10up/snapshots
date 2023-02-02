@@ -47,11 +47,9 @@ abstract class Container {
 	 * Performs setup functions.
 	 */
 	public function register() : void {
-		$this->validate_classes();
-
 		$instances = [];
 
-		foreach ( $this->get_modules() as $key => $module ) {
+		foreach ( $this->get_modules() as $module ) {
 			$implements = class_implements( $module );
 			if ( is_array( $implements ) && in_array( Conditional::class, $implements, true ) && ! $module::is_needed() ) {
 				continue;
@@ -168,41 +166,6 @@ abstract class Container {
 			},
 			[]
 		);
-	}
-
-	/**
-	 * Validates that all classes are valid.
-	 *
-	 * @throws WPSnapshotsException If an unknown module or service is encountered.
-	 */
-	private function validate_classes() {
-		// Validate modules.
-		foreach ( $this->get_modules() as $module ) {
-			if ( ! class_exists( $module ) ) {
-				throw new WPSnapshotsException( sprintf( 'Unknown module: %s', $module ) );
-			}
-
-			$module_implements = class_implements( $module );
-			if ( ! is_array( $module_implements ) || ! in_array( Module::class, $module_implements, true ) ) {
-				throw new WPSnapshotsException( sprintf( 'Module does not implement Module interface: %s', $module ) );
-			}
-		}
-
-		// Validate services.
-		foreach ( $this->get_services() as $key => $service ) {
-			if ( is_null( $service ) ) {
-				continue;
-			}
-
-			if ( ! class_exists( $service ) ) {
-				throw new WPSnapshotsException( sprintf( 'Unknown service: %s with key %s', (string) $service, $key ) );
-			}
-
-			$service_implements = class_implements( $service );
-			if ( ! is_array( $service_implements ) || ! in_array( Service::class, $service_implements, true ) ) {
-				throw new WPSnapshotsException( sprintf( 'Service does not implement Service interface: %s', $service ) );
-			}
-		}
 	}
 
 	/**

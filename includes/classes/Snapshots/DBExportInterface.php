@@ -10,11 +10,11 @@ namespace TenUp\WPSnapshots\Snapshots;
 use TenUp\WPSnapshots\Infrastructure\SharedService;
 
 /**
- * Interface DumperInterface
+ * Interface DBExportInterface
  *
  * @package TenUp\WPSnapshots
  */
-interface DumperInterface extends SharedService {
+interface DBExportInterface extends SharedService {
 
 	/**
 	 * Creates a DB dump.

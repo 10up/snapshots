@@ -11,7 +11,6 @@ use ArrayIterator;
 use Iterator;
 use Phar;
 use PharData;
-use TenUp\WPSnapshots\Log\Logging;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\FileSystem;
 use TenUp\WPSnapshots\Infrastructure\SharedService;
@@ -25,8 +24,6 @@ use function TenUp\WPSnapshots\Utils\wpsnapshots_wp_content_dir;
  * @package TenUp\WPSnapshots
  */
 class FileZipper implements SharedService {
-
-	use Logging;
 
 	/**
 	 * SnapshotFiles instance.
@@ -83,8 +80,6 @@ class FileZipper implements SharedService {
 
 		$this->file_system->get_wp_filesystem()->delete( $phar_file );
 
-		$this->log( 'Created files zip.' );
-
 		return $this->snapshot_files->get_file_size( 'files.tar.gz', $id );
 	}
 
@@ -115,8 +110,6 @@ class FileZipper implements SharedService {
 
 		$initial_files = $this->file_system->get_wp_filesystem()->dirlist( wpsnapshots_wp_content_dir() );
 		$file_list     = $this->build_file_list_recursively( $initial_files, wpsnapshots_wp_content_dir(), $excludes );
-
-		$this->log( 'Files to zip: ' . count( $file_list ) );
 
 		return new ArrayIterator( $file_list );
 	}

@@ -26,14 +26,6 @@ if ( ! defined( 'WPSNAPSHOTS_USE_FILE_SYSTEM' ) ) {
 	define( 'WPSNAPSHOTS_USE_FILE_SYSTEM', true );
 }
 
-if ( ! defined( 'FS_CHMOD_DIR' ) ) {
-	define( 'FS_CHMOD_DIR', ( 0755 & ~ umask() ) );
-}
-
-if ( ! defined( 'FS_CHMOD_FILE' ) ) {
-	define( 'FS_CHMOD_FILE', ( 0644 & ~ umask() ) );
-}
-
 /**
  * Provides the Plugin instance.
  *

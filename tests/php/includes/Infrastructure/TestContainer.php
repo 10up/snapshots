@@ -16,7 +16,6 @@ use TenUp\WPSnapshots\Plugin;
 use TenUp\WPSnapshots\Snapshots\DynamoDBConnector;
 use TenUp\WPSnapshots\Snapshots\FileZipper;
 use TenUp\WPSnapshots\Snapshots\S3StorageConnector;
-use TenUp\WPSnapshots\Snapshots\SnapshotCreator;
 use TenUp\WPSnapshots\Snapshots\SnapshotMetaFromFileSystem;
 use TenUp\WPSnapshots\Snapshots\Trimmer;
 use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
@@ -73,7 +72,6 @@ class TestContainer extends TestCase {
 	 * @covers ::register
 	 * @covers ::get_instance
 	 * @covers ::get_instance_from_parameter
-	 * @covers ::validate_classes
 	 * @covers ::get_concrete_service_name
 	 */
 	public function test_register() {
@@ -87,7 +85,6 @@ class TestContainer extends TestCase {
 			Prompt::class,
 			S3StorageConnector::class,
 			Scrubber::class,
-			SnapshotCreator::class,
 			SnapshotFiles::class,
 			SnapshotMetaFromFileSystem::class,
 			Trimmer::class,

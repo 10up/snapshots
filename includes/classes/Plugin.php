@@ -9,7 +9,7 @@ namespace TenUp\WPSnapshots;
 
 use TenUp\WPSnapshots\Infrastructure\Container;
 use TenUp\WPSnapshots\Log\WPCLILogger;
-use TenUp\WPSnapshots\Snapshots\{DynamoDBConnector, FileZipper, S3StorageConnector, SnapshotCreator, SnapshotMetaFromFileSystem, Trimmer};
+use TenUp\WPSnapshots\Snapshots\{DynamoDBConnector, FileZipper, S3StorageConnector, SnapshotMetaFromFileSystem, Trimmer};
 use TenUp\WPSnapshots\WordPress\Database;
 use TenUp\WPSnapshots\WPCLI\Prompt;
 use TenUp\WPSnapshots\WPCLICommands\{Configure, Create, CreateRepository, Delete, Download, Pull, Push, Search};
@@ -78,7 +78,6 @@ final class Plugin extends Container {
 			'file_system'                             => null,
 			'snapshots/db_dumper'                     => null,
 			'snapshots/file_zipper'                   => FileZipper::class,
-			'snapshots/snapshot_creator'              => SnapshotCreator::class,
 			'snapshots_filesystem'                    => null,
 			'snapshots/db_connector'                  => DynamoDBConnector::class,
 			'snapshots/scrubber'                      => Scrubber::class,

@@ -237,9 +237,11 @@ class Trimmer implements SharedService {
 		// Terms
 		$this->log( 'Trimming terms...' );
 
-		$wpdb->query(
-			"DELETE FROM {$wpdb->prefix}term_relationships WHERE object_id NOT IN (" . implode( ',', $post_ids ) . ')' // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		);
+		if ( ! empty( $post_ids ) ) {
+			$wpdb->query(
+				"DELETE FROM {$wpdb->prefix}term_relationships WHERE object_id NOT IN (" . implode( ',', $post_ids ) . ')' // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			);
+		}
 
 		$term_relationships = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}term_relationships ORDER BY term_taxonomy_id DESC", 'ARRAY_A' );
 

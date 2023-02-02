@@ -48,6 +48,10 @@ class Scrubber implements SharedService {
 	public function scrub( string $id ) : void {
 		global $wpdb;
 
+		// Drop tables if they exist.
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->usermeta}_temp" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->users}_temp" );
+
 		$this->log( 'Scrubbing users...' );
 
 		$dummy_users = $this->get_dummy_users();

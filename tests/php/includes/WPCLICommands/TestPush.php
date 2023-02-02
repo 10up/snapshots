@@ -7,10 +7,7 @@
 
 namespace TenUp\WPSnapshots\Tests\Commands;
 
-use PHPUnit\Framework\MockObject\MockObject;
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\Snapshots\SnapshotCreator;
 use TenUp\WPSnapshots\Tests\Fixtures\{CommandTests, PrivateAccess, WPCLIMocking};
 use TenUp\WPSnapshots\WPCLI\WPCLICommand;
 use TenUp\WPSnapshots\WPCLICommands\Push;
