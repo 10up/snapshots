@@ -102,8 +102,7 @@ class FileZipper implements SharedService {
 			$excludes[] = 'uploads';
 		}
 
-		$excludes[] = trailingslashit( str_replace( wpsnapshots_wp_content_dir(), '', WPSNAPSHOTS_DIR ) ) . '.wpsnapshots';
-		$excludes[] = trailingslashit( str_replace( wpsnapshots_wp_content_dir(), '', WPSNAPSHOTS_DIR ) ) . 'vendor/wordpress';
+		$excludes[] = trailingslashit( str_replace( wpsnapshots_wp_content_dir(), '', WPSNAPSHOTS_DIR ) );
 
 		$excludes = array_map(
 			function( $exclude ) {
