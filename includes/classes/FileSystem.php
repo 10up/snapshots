@@ -91,7 +91,7 @@ class FileSystem implements SharedService {
 		$errors = [];
 
 		if ( ! $this->get_wp_filesystem()->exists( $destination ) ) {
-			if ( ! $this->get_wp_filesystem()->mkdir( $destination ) ) {
+			if ( ! $this->get_wp_filesystem()->mkdir( $destination, FS_CHMOD_DIR ) ) {
 				$errors[] = 'Unable to create directory: ' . $destination;
 			}
 		}
@@ -122,7 +122,7 @@ class FileSystem implements SharedService {
 				} elseif ( 'd' === $file['type'] ) {
 
 					// Create the directory.
-					if ( ! $this->get_wp_filesystem()->exists( $destination_file ) && ! $this->get_wp_filesystem()->mkdir( $destination_file ) ) {
+					if ( ! $this->get_wp_filesystem()->exists( $destination_file ) && ! $this->get_wp_filesystem()->mkdir( $destination_file, FS_CHMOD_DIR ) ) {
 						throw new WPSnapshotsException( 'Unable to create directory: ' . $destination_file );
 					}
 

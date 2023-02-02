@@ -12,6 +12,7 @@ use Phar;
 use PharData;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Infrastructure\SharedService;
+use TenUp\WPSnapshots\Log\{LoggerInterface, Logging};
 use WP_Filesystem_Base;
 use ZipArchive;
 
@@ -21,6 +22,8 @@ use ZipArchive;
  * @package TenUp\WPSnapshots
  */
 class SnapshotFiles implements SharedService {
+
+	use Logging;
 
 	/**
 	 * The FileSystem instance.
@@ -32,10 +35,12 @@ class SnapshotFiles implements SharedService {
 	/**
 	 * Class constructor.
 	 *
-	 * @param FileSystem $file_system The FileSystem instance.
+	 * @param FileSystem      $file_system The FileSystem instance.
+	 * @param LoggerInterface $logger The Logger instance.
 	 */
-	public function __construct( FileSystem $file_system ) {
+	public function __construct( FileSystem $file_system, LoggerInterface $logger ) {
 		$this->file_system = $file_system;
+		$this->set_logger( $logger );
 	}
 
 	/**
@@ -140,7 +145,7 @@ class SnapshotFiles implements SharedService {
 
 		if ( ! $this->get_wp_filesystem()->exists( $snapshots_directory ) ) {
 			try {
-				if ( ! $this->get_wp_filesystem()->mkdir( $snapshots_directory ) ) {
+				if ( ! $this->get_wp_filesystem()->mkdir( $snapshots_directory, FS_CHMOD_DIR ) ) {
 					throw new WPSnapshotsException( 'Could not create snapshot directory' );
 				}
 			} catch ( Exception $e ) {
@@ -160,7 +165,7 @@ class SnapshotFiles implements SharedService {
 			}
 
 			if ( ! $this->get_wp_filesystem()->exists( $snapshots_directory . $id . '/' ) ) {
-				if ( ! $this->get_wp_filesystem()->mkdir( $snapshots_directory . $id . '/' ) ) {
+				if ( ! $this->get_wp_filesystem()->mkdir( $snapshots_directory . $id . '/', FS_CHMOD_DIR ) ) {
 					throw new WPSnapshotsException( 'Could not create snapshot directory' );
 				}
 			}
@@ -243,49 +248,50 @@ class SnapshotFiles implements SharedService {
 		// Recursively delete everything in the wp-content directory except plugins/snapshots-command.
 		$this->file_system->delete_directory_contents( $destination, true, [ WPSNAPSHOTS_DIR ] );
 
-		$gzipped_tar_file = $this->get_file_path( 'files.tar.gz', $id );
-		$tar_file         = str_replace( '.gz', '', $gzipped_tar_file );
-		$zip_file         = str_replace( '.tar', '.zip', $tar_file );
+		$gzipped_tar_file        = $this->get_file_path( 'files.tar.gz', $id );
+		$copied_gzipped_tar_file = str_replace( 'files', 'files-copy', $gzipped_tar_file );
+
+		// Copy the gzipped tar file to a new file so that we can unzip it.
+		if ( ! $this->get_wp_filesystem()->copy( $gzipped_tar_file, $copied_gzipped_tar_file, true, FS_CHMOD_FILE ) ) {
+			throw new WPSnapshotsException( 'Could not copy gzipped tar file' );
+		}
+
+		$tar_file = str_replace( '.gz', '', $copied_gzipped_tar_file );
+		$zip_file = str_replace( '.tar', '.zip', $tar_file );
 
 		$files_dir = $this->get_tmp_dir( '/files' );
 
 		// Delete /tmp/files and re-create it.
 		$this->get_wp_filesystem()->rmdir( $files_dir, true );
-		$this->get_wp_filesystem()->mkdir( $files_dir );
-
-		if ( ! function_exists( 'unzip_file' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-		}
+		$this->get_wp_filesystem()->mkdir( $files_dir, FS_CHMOD_DIR );
 
 		try {
-			// Unzip the files.
-			$unzip_result = unzip_file( $gzipped_tar_file, $files_dir );
+			// Delete /tmp/files and re-create it.
+			$this->get_wp_filesystem()->rmdir( $files_dir, true );
+			$this->get_wp_filesystem()->mkdir( $files_dir, FS_CHMOD_DIR );
 
-			if ( is_wp_error( $unzip_result ) ) {
-				// Delete /tmp/files and re-create it.
-				$this->get_wp_filesystem()->rmdir( $files_dir, true );
-				$this->get_wp_filesystem()->mkdir( $files_dir );
+			$phar = new PharData( $copied_gzipped_tar_file );
+			$phar->convertToData( Phar::ZIP );
 
-				$phar = new PharData( $gzipped_tar_file );
-				$phar->convertToData( Phar::ZIP );
-
-				$unzip_result = unzip_file( $zip_file, $files_dir );
-
-				if ( is_wp_error( $unzip_result ) ) {
-					throw new WPSnapshotsException( 'Unable to unzip files: ' . $unzip_result->get_error_message() );
-				}
-
-				unset( $phar );
-				Phar::unlinkArchive( $gzipped_tar_file );
+			$zip = new ZipArchive();
+			if ( $zip->open( $zip_file ) !== true ) {
+				throw new WPSnapshotsException( 'Unable to unzip files' );
 			}
 
-			$errors = $this->file_system->sync_files( $files_dir, $destination, true );
+			$zip->extractTo( $destination );
+			$zip->close();
+
+			unset( $phar );
+			Phar::unlinkArchive( $copied_gzipped_tar_file );
+
+		//	$errors = $this->file_system->sync_files( $files_dir, $destination, true );
 		} catch ( Exception $e ) {
 			throw new WPSnapshotsException( 'Unzip file error: ' . $e->getMessage() );
 		} finally {
-		//	$this->get_wp_filesystem()->delete( $tar_file );
-		//	$this->get_wp_filesystem()->delete( $zip_file );
-			$this->get_wp_filesystem()->rmdir( $files_dir, true );
+			$this->get_wp_filesystem()->delete( $tar_file );
+			$this->get_wp_filesystem()->delete( $zip_file );
+			$this->get_wp_filesystem()->delete( $copied_gzipped_tar_file );
+			//$this->get_wp_filesystem()->rmdir( $files_dir, true );
 		}
 
 		return $errors;
@@ -334,7 +340,7 @@ class SnapshotFiles implements SharedService {
 		 */
 		$directory = apply_filters( 'wpsnapshots_directory', $directory );
 
-		if ( ! $this->get_wp_filesystem()->is_dir( $directory ) && ! $this->get_wp_filesystem()->mkdir( $directory ) ) {
+		if ( ! $this->get_wp_filesystem()->is_dir( $directory ) && ! $this->get_wp_filesystem()->mkdir( $directory, FS_CHMOD_DIR ) ) {
 			throw new WPSnapshotsException( 'Unable to create ' . $directory );
 		}
 

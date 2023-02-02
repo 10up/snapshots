@@ -59,9 +59,11 @@ class FileZipper implements SharedService {
 	 * @param string $id  Snapshot ID.
 	 * @param array  $args Snapshot arguments.
 	 *
+	 * @return int The size of the created file.
+	 *
 	 * @throws WPSnapshotsException If could not create zip.
 	 */
-	public function zip_files( string $id, array $args ) {
+	public function zip_files( string $id, array $args ) : int {
 		if ( ! class_exists( 'PharData' ) ) {
 			throw new WPSnapshotsException( 'PharData class not found.' );
 		}
@@ -82,6 +84,8 @@ class FileZipper implements SharedService {
 		$this->file_system->get_wp_filesystem()->delete( $phar_file );
 
 		$this->log( 'Created files zip.' );
+
+		return $this->snapshot_files->get_file_size( 'files.tar.gz', $id );
 	}
 
 	/**

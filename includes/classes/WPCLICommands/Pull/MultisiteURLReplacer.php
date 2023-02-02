@@ -36,6 +36,8 @@ final class MultisiteURLReplacer extends URLReplacer {
 	 * @return string The Home URL.
 	 */
 	public function replace_urls() : string {
+		global $wpdb;
+
 		$this->log( 'Preparing to replace URLs...' );
 
 		if ( empty( $this->skip_table_search_replace ) ) {
@@ -66,9 +68,9 @@ final class MultisiteURLReplacer extends URLReplacer {
 			$this->replace_urls_for_site( $site, $this->site_mapping, $this->skip_table_search_replace, $current_table_prefix );
 		}
 
-		$this->log( 'Updating site table...' );
+		$this->log( sprintf( 'Setting the domain of site %d to %s', $main_blog_id, $this->main_domain ) );
 
-		wp_update_site( $main_blog_id, [ 'domain' => $this->main_domain ] );
+		$wpdb->query( $wpdb->prepare( 'UPDATE ' . $current_table_prefix . 'site SET domain=%s', $this->main_domain ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		$this->log( 'URLs replaced.' );
 

@@ -187,7 +187,9 @@ class Create extends WPCLICommand {
 	 * @throws WPSnapshotsException If the snapshot cannot be created.
 	 */
 	public function run( bool $contains_db, bool $contains_files ) : string {
-		return $this->snapshot_creator->create( $this->get_create_args( $contains_db, $contains_files ) );
+		$id = md5( time() . wp_rand() );
+		$this->snapshots_filesystem->create_directory( $id );
+		return $this->snapshot_creator->create( $this->get_create_args( $contains_db, $contains_files ), $id );
 	}
 
 	/**

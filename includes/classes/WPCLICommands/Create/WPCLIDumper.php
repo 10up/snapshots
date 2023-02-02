@@ -75,9 +75,11 @@ class WPCLIDumper implements DumperInterface {
 	 * @param string $id The snapshot ID.
 	 * @param array  $args The snapshot arguments.
 	 *
+	 * @return int The size of the created file.
+	 *
 	 * @throws WPSnapshotsException If an error occurs.
 	 */
-	public function dump( string $id, array $args ) {
+	public function dump( string $id, array $args ) : int {
 		if ( ! empty( $args['small'] ) ) {
 			$this->trimmer->trim( is_multisite() ? get_sites() : null );
 		}
@@ -111,6 +113,8 @@ class WPCLIDumper implements DumperInterface {
 		$this->log( 'Removing uncompressed database backup...' );
 
 		$this->snapshot_files->delete_file( 'data.sql', $id );
+
+		return $this->snapshot_files->get_wp_filesystem()->size( $sql_file . '.gz' );
 	}
 
 	/**

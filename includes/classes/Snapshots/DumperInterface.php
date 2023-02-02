@@ -21,6 +21,8 @@ interface DumperInterface extends SharedService {
 	 *
 	 * @param string $id The snapshot ID.
 	 * @param array  $args The snapshot arguments.
+	 *
+	 * @return int The size of the created file.
 	 */
-	public function dump( string $id, array $args );
+	public function dump( string $id, array $args ): int;
 }

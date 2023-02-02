@@ -86,8 +86,8 @@ final class Pull extends WPCLICommand {
 
 			$meta = $this->get_meta();
 
-			$include_db    = $meta['contains_db'] && $this->prompt->get_flag_or_prompt( $this->get_assoc_args(), 'include_db', 'Include database in snapshot?' );
-			$include_files = $meta['contains_files'] && $this->prompt->get_flag_or_prompt( $this->get_assoc_args(), 'include_files', 'Include files in snapshot?' );
+			$include_files = $meta['contains_files'] && $this->prompt->get_flag_or_prompt( $this->get_assoc_args(), 'include_files', 'Do you want to pull files?' );
+			$include_db    = $meta['contains_db'] && $this->prompt->get_flag_or_prompt( $this->get_assoc_args(), 'include_db', 'Do you want to pull the database?' );
 
 			if ( ! $include_db && ! $include_files ) {
 				throw new WPSnapshotsException( 'You must include either the DB, the files, or both.' );
@@ -283,7 +283,7 @@ final class Pull extends WPCLICommand {
 
 		switch ( true ) {
 			case ! empty( $remote_meta ) && ! empty( $local_meta ):
-				$this->should_download = $this->prompt->get_flag_or_prompt( $this->get_assoc_args(), 'overwrite_local_copy', 'Snapshot already exists locally. Overwrite?', $this->get_default_arg_value( 'overwrite_local_copy' ) );
+				$this->should_download = $this->prompt->get_flag_or_prompt( $this->get_assoc_args(), 'overwrite_local_copy', 'This snapshot exists locally. Do you want to overwrite it with the remote copy?', $this->get_default_arg_value( 'overwrite_local_copy' ) );
 				$this->meta            = $this->should_download ? $remote_meta : $local_meta;
 				break;
 			case ! empty( $remote_meta ) && empty( $local_meta ):
@@ -321,10 +321,6 @@ final class Pull extends WPCLICommand {
 			};
 		}
 
-		if ( $include_files ) {
-			$pull_actions[] = [ $this, 'pull_files' ];
-		}
-
 		if ( $include_db ) {
 			$pull_actions[] = [ $this, 'rename_tables' ];
 		}
@@ -351,6 +347,10 @@ final class Pull extends WPCLICommand {
 			$pull_actions[] = function() {
 				$this->create_wpsnapshots_user( $this->get_meta()['multisite'] );
 			};
+		}
+
+		if ( $include_files ) {
+			$pull_actions[] = [ $this, 'pull_files' ];
 		}
 
 		return $pull_actions;
@@ -415,7 +415,14 @@ final class Pull extends WPCLICommand {
 			$command .= ' --include_files';
 		}
 
-		wp_cli()::runcommand( $command, [ 'launch' => false ] );
+		wp_cli()::runcommand(
+			$command,
+			[
+				'launch'     => true,
+				'exit_error' => false,
+				'return'     => 'all',
+			]
+		);
 
 		$this->log( 'Snapshot downloaded.', 'success' );
 	}
@@ -432,7 +439,16 @@ final class Pull extends WPCLICommand {
 
 		$command = 'db import ' . $this->snapshots_filesystem->get_file_path( 'data.sql', $this->get_id() ) . ' --quiet --skip-themes --skip-plugins --skip-packages';
 
-		wp_cli()::runcommand( $command, [ 'launch' => false ] );
+		wp_cli()::runcommand(
+			$command,
+			[
+				'launch'     => true,
+				'return'     => 'all',
+				'exit_error' => false,
+			]
+		);
+
+		$this->filesystem->get_wp_filesystem()->delete( $this->snapshots_filesystem->get_file_path( 'data.sql', $this->get_id() ) );
 
 		$this->log( 'Database imported.', 'success' );
 
@@ -473,7 +489,14 @@ final class Pull extends WPCLICommand {
 
 		$command = 'core update --version=' . $wp_version . ' --force --quiet --skip-themes --skip-plugins --skip-packages';
 
-		wp_cli()::runcommand( $command, [ 'launch' => false ] );
+		wp_cli()::runcommand(
+			$command,
+			[
+				'launch'     => true,
+				'return'     => 'all',
+				'exit_error' => false,
+			]
+		);
 
 		$this->log( 'WordPress updated.', 'success' );
 	}
@@ -484,7 +507,7 @@ final class Pull extends WPCLICommand {
 	 * @throws WPSnapshotsException If WP_CONTENT_DIR is not defined.
 	 */
 	private function pull_files() {
-		$this->log( 'Pulling files...' );
+		$this->log( 'Pulling files and replacing /wp-content. This could take a while...' );
 
 		$errors = $this->snapshots_filesystem->unzip_snapshot_files( $this->get_id(), wpsnapshots_wp_content_dir() );
 
@@ -505,6 +528,8 @@ final class Pull extends WPCLICommand {
 	 * @param bool $network_activate Whether to network activate the plugin.
 	 */
 	private function activate_this_plugin( bool $network_activate = false ) {
+		$this->log( 'Reactivating this plugin...' );
+
 		$command = 'plugin activate snapshots-command --skip-themes --skip-plugins --skip-packages';
 
 		if ( $network_activate ) {
@@ -514,8 +539,9 @@ final class Pull extends WPCLICommand {
 		wp_cli()::runcommand(
 			$command,
 			[
-				'launch' => true,
-				'return' => 'all',
+				'launch'     => true,
+				'return'     => 'all',
+				'exit_error' => false,
 			]
 		);
 	}
@@ -567,8 +593,6 @@ final class Pull extends WPCLICommand {
 			if ( $multisite && function_exists( 'grant_super_admin' ) ) {
 				grant_super_admin( $user_id );
 			}
-
-			$this->log( 'wpsnapshots user created.', 'success' );
 		}
 	}
 

@@ -209,8 +209,9 @@ class Scrubber implements SharedService {
 		wp_cli()::runcommand(
 			$command,
 			[
-				'launch' => true,
-				'return' => 'all',
+				'launch'     => true,
+				'return'     => 'all',
+				'exit_error' => false,
 			]
 		);
 	}
