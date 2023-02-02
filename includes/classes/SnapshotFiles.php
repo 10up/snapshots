@@ -14,7 +14,6 @@ use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Infrastructure\SharedService;
 use TenUp\WPSnapshots\Log\{LoggerInterface, Logging};
 use WP_Filesystem_Base;
-use ZipArchive;
 
 /**
  * SnapshotFiles class.
@@ -257,41 +256,23 @@ class SnapshotFiles implements SharedService {
 		}
 
 		$tar_file = str_replace( '.gz', '', $copied_gzipped_tar_file );
-		$zip_file = str_replace( '.tar', '.zip', $tar_file );
-
-		$files_dir = $this->get_tmp_dir( '/files' );
-
-		// Delete /tmp/files and re-create it.
-		$this->get_wp_filesystem()->rmdir( $files_dir, true );
-		$this->get_wp_filesystem()->mkdir( $files_dir, FS_CHMOD_DIR );
 
 		try {
-			// Delete /tmp/files and re-create it.
-			$this->get_wp_filesystem()->rmdir( $files_dir, true );
-			$this->get_wp_filesystem()->mkdir( $files_dir, FS_CHMOD_DIR );
-
 			$phar = new PharData( $copied_gzipped_tar_file );
-			$phar->convertToData( Phar::ZIP );
+			$phar->decompress(); // creates files.tar
 
-			$zip = new ZipArchive();
-			if ( $zip->open( $zip_file ) !== true ) {
-				throw new WPSnapshotsException( 'Unable to unzip files' );
-			}
+			$phar = new PharData( $tar_file );
+			$phar->extractTo( $destination, null, true );
 
-			$zip->extractTo( $destination );
-			$zip->close();
-
+			// Clean up.
 			unset( $phar );
+			Phar::unlinkArchive( $tar_file );
 			Phar::unlinkArchive( $copied_gzipped_tar_file );
-
-		//	$errors = $this->file_system->sync_files( $files_dir, $destination, true );
 		} catch ( Exception $e ) {
-			throw new WPSnapshotsException( 'Unzip file error: ' . $e->getMessage() );
+			$errors[] = $e->getMessage();
 		} finally {
 			$this->get_wp_filesystem()->delete( $tar_file );
-			$this->get_wp_filesystem()->delete( $zip_file );
 			$this->get_wp_filesystem()->delete( $copied_gzipped_tar_file );
-			//$this->get_wp_filesystem()->rmdir( $files_dir, true );
 		}
 
 		return $errors;
