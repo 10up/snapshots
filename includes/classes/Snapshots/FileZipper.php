@@ -98,7 +98,7 @@ class FileZipper implements SharedService {
 	private function get_build_from_iterator_iterator( array $args ) : Iterator {
 		$excludes = $args['excludes'] ?? [];
 
-		if ( $args['exclude_uploads'] ) {
+		if ( ! empty( $args['exclude_uploads'] ) ) {
 			$excludes[] = 'uploads';
 		}
 

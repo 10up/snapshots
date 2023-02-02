@@ -19,6 +19,7 @@ use TenUp\WPSnapshots\WPCLI\WPCLICommand;
 use TenUp\WPSnapshots\WPCLICommands\Pull;
 use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacer;
 use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacerFactory;
+use WP_Filesystem_Base;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 use function TenUp\WPSnapshots\Utils\wpsnapshots_wp_content_dir;
@@ -273,7 +274,7 @@ class TestPull extends TestCase {
 			1,
 			[
 				[
-					'wpsnapshots download test-id --quiet --repository=test-repository --region=test-region --include_db --include_files', [ 'launch' => false ]
+					'wpsnapshots download test-id --quiet --repository=test-repository --region=test-region --include_db --include_files', [ 'launch' => true, 'exit_error' => false, 'return' => 'all' ],
 				],
 			]
 		);
@@ -300,15 +301,26 @@ class TestPull extends TestCase {
 		$this->set_private_property( $this->command, 'snapshots_filesystem', $snapshots_filesystem_mock );
 
 		/**
+		 * Mock WP_File_System
+		 * 
+		 * @var MockObject|WP_Filesystem_Base $wp_filesystem_mock
+		 */
+		$wp_filesystem_mock = $this->createMock( WP_Filesystem_Base::class );
+
+		/**
 		 * Mock the filesystem variable.
 		 * 
 		 * @var MockObject|FileSystem $filesystem
 		 */
 		$filesystem = $this->createMock( FileSystem::class );
+		$filesystem->method( 'get_wp_filesystem' )->willReturn( $wp_filesystem_mock );
 
 		$filesystem->expects( $this->once() )
 			->method( 'unzip_file' )
 			->with( 'test', 'test' );
+
+		$filesystem->expects( $this->once() )
+			->method( 'get_wp_filesystem' );
 
 		$this->set_private_property( $this->command, 'filesystem', $filesystem );
 
@@ -319,7 +331,7 @@ class TestPull extends TestCase {
 			1,
 			[
 				[
-					'db import test --quiet --skip-themes --skip-plugins --skip-packages', [ 'launch' => false ]
+					'db import test --quiet --skip-themes --skip-plugins --skip-packages', [ 'launch' => true, 'return' => 'all', 'exit_error' => false ],
 				],
 			]
 		);
@@ -374,7 +386,7 @@ class TestPull extends TestCase {
 			1,
 			[
 				[
-					'core update --version=4.9.8 --force --quiet --skip-themes --skip-plugins --skip-packages', [ 'launch' => false ]
+					'core update --version=4.9.8 --force --quiet --skip-themes --skip-plugins --skip-packages', [ 'launch' => true, 'return' => 'all', 'exit_error' => false ]
 				],
 			]
 		);
@@ -412,7 +424,7 @@ class TestPull extends TestCase {
 			'line',
 			2,
 			[
-				[ 'Pulling files...' ],
+				[ 'Pulling files and replacing /wp-content. This could take a while...' ],
 				[ 'Files pulled.' ],
 			]
 		);
@@ -437,7 +449,7 @@ class TestPull extends TestCase {
 			'line',
 			4,
 			[
-				[ 'Pulling files...' ],
+				[ 'Pulling files and replacing /wp-content. This could take a while...' ],
 				[ 'There were errors pulling files:' ],
 				[ 'test-error' ],
 				[ 'Files pulled.' ],
@@ -454,7 +466,7 @@ class TestPull extends TestCase {
 			1,
 			[
 				[
-					'plugin activate snapshots-command --skip-themes --skip-plugins --skip-packages', [ 'launch' => true, 'return' => 'all' ]
+					'plugin activate snapshots-command --skip-themes --skip-plugins --skip-packages', [ 'launch' => true, 'return' => 'all', 'exit_error' => false ]
 				],
 			]
 		);
@@ -557,10 +569,9 @@ class TestPull extends TestCase {
 
 		$this->get_wp_cli_mock()->assertMethodCalled(
 			'line',
-			2,
+			1,
 			[
 				[ 'Creating wpsnapshots user...' ],
-				[ 'wpsnapshots user created.' ],
 			]
 		);
 	}

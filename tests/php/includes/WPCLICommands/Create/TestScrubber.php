@@ -101,6 +101,7 @@ class TestScrubber extends TestCase {
 					[
 						'launch' => true,
 						'return' => 'all',
+						'exit_error' => false,
 					],
 				],
 				[
@@ -108,6 +109,7 @@ class TestScrubber extends TestCase {
 					[
 						'launch' => true,
 						'return' => 'all',
+						'exit_error' => false,
 					],
 				]
 			]

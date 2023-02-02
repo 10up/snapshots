@@ -7,13 +7,15 @@
 
 namespace TenUp\WPSnapshots\Tests;
 
+use Phar;
+use PharData;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\Plugin;
 use TenUp\WPSnapshots\SnapshotFiles;
+use TenUp\WPSnapshots\Snapshots\FileZipper;
 use TenUp\WPSnapshots\Tests\Fixtures\DirectoryFiltering;
 use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
-use ZipArchive;
 
 /**
  * Class TestSnapshotsFileSystem
@@ -206,6 +208,8 @@ class TestSnapshotsFileSystem extends TestCase {
 
 	/** @covers ::unzip_snapshot_files */
 	public function test_unzip_snapshot_files() {
+		$file_zipper = ( new Plugin() )->get_instance( FileZipper::class );
+
 		$snapshot_id = 'test-snapshot-id';
 		$destination_directory = $this->get_directory_path() . '/destination';
 
@@ -213,17 +217,22 @@ class TestSnapshotsFileSystem extends TestCase {
 		mkdir( $destination_directory );
 
 		// Create a zip file.
-		$zip_file = $this->snapshots_fs->get_file_path( 'files.tar.gz', $snapshot_id );
 		$this->snapshots_fs->create_directory( $snapshot_id );
 
-		$zip = new ZipArchive();
-		$zip->open( $zip_file, ZipArchive::CREATE );
-
 		for ( $i = 0; $i < 10; $i++ ) {
-			$zip->addFromString( 'test-' . $i . '.txt', 'This is a test file. ' . $i );
+			// Create test files.
+
+			$this->snapshots_fs->update_file_contents( 'test-' . $i . '.txt', 'This is a test file. ' . $i, false, $snapshot_id );
 		}
 
-		$zip->close();
+		$phar_file = $this->snapshots_fs->get_file_path( 'files.tar', $snapshot_id );
+		$phar      = new PharData( $phar_file );
+
+		$phar->buildFromDirectory( $this->snapshots_fs->get_file_path( '', $snapshot_id ) );
+		$phar->compress( Phar::GZ );
+
+		unset( $phar );
+		Phar::unlinkArchive( $phar_file );
 
 		$this->snapshots_fs->unzip_snapshot_files( $snapshot_id, $destination_directory );
 

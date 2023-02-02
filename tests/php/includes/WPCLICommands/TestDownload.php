@@ -69,14 +69,6 @@ class TestDownload extends TestCase {
 		$this->assertEquals( 'download', $this->call_private_method( $this->command, 'get_command' ) );
 	}
 
-	/** @covers ::get_local_meta */
-	public function test_get_local_meta() {
-		$this->assertEquals(
-			[],
-			$this->call_private_method( $this->command, 'get_local_meta', [ 'test-id' ] )
-		);
-	}
-
 	/**
 	 * @covers ::get_id
 	 * @covers ::get_args

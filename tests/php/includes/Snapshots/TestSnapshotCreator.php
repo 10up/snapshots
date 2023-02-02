@@ -85,15 +85,6 @@ class TestSnapshotCreator extends TestCase {
 		$mock_dumper = $this->createMock( WPCLIDumper::class );
 
 		/**
-		 * SnapshotFiles mock
-		 * 
-		 * @var MockObject $mock_snapshot_files
-		 */
-		$mock_snapshot_files = $this->createMock( SnapshotFiles::class );
-		$mock_snapshot_files->method( 'get_file_size' )
-			->willReturn( 1000 );
-
-		/**
 		 * SnapshotMeta mock.
 		 * 
 		 * @var MockObject $mock_snapshot_meta
@@ -103,7 +94,6 @@ class TestSnapshotCreator extends TestCase {
 
 		$this->set_private_property( $this->snapshot_creator, 'file_zipper', $mock_file_zipper );
 		$this->set_private_property( $this->snapshot_creator, 'dumper', $mock_dumper );
-		$this->set_private_property( $this->snapshot_creator, 'snapshot_files', $mock_snapshot_files );
 		$this->set_private_property( $this->snapshot_creator, 'meta', $mock_snapshot_meta );
 
 		$test_id = 'test-id';
@@ -111,7 +101,7 @@ class TestSnapshotCreator extends TestCase {
 
 		$mock_file_zipper->expects( $this->once() )
 			->method( 'zip_files' )
-			->with( $test_id, array_merge( $test_args, [ 'db_size' => 1000 ] ) );
+			->with( $test_id, array_merge( $test_args, [ 'db_size' => 0 ] ) );
 
 		$mock_dumper->expects( $this->once() )
 			->method( 'dump' )
@@ -119,7 +109,7 @@ class TestSnapshotCreator extends TestCase {
 
 		$mock_snapshot_meta->expects( $this->once() )
 			->method( 'generate' )
-			->with( $test_id, array_merge( $test_args, [ 'db_size' => 1000, 'files_size' => 1000 ] ) );
+			->with( $test_id, array_merge( $test_args, [ 'db_size' => 0, 'files_size' => 0 ] ) );
 
 		$this->snapshot_creator->create( $test_args, $test_id );
 	}

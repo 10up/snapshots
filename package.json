@@ -9,8 +9,8 @@
     "env:stop": "wp-env stop",
     "env": "wp-env",
     "shell": "wp-env run",
-    "test:php:coverage": "wp-env run tests-wordpress 'env XDEBUG_MODE=coverage' /var/www/html/wp-content/plugins/$(basename $(pwd))/vendor/bin/phpunit -c /var/www/html/wp-content/plugins/$(basename $(pwd))/phpunit.xml.dist --verbose --coverage-html /var/www/html/wp-content/plugins/$(basename $(pwd))/coverage",
-    "test:php": "wp-env run tests-wordpress /var/www/html/wp-content/plugins/$(basename $(pwd))/vendor/bin/phpunit -c /var/www/html/wp-content/plugins/$(basename $(pwd))/phpunit.xml.dist --verbose"
+    "test:php:coverage": "wp-env run tests-wordpress 'env XDEBUG_MODE=coverage' '/var/www/html/wp-content/plugins/snapshots-command/vendor/bin/phpunit' -c '/var/www/html/wp-content/plugins/snapshots-command/phpunit.xml.dist' --verbose --coverage-html '/var/www/html/wp-content/plugins/snapshots-command/coverage'",
+    "test:php": "wp-env run tests-wordpress /var/www/html/wp-content/plugins/snapshots-command/vendor/bin/phpunit -c /var/www/html/wp-content/plugins/snapshots-command/phpunit.xml.dist --verbose"
   },
   "repository": {
     "type": "git",

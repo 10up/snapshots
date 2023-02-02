@@ -159,7 +159,7 @@ class TestSearch extends TestCase {
 				1,
 				[
 					[
-						'table',
+						'yaml',
 						[
 							$time => [
 								'id' => '',

@@ -70,7 +70,10 @@ final class MultisiteURLReplacer extends URLReplacer {
 
 		$this->log( sprintf( 'Setting the domain of site %d to %s', $main_blog_id, $this->main_domain ) );
 
-		$wpdb->query( $wpdb->prepare( 'UPDATE ' . $current_table_prefix . 'site SET domain=%s', $this->main_domain ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		// if $current_table_prefix . 'site' table exists.
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$current_table_prefix}site'" ) === $current_table_prefix . 'site' ) { // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$wpdb->query( $wpdb->prepare( 'UPDATE ' . $current_table_prefix . 'site SET domain=%s', $this->main_domain ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		}
 
 		$this->log( 'URLs replaced.' );
 
