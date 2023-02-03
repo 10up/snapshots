@@ -43,7 +43,7 @@ class FileZipper implements SharedService {
 	 * Class constructor.
 	 *
 	 * @param WPSnapshotsDirectory $snapshot_files WPSnapshotsDirectory instance.
-	 * @param FileSystem    $file_system FileSystem instance.
+	 * @param FileSystem           $file_system FileSystem instance.
 	 */
 	public function __construct( WPSnapshotsDirectory $snapshot_files, FileSystem $file_system ) {
 		$this->snapshot_files = $snapshot_files;
