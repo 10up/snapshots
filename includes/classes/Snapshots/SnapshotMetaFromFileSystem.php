@@ -8,7 +8,7 @@
 namespace TenUp\WPSnapshots\Snapshots;
 
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\SnapshotFiles;
+use TenUp\WPSnapshots\WPSnapshotsDirectory;
 use TenUp\WPSnapshots\WordPress\Database;
 
 /**
@@ -19,9 +19,9 @@ use TenUp\WPSnapshots\WordPress\Database;
 class SnapshotMetaFromFileSystem extends SnapshotMeta {
 
 	/**
-	 * SnapshotFiles instance.
+	 * WPSnapshotsDirectory instance.
 	 *
-	 * @var SnapshotFiles
+	 * @var WPSnapshotsDirectory
 	 */
 	private $snapshot_files;
 
@@ -35,11 +35,11 @@ class SnapshotMetaFromFileSystem extends SnapshotMeta {
 	/**
 	 * Meta constructor
 	 *
-	 * @param SnapshotFiles $snapshot_files SnapshotFiles instance.
-	 * @param Database      $wordpress_database Database instance.
-	 * @param array         ...$args Arguments.
+	 * @param WPSnapshotsDirectory $snapshot_files WPSnapshotsDirectory instance.
+	 * @param Database             $wordpress_database Database instance.
+	 * @param array                ...$args Arguments.
 	 */
-	public function __construct( SnapshotFiles $snapshot_files, Database $wordpress_database, ...$args ) {
+	public function __construct( WPSnapshotsDirectory $snapshot_files, Database $wordpress_database, ...$args ) {
 		parent::__construct( ...$args ); // @phpstan-ignore-line
 
 		$this->snapshot_files     = $snapshot_files;

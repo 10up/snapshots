@@ -1,6 +1,6 @@
 <?php
 /**
- * WPCLIDumper class
+ * WPCLIDBExport class
  *
  * @package TenUp\WPSnapshots
  */
@@ -8,19 +8,19 @@
 namespace TenUp\WPSnapshots\WPCLICommands\Create;
 
 use TenUp\WPSnapshots\Log\{LoggerInterface, Logging};
-use TenUp\WPSnapshots\SnapshotFiles;
+use TenUp\WPSnapshots\WPSnapshotsDirectory;
 use TenUp\WPSnapshots\WordPress\Database;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\Snapshots\{DBExportInterface, Trimmer};
+use TenUp\WPSnapshots\Snapshots\{DBExportInterface};
 
 use function TenUp\WPSnapshots\Utils\wp_cli;
 
 /**
- * Class WPCLIDumper
+ * Class WPCLIDBExport
  *
  * @package TenUp\WPSnapshots
  */
-class WPCLIDumper implements DBExportInterface {
+class WPCLIDBExport implements DBExportInterface {
 
 	use Logging;
 
@@ -32,9 +32,9 @@ class WPCLIDumper implements DBExportInterface {
 	private $trimmer;
 
 	/**
-	 * SnapshotFiles instance.
+	 * WPSnapshotsDirectory instance.
 	 *
-	 * @var SnapshotFiles
+	 * @var WPSnapshotsDirectory
 	 */
 	private $snapshot_files;
 
@@ -55,13 +55,13 @@ class WPCLIDumper implements DBExportInterface {
 	/**
 	 * Class constructor.
 	 *
-	 * @param Trimmer         $trimmer Trimmer instance.
-	 * @param SnapshotFiles   $snapshot_files SnapshotFiles instance.
-	 * @param Scrubber        $scrubber Scrubber instance.
-	 * @param Database        $wordpress_database Database instance.
-	 * @param LoggerInterface $logger LoggerInterface instance.
+	 * @param Trimmer              $trimmer Trimmer instance.
+	 * @param WPSnapshotsDirectory $snapshot_files WPSnapshotsDirectory instance.
+	 * @param Scrubber             $scrubber Scrubber instance.
+	 * @param Database             $wordpress_database Database instance.
+	 * @param LoggerInterface      $logger LoggerInterface instance.
 	 */
-	public function __construct( Trimmer $trimmer, SnapshotFiles $snapshot_files, Scrubber $scrubber, Database $wordpress_database, LoggerInterface $logger ) {
+	public function __construct( Trimmer $trimmer, WPSnapshotsDirectory $snapshot_files, Scrubber $scrubber, Database $wordpress_database, LoggerInterface $logger ) {
 		$this->trimmer            = $trimmer;
 		$this->snapshot_files     = $snapshot_files;
 		$this->scrubber           = $scrubber;

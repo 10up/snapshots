@@ -27,7 +27,7 @@ class TestFileSystem extends TestCase {
     use PrivateAccess, DirectoryFiltering;
 
 	/**
-	 * SnapshotFiles instance.
+	 * WPSnapshotsDirectory instance.
 	 * 
 	 * @var FileSystem
 	 */

@@ -8,7 +8,7 @@
 namespace TenUp\WPSnapshots\WPSnapshotsConfig;
 
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\SnapshotFiles;
+use TenUp\WPSnapshots\WPSnapshotsDirectory;
 
 /**
  * Handle getting and setting of configuration values.
@@ -20,7 +20,7 @@ class WPSnapshotsConfigFromFileSystem implements WPSnapshotsConfigInterface {
 	/**
 	 * Data instance.
 	 *
-	 * @var SnapshotFiles
+	 * @var WPSnapshotsDirectory
 	 */
 	private $snapshots_file_system;
 
@@ -34,9 +34,9 @@ class WPSnapshotsConfigFromFileSystem implements WPSnapshotsConfigInterface {
 	/**
 	 * Config constructor.
 	 *
-	 * @param SnapshotFiles $snapshots_file_system SnapshotFiles instance.
+	 * @param WPSnapshotsDirectory $snapshots_file_system WPSnapshotsDirectory instance.
 	 */
-	public function __construct( SnapshotFiles $snapshots_file_system ) {
+	public function __construct( WPSnapshotsDirectory $snapshots_file_system ) {
 		$this->snapshots_file_system = $snapshots_file_system;
 	}
 

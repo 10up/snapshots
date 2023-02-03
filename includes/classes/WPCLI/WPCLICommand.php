@@ -13,7 +13,7 @@ use TenUp\WPSnapshots\Infrastructure\{Module, Conditional};
 use TenUp\WPSnapshots\Log\{Logging, WPCLILogger};
 use TenUp\WPSnapshots\Snapshots\{DBConnectorInterface, SnapshotMetaFromFileSystem, SnapshotMetaInterface, StorageConnectorInterface};
 use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigInterface;
-use TenUp\WPSnapshots\SnapshotFiles;
+use TenUp\WPSnapshots\WPSnapshotsDirectory;
 use TenUp\WPSnapshots\WordPress\Database;
 use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
 
@@ -64,9 +64,9 @@ abstract class WPCLICommand implements Conditional, Module {
 	protected $snapshot_meta;
 
 	/**
-	 * SnapshotFiles instance.
+	 * WPSnapshotsDirectory instance.
 	 *
-	 * @var SnapshotFiles
+	 * @var WPSnapshotsDirectory
 	 */
 	protected $snapshots_filesystem;
 
@@ -116,7 +116,7 @@ abstract class WPCLICommand implements Conditional, Module {
 	 * @param StorageConnectorInterface  $storage_connector StorageConnectorInterface instance.
 	 * @param DBConnectorInterface       $db_connector DBConnectorInterface instance.
 	 * @param SnapshotMetaInterface      $snapshot_meta SnapshotMetaInterface instance.
-	 * @param SnapshotFiles              $snapshots_filesystem SnapshotFiles instance.
+	 * @param WPSnapshotsDirectory       $snapshots_filesystem WPSnapshotsDirectory instance.
 	 * @param Database                   $wordpress_database Database instance.
 	 * @param FileSystem                 $filesystem FileSystem instance.
 	 */
@@ -127,7 +127,7 @@ abstract class WPCLICommand implements Conditional, Module {
 		StorageConnectorInterface $storage_connector,
 		DBConnectorInterface $db_connector,
 		SnapshotMetaInterface $snapshot_meta,
-		SnapshotFiles $snapshots_filesystem,
+		WPSnapshotsDirectory $snapshots_filesystem,
 		Database $wordpress_database,
 		FileSystem $filesystem
 	) {

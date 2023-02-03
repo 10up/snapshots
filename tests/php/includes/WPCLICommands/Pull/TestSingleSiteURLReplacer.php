@@ -10,7 +10,7 @@ namespace TenUp\WPSnapshots\Tests\WPCLICommands\Pull;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsInputValidationException;
 use TenUp\WPSnapshots\Log\WPCLILogger;
 use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\SnapshotFiles;
+use TenUp\WPSnapshots\WPSnapshotsDirectory;
 use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
 use TenUp\WPSnapshots\Tests\Fixtures\WPCLIMocking;
 use TenUp\WPSnapshots\WordPress\Database;
@@ -48,7 +48,7 @@ class TestSingleSiteURLReplacer extends TestCase {
 		$plugin = new Plugin();
 		$this->url_replacer = new SingleSiteURLReplacer(
 			$plugin->get_instance( Prompt::class ),
-			$plugin->get_instance( SnapshotFiles::class ),
+			$plugin->get_instance( WPSnapshotsDirectory::class ),
 			$plugin->get_instance( Database ::class ),
 			$plugin->get_instance( WPCLILogger::class ),
 			[

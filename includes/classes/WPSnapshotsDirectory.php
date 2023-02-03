@@ -1,6 +1,6 @@
 <?php
 /**
- * SnapshotFiles class.
+ * WPSnapshotsDirectory class.
  *
  * @package TenUp\WPSnapshots
  */
@@ -16,11 +16,11 @@ use TenUp\WPSnapshots\Log\{LoggerInterface, Logging};
 use WP_Filesystem_Base;
 
 /**
- * SnapshotFiles class.
+ * WPSnapshotsDirectory class.
  *
  * @package TenUp\WPSnapshots
  */
-class SnapshotFiles implements SharedService {
+class WPSnapshotsDirectory implements SharedService {
 
 	use Logging;
 
@@ -144,7 +144,7 @@ class SnapshotFiles implements SharedService {
 
 		if ( ! $this->get_wp_filesystem()->exists( $snapshots_directory ) ) {
 			try {
-				if ( ! $this->get_wp_filesystem()->mkdir( $snapshots_directory, FS_CHMOD_DIR ) ) {
+				if ( ! $this->get_wp_filesystem()->mkdir( $snapshots_directory ) ) {
 					throw new WPSnapshotsException( 'Could not create snapshot directory' );
 				}
 			} catch ( Exception $e ) {
@@ -164,7 +164,7 @@ class SnapshotFiles implements SharedService {
 			}
 
 			if ( ! $this->get_wp_filesystem()->exists( $snapshots_directory . $id . '/' ) ) {
-				if ( ! $this->get_wp_filesystem()->mkdir( $snapshots_directory . $id . '/', FS_CHMOD_DIR ) ) {
+				if ( ! $this->get_wp_filesystem()->mkdir( $snapshots_directory . $id . '/' ) ) {
 					throw new WPSnapshotsException( 'Could not create snapshot directory' );
 				}
 			}
@@ -251,7 +251,7 @@ class SnapshotFiles implements SharedService {
 		$copied_gzipped_tar_file = str_replace( 'files', 'files-copy', $gzipped_tar_file );
 
 		// Copy the gzipped tar file to a new file so that we can unzip it.
-		if ( ! $this->get_wp_filesystem()->copy( $gzipped_tar_file, $copied_gzipped_tar_file, true, FS_CHMOD_FILE ) ) {
+		if ( ! $this->get_wp_filesystem()->copy( $gzipped_tar_file, $copied_gzipped_tar_file, true ) ) {
 			throw new WPSnapshotsException( 'Could not copy gzipped tar file' );
 		}
 
@@ -321,7 +321,7 @@ class SnapshotFiles implements SharedService {
 		 */
 		$directory = apply_filters( 'wpsnapshots_directory', $directory );
 
-		if ( ! $this->get_wp_filesystem()->is_dir( $directory ) && ! $this->get_wp_filesystem()->mkdir( $directory, FS_CHMOD_DIR ) ) {
+		if ( ! $this->get_wp_filesystem()->is_dir( $directory ) && ! $this->get_wp_filesystem()->mkdir( $directory ) ) {
 			throw new WPSnapshotsException( 'Unable to create ' . $directory );
 		}
 

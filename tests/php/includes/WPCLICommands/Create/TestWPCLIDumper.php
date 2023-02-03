@@ -1,6 +1,6 @@
 <?php
 /**
- * Tests for WPCLIDumper.
+ * Tests for WPCLIDBExport.
  * 
  * @package TenUp\WPSnapshots
  */
@@ -8,37 +8,30 @@
 namespace TenUp\WPSnapshots\Tests\WPCLICommands\Create;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsInputValidationException;
-use TenUp\WPSnapshots\Log\WPCLILogger;
 use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\SnapshotFiles;
-use TenUp\WPSnapshots\Snapshots\Trimmer;
 use TenUp\WPSnapshots\Tests\Fixtures\DirectoryFiltering;
 use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
 use TenUp\WPSnapshots\Tests\Fixtures\WPCLIMocking;
-use TenUp\WPSnapshots\WordPress\Database;
-use TenUp\WPSnapshots\WPCLI\Prompt;
 use TenUp\WPSnapshots\WPCLICommands\Create\Scrubber;
-use TenUp\WPSnapshots\WPCLICommands\Create\WPCLIDumper;
-use TenUp\WPSnapshots\WPCLICommands\Pull\MultisiteURLReplacer;
-use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacer;
+use TenUp\WPSnapshots\WPCLICommands\Create\Trimmer;
+use TenUp\WPSnapshots\WPCLICommands\Create\WPCLIDBExport;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
- * Class TestWPCLIDumper
+ * Class TestWPCLIDBExport
  * 
  * @package TenUp\WPSnapshots\Tests\WPCLICommands\Create
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\WPCLICommands\Create\WPCLIDumper
+ * @coversDefaultClass \TenUp\WPSnapshots\WPCLICommands\Create\WPCLIDBExport
  */
-class TestWPCLIDumper extends TestCase {
+class TestWPCLIDBExport extends TestCase {
 
 	use WPCLIMocking, PrivateAccess, DirectoryFiltering;
 
 	/**
-	 * WPCLIDumper instance.
+	 * WPCLIDBExport instance.
 	 * 
-	 * @var WPCLIDumper
+	 * @var WPCLIDBExport
 	 */
 	protected $wpcli_dumper;
 
@@ -51,7 +44,7 @@ class TestWPCLIDumper extends TestCase {
 		$this->set_up_wp_cli_mock();
 		$this->set_up_directory_filtering();
 
-		$this->wpcli_dumper = ( new Plugin() )->get_instance( WPCLIDumper::class );
+		$this->wpcli_dumper = ( new Plugin() )->get_instance( WPCLIDBExport::class );
 	}
 
 	/**
@@ -66,7 +59,7 @@ class TestWPCLIDumper extends TestCase {
 
 	/** @covers ::__construct */
 	public function test_constructor() {
-		$this->assertInstanceOf( WPCLIDumper::class, $this->wpcli_dumper );
+		$this->assertInstanceOf( WPCLIDBExport::class, $this->wpcli_dumper );
 	}
 
 

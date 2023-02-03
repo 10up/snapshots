@@ -8,7 +8,7 @@
 namespace TenUp\WPSnapshots\Utils;
 
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\SnapshotFiles;
+use TenUp\WPSnapshots\WPSnapshotsDirectory;
 use WP_CLI;
 
 /**

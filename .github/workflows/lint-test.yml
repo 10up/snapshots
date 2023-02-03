@@ -40,11 +40,11 @@ jobs:
           tools: cs2pr
           coverage: none
 
-      # - name: composer install
-        # run: composer install
+      - name: composer install
+        run: composer install
 
-      # - name: PHPCS check
-        # run: composer run lint
+      - name: PHPCS check
+        run: composer run lint
 
   phpstan:
     name: PHP Static Analysis

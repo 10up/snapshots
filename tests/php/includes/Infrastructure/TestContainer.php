@@ -11,19 +11,18 @@ use TenUp\WPSnapshots\FileSystem;
 use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
 use TenUp\WPSnapshots\Infrastructure\Container;
 use TenUp\WPSnapshots\Log\WPCLILogger;
-use TenUp\WPSnapshots\SnapshotFiles;
+use TenUp\WPSnapshots\WPSnapshotsDirectory;
 use TenUp\WPSnapshots\Plugin;
 use TenUp\WPSnapshots\Snapshots\DynamoDBConnector;
 use TenUp\WPSnapshots\Snapshots\FileZipper;
 use TenUp\WPSnapshots\Snapshots\S3StorageConnector;
 use TenUp\WPSnapshots\Snapshots\SnapshotMetaFromFileSystem;
-use TenUp\WPSnapshots\Snapshots\Trimmer;
 use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
 use TenUp\WPSnapshots\Tests\Fixtures\WPCLIMocking;
 use TenUp\WPSnapshots\WordPress\Database;
 use TenUp\WPSnapshots\WPCLI\Prompt;
-use TenUp\WPSnapshots\WPCLICommands\Create\Scrubber;
-use TenUp\WPSnapshots\WPCLICommands\Create\WPCLIDumper;
+use TenUp\WPSnapshots\WPCLICommands\Create\{Scrubber, Trimmer};
+use TenUp\WPSnapshots\WPCLICommands\Create\WPCLIDBExport;
 use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacerFactory;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
@@ -85,11 +84,11 @@ class TestContainer extends TestCase {
 			Prompt::class,
 			S3StorageConnector::class,
 			Scrubber::class,
-			SnapshotFiles::class,
+			WPSnapshotsDirectory::class,
 			SnapshotMetaFromFileSystem::class,
 			Trimmer::class,
 			URLReplacerFactory::class,
-			WPCLIDumper::class,
+			WPCLIDBExport::class,
 			WPCLILogger::class,
 			WPSnapshotsConfigFromFileSystem::class,
 		];

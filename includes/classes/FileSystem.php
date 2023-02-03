@@ -1,6 +1,6 @@
 <?php
 /**
- * SnapshotFiles class.
+ * WPSnapshotsDirectory class.
  *
  * @package TenUp\WPSnapshots
  */
@@ -15,7 +15,7 @@ use WP_Filesystem_Base;
 use function TenUp\WPSnapshots\Utils\wpsnapshots_wp_content_dir;
 
 /**
- * SnapshotFiles class.
+ * WPSnapshotsDirectory class.
  *
  * @package TenUp\WPSnapshots
  */

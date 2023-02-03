@@ -10,7 +10,7 @@ namespace TenUp\WPSnapshots\WPCLICommands\Pull;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsInputValidationException;
 use TenUp\WPSnapshots\Log\LoggerInterface;
 use TenUp\WPSnapshots\Log\Logging;
-use TenUp\WPSnapshots\SnapshotFiles;
+use TenUp\WPSnapshots\WPSnapshotsDirectory;
 use TenUp\WPSnapshots\WordPress\Database;
 use TenUp\WPSnapshots\WPCLI\Prompt;
 
@@ -40,9 +40,9 @@ abstract class URLReplacer {
 	protected $prompt;
 
 	/**
-	 * SnapshotFiles instance.
+	 * WPSnapshotsDirectory instance.
 	 *
-	 * @var SnapshotFiles
+	 * @var WPSnapshotsDirectory
 	 */
 	protected $snapshots_filesystem;
 
@@ -92,7 +92,7 @@ abstract class URLReplacer {
 	 * Constructor.
 	 *
 	 * @param Prompt          $prompt Prompt instance.
-	 * @param SnapshotFiles   $snapshots_filesystem SnapshotFiles instance.
+	 * @param WPSnapshotsDirectory   $snapshots_filesystem WPSnapshotsDirectory instance.
 	 * @param Database        $wordpress_database Database instance.
 	 * @param LoggerInterface $logger WPCLILogger instance.
 	 * @param array           $meta The snapshot meta.
@@ -103,7 +103,7 @@ abstract class URLReplacer {
 	 */
 	public function __construct(
 		Prompt $prompt,
-		SnapshotFiles $snapshots_filesystem,
+		WPSnapshotsDirectory $snapshots_filesystem,
 		Database $wordpress_database,
 		LoggerInterface $logger,
 		array $meta,

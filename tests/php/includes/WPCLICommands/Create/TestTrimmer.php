@@ -5,20 +5,20 @@
  * @package TenUp\WPSnapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\Snapshots;
+namespace TenUp\WPSnapshots\Tests\WPCLICommands\Create;
 
 use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\Snapshots\Trimmer;
 use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
 use TenUp\WPSnapshots\Tests\Fixtures\WPCLIMocking;
+use TenUp\WPSnapshots\WPCLICommands\Create\Trimmer;
 use Yoast\WPTestUtils\WPIntegration\TestCase;
 
 /**
  * Class TestTrimmer
  *
- * @package TenUp\WPSnapshots\Tests\Snapshots
+ * @package TenUp\WPSnapshots\Tests\WPCLICommands\Create
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\Snapshots\Trimmer
+ * @coversDefaultClass \TenUp\WPSnapshots\WPCLICommands\Create\Trimmer
  */
 class TestTrimmer extends TestCase {
 

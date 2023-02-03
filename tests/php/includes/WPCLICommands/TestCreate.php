@@ -15,7 +15,7 @@ use TenUp\WPSnapshots\Snapshots\SnapshotMeta;
 use TenUp\WPSnapshots\Tests\Fixtures\{CommandTests, PrivateAccess, WPCLIMocking};
 use TenUp\WPSnapshots\WPCLI\WPCLICommand;
 use TenUp\WPSnapshots\WPCLICommands\Create;
-use TenUp\WPSnapshots\WPCLICommands\Create\WPCLIDumper;
+use TenUp\WPSnapshots\WPCLICommands\Create\WPCLIDBExport;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
@@ -90,7 +90,7 @@ class TestCreate extends TestCase {
 		 * 
 		 * @var MockObject $mock_dumper
 		 */
-		$mock_dumper = $this->createMock( WPCLIDumper::class );
+		$mock_dumper = $this->createMock( WPCLIDBExport::class );
 
 		/**
 		 * SnapshotMeta mock.
@@ -156,7 +156,7 @@ class TestCreate extends TestCase {
 		 * 
 		 * @var MockObject $mock_dumper
 		 */
-		$mock_dumper = $this->createMock( WPCLIDumper::class );
+		$mock_dumper = $this->createMock( WPCLIDBExport::class );
 
 		/**
 		 * SnapshotMeta mock.
@@ -228,7 +228,7 @@ class TestCreate extends TestCase {
 		 * 
 		 * @var MockObject $mock_dumper
 		 */
-		$mock_dumper = $this->createMock( WPCLIDumper::class );
+		$mock_dumper = $this->createMock( WPCLIDBExport::class );
 
 		/**
 		 * SnapshotMeta mock.

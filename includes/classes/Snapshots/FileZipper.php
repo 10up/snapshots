@@ -14,7 +14,7 @@ use PharData;
 use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\FileSystem;
 use TenUp\WPSnapshots\Infrastructure\SharedService;
-use TenUp\WPSnapshots\SnapshotFiles;
+use TenUp\WPSnapshots\WPSnapshotsDirectory;
 
 use function TenUp\WPSnapshots\Utils\wpsnapshots_wp_content_dir;
 
@@ -26,9 +26,9 @@ use function TenUp\WPSnapshots\Utils\wpsnapshots_wp_content_dir;
 class FileZipper implements SharedService {
 
 	/**
-	 * SnapshotFiles instance.
+	 * WPSnapshotsDirectory instance.
 	 *
-	 * @var SnapshotFiles
+	 * @var WPSnapshotsDirectory
 	 */
 	private $snapshot_files;
 
@@ -42,10 +42,10 @@ class FileZipper implements SharedService {
 	/**
 	 * Class constructor.
 	 *
-	 * @param SnapshotFiles $snapshot_files SnapshotFiles instance.
+	 * @param WPSnapshotsDirectory $snapshot_files WPSnapshotsDirectory instance.
 	 * @param FileSystem    $file_system FileSystem instance.
 	 */
-	public function __construct( SnapshotFiles $snapshot_files, FileSystem $file_system ) {
+	public function __construct( WPSnapshotsDirectory $snapshot_files, FileSystem $file_system ) {
 		$this->snapshot_files = $snapshot_files;
 		$this->file_system    = $file_system;
 	}

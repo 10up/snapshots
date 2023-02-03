@@ -5,7 +5,7 @@
  * @package TenUp\WPSnapshots
  */
 
-namespace TenUp\WPSnapshots\Snapshots;
+namespace TenUp\WPSnapshots\WPCLICommands\Create;
 
 use TenUp\WPSnapshots\Infrastructure\SharedService;
 use TenUp\WPSnapshots\Log\{LoggerInterface, Logging};

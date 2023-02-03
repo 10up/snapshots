@@ -12,7 +12,7 @@ use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
 use TenUp\WPSnapshots\FileSystem;
 use TenUp\WPSnapshots\Plugin;
 use TenUp\WPSnapshots\Snapshots\SnapshotMeta;
-use TenUp\WPSnapshots\SnapshotFiles;
+use TenUp\WPSnapshots\WPSnapshotsDirectory;
 use TenUp\WPSnapshots\Tests\Fixtures\{CommandTests, DirectoryFiltering, PrivateAccess, WPCLIMocking};
 use TenUp\WPSnapshots\WordPress\Database;
 use TenUp\WPSnapshots\WPCLI\WPCLICommand;
@@ -293,9 +293,9 @@ class TestPull extends TestCase {
 		/**
 		 * Mock the snapshots_filesystem variable.
 		 * 
-		 * @var MockObject|SnapshotFiles $snapshots_filesystem_mock
+		 * @var MockObject|WPSnapshotsDirectory $snapshots_filesystem_mock
 		 */
-		$snapshots_filesystem_mock = $this->createMock( SnapshotFiles::class );
+		$snapshots_filesystem_mock = $this->createMock( WPSnapshotsDirectory::class );
 		$snapshots_filesystem_mock->method( 'get_file_path' )->willReturn( 'test' );
 
 		$this->set_private_property( $this->command, 'snapshots_filesystem', $snapshots_filesystem_mock );
@@ -409,7 +409,7 @@ class TestPull extends TestCase {
 		 * 
 		 * @var MockObject $snapshots_filesystem_mock
 		 */
-		$snapshots_filesystem_mock = $this->createMock( SnapshotFiles::class );
+		$snapshots_filesystem_mock = $this->createMock( WPSnapshotsDirectory::class );
 		$snapshots_filesystem_mock->method( 'unzip_snapshot_files' )->willReturn( [] );
 
 		$snapshots_filesystem_mock->expects( $this->once() )
@@ -438,7 +438,7 @@ class TestPull extends TestCase {
 		 * 
 		 * @var MockObject $snapshots_filesystem_mock
 		 */
-		$snapshots_filesystem_mock = $this->createMock( SnapshotFiles::class );
+		$snapshots_filesystem_mock = $this->createMock( WPSnapshotsDirectory::class );
 		$snapshots_filesystem_mock->method( 'unzip_snapshot_files' )->willReturn( [ 'test-error' ] );
 
 		$this->set_private_property( $this->command, 'snapshots_filesystem', $snapshots_filesystem_mock );
