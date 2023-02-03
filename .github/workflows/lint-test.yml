@@ -1,0 +1,127 @@
+name: Linting, Analysis, and Testing
+
+env:
+  COMPOSER_VERSION: "2"
+  COMPOSER_CACHE: "${{ github.workspace }}/.composer-cache"
+  NODE_VERSION: "18"
+  NODE_CACHE: "${{ github.workspace }}/node_modules_cache"
+
+on:
+  push:
+    branches: [ "trunk" ]
+  pull_request:
+    branches: [ "trunk", "feature/*" ]
+
+jobs:
+  phpcs:
+    name: PHP Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set standard 10up cache directories
+        run: |
+          composer config -g cache-dir "${{ env.COMPOSER_CACHE }}"
+
+      - name: Prepare composer cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.COMPOSER_CACHE }}
+          key: composer-${{ env.COMPOSER_VERSION }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            composer-${{ env.COMPOSER_VERSION }}-
+
+      - name: Set PHP version
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.0"
+          tools: cs2pr
+          coverage: none
+
+      - name: composer install
+        run: composer install
+
+      - name: PHPCS check
+        run: composer run lint
+
+  phpstan:
+    name: PHP Static Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set standard 10up cache directories
+        run: |
+          composer config -g cache-dir "${{ env.COMPOSER_CACHE }}"
+
+      - name: Prepare composer cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.COMPOSER_CACHE }}
+          key: composer-${{ env.COMPOSER_VERSION }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            composer-${{ env.COMPOSER_VERSION }}-
+
+      - name: Set PHP version
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.0"
+          tools: cs2pr
+          coverage: none
+
+      - name: composer install
+        run: composer install
+
+      - name: PHPStan check
+        run: composer run static
+
+  phpunit_single_site:
+    name: PHP Unit (Single Site)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3.5.1
+        with:
+          node-version-file: ".nvmrc"
+          cache: npm
+
+      - name: Set standard 10up cache directories
+        run: |
+          composer config -g cache-dir "${{ env.COMPOSER_CACHE }}"
+
+      - name: Prepare composer cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.COMPOSER_CACHE }}
+          key: composer-${{ env.COMPOSER_VERSION }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            composer-${{ env.COMPOSER_VERSION }}-
+
+      - name: Set PHP version
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.0"
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install
+
+      - name: npm install
+        run: npm ci
+        env:
+          CI: true
+
+      - name: Start wp-env
+        run: npm run env start
+
+      - name: Run PHPUnit
+        run: npm run test:php
+

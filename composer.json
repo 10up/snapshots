@@ -8,23 +8,55 @@
             "TenUp\\WPSnapshots\\": "includes/classes/"
         }
     },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "wordpress/wordpress-develop",
+                "version": "dev-trunk",
+                "source": {
+                    "type": "git",
+                    "url": "https://github.com/WordPress/wordpress-develop",
+                    "reference": "trunk"
+                }
+            }
+        }
+    ],
     "require": {
-        "10up/phpcs-composer": "dev-master",
-        "phpunit/phpunit": "9.5.x-dev",
-        "yoast/phpunit-polyfills": "1.x-dev",
-        "yoast/wp-test-utils": "1.x-dev",
-        "wp-cli/wp-cli": "2.8.x-dev",
         "aws/aws-sdk-php": "^3.254"
     },
+    "require-dev": {
+        "10up/phpcs-composer": "dev-master",
+        "yoast/wp-test-utils": "^1.1",
+        "wp-cli/wp-cli": "2.8.x-dev",
+        "civicrm/composer-downloads-plugin": "dev-master",
+        "php-stubs/wordpress-stubs": "^6.1",
+        "php-stubs/wordpress-tests-stubs": "^6.1",
+        "php": ">=8.0",
+        "wordpress/wordpress-develop": "dev-trunk"
+    },
     "scripts": {
-        "install-wp-tests": "./bin/install-wp-tests.sh wpsnapshots_tests root password mysql",
         "lint": "phpcs .",
         "lint-fix": "phpcbf .",
-        "test": "phpunit"
+        "static": "WP_TESTS_DIR=vendor/wordpress/wordpress-develop/tests/phpunit phpstan analyze --ansi --memory-limit=2G",
+        "test": "phpunit",
+        "post-install-cmd": [
+            "php -r \"copy('vendor/wordpress/wordpress-develop/wp-tests-config-sample.php', 'vendor/wordpress/wordpress-develop/wp-tests-config.php');\""
+        ]
     },
     "config": {
         "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "civicrm/composer-downloads-plugin": true
+        }
+    },
+    "extra": {
+        "downloads": {
+            "phpstan": {
+                "path": "vendor/bin/phpstan",
+                "type": "phar",
+                "url": "https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar"
+            }
         }
     }
 }
