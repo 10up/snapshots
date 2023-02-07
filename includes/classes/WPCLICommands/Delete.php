@@ -68,7 +68,7 @@ class Delete extends WPCLICommand {
 	 */
 	protected function get_command_parameters() : array {
 		return [
-			'shortdesc' => 'Create a snapshot locally.',
+			'shortdesc' => 'Delete a remote snapshot',
 			'synopsis'  => [
 				[
 					'type'        => 'positional',

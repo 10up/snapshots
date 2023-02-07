@@ -190,13 +190,6 @@ final class Pull extends WPCLICommand {
 				],
 				[
 					'type'        => 'flag',
-					'name'        => 'suppress_instructions',
-					'description' => 'Suppress instructions after successful installation.',
-					'optional'    => true,
-					'default'     => false,
-				],
-				[
-					'type'        => 'flag',
 					'name'        => 'overwrite_local_copy',
 					'description' => 'Overwrite local copy of snapshot.',
 					'optional'    => true,
