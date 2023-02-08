@@ -37,9 +37,9 @@ WP Snapshots is a WordPress plugin designed to be used in conjuction with WP CLI
 
 ## Authentication
 
-WP Snapshots does not support authenticating with AWS by passing commands via the command line. Instead, you must set up your AWS credentials in your local environment. There are a few methods for authenticating; the easiest are below.
+WP Snapshots does not support authenticating with AWS by passing commands via the command line. Instead, you must set up your AWS credentials in your local environment. There are [a few methods](https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/guide_credentials.html) for setting credentials in your environment; once you do so, the WP Snapshot script will automatically detect your credentials and use them to authenticate all requests. The easiest options are outlined below.
 
-### 1. AWS Credentials File
+### Option 1: AWS Credentials File
 
 Create a `~/.aws/credentials` file with the following contents:
 
@@ -49,11 +49,11 @@ aws_access_key_id = <your-access-key-id>
 aws_secret_access_key = <your-secret-access-key>
 ```
 
-Depending on your setup, you may need to create the `~/.aws` directory and the `credentials` file inside of your local environment. If you are using a VM or container, you may need to create the file in your local environment and then copy it into the VM or container. 
+Depending on your setup, you may need to create the `~/.aws` directory and the `credentials` file inside of your local environment.
 
 More information in [AWS documentation](https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/guide_credentials_profiles.html).
 
-### 2. Environment Variables
+### Option 2: Environment Variables
 
 Set the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables. See the [AWS docs](https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/guide_credentials_environment.html) for more information.
 
@@ -65,7 +65,7 @@ Documentation for each operation is below.
 
 ### configure
 
-WP Snapshots relies on AWS to store files and data. As such, you need to connect to a "repository" hosted on AWS. Each command supports a `--repository` argument to tell the script which AWS repository to use, but to bypass requiring that argument on every command, you can store the setting using the command below. After you have done so, WP Snapshots will use the first repository stored in your configuration by default.
+WP Snapshots relies on AWS to store files and data. As such, you need to connect to a repository hosted on AWS. Each command supports a `--repository` argument to tell the script which AWS repository to use, but to bypass requiring that argument on every command, you can store the setting using the command below. After you have done so, WP Snapshots will use the first repository stored in your configuration by default.
 
 #### Command
 
@@ -74,6 +74,7 @@ __wp wpsnapshots configure <repository> [--region=\<region\>] [--user_name=\<use
 <details>
 <summary>Show Arguments</summary>
 
+```
   <repository>
     The name of the repository to configure.
 
@@ -89,6 +90,7 @@ __wp wpsnapshots configure <repository> [--region=\<region\>] [--user_name=\<use
   [--user_email=\<user_email\>]
     The user email to use. If it's not provided, user will be prompted for it.
 </details>
+```
 
 #### Examples
 
@@ -307,7 +309,7 @@ __wp wpsnapshots pull <snapshot_id> [--repository=\<repository\>] [--region=\<re
 
 ### search
 
-This command searches the repository for snapshots. `\<search_text\>` will be compared against project names and authors. Multiple queries can be used to search snapshots in different projects. Searching for "\*" will return all snapshots.
+This command searches the repository for snapshots. `<search_text>` will be compared against project names and authors. Multiple queries can be used to search snapshots in different projects. Searching for "\*" will return all snapshots.
 
 __wp wpsnapshots search <search_text> [--repository=\<repository\>] [--format=\<format\>] [--region=\<region\>]__
 
@@ -504,4 +506,4 @@ WP Snapshots relies on AWS for access management. Each snapshot is associated wi
 
 ## Like what you see?
 
-\<a href="http://10up.com/contact/"\>\<img src="https://10up.com/uploads/2016/10/10up-Github-Banner.png" width="850" alt="Work with us at 10up"\>\</a\>
+<a href="http://10up.com/contact/"><img src="https://10up.com/uploads/2016/10/10up-Github-Banner.png" width="850" alt="Work with us at 10up"></a>
