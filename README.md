@@ -49,7 +49,7 @@ aws_access_key_id = <your-access-key-id>
 aws_secret_access_key = <your-secret-access-key>
 ```
 
-Depending on your setup, you may need to create the `~/.aws` directory and the `credentials` file inside of your local environment. If you are using a VM or container, you may need to create the file in your local environment and then copy it into the VM or container. 
+Depending on your setup, you may need to create the `~/.aws` directory and the `credentials` file inside of your local environment.
 
 More information in [AWS documentation](https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/guide_credentials_profiles.html).
 
@@ -65,7 +65,7 @@ Documentation for each operation is below.
 
 ### configure
 
-WP Snapshots relies on AWS to store files and data. As such, you need to connect to a "repository" hosted on AWS. Each command supports a `--repository` argument to tell the script which AWS repository to use, but to bypass requiring that argument on every command, you can store the setting using the command below. After you have done so, WP Snapshots will use the first repository stored in your configuration by default.
+WP Snapshots relies on AWS to store files and data. As such, you need to connect to a repository hosted on AWS. Each command supports a `--repository` argument to tell the script which AWS repository to use, but to bypass requiring that argument on every command, you can store the setting using the command below. After you have done so, WP Snapshots will use the first repository stored in your configuration by default.
 
 #### Command
 
@@ -309,7 +309,7 @@ __wp wpsnapshots pull <snapshot_id> [--repository=\<repository\>] [--region=\<re
 
 ### search
 
-This command searches the repository for snapshots. `\<search_text\>` will be compared against project names and authors. Multiple queries can be used to search snapshots in different projects. Searching for "\*" will return all snapshots.
+This command searches the repository for snapshots. `<search_text>` will be compared against project names and authors. Multiple queries can be used to search snapshots in different projects. Searching for "\*" will return all snapshots.
 
 __wp wpsnapshots search <search_text> [--repository=\<repository\>] [--format=\<format\>] [--region=\<region\>]__
 
@@ -506,4 +506,4 @@ WP Snapshots relies on AWS for access management. Each snapshot is associated wi
 
 ## Like what you see?
 
-\<a href="http://10up.com/contact/"\>\<img src="https://10up.com/uploads/2016/10/10up-Github-Banner.png" width="850" alt="Work with us at 10up"\>\</a\>
+<a href="http://10up.com/contact/"><img src="https://10up.com/uploads/2016/10/10up-Github-Banner.png" width="850" alt="Work with us at 10up"></a>
