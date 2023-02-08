@@ -8,9 +8,9 @@ env:
 
 on:
   push:
-    branches: [ "trunk" ]
+    branches: [ "trunk", "develop" ]
   pull_request:
-    branches: [ "trunk", "feature/*" ]
+    branches: [ "trunk", "develop", "feature/*" ]
 
 jobs:
   phpcs:
