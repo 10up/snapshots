@@ -8,7 +8,7 @@ env:
 
 on:
   push:
-    branches: [ "trunk" ]
+    branches: [ "trunk", "develop" ]
   pull_request:
     branches: [ "trunk", "develop", "feature/*" ]
 
