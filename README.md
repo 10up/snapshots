@@ -37,9 +37,9 @@ WP Snapshots is a WordPress plugin designed to be used in conjuction with WP CLI
 
 ## Authentication
 
-WP Snapshots does not support authenticating with AWS by passing commands via the command line. Instead, you must set up your AWS credentials in your local environment. There are a few methods for authenticating; the easiest are below.
+WP Snapshots does not support authenticating with AWS by passing commands via the command line. Instead, you must set up your AWS credentials in your local environment. There are [a few methods](https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/guide_credentials.html) for setting credentials in your environment; once you do so, the WP Snapshot script will automatically detect your credentials and use them to authenticate all requests. The easiest options are outlined below.
 
-### 1. AWS Credentials File
+### Option 1: AWS Credentials File
 
 Create a `~/.aws/credentials` file with the following contents:
 
@@ -53,7 +53,7 @@ Depending on your setup, you may need to create the `~/.aws` directory and the `
 
 More information in [AWS documentation](https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/guide_credentials_profiles.html).
 
-### 2. Environment Variables
+### Option 2: Environment Variables
 
 Set the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables. See the [AWS docs](https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/guide_credentials_environment.html) for more information.
 
@@ -74,6 +74,7 @@ __wp wpsnapshots configure <repository> [--region=\<region\>] [--user_name=\<use
 <details>
 <summary>Show Arguments</summary>
 
+```
   <repository>
     The name of the repository to configure.
 
@@ -89,6 +90,7 @@ __wp wpsnapshots configure <repository> [--region=\<region\>] [--user_name=\<use
   [--user_email=\<user_email\>]
     The user email to use. If it's not provided, user will be prompted for it.
 </details>
+```
 
 #### Examples
 
