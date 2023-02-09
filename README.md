@@ -89,8 +89,8 @@ __wp wpsnapshots configure <repository> [--region=\<region\>] [--user_name=\<use
 
   [--user_email=\<user_email\>]
     The user email to use. If it's not provided, user will be prompted for it.
-</details>
 ```
+</details>
 
 #### Examples
 
