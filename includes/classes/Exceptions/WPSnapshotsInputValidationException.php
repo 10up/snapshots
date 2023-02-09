@@ -2,16 +2,16 @@
 /**
  * WPSnapshotsInputValidationException class.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Exceptions;
+namespace TenUp\Snapshots\Exceptions;
 
 use Exception;
 
 /**
  * WPSnapshotsException class.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 class WPSnapshotsInputValidationException extends Exception {}

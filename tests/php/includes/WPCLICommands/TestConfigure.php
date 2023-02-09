@@ -2,26 +2,26 @@
 /**
  * Tests covering the Configure command class.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\Commands;
+namespace TenUp\Snapshots\Tests\Commands;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\Snapshots\S3StorageConnector;
-use TenUp\WPSnapshots\Tests\Fixtures\{CommandTests, PrivateAccess, DirectoryFiltering, WPCLIMocking};
-use TenUp\WPSnapshots\WPCLI\WPCLICommand;
-use TenUp\WPSnapshots\WPCLICommands\Configure;
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots\S3StorageConnector;
+use TenUp\Snapshots\Tests\Fixtures\{CommandTests, PrivateAccess, DirectoryFiltering, WPCLIMocking};
+use TenUp\Snapshots\WPCLI\WPCLICommand;
+use TenUp\Snapshots\WPCLICommands\Configure;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class TestConfigure
  *
- * @package TenUp\WPSnapshots\Tests\Commands
+ * @package TenUp\Snapshots\Tests\Commands
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\WPCLICommands\Configure
+ * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\Configure
  */
 class TestConfigure extends TestCase {
 
@@ -101,7 +101,7 @@ class TestConfigure extends TestCase {
 			$this->get_test_args()
 		);
 
-		$result = json_decode( file_get_contents( '/wpsnapshots-tmp/config.json' ), true );
+		$result = json_decode( file_get_contents( '/tenup-snapshots-tmp/config.json' ), true );
 
 		$this->assertEquals(
 			[
@@ -170,7 +170,7 @@ class TestConfigure extends TestCase {
 			]
 		];
 
-		file_put_contents( '/wpsnapshots-tmp/config.json', json_encode( $config ) );
+		file_put_contents( '/tenup-snapshots-tmp/config.json', json_encode( $config ) );
 
 		$this->command->execute(
 			[ '10up' ],
@@ -185,7 +185,7 @@ class TestConfigure extends TestCase {
 			);
 
 		// Check that the file has the expected output.
-		$result = json_decode( file_get_contents( '/wpsnapshots-tmp/config.json' ), true );
+		$result = json_decode( file_get_contents( '/tenup-snapshots-tmp/config.json' ), true );
 
 		$this->assertEquals( $config, $result );
 	}

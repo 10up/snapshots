@@ -2,21 +2,21 @@
 /**
  * Tests for the WPCLILogger class.
  * 
- * @package Tenup\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\Log;
+namespace TenUp\Snapshots\Tests\Log;
 
-use TenUp\WPSnapshots\Log\WPCLILogger;
-use TenUp\WPSnapshots\Tests\Fixtures\WPCLIMocking;
+use TenUp\Snapshots\Log\WPCLILogger;
+use TenUp\Snapshots\Tests\Fixtures\WPCLIMocking;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class WPCLILoggerTest
  * 
- * @package TenUp\WPSnapshots\Tests\Log
+ * @package TenUp\Snapshots\Tests\Log
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\Log\WPCLILogger
+ * @coversDefaultClass \TenUp\Snapshots\Log\WPCLILogger
  */
 class TestWPCLILogger extends TestCase {
 	

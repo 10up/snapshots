@@ -2,17 +2,17 @@
 /**
  * Helper trait allowinga access to private and protected methods and properties.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\Fixtures;
+namespace TenUp\Snapshots\Tests\Fixtures;
 
 use ReflectionClass;
 
 /**
  * Trait PrivateAccess
  *
- * @package TenUp\WPSnapshots\Tests\Fixtures
+ * @package TenUp\Snapshots\Tests\Fixtures
  */
 trait PrivateAccess {
 	/**

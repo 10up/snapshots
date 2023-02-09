@@ -2,17 +2,17 @@
 /**
  * Interface for Storage Connectors.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Snapshots;
+namespace TenUp\Snapshots\Snapshots;
 
-use TenUp\WPSnapshots\Infrastructure\SharedService;
+use TenUp\Snapshots\Infrastructure\SharedService;
 
 /**
  * Interface StorageConnectorInterface
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 interface DBConnectorInterface extends SharedService {
 

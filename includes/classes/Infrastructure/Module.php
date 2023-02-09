@@ -2,15 +2,15 @@
 /**
  * Module interface.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Infrastructure;
+namespace TenUp\Snapshots\Infrastructure;
 
 /**
  * Module interface.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 interface Module {
 

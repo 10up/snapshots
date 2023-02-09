@@ -2,26 +2,26 @@
 /**
  * Tests covering the Download command class.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\Commands;
+namespace TenUp\Snapshots\Tests\Commands;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\Snapshots\S3StorageConnector;
-use TenUp\WPSnapshots\Snapshots\SnapshotMeta;
-use TenUp\WPSnapshots\Tests\Fixtures\{CommandTests, PrivateAccess, WPCLIMocking};
-use TenUp\WPSnapshots\WPCLI\WPCLICommand;
-use TenUp\WPSnapshots\WPCLICommands\Download;
+use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots\S3StorageConnector;
+use TenUp\Snapshots\Snapshots\SnapshotMeta;
+use TenUp\Snapshots\Tests\Fixtures\{CommandTests, PrivateAccess, WPCLIMocking};
+use TenUp\Snapshots\WPCLI\WPCLICommand;
+use TenUp\Snapshots\WPCLICommands\Download;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class TestDownload
  *
- * @package TenUp\WPSnapshots\Tests\Commands
+ * @package TenUp\Snapshots\Tests\Commands
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\WPCLICommands\Download
+ * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\Download
  */
 class TestDownload extends TestCase {
 
@@ -103,7 +103,7 @@ class TestDownload extends TestCase {
 		$this->set_private_property( $this->command, 'snapshot_meta', $mock_snapshot_meta );
 		$this->command->set_assoc_arg( 'repository', '10up' );
 
-		add_filter( 'wpsnapshots_readline', function() {
+		add_filter( 'tenup_snapshots_readline', function() {
 			return function() {
 				return 'Y';
 			};
@@ -201,7 +201,7 @@ class TestDownload extends TestCase {
 			'test-region'
 		);
 
-		add_filter( 'wpsnapshots_readline', function() {
+		add_filter( 'tenup_snapshots_readline', function() {
 			return function() {
 				return 'Y';
 			};

@@ -2,17 +2,17 @@
 /**
  * MultisiteURLReplacer class.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\WPCLICommands\Pull;
+namespace TenUp\Snapshots\WPCLICommands\Pull;
 
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsInputValidationException;
+use TenUp\Snapshots\Exceptions\WPSnapshotsInputValidationException;
 
 /**
  * MultisiteURLReplacer
  *
- * @package TenUp\WPSnapshots\WPCLI\Pull
+ * @package TenUp\Snapshots\WPCLI\Pull
  */
 final class MultisiteURLReplacer extends URLReplacer {
 

@@ -2,17 +2,17 @@
 /**
  * Dumper interface
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Snapshots;
+namespace TenUp\Snapshots\Snapshots;
 
-use TenUp\WPSnapshots\Infrastructure\SharedService;
+use TenUp\Snapshots\Infrastructure\SharedService;
 
 /**
  * Interface DBExportInterface
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 interface DBExportInterface extends SharedService {
 

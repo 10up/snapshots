@@ -2,17 +2,17 @@
 /**
  * Trait providing basic tests for every CLI command.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\Fixtures;
+namespace TenUp\Snapshots\Tests\Fixtures;
 
-use TenUp\WPSnapshots\WPCLI\{Prompt, WPCLICommand};
+use TenUp\Snapshots\WPCLI\{Prompt, WPCLICommand};
 
 /**
  * Trait CommandTests
  * 
- * @package TenUp\WPSnapshots\Tests\Fixtures
+ * @package TenUp\Snapshots\Tests\Fixtures
  */
 trait CommandTests {
 
@@ -29,11 +29,11 @@ trait CommandTests {
 
         $this->command->register();
 
-        // Confirm that the command wp wpsnapshots <command> is registered.
+        // Confirm that the command wp snapshots <command> is registered.
         $command = $this->call_private_method( $this->command, 'get_command' );
         $calls = $this->get_wp_cli_mock()->assertMethodCalled( 'add_command', 1 );
 
-        $this->assertEquals( "wpsnapshots $command", $calls[0][0] );
+        $this->assertEquals( "snapshots $command", $calls[0][0] );
     }
 
     /** @covers ::get_command_parameters */

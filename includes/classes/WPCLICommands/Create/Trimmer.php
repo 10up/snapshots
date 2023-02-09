@@ -2,20 +2,20 @@
 /**
  * Trimmer class
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\WPCLICommands\Create;
+namespace TenUp\Snapshots\WPCLICommands\Create;
 
-use TenUp\WPSnapshots\Infrastructure\SharedService;
-use TenUp\WPSnapshots\Log\{LoggerInterface, Logging};
-use TenUp\WPSnapshots\WordPress\Database;
+use TenUp\Snapshots\Infrastructure\SharedService;
+use TenUp\Snapshots\Log\{LoggerInterface, Logging};
+use TenUp\Snapshots\WordPress\Database;
 use WP_Site;
 
 /**
  * Class Trimmer
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 class Trimmer implements SharedService {
 
@@ -54,7 +54,7 @@ class Trimmer implements SharedService {
 		 * }
 		 */
 		$this->limits = apply_filters(
-			'wpsnapshots_trimmer_limits',
+			'tenup_snapshots_trimmer_limits',
 			[
 				'posts'    => 300,
 				'comments' => 500,

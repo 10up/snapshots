@@ -2,30 +2,30 @@
 /**
  * Tests for the FileZipper class.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\Snapshots;
+namespace TenUp\Snapshots\Tests\Snapshots;
 
 use Aws\DynamoDb\DynamoDbClient;
 use Phar;
 use PharData;
 use PHPUnit\Framework\MockObject\MockObject;
-use TenUp\WPSnapshots\FileSystem;
-use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\Snapshots\DynamoDBConnector;
-use TenUp\WPSnapshots\Snapshots\FileZipper;
-use TenUp\WPSnapshots\Tests\Fixtures\DirectoryFiltering;
-use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
+use TenUp\Snapshots\FileSystem;
+use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots\DynamoDBConnector;
+use TenUp\Snapshots\Snapshots\FileZipper;
+use TenUp\Snapshots\Tests\Fixtures\DirectoryFiltering;
+use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 use ZipArchive;
 
 /**
  * Class FileZipper
  *
- * @package TenUp\WPSnapshots\Tests\Snapshots
+ * @package TenUp\Snapshots\Tests\Snapshots
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\Snapshots\FileZipper
+ * @coversDefaultClass \TenUp\Snapshots\Snapshots\FileZipper
  */
 class TestFileZipper extends TestCase {
 
@@ -76,7 +76,7 @@ class TestFileZipper extends TestCase {
 	 * @covers ::build_file_list_recursively
 	 */
 	public function test_zip_files() {
-		add_filter( 'wpsnapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
+		add_filter( 'tenup_snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
 		$id = 'test-id';
 		$args = [
@@ -86,17 +86,17 @@ class TestFileZipper extends TestCase {
 
 		$this->file_zipper->zip_files( $id, $args );
 
-		$this->assertFileExists( '/wpsnapshots-tmp/test-id/files.tar.gz' );
+		$this->assertFileExists( '/tenup-snapshots-tmp/test-id/files.tar.gz' );
 
-		remove_filter( 'wpsnapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
+		remove_filter( 'tenup_snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
 		// Unzip the file and check the contents.
-		$phar = new PharData( '/wpsnapshots-tmp/test-id/files.tar.gz' );
+		$phar = new PharData( '/tenup-snapshots-tmp/test-id/files.tar.gz' );
 		$phar->decompress();
 		$phar->extractTo( '/tmp/files' );
 
 		unset( $phar );
-		Phar::unlinkArchive( '/wpsnapshots-tmp/test-id/files.tar.gz' );
+		Phar::unlinkArchive( '/tenup-snapshots-tmp/test-id/files.tar.gz' );
 
 		$this->assertFileExists( '/tmp/files/uploads/' );
 		$this->assertFileExists( '/tmp/files/uploads/test-file.txt' );
@@ -105,7 +105,7 @@ class TestFileZipper extends TestCase {
 		$this->assertFileExists( '/tmp/files/themes/test-theme/test-file.txt' );
 		$this->assertFileExists( '/tmp/files/themes/test-theme/test-file-2.txt' );
 
-		$this->file_system->get_wp_filesystem()->delete( '/wpsnapshots-tmp', true );
+		$this->file_system->get_wp_filesystem()->delete( '/tenup-snapshots-tmp', true );
 		$this->file_system->get_wp_filesystem()->delete( '/tmp/files', true );
 		$this->file_system->get_wp_filesystem()->delete( '/tmp/wp-content', true );
 
@@ -118,7 +118,7 @@ class TestFileZipper extends TestCase {
 	 * @covers ::build_file_list_recursively
 	 */
 	public function test_zip_files_with_excludes() {
-		add_filter( 'wpsnapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
+		add_filter( 'tenup_snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
 		$id = 'test-id-2';
 		$args = [
@@ -131,17 +131,17 @@ class TestFileZipper extends TestCase {
 
 		$this->file_zipper->zip_files( $id, $args );
 
-		$this->assertFileExists( '/wpsnapshots-tmp/test-id-2/files.tar.gz' );
+		$this->assertFileExists( '/tenup-snapshots-tmp/test-id-2/files.tar.gz' );
 
-		remove_filter( 'wpsnapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
+		remove_filter( 'tenup_snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
 		// Unzip the file and check the contents.
-		$phar = new PharData( '/wpsnapshots-tmp/test-id-2/files.tar.gz' );
+		$phar = new PharData( '/tenup-snapshots-tmp/test-id-2/files.tar.gz' );
 		$phar->decompress();
 		$phar->extractTo( '/tmp/files' );
 
 		unset( $phar );
-		Phar::unlinkArchive( '/wpsnapshots-tmp/test-id-2/files.tar.gz' );
+		Phar::unlinkArchive( '/tenup-snapshots-tmp/test-id-2/files.tar.gz' );
 
 		$this->assertFileDoesNotExist( '/tmp/files/uploads/' );
 		$this->assertFileDoesNotExist( '/tmp/files/uploads/test-file.txt' );
@@ -153,7 +153,7 @@ class TestFileZipper extends TestCase {
 		$this->assertFileExists( '/tmp/files/themes/' );
 		$this->assertFileDoesNotExist( '/tmp/files/themes/test-theme' );
 
-		$this->file_system->get_wp_filesystem()->delete( '/wpsnapshots-tmp', true );
+		$this->file_system->get_wp_filesystem()->delete( '/tenup-snapshots-tmp', true );
 		$this->file_system->get_wp_filesystem()->delete( '/tmp/files', true );
 		$this->file_system->get_wp_filesystem()->delete( '/tmp/wp-content', true );
 	}

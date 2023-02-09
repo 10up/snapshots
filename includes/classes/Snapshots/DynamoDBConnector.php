@@ -2,10 +2,10 @@
 /**
  * Amazon Dynamo wrapper functionality
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Snapshots;
+namespace TenUp\Snapshots\Snapshots;
 
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Marshaler;

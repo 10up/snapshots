@@ -2,22 +2,19 @@
 /**
  * WPSnapshotsDirectory class.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots;
+namespace TenUp\Snapshots;
 
-use Exception;
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\Infrastructure\SharedService;
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Infrastructure\SharedService;
 use WP_Filesystem_Base;
-
-use function TenUp\WPSnapshots\Utils\wpsnapshots_wp_content_dir;
 
 /**
  * WPSnapshotsDirectory class.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 class FileSystem implements SharedService {
 

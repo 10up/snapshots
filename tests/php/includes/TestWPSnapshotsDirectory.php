@@ -2,27 +2,27 @@
 /**
  * Tests for the WPSnapshotsDirectory class.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests;
+namespace TenUp\Snapshots\Tests;
 
 use Phar;
 use PharData;
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\WPSnapshotsDirectory;
-use TenUp\WPSnapshots\Snapshots\FileZipper;
-use TenUp\WPSnapshots\Tests\Fixtures\DirectoryFiltering;
-use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\Snapshots\FileZipper;
+use TenUp\Snapshots\Tests\Fixtures\DirectoryFiltering;
+use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class TestWPSnapshotsDirectory
  *
- * @package TenUp\WPSnapshots\Tests
+ * @package TenUp\Snapshots\Tests
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\WPSnapshotsDirectory
+ * @coversDefaultClass \TenUp\Snapshots\WPSnapshotsDirectory
  */
 class TestWPSnapshotsDirectory extends TestCase {
 	
@@ -65,11 +65,11 @@ class TestWPSnapshotsDirectory extends TestCase {
 			return '/tmp';
 		};
 
-		add_filter( 'wpsnapshots_directory',  $filter );
+		add_filter( 'tenup_snapshots_directory',  $filter );
 
 		$this->assertEquals( '/tmp', $this->call_private_method( $this->snapshots_fs, 'get_directory' ) );
 
-		remove_filter( 'wpsnapshots_directory', $filter );
+		remove_filter( 'tenup_snapshots_directory', $filter );
 	}
 
 	/** @covers ::get_directory */
@@ -78,11 +78,11 @@ class TestWPSnapshotsDirectory extends TestCase {
 			return '/tmp';
 		};
 
-		add_filter( 'wpsnapshots_directory', $filter );
+		add_filter( 'tenup_snapshots_directory', $filter );
 
 		$this->assertEquals( '/tmp', $this->call_private_method( $this->snapshots_fs, 'get_directory' ) );
 
-		remove_filter( 'wpsnapshots_directory', $filter );
+		remove_filter( 'tenup_snapshots_directory', $filter );
 	}
 
 	/**
@@ -114,7 +114,7 @@ class TestWPSnapshotsDirectory extends TestCase {
 	 */
 	public function test_get_file_contents_throws_when_nonexistent_path() {
 		$this->expectException( WPSnapshotsException::class );
-		$this->expectExceptionMessage( 'Unable to read file: /wpsnapshots-tmp/nonexistent.txt' );
+		$this->expectExceptionMessage( 'Unable to read file: /tenup-snapshots-tmp/nonexistent.txt' );
 
 		$this->snapshots_fs->get_file_contents( 'nonexistent.txt' );
 	}
@@ -201,7 +201,7 @@ class TestWPSnapshotsDirectory extends TestCase {
 	/** @covers ::get_file_lines */
 	public function test_get_file_lines_throws_when_nonexistent_path() {
 		$this->expectException( WPSnapshotsException::class );
-		$this->expectExceptionMessage( 'Unable to read file: /wpsnapshots-tmp/nonexistent.txt' );
+		$this->expectExceptionMessage( 'Unable to read file: /tenup-snapshots-tmp/nonexistent.txt' );
 
 		$this->snapshots_fs->get_file_lines( 'nonexistent.txt' );
 	}

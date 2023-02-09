@@ -1,11 +1,11 @@
 {
-    "name": "10up/wpsnapshots-command",
+    "name": "10up/snapshots",
     "type": "wordpress-plugin",
     "license": "MIT",
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
-            "TenUp\\WPSnapshots\\": "includes/classes/"
+            "TenUp\\Snapshots\\": "includes/classes/"
         }
     },
     "repositories": [

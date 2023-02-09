@@ -2,15 +2,15 @@
 /**
  * Conditional interface.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Infrastructure;
+namespace TenUp\Snapshots\Infrastructure;
 
 /**
  * Conditional interface.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 interface Conditional {
 

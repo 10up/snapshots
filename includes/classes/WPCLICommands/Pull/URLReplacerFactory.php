@@ -2,22 +2,22 @@
 /**
  * URLReplacer class.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\WPCLICommands\Pull;
+namespace TenUp\Snapshots\WPCLICommands\Pull;
 
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\Infrastructure\Factory;
-use TenUp\WPSnapshots\Log\{LoggerInterface, Logging};
-use TenUp\WPSnapshots\WPSnapshotsDirectory;
-use TenUp\WPSnapshots\WordPress\Database;
-use TenUp\WPSnapshots\WPCLI\Prompt;
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Infrastructure\Factory;
+use TenUp\Snapshots\Log\{LoggerInterface, Logging};
+use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\WordPress\Database;
+use TenUp\Snapshots\WPCLI\Prompt;
 
 /**
  * URLReplacerFactory
  *
- * @package TenUp\WPSnapshots\WPCLI\Pull
+ * @package TenUp\Snapshots\WPCLI\Pull
  */
 class URLReplacerFactory implements Factory {
 

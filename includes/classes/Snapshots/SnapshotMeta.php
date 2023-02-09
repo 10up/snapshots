@@ -2,18 +2,18 @@
 /**
  * Snapshot meta abstract class
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Snapshots;
+namespace TenUp\Snapshots\Snapshots;
 
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\Snapshots\DBConnectorInterface;
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Snapshots\DBConnectorInterface;
 
 /**
  * Snapshot meta wrapper with support for downloading remote meta
  *
- * @package TenUp\WPSnapshots\Snapshots
+ * @package TenUp\Snapshots\Snapshots
  */
 abstract class SnapshotMeta implements SnapshotMetaInterface {
 

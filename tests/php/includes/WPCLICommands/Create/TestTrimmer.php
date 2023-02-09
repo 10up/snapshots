@@ -2,23 +2,23 @@
 /**
  * Tests for the Trimmer class.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\WPCLICommands\Create;
+namespace TenUp\Snapshots\Tests\WPCLICommands\Create;
 
-use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
-use TenUp\WPSnapshots\Tests\Fixtures\WPCLIMocking;
-use TenUp\WPSnapshots\WPCLICommands\Create\Trimmer;
+use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
+use TenUp\Snapshots\Tests\Fixtures\WPCLIMocking;
+use TenUp\Snapshots\WPCLICommands\Create\Trimmer;
 use Yoast\WPTestUtils\WPIntegration\TestCase;
 
 /**
  * Class TestTrimmer
  *
- * @package TenUp\WPSnapshots\Tests\WPCLICommands\Create
+ * @package TenUp\Snapshots\Tests\WPCLICommands\Create
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\WPCLICommands\Create\Trimmer
+ * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\Create\Trimmer
  */
 class TestTrimmer extends TestCase {
 
@@ -63,7 +63,7 @@ class TestTrimmer extends TestCase {
 			];
 		};
 		
-		add_filter( 'wpsnapshots_trimmer_limits', $limits_filter );
+		add_filter( 'tenup_snapshots_trimmer_limits', $limits_filter );
 
 		$this->trimmer = ( new Plugin() )->get_instance( Trimmer::class );
 

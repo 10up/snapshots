@@ -2,15 +2,15 @@
 /**
  * Factory interface.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Infrastructure;
+namespace TenUp\Snapshots\Infrastructure;
 
 /**
  * Factory interface.
  *
- * @package TenUp\WPSnapshots\Infrastructure
+ * @package TenUp\Snapshots\Infrastructure
  */
 interface Factory extends SharedService {
 

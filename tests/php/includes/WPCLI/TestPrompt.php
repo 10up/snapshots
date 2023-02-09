@@ -2,25 +2,25 @@
 /**
  * Tests for the prompt instance.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\WPCLI;
+namespace TenUp\Snapshots\Tests\WPCLI;
 
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsInputValidationException;
-use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\Tests\Fixtures\WPCLIMocking;
-use TenUp\WPSnapshots\WPCLI\Prompt;
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\WPSnapshotsInputValidationException;
+use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Tests\Fixtures\WPCLIMocking;
+use TenUp\Snapshots\WPCLI\Prompt;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 
 /**
  * Class TestPrompt
  * 
- * @package TenUp\WPSnapshots\Tests\WPCLI
+ * @package TenUp\Snapshots\Tests\WPCLI
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\WPCLI\Prompt
+ * @coversDefaultClass \TenUp\Snapshots\WPCLI\Prompt
  */
 class TestPrompt extends TestCase {
 
@@ -74,7 +74,7 @@ class TestPrompt extends TestCase {
 			};
 		};
 	
-		add_filter( 'wpsnapshots_readline', $readline_mock );
+		add_filter( 'tenup_snapshots_readline', $readline_mock );
 
 		$actual_args = $this->prompt->get_arg_or_prompt( $args, [ 'key' => 'test' ] );
 
@@ -82,7 +82,7 @@ class TestPrompt extends TestCase {
 
 		$this->get_wp_cli_mock()->assertMethodCalled( 'line' );
 
-		remove_filter( 'wpsnapshots_readline', $readline_mock );
+		remove_filter( 'tenup_snapshots_readline', $readline_mock );
 	}
 
 	/**
@@ -97,7 +97,7 @@ class TestPrompt extends TestCase {
 			};
 		};
 	
-		add_filter( 'wpsnapshots_readline', $readline_mock );
+		add_filter( 'tenup_snapshots_readline', $readline_mock );
 
 		$actual_args = $this->prompt->get_arg_or_prompt(
 			$args,
@@ -113,7 +113,7 @@ class TestPrompt extends TestCase {
 
 		$this->get_wp_cli_mock()->assertMethodCalled( 'line' );
 
-		remove_filter( 'wpsnapshots_readline', $readline_mock );
+		remove_filter( 'tenup_snapshots_readline', $readline_mock );
 	}
 
 	/**
@@ -128,7 +128,7 @@ class TestPrompt extends TestCase {
 			};
 		};
 	
-		add_filter( 'wpsnapshots_readline', $readline_mock );
+		add_filter( 'tenup_snapshots_readline', $readline_mock );
 
 		$result = $this->prompt->readline(
 			'Prompt?',
@@ -140,7 +140,7 @@ class TestPrompt extends TestCase {
 
 		$this->assertEquals( 'value', $result );
 
-		remove_filter( 'wpsnapshots_readline', $readline_mock );
+		remove_filter( 'tenup_snapshots_readline', $readline_mock );
 	}
 
 	/**
@@ -155,7 +155,7 @@ class TestPrompt extends TestCase {
 			};
 		};
 	
-		add_filter( 'wpsnapshots_readline', $readline_mock );
+		add_filter( 'tenup_snapshots_readline', $readline_mock );
 
 		$result = $this->prompt->readline(
 			'Prompt?',
@@ -171,7 +171,7 @@ class TestPrompt extends TestCase {
 
 		$this->assertEquals( 'value1', $result );
 
-		remove_filter( 'wpsnapshots_readline', $readline_mock );
+		remove_filter( 'tenup_snapshots_readline', $readline_mock );
 	}
 
 	/**
@@ -186,7 +186,7 @@ class TestPrompt extends TestCase {
 			};
 		};
 	
-		add_filter( 'wpsnapshots_readline', $readline_mock );
+		add_filter( 'tenup_snapshots_readline', $readline_mock );
 		$sanitize_callback_called = false;
 
 		$actual_args = $this->prompt->get_arg_or_prompt(
@@ -205,14 +205,14 @@ class TestPrompt extends TestCase {
 
 		$this->get_wp_cli_mock()->assertMethodCalled( 'line' );
 
-		remove_filter( 'wpsnapshots_readline', $readline_mock );
+		remove_filter( 'tenup_snapshots_readline', $readline_mock );
 	}
 
 	/** @covers ::get_flag_or_prompt */
 	public function test_returns_flag_if_already_present() {
 		$args = [ 'test' => true ];
 
-		add_filter( 'wpsnapshots_readline', function() {
+		add_filter( 'tenup_snapshots_readline', function() {
 			return function() {
 				return 'Y';
 			};

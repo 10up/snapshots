@@ -2,27 +2,27 @@
 /**
  * Tests covering the Search command class.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\Commands;
+namespace TenUp\Snapshots\Tests\Commands;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\Snapshots\DynamoDBConnector;
-use TenUp\WPSnapshots\Tests\Fixtures\{CommandTests, PrivateAccess, WPCLIMocking};
-use TenUp\WPSnapshots\WPCLI\WPCLICommand;
-use TenUp\WPSnapshots\WPCLICommands\Search;
-use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots\DynamoDBConnector;
+use TenUp\Snapshots\Tests\Fixtures\{CommandTests, PrivateAccess, WPCLIMocking};
+use TenUp\Snapshots\WPCLI\WPCLICommand;
+use TenUp\Snapshots\WPCLICommands\Search;
+use TenUp\Snapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class TestSearch
  *
- * @package TenUp\WPSnapshots\Tests\Commands
+ * @package TenUp\Snapshots\Tests\Commands
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\WPCLICommands\Search
+ * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\Search
  */
 class TestSearch extends TestCase {
 
@@ -106,16 +106,16 @@ class TestSearch extends TestCase {
 		$this->set_private_property( $this->command, 'db_connector', $mock_db_connector );
 
 		/**
-		 * @var WPSnapshotsConfigFromFileSystem|MockObject $mock_wpsnapshots_config
+		 * @var WPSnapshotsConfigFromFileSystem|MockObject $mock_tenup_snapshots_config
 		 */
-		$mock_wpsnapshots_config = $this->createMock( WPSnapshotsConfigFromFileSystem::class );
-		$mock_wpsnapshots_config->method( 'get_repository_settings' )->willReturn(
+		$mock_tenup_snapshots_config = $this->createMock( WPSnapshotsConfigFromFileSystem::class );
+		$mock_tenup_snapshots_config->method( 'get_repository_settings' )->willReturn(
 			[
 				'region' => 'test',
 				'repository' => 'test',
 			]
 		);
-		$this->set_private_property( $this->command, 'config', $mock_wpsnapshots_config );
+		$this->set_private_property( $this->command, 'config', $mock_tenup_snapshots_config );
 
 		$this->command->set_assoc_arg( 'repository', 'test' );
 		$this->command->set_args( [ 'test' ] );

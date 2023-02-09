@@ -2,18 +2,18 @@
 /**
  * Snapshot meta interface
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Snapshots;
+namespace TenUp\Snapshots\Snapshots;
 
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\Infrastructure\SharedService;
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Infrastructure\SharedService;
 
 /**
  * Interface for napshot meta wrapper with support for downloading remote meta
  *
- * @package TenUp\WPSnapshots\Snapshots
+ * @package TenUp\Snapshots\Snapshots
  */
 interface SnapshotMetaInterface extends SharedService {
 

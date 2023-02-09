@@ -2,17 +2,17 @@
 /**
  * Logger interface.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Log;
+namespace TenUp\Snapshots\Log;
 
-use TenUp\WPSnapshots\Infrastructure\SharedService;
+use TenUp\Snapshots\Infrastructure\SharedService;
 
 /**
  * Logger interface.
  *
- * @package TenUp\WPSnapshots\Log
+ * @package TenUp\Snapshots\Log
  */
 interface LoggerInterface extends SharedService {
 

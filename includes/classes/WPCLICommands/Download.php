@@ -2,21 +2,21 @@
 /**
  * Download command class.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\WPCLICommands;
+namespace TenUp\Snapshots\WPCLICommands;
 
 use Exception;
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\WPCLI\WPCLICommand;
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\WPCLI\WPCLICommand;
 
-use function TenUp\WPSnapshots\Utils\wp_cli;
+use function TenUp\Snapshots\Utils\wp_cli;
 
 /**
  * Download command
  *
- * @package TenUp\WPSnapshots\WPCLI
+ * @package TenUp\Snapshots\WPCLI
  */
 final class Download extends WPCLICommand {
 

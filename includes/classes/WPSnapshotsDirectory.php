@@ -2,23 +2,23 @@
 /**
  * WPSnapshotsDirectory class.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots;
+namespace TenUp\Snapshots;
 
 use Exception;
 use Phar;
 use PharData;
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\Infrastructure\SharedService;
-use TenUp\WPSnapshots\Log\{LoggerInterface, Logging};
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Infrastructure\SharedService;
+use TenUp\Snapshots\Log\{LoggerInterface, Logging};
 use WP_Filesystem_Base;
 
 /**
  * WPSnapshotsDirectory class.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 class WPSnapshotsDirectory implements SharedService {
 
@@ -244,8 +244,8 @@ class WPSnapshotsDirectory implements SharedService {
 	public function unzip_snapshot_files( string $id, string $destination ) : array {
 		$errors = [];
 
-		// Recursively delete everything in the wp-content directory except plugins/snapshots-command.
-		$this->file_system->delete_directory_contents( $destination, true, [ WPSNAPSHOTS_DIR ] );
+		// Recursively delete everything in the wp-content directory except plugins/tenup-snapshots.
+		$this->file_system->delete_directory_contents( $destination, true, [ TENUP_SNAPSHOTS_DIR ] );
 
 		$gzipped_tar_file        = $this->get_file_path( 'files.tar.gz', $id );
 		$copied_gzipped_tar_file = str_replace( 'files', 'files-copy', $gzipped_tar_file );
@@ -285,14 +285,14 @@ class WPSnapshotsDirectory implements SharedService {
 	 * @return string
 	 */
 	public function get_tmp_dir( string $subpath = '' ) : string {
-		$wpsnapshots_directory = $this->get_directory();
+		$tenup_snapshots_directory = $this->get_directory();
 
 		/**
 		 * Filters the path to the tmp directory to use for WP snapshots.
 		 *
 		 * @param string $tmp_dir Path to the tmp directory to use for WP snapshots.
 		 */
-		$tmp_dir = apply_filters( 'wpsnapshots_tmp_dir', trailingslashit( $wpsnapshots_directory ) . 'tmp' );
+		$tmp_dir = apply_filters( 'tenup_snapshots_tmp_dir', trailingslashit( $tenup_snapshots_directory ) . 'tmp' );
 
 		if ( ! empty( $subpath ) ) {
 			$tmp_dir = trailingslashit( $tmp_dir ) . preg_replace( '/^\//', '', $subpath );
@@ -311,7 +311,7 @@ class WPSnapshotsDirectory implements SharedService {
 	 */
 	private function get_directory( ?string $id = null ) : string {
 
-		$directory = getenv( 'WPSNAPSHOTS_DIR' );
+		$directory = getenv( 'TENUP_SNAPSHOTS_DIR' );
 		$directory = ! empty( $directory ) ? rtrim( $directory, '/' ) . '/' : rtrim( $_SERVER['HOME'], '/' ) . '/.wpsnapshots/';
 
 		/**
@@ -319,7 +319,7 @@ class WPSnapshotsDirectory implements SharedService {
 		 *
 		 * @param string $file Snapshots directory.
 		 */
-		$directory = apply_filters( 'wpsnapshots_directory', $directory );
+		$directory = apply_filters( 'tenup_snapshots_directory', $directory );
 
 		if ( ! $this->get_wp_filesystem()->is_dir( $directory ) && ! $this->get_wp_filesystem()->mkdir( $directory ) ) {
 			throw new WPSnapshotsException( 'Unable to create ' . $directory );

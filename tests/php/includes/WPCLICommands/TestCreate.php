@@ -2,28 +2,28 @@
 /**
  * Tests covering the Create command class.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\Commands;
+namespace TenUp\Snapshots\Tests\Commands;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\Snapshots\FileZipper;
-use TenUp\WPSnapshots\Snapshots\SnapshotMeta;
-use TenUp\WPSnapshots\Tests\Fixtures\{CommandTests, PrivateAccess, WPCLIMocking};
-use TenUp\WPSnapshots\WPCLI\WPCLICommand;
-use TenUp\WPSnapshots\WPCLICommands\Create;
-use TenUp\WPSnapshots\WPCLICommands\Create\WPCLIDBExport;
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots\FileZipper;
+use TenUp\Snapshots\Snapshots\SnapshotMeta;
+use TenUp\Snapshots\Tests\Fixtures\{CommandTests, PrivateAccess, WPCLIMocking};
+use TenUp\Snapshots\WPCLI\WPCLICommand;
+use TenUp\Snapshots\WPCLICommands\Create;
+use TenUp\Snapshots\WPCLICommands\Create\WPCLIDBExport;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class TestCreate
  *
- * @package TenUp\WPSnapshots\Tests\Commands
+ * @package TenUp\Snapshots\Tests\Commands
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\WPCLICommands\Create
+ * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\Create
  */
 class TestCreate extends TestCase {
 

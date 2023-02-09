@@ -2,15 +2,15 @@
 /**
  * Trait for filtering the directory data is saved to.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\Fixtures;
+namespace TenUp\Snapshots\Tests\Fixtures;
 
 /**
  * Trait DirectoryFiltering
  *
- * @package TenUp\WPSnapshots\Fixtures
+ * @package TenUp\Snapshots\Fixtures
  */
 trait DirectoryFiltering {
 	
@@ -25,14 +25,14 @@ trait DirectoryFiltering {
 		// Create the directory.
 		exec( 'mkdir ' . $this->get_directory_path() );
 
-		add_filter( 'wpsnapshots_directory', $filter_directory );
+		add_filter( 'tenup_snapshots_directory', $filter_directory );
 	}
 
 	/**
 	 * Removes the directory filter.
 	 */
 	public function tear_down_directory_filtering() {
-		remove_all_filters( 'wpsnapshots_directory' );
+		remove_all_filters( 'tenup_snapshots_directory' );
 
 		exec( 'rm -rf ' . $this->get_directory_path() );
 	}
@@ -43,6 +43,6 @@ trait DirectoryFiltering {
 	 * @return string
 	 */
 	public function get_directory_path() {
-		return '/wpsnapshots-tmp';
+		return '/tenup-snapshots-tmp';
 	}
 }

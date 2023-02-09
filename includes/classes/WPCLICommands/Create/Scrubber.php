@@ -2,21 +2,21 @@
 /**
  * High security database scrubber.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\WPCLICommands\Create;
+namespace TenUp\Snapshots\WPCLICommands\Create;
 
-use TenUp\WPSnapshots\Infrastructure\SharedService;
-use TenUp\WPSnapshots\WPSnapshotsDirectory;
-use TenUp\WPSnapshots\Log\{LoggerInterface, Logging};
+use TenUp\Snapshots\Infrastructure\SharedService;
+use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\Log\{LoggerInterface, Logging};
 
-use function TenUp\WPSnapshots\Utils\wp_cli;
+use function TenUp\Snapshots\Utils\wp_cli;
 
 /**
  * Class Scrubber
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 class Scrubber implements SharedService {
 
@@ -179,7 +179,7 @@ class Scrubber implements SharedService {
 		static $users = [];
 
 		if ( empty( $users ) ) {
-			$file = fopen( trailingslashit( WPSNAPSHOTS_DIR ) . 'includes/data/users.csv', 'r' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fopen
+			$file = fopen( trailingslashit( TENUP_SNAPSHOTS_DIR ) . 'includes/data/users.csv', 'r' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fopen
 
 			$line = fgetcsv( $file );
 			while ( false !== $line ) {

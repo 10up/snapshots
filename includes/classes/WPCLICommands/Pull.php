@@ -2,23 +2,23 @@
 /**
  * Pull command class.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\WPCLICommands;
+namespace TenUp\Snapshots\WPCLICommands;
 
 use Exception;
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\WPCLI\WPCLICommand;
-use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacerFactory;
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\WPCLI\WPCLICommand;
+use TenUp\Snapshots\WPCLICommands\Pull\URLReplacerFactory;
 
-use function TenUp\WPSnapshots\Utils\wp_cli;
-use function TenUp\WPSnapshots\Utils\wpsnapshots_wp_content_dir;
+use function TenUp\Snapshots\Utils\wp_cli;
+use function TenUp\Snapshots\Utils\tenup_snapshots_wp_content_dir;
 
 /**
  * Pull command
  *
- * @package TenUp\WPSnapshots\WPCLI
+ * @package TenUp\Snapshots\WPCLI
  */
 final class Pull extends WPCLICommand {
 
@@ -328,7 +328,7 @@ final class Pull extends WPCLICommand {
 			$pull_actions[] = [ $this, 'pull_db' ];
 			$pull_actions[] = [ $this, 'replace_urls' ];
 
-			$path_to_this_plugin_relative_to_plugins_directory = trailingslashit( basename( WPSNAPSHOTS_DIR ) ) . 'wpsnapshots.php';
+			$path_to_this_plugin_relative_to_plugins_directory = trailingslashit( basename( TENUP_SNAPSHOTS_DIR ) ) . 'wpsnapshots.php';
 			if ( function_exists( 'is_plugin_active_for_network' ) && is_plugin_active_for_network( $path_to_this_plugin_relative_to_plugins_directory ) ) {
 				$pull_actions[] = function() {
 					$this->activate_this_plugin( true );
@@ -338,7 +338,7 @@ final class Pull extends WPCLICommand {
 			}
 
 			$pull_actions[] = function() {
-				$this->create_wpsnapshots_user( $this->get_meta()['multisite'] );
+				$this->create_tenup_snapshots_user( $this->get_meta()['multisite'] );
 			};
 		}
 
@@ -398,7 +398,7 @@ final class Pull extends WPCLICommand {
 	 * @throws WPSnapshotsException If the snapshot does not exist or is not valid.
 	 */
 	private function download_snapshot( bool $include_db = true, bool $include_files = true ) {
-		$command = 'wpsnapshots download ' . $this->get_id() . ' --quiet --repository=' . $this->get_repository_name() . ' --region=' . $this->get_assoc_arg( 'region' );
+		$command = 'snapshots download ' . $this->get_id() . ' --quiet --repository=' . $this->get_repository_name() . ' --region=' . $this->get_assoc_arg( 'region' );
 
 		if ( $include_db ) {
 			$command .= ' --include_db';
@@ -502,7 +502,7 @@ final class Pull extends WPCLICommand {
 	private function pull_files() {
 		$this->log( 'Pulling files and replacing /wp-content. This could take a while...' );
 
-		$errors = $this->snapshots_filesystem->unzip_snapshot_files( $this->get_id(), wpsnapshots_wp_content_dir() );
+		$errors = $this->snapshots_filesystem->unzip_snapshot_files( $this->get_id(), tenup_snapshots_wp_content_dir() );
 
 		if ( ! empty( $errors ) ) {
 			$this->log( 'There were errors pulling files:', 'error' );
@@ -523,7 +523,7 @@ final class Pull extends WPCLICommand {
 	private function activate_this_plugin( bool $network_activate = false ) {
 		$this->log( 'Reactivating this plugin...' );
 
-		$command = 'plugin activate snapshots-command --skip-themes --skip-plugins --skip-packages';
+		$command = 'plugin activate tenup-snapshots --skip-themes --skip-plugins --skip-packages';
 
 		if ( $network_activate ) {
 			$command .= ' --network';
@@ -560,7 +560,7 @@ final class Pull extends WPCLICommand {
 	 *
 	 * @param bool $multisite Whether this is a multisite install.
 	 */
-	private function create_wpsnapshots_user( bool $multisite ) : void {
+	private function create_tenup_snapshots_user( bool $multisite ) : void {
 		$this->log( 'Creating wpsnapshots user...' );
 
 		$user = get_user_by( 'login', 'wpsnapshots' );

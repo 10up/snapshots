@@ -2,23 +2,23 @@
 /**
  * Tests covering the Push command class.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\Commands;
+namespace TenUp\Snapshots\Tests\Commands;
 
-use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\Tests\Fixtures\{CommandTests, PrivateAccess, WPCLIMocking};
-use TenUp\WPSnapshots\WPCLI\WPCLICommand;
-use TenUp\WPSnapshots\WPCLICommands\Push;
+use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Tests\Fixtures\{CommandTests, PrivateAccess, WPCLIMocking};
+use TenUp\Snapshots\WPCLI\WPCLICommand;
+use TenUp\Snapshots\WPCLICommands\Push;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class TestPush
  *
- * @package TenUp\WPSnapshots\Tests\Commands
+ * @package TenUp\Snapshots\Tests\Commands
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\WPCLICommands\Push
+ * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\Push
  */
 class TestPush extends TestCase {
 

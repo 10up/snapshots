@@ -2,27 +2,27 @@
 /**
  * Abstract WPCLICommand class.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\WPCLI;
+namespace TenUp\Snapshots\WPCLI;
 
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\FileSystem;
-use TenUp\WPSnapshots\Infrastructure\{Module, Conditional};
-use TenUp\WPSnapshots\Log\{Logging, WPCLILogger};
-use TenUp\WPSnapshots\Snapshots\{DBConnectorInterface, SnapshotMetaFromFileSystem, SnapshotMetaInterface, StorageConnectorInterface};
-use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigInterface;
-use TenUp\WPSnapshots\WPSnapshotsDirectory;
-use TenUp\WPSnapshots\WordPress\Database;
-use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\FileSystem;
+use TenUp\Snapshots\Infrastructure\{Module, Conditional};
+use TenUp\Snapshots\Log\{Logging, WPCLILogger};
+use TenUp\Snapshots\Snapshots\{DBConnectorInterface, SnapshotMetaFromFileSystem, SnapshotMetaInterface, StorageConnectorInterface};
+use TenUp\Snapshots\WPSnapshotsConfig\WPSnapshotsConfigInterface;
+use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\WordPress\Database;
+use TenUp\Snapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
 
-use function TenUp\WPSnapshots\Utils\wp_cli;
+use function TenUp\Snapshots\Utils\wp_cli;
 
 /**
  * Abstract class WPCLICommand
  *
- * @package TenUp\WPSnapshots\WPCLI
+ * @package TenUp\Snapshots\WPCLI
  */
 abstract class WPCLICommand implements Conditional, Module {
 
@@ -146,7 +146,7 @@ abstract class WPCLICommand implements Conditional, Module {
 	 * Registers the module.
 	 */
 	public function register() {
-		wp_cli()::add_command( 'wpsnapshots ' . $this->get_command(), [ $this, 'execute' ], $this->get_command_parameters() );
+		wp_cli()::add_command( 'snapshots ' . $this->get_command(), [ $this, 'execute' ], $this->get_command_parameters() );
 	}
 
 	/**

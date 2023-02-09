@@ -2,17 +2,17 @@
 /**
  * WP_CLI-based logger.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Log;
+namespace TenUp\Snapshots\Log;
 
-use function TenUp\WPSnapshots\Utils\wp_cli;
+use function TenUp\Snapshots\Utils\wp_cli;
 
 /**
  * WP_CLI-based logger.
  *
- * @package TenUp\WPSnapshots\Log
+ * @package TenUp\Snapshots\Log
  */
 class WPCLILogger implements LoggerInterface {
 
