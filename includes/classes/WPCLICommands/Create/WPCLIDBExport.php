@@ -2,23 +2,23 @@
 /**
  * WPCLIDBExport class
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\WPCLICommands\Create;
+namespace TenUp\Snapshots\WPCLICommands\Create;
 
-use TenUp\WPSnapshots\Log\{LoggerInterface, Logging};
-use TenUp\WPSnapshots\WPSnapshotsDirectory;
-use TenUp\WPSnapshots\WordPress\Database;
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\Snapshots\{DBExportInterface};
+use TenUp\Snapshots\Log\{LoggerInterface, Logging};
+use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\WordPress\Database;
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Snapshots\{DBExportInterface};
 
-use function TenUp\WPSnapshots\Utils\wp_cli;
+use function TenUp\Snapshots\Utils\wp_cli;
 
 /**
  * Class WPCLIDBExport
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 class WPCLIDBExport implements DBExportInterface {
 

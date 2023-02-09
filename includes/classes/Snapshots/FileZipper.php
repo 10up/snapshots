@@ -2,26 +2,26 @@
 /**
  * FileZipper class
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Snapshots;
+namespace TenUp\Snapshots\Snapshots;
 
 use ArrayIterator;
 use Iterator;
 use Phar;
 use PharData;
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\FileSystem;
-use TenUp\WPSnapshots\Infrastructure\SharedService;
-use TenUp\WPSnapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\FileSystem;
+use TenUp\Snapshots\Infrastructure\SharedService;
+use TenUp\Snapshots\WPSnapshotsDirectory;
 
-use function TenUp\WPSnapshots\Utils\wpsnapshots_wp_content_dir;
+use function TenUp\Snapshots\Utils\tenup_snapshots_wp_content_dir;
 
 /**
  * Class FileZipper
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 class FileZipper implements SharedService {
 
@@ -97,19 +97,19 @@ class FileZipper implements SharedService {
 			$excludes[] = 'uploads';
 		}
 
-		$excludes[] = trailingslashit( str_replace( wpsnapshots_wp_content_dir(), '', WPSNAPSHOTS_DIR ) );
+		$excludes[] = trailingslashit( str_replace( tenup_snapshots_wp_content_dir(), '', TENUP_SNAPSHOTS_DIR ) );
 
 		$excludes = array_map(
 			function( $exclude ) {
-				$full_exclude = trailingslashit( wpsnapshots_wp_content_dir() ) . $exclude;
+				$full_exclude = trailingslashit( tenup_snapshots_wp_content_dir() ) . $exclude;
 				// Remove double slashes.
 				return preg_replace( '#/+#', '/', $full_exclude );
 			},
 			$excludes
 		);
 
-		$initial_files = $this->file_system->get_wp_filesystem()->dirlist( wpsnapshots_wp_content_dir() );
-		$file_list     = $this->build_file_list_recursively( $initial_files, wpsnapshots_wp_content_dir(), $excludes );
+		$initial_files = $this->file_system->get_wp_filesystem()->dirlist( tenup_snapshots_wp_content_dir() );
+		$file_list     = $this->build_file_list_recursively( $initial_files, tenup_snapshots_wp_content_dir(), $excludes );
 
 		return new ArrayIterator( $file_list );
 	}
@@ -126,7 +126,7 @@ class FileZipper implements SharedService {
 	private function build_file_list_recursively( array $files, string $base_dir, array $excludes ) : array {
 		$file_list = [];
 
-		$wp_content_dir = wpsnapshots_wp_content_dir();
+		$wp_content_dir = tenup_snapshots_wp_content_dir();
 
 		foreach ( $files as $file ) {
 			$full_path = trailingslashit( $base_dir ) . $file['name'];
@@ -136,7 +136,7 @@ class FileZipper implements SharedService {
 			}
 
 			foreach ( $excludes as $exclude ) {
-				$path_without_wp_content = str_replace( wpsnapshots_wp_content_dir(), '', $full_path );
+				$path_without_wp_content = str_replace( tenup_snapshots_wp_content_dir(), '', $full_path );
 
 				if ( 0 === strpos( $path_without_wp_content, $exclude ) ) {
 					continue 2;
@@ -148,6 +148,11 @@ class FileZipper implements SharedService {
 			}
 
 			if ( 'f' === $file['type'] ) {
+				// If file length is too long, skip it, or else the whole process will fail.
+				if ( strlen( str_replace( $wp_content_dir, '', $full_path ) ) > 100 ) {
+					continue;
+				}
+
 				$file_list[ str_replace( $wp_content_dir, '', $full_path ) ] = $full_path;
 			} elseif ( 'd' === $file['type'] ) {
 				$dir_files = $this->file_system->get_wp_filesystem()->dirlist( $full_path );

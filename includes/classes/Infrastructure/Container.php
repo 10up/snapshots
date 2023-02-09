@@ -2,16 +2,16 @@
 /**
  * Auto-initialize all services in the plugin.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Infrastructure;
+namespace TenUp\Snapshots\Infrastructure;
 
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
 
 /**
  * Container class.

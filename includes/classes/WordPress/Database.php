@@ -2,18 +2,18 @@
 /**
  * WordPress database helpers.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\WordPress;
+namespace TenUp\Snapshots\WordPress;
 
-use TenUp\WPSnapshots\Infrastructure\SharedService;
+use TenUp\Snapshots\Infrastructure\SharedService;
 use wpdb;
 
 /**
  * Database class.
  *
- * @package TenUp\WPSnapshots\WordPress
+ * @package TenUp\Snapshots\WordPress
  */
 class Database implements SharedService {
 

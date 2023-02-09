@@ -2,36 +2,36 @@
 /**
  * Tests for the abstract Container class.
  * 
- * @package Tenup\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\Infrastructure;
+namespace TenUp\Snapshots\Tests\Infrastructure;
 
-use TenUp\WPSnapshots\FileSystem;
-use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
-use TenUp\WPSnapshots\Infrastructure\Container;
-use TenUp\WPSnapshots\Log\WPCLILogger;
-use TenUp\WPSnapshots\WPSnapshotsDirectory;
-use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\Snapshots\DynamoDBConnector;
-use TenUp\WPSnapshots\Snapshots\FileZipper;
-use TenUp\WPSnapshots\Snapshots\S3StorageConnector;
-use TenUp\WPSnapshots\Snapshots\SnapshotMetaFromFileSystem;
-use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
-use TenUp\WPSnapshots\Tests\Fixtures\WPCLIMocking;
-use TenUp\WPSnapshots\WordPress\Database;
-use TenUp\WPSnapshots\WPCLI\Prompt;
-use TenUp\WPSnapshots\WPCLICommands\Create\{Scrubber, Trimmer};
-use TenUp\WPSnapshots\WPCLICommands\Create\WPCLIDBExport;
-use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacerFactory;
+use TenUp\Snapshots\FileSystem;
+use TenUp\Snapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
+use TenUp\Snapshots\Infrastructure\Container;
+use TenUp\Snapshots\Log\WPCLILogger;
+use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots\DynamoDBConnector;
+use TenUp\Snapshots\Snapshots\FileZipper;
+use TenUp\Snapshots\Snapshots\S3StorageConnector;
+use TenUp\Snapshots\Snapshots\SnapshotMetaFromFileSystem;
+use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
+use TenUp\Snapshots\Tests\Fixtures\WPCLIMocking;
+use TenUp\Snapshots\WordPress\Database;
+use TenUp\Snapshots\WPCLI\Prompt;
+use TenUp\Snapshots\WPCLICommands\Create\{Scrubber, Trimmer};
+use TenUp\Snapshots\WPCLICommands\Create\WPCLIDBExport;
+use TenUp\Snapshots\WPCLICommands\Pull\URLReplacerFactory;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class ContainerTest
  *
- * @package TenUp\WPSnapshots\Tests\Infrastructure
+ * @package TenUp\Snapshots\Tests\Infrastructure
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\Infrastructure\Container
+ * @coversDefaultClass \TenUp\Snapshots\Infrastructure\Container
  */
 class TestContainer extends TestCase {
 

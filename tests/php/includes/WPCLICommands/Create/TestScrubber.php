@@ -2,33 +2,33 @@
 /**
  * Tests for Scrubber.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\WPCLICommands\Create;
+namespace TenUp\Snapshots\Tests\WPCLICommands\Create;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsInputValidationException;
-use TenUp\WPSnapshots\Log\WPCLILogger;
-use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\WPSnapshotsDirectory;
-use TenUp\WPSnapshots\Tests\Fixtures\DirectoryFiltering;
-use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
-use TenUp\WPSnapshots\Tests\Fixtures\WPCLIMocking;
-use TenUp\WPSnapshots\WordPress\Database;
-use TenUp\WPSnapshots\WPCLI\Prompt;
-use TenUp\WPSnapshots\WPCLICommands\Create\Scrubber;
-use TenUp\WPSnapshots\WPCLICommands\Create\WPCLIDBExport;
-use TenUp\WPSnapshots\WPCLICommands\Pull\MultisiteURLReplacer;
-use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacer;
+use TenUp\Snapshots\Exceptions\WPSnapshotsInputValidationException;
+use TenUp\Snapshots\Log\WPCLILogger;
+use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\Tests\Fixtures\DirectoryFiltering;
+use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
+use TenUp\Snapshots\Tests\Fixtures\WPCLIMocking;
+use TenUp\Snapshots\WordPress\Database;
+use TenUp\Snapshots\WPCLI\Prompt;
+use TenUp\Snapshots\WPCLICommands\Create\Scrubber;
+use TenUp\Snapshots\WPCLICommands\Create\WPCLIDBExport;
+use TenUp\Snapshots\WPCLICommands\Pull\MultisiteURLReplacer;
+use TenUp\Snapshots\WPCLICommands\Pull\URLReplacer;
 use Yoast\WPTestUtils\WPIntegration\TestCase;
 
 /**
  * Class Scrubber
  * 
- * @package TenUp\WPSnapshots\Tests\WPCLICommands\Create
+ * @package TenUp\Snapshots\Tests\WPCLICommands\Create
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\WPCLICommands\Create\Scrubber
+ * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\Create\Scrubber
  */
 class TestScrubber extends TestCase {
 
@@ -83,8 +83,8 @@ class TestScrubber extends TestCase {
 
 		$id = 'test-id';
 
-		$test_user_meta_table_path = '/wpsnapshots-tmp/test-id/data-usermeta.sql';
-		$test_user_table_path = '/wpsnapshots-tmp/test-id/data-users.sql';
+		$test_user_meta_table_path = '/tenup-snapshots-tmp/test-id/data-usermeta.sql';
+		$test_user_table_path = '/tenup-snapshots-tmp/test-id/data-users.sql';
 
 		// Create file.
 		$this->create_file( $test_user_meta_table_path, 'test' );
@@ -97,7 +97,7 @@ class TestScrubber extends TestCase {
 			2,
 			[
 				[
-					'db export /wpsnapshots-tmp/test-id/data-users.sql --tables=wp_users_temp',
+					'db export /tenup-snapshots-tmp/test-id/data-users.sql --tables=wp_users_temp',
 					[
 						'launch' => true,
 						'return' => 'all',
@@ -105,7 +105,7 @@ class TestScrubber extends TestCase {
 					],
 				],
 				[
-					'db export /wpsnapshots-tmp/test-id/data-usermeta.sql --tables=wp_usermeta_temp',
+					'db export /tenup-snapshots-tmp/test-id/data-usermeta.sql --tables=wp_usermeta_temp',
 					[
 						'launch' => true,
 						'return' => 'all',

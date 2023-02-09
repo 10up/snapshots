@@ -2,25 +2,25 @@
 /**
  * Tests for the S3StorageConnector class.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\Snapshots;
+namespace TenUp\Snapshots\Tests\Snapshots;
 
 use Aws\S3\S3Client;
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\Snapshots\S3StorageConnector;
-use TenUp\WPSnapshots\Tests\Fixtures\DirectoryFiltering;
-use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots\S3StorageConnector;
+use TenUp\Snapshots\Tests\Fixtures\DirectoryFiltering;
+use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class TestS3StorageConnector
  *
- * @package TenUp\WPSnapshots\Tests\Snapshots
+ * @package TenUp\Snapshots\Tests\Snapshots
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\Snapshots\S3StorageConnector
+ * @coversDefaultClass \TenUp\Snapshots\Snapshots\S3StorageConnector
  */
 class TestS3StorageConnector extends TestCase {
 
@@ -74,7 +74,7 @@ class TestS3StorageConnector extends TestCase {
 			->with( [
 				'Bucket' => 'wpsnapshots-test-repo',
 				'Key'    => 'test-project/test-id/data.sql.gz',
-				'SaveAs' => '/wpsnapshots-tmp/test-id/data.sql.gz',
+				'SaveAs' => '/tenup-snapshots-tmp/test-id/data.sql.gz',
 			] );
 
 		$this->set_private_property( $this->connector, 'clients', [ 'test-region' => $client ] );
@@ -103,7 +103,7 @@ class TestS3StorageConnector extends TestCase {
 			->with( [
 				'Bucket' => 'wpsnapshots-test-repo',
 				'Key'    => 'test-project/test-id/files.tar.gz',
-				'SaveAs' => '/wpsnapshots-tmp/test-id/files.tar.gz',
+				'SaveAs' => '/tenup-snapshots-tmp/test-id/files.tar.gz',
 			] );
 
 		$this->set_private_property( $this->connector, 'clients', [ 'test-region' => $client ] );
@@ -134,14 +134,14 @@ class TestS3StorageConnector extends TestCase {
 					[
 						'Bucket' => 'wpsnapshots-test-repo',
 						'Key'    => 'test-project/test-id/data.sql.gz',
-						'SaveAs' => '/wpsnapshots-tmp/test-id/data.sql.gz',
+						'SaveAs' => '/tenup-snapshots-tmp/test-id/data.sql.gz',
 					]
 				],
 				[
 					[
 						'Bucket' => 'wpsnapshots-test-repo',
 						'Key'    => 'test-project/test-id/files.tar.gz',
-						'SaveAs' => '/wpsnapshots-tmp/test-id/files.tar.gz',
+						'SaveAs' => '/tenup-snapshots-tmp/test-id/files.tar.gz',
 					]
 				]
 			);

@@ -2,21 +2,21 @@
 /**
  * Tests for the Logging trait.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
  
-namespace TenUp\WPSnapshots\Tests\Log;
+namespace TenUp\Snapshots\Tests\Log;
 
-use TenUp\WPSnapshots\Log\LoggerInterface;
-use TenUp\WPSnapshots\Log\Logging;
+use TenUp\Snapshots\Log\LoggerInterface;
+use TenUp\Snapshots\Log\Logging;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class LoggingTest
  * 
- * @package TenUp\WPSnapshots\Tests\Log
+ * @package TenUp\Snapshots\Tests\Log
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\Log\Logging
+ * @coversDefaultClass \TenUp\Snapshots\Log\Logging
  */
 class TestLogging extends TestCase {
 	use Logging;

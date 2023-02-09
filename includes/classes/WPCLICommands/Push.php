@@ -2,15 +2,15 @@
 /**
  * Push command class.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\WPCLICommands;
+namespace TenUp\Snapshots\WPCLICommands;
 
 /**
  * Push command
  *
- * @package TenUp\WPSnapshots\WPCLI
+ * @package TenUp\Snapshots\WPCLI
  */
 final class Push extends Create {
 

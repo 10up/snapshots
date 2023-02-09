@@ -2,34 +2,34 @@
 /**
  * Tests covering the Pull command class.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\Commands;
+namespace TenUp\Snapshots\Tests\Commands;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\FileSystem;
-use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\Snapshots\SnapshotMeta;
-use TenUp\WPSnapshots\WPSnapshotsDirectory;
-use TenUp\WPSnapshots\Tests\Fixtures\{CommandTests, DirectoryFiltering, PrivateAccess, WPCLIMocking};
-use TenUp\WPSnapshots\WordPress\Database;
-use TenUp\WPSnapshots\WPCLI\WPCLICommand;
-use TenUp\WPSnapshots\WPCLICommands\Pull;
-use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacer;
-use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacerFactory;
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\FileSystem;
+use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots\SnapshotMeta;
+use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\Tests\Fixtures\{CommandTests, DirectoryFiltering, PrivateAccess, WPCLIMocking};
+use TenUp\Snapshots\WordPress\Database;
+use TenUp\Snapshots\WPCLI\WPCLICommand;
+use TenUp\Snapshots\WPCLICommands\Pull;
+use TenUp\Snapshots\WPCLICommands\Pull\URLReplacer;
+use TenUp\Snapshots\WPCLICommands\Pull\URLReplacerFactory;
 use WP_Filesystem_Base;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
-use function TenUp\WPSnapshots\Utils\wpsnapshots_wp_content_dir;
+use function TenUp\Snapshots\Utils\tenup_snapshots_wp_content_dir;
 
 /**
  * Class TestPull
  *
- * @package TenUp\WPSnapshots\Tests\Commands
+ * @package TenUp\Snapshots\Tests\Commands
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\WPCLICommands\Pull
+ * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\Pull
  */
 class TestPull extends TestCase {
 
@@ -274,7 +274,7 @@ class TestPull extends TestCase {
 			1,
 			[
 				[
-					'wpsnapshots download test-id --quiet --repository=test-repository --region=test-region --include_db --include_files', [ 'launch' => true, 'exit_error' => false, 'return' => 'all' ],
+					'snapshots download test-id --quiet --repository=test-repository --region=test-region --include_db --include_files', [ 'launch' => true, 'exit_error' => false, 'return' => 'all' ],
 				],
 			]
 		);
@@ -414,7 +414,7 @@ class TestPull extends TestCase {
 
 		$snapshots_filesystem_mock->expects( $this->once() )
 			->method( 'unzip_snapshot_files' )
-			->with( 'test-id', wpsnapshots_wp_content_dir() );
+			->with( 'test-id', tenup_snapshots_wp_content_dir() );
 
 		$this->set_private_property( $this->command, 'snapshots_filesystem', $snapshots_filesystem_mock );
 
@@ -466,7 +466,7 @@ class TestPull extends TestCase {
 			1,
 			[
 				[
-					'plugin activate snapshots-command --skip-themes --skip-plugins --skip-packages', [ 'launch' => true, 'return' => 'all', 'exit_error' => false ]
+					'plugin activate tenup-snapshots --skip-themes --skip-plugins --skip-packages', [ 'launch' => true, 'return' => 'all', 'exit_error' => false ]
 				],
 			]
 		);
@@ -556,13 +556,13 @@ class TestPull extends TestCase {
 		$this->call_private_method( $this->command, 'replace_urls' );
 	}
 
-	/** @covers ::create_wpsnapshots_user */
+	/** @covers ::create_tenup_snapshots_user */
 	public function test_create_snapshots_user() {
 
 		// Assert user does not exist.
 		$this->assertFalse( get_user_by( 'login', 'wpsnapshots' ) );
 
-		$this->call_private_method( $this->command, 'create_wpsnapshots_user', [ false ] );
+		$this->call_private_method( $this->command, 'create_tenup_snapshots_user', [ false ] );
 
 		// Assert user exists.
 		$this->assertNotFalse( get_user_by( 'login', 'wpsnapshots' ) );

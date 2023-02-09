@@ -2,26 +2,26 @@
 /**
  * Tests covering the CreateRepository command class.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\Commands;
+namespace TenUp\Snapshots\Tests\Commands;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\Snapshots\DynamoDBConnector;
-use TenUp\WPSnapshots\Snapshots\S3StorageConnector;
-use TenUp\WPSnapshots\Tests\Fixtures\{CommandTests, PrivateAccess, WPCLIMocking};
-use TenUp\WPSnapshots\WPCLI\WPCLICommand;
-use TenUp\WPSnapshots\WPCLICommands\CreateRepository;
+use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots\DynamoDBConnector;
+use TenUp\Snapshots\Snapshots\S3StorageConnector;
+use TenUp\Snapshots\Tests\Fixtures\{CommandTests, PrivateAccess, WPCLIMocking};
+use TenUp\Snapshots\WPCLI\WPCLICommand;
+use TenUp\Snapshots\WPCLICommands\CreateRepository;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class TestCreateRepository
  *
- * @package TenUp\WPSnapshots\Tests\Commands
+ * @package TenUp\Snapshots\Tests\Commands
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\WPCLICommands\CreateRepository
+ * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\CreateRepository
  */
 class TestCreateRepository extends TestCase {
 

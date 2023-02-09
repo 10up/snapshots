@@ -2,19 +2,19 @@
 /**
  * Class handling Storage interactions.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Snapshots;
+namespace TenUp\Snapshots\Snapshots;
 
 use Aws\S3\S3Client;
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\WPSnapshotsDirectory;
 
 /**
  * Class S3StorageConnector
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 class S3StorageConnector implements StorageConnectorInterface {
 
@@ -214,6 +214,8 @@ class S3StorageConnector implements StorageConnectorInterface {
 				[
 					'version' => 'latest',
 					'region'  => $region,
+					'retries' => 3,
+					'scheme'  => get_site_url( get_current_blog_id() ) === 'https://' ? 'https' : 'http',
 				]
 			);
 		}

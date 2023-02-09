@@ -2,13 +2,13 @@
 /**
  * Utility functions
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Utils;
+namespace TenUp\Snapshots\Utils;
 
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\WPSnapshotsDirectory;
 use WP_CLI;
 
 /**
@@ -27,7 +27,7 @@ function wp_cli() : object {
 	 * @param object $wp_cli Class that wraps WP_CLI and WP_CLI\Utils functions as static methods.
 	 */
 	return apply_filters(
-		'wpsnapshots_wpcli',
+		'tenup_snapshots_wpcli',
 		new class() {
 
 			/**
@@ -64,7 +64,7 @@ function wp_cli() : object {
  *
  * @throws WPSnapshotsException If WP_CONTENT_DIR is not defined.
  */
-function wpsnapshots_wp_content_dir() : string {
+function tenup_snapshots_wp_content_dir() : string {
 	if ( ! defined( 'WP_CONTENT_DIR' ) ) {
 		throw new WPSnapshotsException( 'WP_CONTENT_DIR is not defined.' );
 	}
@@ -74,6 +74,6 @@ function wpsnapshots_wp_content_dir() : string {
 	 *
 	 * @param string $wp_content_dir Path to the wp-content directory.
 	 */
-	return apply_filters( 'wpsnapshots_wp_content_dir', WP_CONTENT_DIR );
+	return apply_filters( 'tenup_snapshots_wp_content_dir', WP_CONTENT_DIR );
 }
 

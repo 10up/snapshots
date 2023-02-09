@@ -2,25 +2,25 @@
 /**
  * Tests for the FileSystem class.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests;
+namespace TenUp\Snapshots\Tests;
 
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\FileSystem;
-use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\Tests\Fixtures\DirectoryFiltering;
-use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\FileSystem;
+use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Tests\Fixtures\DirectoryFiltering;
+use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 use ZipArchive;
 
 /**
  * Class TestFileSystem
  *
- * @package TenUp\WPSnapshots\Tests
+ * @package TenUp\Snapshots\Tests
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\FileSystem
+ * @coversDefaultClass \TenUp\Snapshots\FileSystem
  */
 class TestFileSystem extends TestCase {
 	

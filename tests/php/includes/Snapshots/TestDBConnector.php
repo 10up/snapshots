@@ -2,23 +2,23 @@
 /**
  * Tests for the DynamoDBConnector class.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\Snapshots;
+namespace TenUp\Snapshots\Tests\Snapshots;
 
 use Aws\DynamoDb\DynamoDbClient;
 use PHPUnit\Framework\MockObject\MockObject;
-use TenUp\WPSnapshots\Snapshots\DynamoDBConnector;
-use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
+use TenUp\Snapshots\Snapshots\DynamoDBConnector;
+use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class TestDBConnector
  *
- * @package TenUp\WPSnapshots\Tests\Snapshots
+ * @package TenUp\Snapshots\Tests\Snapshots
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\Snapshots\DynamoDBConnector
+ * @coversDefaultClass \TenUp\Snapshots\Snapshots\DynamoDBConnector
  */
 class TestDBConnector extends TestCase {
 

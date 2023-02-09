@@ -2,18 +2,18 @@
 /**
  * Handle getting and setting of configuration values.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\WPSnapshotsConfig;
+namespace TenUp\Snapshots\WPSnapshotsConfig;
 
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\WPSnapshotsDirectory;
 
 /**
  * Handle getting and setting of configuration values.
  *
- * @package TenUp\WPSnapshots\WPSnapshotsConfig
+ * @package TenUp\Snapshots\WPSnapshotsConfig
  */
 class WPSnapshotsConfigFromFileSystem implements WPSnapshotsConfigInterface {
 

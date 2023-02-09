@@ -2,15 +2,15 @@
 /**
  * WPCLI Mock class
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\Fixtures;
+namespace TenUp\Snapshots\Tests\Fixtures;
 
 /**
  * Class WPCLIMock
  *
- * @package TenUp\WPSnapshots\Tests\Fixtures
+ * @package TenUp\Snapshots\Tests\Fixtures
  */
 class WPCLIMock {
 	/**

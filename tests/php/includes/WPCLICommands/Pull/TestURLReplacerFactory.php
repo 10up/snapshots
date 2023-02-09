@@ -2,29 +2,29 @@
 /**
  * Tests for URLReplacerFactory.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\WPCLICommands\Pull;
+namespace TenUp\Snapshots\Tests\WPCLICommands\Pull;
 
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsInputValidationException;
-use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\WPSnapshotsDirectory;
-use TenUp\WPSnapshots\WordPress\Database;
-use TenUp\WPSnapshots\WPCLI\Prompt;
-use TenUp\WPSnapshots\WPCLICommands\Pull\MultisiteURLReplacer;
-use TenUp\WPSnapshots\WPCLICommands\Pull\SingleSiteURLReplacer;
-use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacerFactory;
-use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacer;
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\WPSnapshotsInputValidationException;
+use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\WordPress\Database;
+use TenUp\Snapshots\WPCLI\Prompt;
+use TenUp\Snapshots\WPCLICommands\Pull\MultisiteURLReplacer;
+use TenUp\Snapshots\WPCLICommands\Pull\SingleSiteURLReplacer;
+use TenUp\Snapshots\WPCLICommands\Pull\URLReplacerFactory;
+use TenUp\Snapshots\WPCLICommands\Pull\URLReplacer;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class TestURLReplacerFactory
  * 
- * @package TenUp\WPSnapshots\Tests\WPCLICommands\Pull
+ * @package TenUp\Snapshots\Tests\WPCLICommands\Pull
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacerFactory
+ * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\Pull\URLReplacerFactory
  */
 class TestURLReplacerFactory extends TestCase {
 	/**

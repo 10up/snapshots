@@ -2,25 +2,25 @@
 /**
  * Plugin container.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots;
+namespace TenUp\Snapshots;
 
-use TenUp\WPSnapshots\Infrastructure\Container;
-use TenUp\WPSnapshots\Log\WPCLILogger;
-use TenUp\WPSnapshots\Snapshots\{DynamoDBConnector, FileZipper, S3StorageConnector, SnapshotMetaFromFileSystem};
-use TenUp\WPSnapshots\WordPress\Database;
-use TenUp\WPSnapshots\WPCLI\Prompt;
-use TenUp\WPSnapshots\WPCLICommands\{Configure, Create, CreateRepository, Delete, Download, Pull, Push, Search};
-use TenUp\WPSnapshots\WPCLICommands\Create\{Scrubber, WPCLIDBExport, Trimmer};
-use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacerFactory;
-use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
+use TenUp\Snapshots\Infrastructure\Container;
+use TenUp\Snapshots\Log\WPCLILogger;
+use TenUp\Snapshots\Snapshots\{DynamoDBConnector, FileZipper, S3StorageConnector, SnapshotMetaFromFileSystem};
+use TenUp\Snapshots\WordPress\Database;
+use TenUp\Snapshots\WPCLI\Prompt;
+use TenUp\Snapshots\WPCLICommands\{Configure, Create, CreateRepository, Delete, Download, Pull, Push, Search};
+use TenUp\Snapshots\WPCLICommands\Create\{Scrubber, WPCLIDBExport, Trimmer};
+use TenUp\Snapshots\WPCLICommands\Pull\URLReplacerFactory;
+use TenUp\Snapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
 
 /**
  * Plugin container.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 final class Plugin extends Container {
 
@@ -48,7 +48,7 @@ final class Plugin extends Container {
 		 *
 		 * @param array $components Client components.
 		 */
-		return (array) apply_filters( 'wpsnapshots_components', $components );
+		return (array) apply_filters( 'tenup_snapshots_components', $components );
 	}
 
 	/**
@@ -81,6 +81,6 @@ final class Plugin extends Container {
 		 *
 		 * @param array $services Service modules.
 		 */
-		return (array) apply_filters( 'wpsnapshots_services', $services );
+		return (array) apply_filters( 'tenup_snapshots_services', $services );
 	}
 }

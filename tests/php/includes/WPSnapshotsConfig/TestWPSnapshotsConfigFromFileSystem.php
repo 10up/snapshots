@@ -2,23 +2,23 @@
 /**
  * Tests for the WPSnapshotsConfigFromFileSystem class.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\Config;
+namespace TenUp\Snapshots\Tests\Config;
 
-use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\Tests\Fixtures\DirectoryFiltering;
-use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
-use TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigInterface;
+use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Tests\Fixtures\DirectoryFiltering;
+use TenUp\Snapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
+use TenUp\Snapshots\WPSnapshotsConfig\WPSnapshotsConfigInterface;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class TestConfigFromFileSystem
  *
- * @package TenUp\WPSnapshots\Tests\Config
+ * @package TenUp\Snapshots\Tests\Config
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem
+ * @coversDefaultClass \TenUp\Snapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem
  */
 class TestConfigFromFileSystem extends TestCase {
 

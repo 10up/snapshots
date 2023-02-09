@@ -2,15 +2,15 @@
 /**
  * Logging trait.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Log;
+namespace TenUp\Snapshots\Log;
 
 /**
  * Logging trait.
  *
- * @package TenUp\WPSnapshots\Log
+ * @package TenUp\Snapshots\Log
  */
 trait Logging {
 

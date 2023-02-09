@@ -2,30 +2,30 @@
 /**
  * Tests for MultisiteURLReplacer.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\WPCLICommands\Pull;
+namespace TenUp\Snapshots\Tests\WPCLICommands\Pull;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsInputValidationException;
-use TenUp\WPSnapshots\Log\WPCLILogger;
-use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\WPSnapshotsDirectory;
-use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
-use TenUp\WPSnapshots\Tests\Fixtures\WPCLIMocking;
-use TenUp\WPSnapshots\WordPress\Database;
-use TenUp\WPSnapshots\WPCLI\Prompt;
-use TenUp\WPSnapshots\WPCLICommands\Pull\MultisiteURLReplacer;
-use TenUp\WPSnapshots\WPCLICommands\Pull\URLReplacer;
+use TenUp\Snapshots\Exceptions\WPSnapshotsInputValidationException;
+use TenUp\Snapshots\Log\WPCLILogger;
+use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
+use TenUp\Snapshots\Tests\Fixtures\WPCLIMocking;
+use TenUp\Snapshots\WordPress\Database;
+use TenUp\Snapshots\WPCLI\Prompt;
+use TenUp\Snapshots\WPCLICommands\Pull\MultisiteURLReplacer;
+use TenUp\Snapshots\WPCLICommands\Pull\URLReplacer;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class TestMultisiteURLReplacer
  * 
- * @package TenUp\WPSnapshots\Tests\WPCLICommands\Pull
+ * @package TenUp\Snapshots\Tests\WPCLICommands\Pull
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\WPCLICommands\Pull\MultisiteURLReplacer
+ * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\Pull\MultisiteURLReplacer
  */
 class TestMultisiteURLReplacer extends TestCase {
 

@@ -2,17 +2,17 @@
 /**
  * Interface for classes that persist configuration values.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\WPSnapshotsConfig;
+namespace TenUp\Snapshots\WPSnapshotsConfig;
 
-use TenUp\WPSnapshots\Infrastructure\SharedService;
+use TenUp\Snapshots\Infrastructure\SharedService;
 
 /**
  * Interface for classes that persist configuration values.
  *
- * @package TenUp\WPSnapshots\WPSnapshotsConfig
+ * @package TenUp\Snapshots\WPSnapshotsConfig
  */
 interface WPSnapshotsConfigInterface extends SharedService {
 

@@ -2,14 +2,14 @@
 /**
  * Service interface
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Infrastructure;
+namespace TenUp\Snapshots\Infrastructure;
 
 /**
  * Service interface
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 interface Service {}

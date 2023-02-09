@@ -2,27 +2,27 @@
 /**
  * Tests for WPCLIDBExport.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\WPCLICommands\Create;
+namespace TenUp\Snapshots\Tests\WPCLICommands\Create;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\Tests\Fixtures\DirectoryFiltering;
-use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
-use TenUp\WPSnapshots\Tests\Fixtures\WPCLIMocking;
-use TenUp\WPSnapshots\WPCLICommands\Create\Scrubber;
-use TenUp\WPSnapshots\WPCLICommands\Create\Trimmer;
-use TenUp\WPSnapshots\WPCLICommands\Create\WPCLIDBExport;
+use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Tests\Fixtures\DirectoryFiltering;
+use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
+use TenUp\Snapshots\Tests\Fixtures\WPCLIMocking;
+use TenUp\Snapshots\WPCLICommands\Create\Scrubber;
+use TenUp\Snapshots\WPCLICommands\Create\Trimmer;
+use TenUp\Snapshots\WPCLICommands\Create\WPCLIDBExport;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class TestWPCLIDBExport
  * 
- * @package TenUp\WPSnapshots\Tests\WPCLICommands\Create
+ * @package TenUp\Snapshots\Tests\WPCLICommands\Create
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\WPCLICommands\Create\WPCLIDBExport
+ * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\Create\WPCLIDBExport
  */
 class TestWPCLIDBExport extends TestCase {
 
@@ -100,7 +100,7 @@ class TestWPCLIDBExport extends TestCase {
 			->with( $test_id );
 
 		// Create test data.sql file.
-		$file_path = '/wpsnapshots-tmp/test-id/data.sql';
+		$file_path = '/tenup-snapshots-tmp/test-id/data.sql';
 		$this->create_file( $file_path );
 
 		$this->wpcli_dumper->dump( $test_id, $test_args );
@@ -111,7 +111,7 @@ class TestWPCLIDBExport extends TestCase {
 			1,
 			[
 				[
-					'db export /wpsnapshots-tmp/test-id/data.sql --tables=wp_commentmeta,wp_comments,wp_links,wp_options,wp_postmeta,wp_posts,wp_term_relationships,wp_term_taxonomy,wp_termmeta,wp_terms,',
+					'db export /tenup-snapshots-tmp/test-id/data.sql --tables=wp_commentmeta,wp_comments,wp_links,wp_options,wp_postmeta,wp_posts,wp_term_relationships,wp_term_taxonomy,wp_termmeta,wp_terms,',
 					[
 						'launch' => true,
 						'return' => 'all',
@@ -125,7 +125,7 @@ class TestWPCLIDBExport extends TestCase {
 		$this->assertFalse( file_exists( $file_path ) );
 
 		// Confirm the gz file was created.
-		$this->assertTrue( file_exists( '/wpsnapshots-tmp/test-id/data.sql.gz' ) );
+		$this->assertTrue( file_exists( '/tenup-snapshots-tmp/test-id/data.sql.gz' ) );
 	}
 
 	/**

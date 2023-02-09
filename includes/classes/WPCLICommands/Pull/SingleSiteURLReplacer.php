@@ -2,15 +2,15 @@
 /**
  * SingleSiteURLReplacer class.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\WPCLICommands\Pull;
+namespace TenUp\Snapshots\WPCLICommands\Pull;
 
 /**
  * SingleSiteURLReplacer
  *
- * @package TenUp\WPSnapshots\WPCLI
+ * @package TenUp\Snapshots\WPCLI
  */
 final class SingleSiteURLReplacer extends URLReplacer {
 

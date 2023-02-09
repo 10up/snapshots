@@ -2,27 +2,27 @@
 /**
  * Tests for the SnapshotMetaFromFileSystem class.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\Snapshots;
+namespace TenUp\Snapshots\Tests\Snapshots;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\Snapshots\DynamoDBConnector;
-use TenUp\WPSnapshots\Snapshots\SnapshotMeta;
-use TenUp\WPSnapshots\Snapshots\SnapshotMetaFromFileSystem;
-use TenUp\WPSnapshots\WPSnapshotsDirectory;
-use TenUp\WPSnapshots\Tests\Fixtures\DirectoryFiltering;
-use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
+use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots\DynamoDBConnector;
+use TenUp\Snapshots\Snapshots\SnapshotMeta;
+use TenUp\Snapshots\Snapshots\SnapshotMetaFromFileSystem;
+use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\Tests\Fixtures\DirectoryFiltering;
+use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class TestSnapshotMetaFromFileSystem
  *
- * @package TenUp\WPSnapshots\Tests\Snapshots
+ * @package TenUp\Snapshots\Tests\Snapshots
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\Snapshots\SnapshotMetaFromFileSystem
+ * @coversDefaultClass \TenUp\Snapshots\Snapshots\SnapshotMetaFromFileSystem
  */
 class TestSnapshotMetaFromFileSystem extends TestCase {
 
@@ -56,7 +56,7 @@ class TestSnapshotMetaFromFileSystem extends TestCase {
 
 	/**
 	 * @covers ::__construct
-	 * @covers \TenUp\WPSnapshots\Snapshots\SnapshotMeta::__construct
+	 * @covers \TenUp\Snapshots\Snapshots\SnapshotMeta::__construct
 	 */
 	public function test_constructor() {
 		$this->assertInstanceOf( SnapshotMetaFromFileSystem::class, $this->meta );

@@ -1,5 +1,5 @@
 {
-  "name": "@10up/wpsnapshots",
+  "name": "@10up/snapshots",
   "version": "0.1.0",
   "description": "",
   "main": "index.js",
@@ -9,19 +9,19 @@
     "env:stop": "wp-env stop",
     "env": "wp-env",
     "shell": "wp-env run",
-    "test:php:coverage": "wp-env run tests-wordpress 'env XDEBUG_MODE=coverage' '/var/www/html/wp-content/plugins/snapshots-command/vendor/bin/phpunit' -c '/var/www/html/wp-content/plugins/snapshots-command/phpunit.xml.dist' --verbose --coverage-html '/var/www/html/wp-content/plugins/snapshots-command/coverage'",
-    "test:php": "wp-env run tests-wordpress /var/www/html/wp-content/plugins/snapshots-command/vendor/bin/phpunit -c /var/www/html/wp-content/plugins/snapshots-command/phpunit.xml.dist --verbose"
+    "test:php:coverage": "wp-env run tests-wordpress 'env XDEBUG_MODE=coverage' '/var/www/html/wp-content/plugins/tenup-snapshots/vendor/bin/phpunit' -c '/var/www/html/wp-content/plugins/tenup-snapshots/phpunit.xml.dist' --verbose --coverage-html '/var/www/html/wp-content/plugins/tenup-snapshots/coverage'",
+    "test:php": "wp-env run tests-wordpress /var/www/html/wp-content/plugins/tenup-snapshots/vendor/bin/phpunit -c /var/www/html/wp-content/plugins/tenup-snapshots/phpunit.xml.dist --verbose"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/10up/snapshots-command.git"
+    "url": "git+https://github.com/10up/tenup-snapshots.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/10up/snapshots-command/issues"
+    "url": "https://github.com/10up/tenup-snapshots/issues"
   },
-  "homepage": "https://github.com/10up/snapshots-command#readme",
+  "homepage": "https://github.com/10up/tenup-snapshots#readme",
   "devDependencies": {
     "@wordpress/env": "^5.10.0"
   }

@@ -2,24 +2,24 @@
 /**
  * Create command class.
  *
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\WPCLICommands;
+namespace TenUp\Snapshots\WPCLICommands;
 
 use Exception;
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\Infrastructure\Service;
-use TenUp\WPSnapshots\Snapshots\DBExportInterface;
-use TenUp\WPSnapshots\Snapshots\FileZipper;
-use TenUp\WPSnapshots\WPCLI\WPCLICommand;
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Infrastructure\Service;
+use TenUp\Snapshots\Snapshots\DBExportInterface;
+use TenUp\Snapshots\Snapshots\FileZipper;
+use TenUp\Snapshots\WPCLI\WPCLICommand;
 
-use function TenUp\WPSnapshots\Utils\wp_cli;
+use function TenUp\Snapshots\Utils\wp_cli;
 
 /**
  * Create command
  *
- * @package TenUp\WPSnapshots\WPCLI
+ * @package TenUp\Snapshots\WPCLI
  */
 class Create extends WPCLICommand {
 

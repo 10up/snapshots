@@ -2,7 +2,7 @@
 
 A project sharing tool for WordPress.
 
-[![Support Level](https://img.shields.io/badge/support-active-green.svg)](#support-level) [![MIT License](https://img.shields.io/github/license/10up/wpsnapshots.svg)](https://github.com/10up/snapshots-command/blob/develop/LICENSE.md)
+[![Support Level](https://img.shields.io/badge/support-active-green.svg)](#support-level) [![MIT License](https://img.shields.io/github/license/10up/wpsnapshots.svg)](https://github.com/10up/tenup-snapshots/blob/develop/LICENSE.md)
 
 ## Table of Contents  
 * [Overview](#overview)
@@ -69,7 +69,7 @@ WP Snapshots relies on AWS to store files and data. As such, you need to connect
 
 #### Command
 
-__wp wpsnapshots configure <repository> [--region=\<region\>] [--user_name=\<user_name\>] [--user_email=\<user_email\>]__
+__wp snapshots configure <repository> [--region=\<region\>] [--user_name=\<user_name\>] [--user_email=\<user_email\>]__
 
 <details>
 <summary>Show Arguments</summary>
@@ -105,7 +105,7 @@ If WP Snapshots has not been set up for your team/company, you'll need to create
 
 #### Command
 
-__wp wpsnapshots create-repository <repository> [--region=\<region\>]__
+__wp snapshots create-repository <repository> [--region=\<region\>]__
 
 
 <details>
@@ -135,7 +135,7 @@ Pushing a snapshot will not replace older snapshots with the same name. Each tim
 
 #### Command
 
-__wp wpsnapshots push [--repository=\<repository\>] [--region=\<region\>] [--exclude=\<exclude\>] [--slug=\<slug\>] [--description=\<description\>] [--wp_version=\<wp_version\>] [--author_name=\<author_name\>]
+__wp snapshots push [--repository=\<repository\>] [--region=\<region\>] [--exclude=\<exclude\>] [--slug=\<slug\>] [--description=\<description\>] [--wp_version=\<wp_version\>] [--author_name=\<author_name\>]
   [--author_email=\<author_email\>] [--exclude_uploads] [--small] [--include_files] [--include_db]__
 
 <details>
@@ -224,7 +224,7 @@ After pulling, you can log in as admin with the user `wpsnapshots`, password `pa
 
 #### Command
 
-__wp wpsnapshots pull <snapshot_id> [--repository=\<repository\>] [--region=\<region\>] [--skip_table_search_replace=\<skip_table_search_replace\>] [--site_mapping=\<site_mapping\>] [--main_domain=\<main_domain\>]
+__wp snapshots pull <snapshot_id> [--repository=\<repository\>] [--region=\<region\>] [--skip_table_search_replace=\<skip_table_search_replace\>] [--site_mapping=\<site_mapping\>] [--main_domain=\<main_domain\>]
   [--confirm] [--confirm_wp_download] [--confirm_config_create] [--confirm_wp_version_change] [--confirm_ms_constant_update] [--overwrite_local_copy] [--include_files] [--include_db]__
 
 <details>
@@ -311,7 +311,7 @@ __wp wpsnapshots pull <snapshot_id> [--repository=\<repository\>] [--region=\<re
 
 This command searches the repository for snapshots. `<search_text>` will be compared against project names and authors. Multiple queries can be used to search snapshots in different projects. Searching for "\*" will return all snapshots.
 
-__wp wpsnapshots search <search_text> [--repository=\<repository\>] [--format=\<format\>] [--region=\<region\>]__
+__wp snapshots search <search_text> [--repository=\<repository\>] [--format=\<format\>] [--region=\<region\>]__
 
 #### Command
 
@@ -341,7 +341,7 @@ __wp wpsnapshots search <search_text> [--repository=\<repository\>] [--format=\<
 
 This command deletes a snapshot from the remote repository. If you have the snapshot cached locally, your cached copy will not be deleted. (Local copies can be deleted manually within the `~/.wpsnapshots` directory.)
 
-__wp wpsnapshots delete <snapshot_id> [--repository=\<repository\>] [--region=\<region\>]__
+__wp snapshots delete <snapshot_id> [--repository=\<repository\>] [--region=\<region\>]__
 
 #### Command
 
@@ -369,7 +369,7 @@ The `create` command performs most of the same operations as `push`, but it does
 
 #### Command
 
-__wp wpsnapshots create [--repository=\<repository\>] [--region=\<region\>] [--exclude=\<exclude\>] [--slug=\<slug\>] [--description=\<description\>] [--wp_version=\<wp_version\>] [--author_name=\<author_name\>]
+__wp snapshots create [--repository=\<repository\>] [--region=\<region\>] [--exclude=\<exclude\>] [--slug=\<slug\>] [--description=\<description\>] [--wp_version=\<wp_version\>] [--author_name=\<author_name\>]
   [--author_email=\<author_email\>] [--exclude_uploads] [--small] [--include_files] [--include_db]__
 
 <details>
@@ -456,7 +456,7 @@ This command downloads a snapshot from the remote repository and stores it in th
 
 #### Command
 
-__wp wpsnapshots download <snapshot_id> [--repository=\<repository\>] [--region=\<region\>] [--include_files] [--include_db]__
+__wp snapshots download <snapshot_id> [--repository=\<repository\>] [--region=\<region\>] [--include_files] [--include_db]__
 
 <details>
 <summary>Show Arguments</summary>
@@ -496,7 +496,7 @@ WP Snapshots relies on AWS for access management. Each snapshot is associated wi
 
 ## Troubleshooting
 
-* __wpsnapshots push or pull is crashing.__
+* __wp snapshots push or pull is crashing.__
 
   A fatal error is most likely occuring when bootstrapping WordPress. Look at your error log to see what's happening. Often this happens because of a missing PHP class (Memcached) which is a result of not running WP Snapshots inside your environment (container or VM).
 

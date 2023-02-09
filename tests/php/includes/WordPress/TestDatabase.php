@@ -2,23 +2,23 @@
 /**
  * Tests for the Database class.
  * 
- * @package TenUp\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests\WordPress;
+namespace TenUp\Snapshots\Tests\WordPress;
 
-use TenUp\WPSnapshots\Exceptions\WPSnapshotsException;
-use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
-use TenUp\WPSnapshots\WordPress\Database;
+use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
+use TenUp\Snapshots\WordPress\Database;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class TestDatabase
  *
- * @package TenUp\WPSnapshots\Tests
+ * @package TenUp\Snapshots\Tests
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\WordPress\Database
+ * @coversDefaultClass \TenUp\Snapshots\WordPress\Database
  */
 class TestDatabase extends TestCase {
 	

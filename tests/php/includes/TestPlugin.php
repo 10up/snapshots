@@ -2,21 +2,21 @@
 /**
  * Tests covering general plugin functionality.
  * 
- * @package Tenup\WPSnapshots
+ * @package TenUp\Snapshots
  */
 
-namespace TenUp\WPSnapshots\Tests;
+namespace TenUp\Snapshots\Tests;
 
-use TenUp\WPSnapshots\Plugin;
-use TenUp\WPSnapshots\Tests\Fixtures\PrivateAccess;
+use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class PluginTest
  *
- * @package TenUp\WPSnapshots\Tests
+ * @package TenUp\Snapshots\Tests
  * 
- * @coversDefaultClass \TenUp\WPSnapshots\Plugin
+ * @coversDefaultClass \TenUp\Snapshots\Plugin
  */
 class PluginTest extends TestCase {
 
