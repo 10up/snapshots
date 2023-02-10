@@ -37,7 +37,7 @@ if ( ! defined( 'WP_CLI' ) ) {
  * Manually load the plugin being tested.
  */
 function _manually_load_plugin() {
-	require_once dirname( __DIR__, 2 ) . '/tenup-snapshots.php';
+	require_once dirname( __DIR__, 2 ) . '/10up-snapshots.php';
 }
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
