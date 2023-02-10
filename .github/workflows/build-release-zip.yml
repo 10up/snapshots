@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
    branches:
-    - trunk
+    - develop # Change this after alpha PR is merged.
 
 jobs:
   build:
