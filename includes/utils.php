@@ -8,8 +8,24 @@
 namespace TenUp\Snapshots\Utils;
 
 use TenUp\Snapshots\Exceptions\WPSnapshotsException;
-use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\Plugin;
 use WP_CLI;
+
+/**
+ * Provides the Plugin instance.
+ *
+ * @return TenUp\Snapshots\Plugin
+ */
+function tenup_snapshots() {
+	static $plugin;
+
+	if ( ! $plugin ) {
+		$plugin = new Plugin();
+		$plugin->register();
+	}
+
+	return $plugin;
+}
 
 /**
  * Provides an object wrapping WP_CLI and WP_CLI\Utils functions.

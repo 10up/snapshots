@@ -5,6 +5,8 @@
  * @package TenUp\Snapshots
  */
 
+use function TenUp\Snapshots\Utils\tenup_snapshots;
+
 if ( ! defined( 'WP_CLI' ) ) {
 	return;
 }
@@ -14,21 +16,5 @@ if ( ! defined( 'TENUP_SNAPSHOTS_DIR' ) ) {
 }
 
 require_once __DIR__ . '/includes/utils.php';
-
-/**
- * Provides the Plugin instance.
- *
- * @return TenUp\Snapshots\Plugin
- */
-function tenup_snapshots() {
-	static $plugin;
-
-	if ( ! $plugin ) {
-		$plugin = new TenUp\Snapshots\Plugin();
-		$plugin->register();
-	}
-
-	return $plugin;
-}
 
 tenup_snapshots();

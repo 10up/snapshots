@@ -15,3 +15,7 @@
  * Plugin entry file.
  */
 require_once __DIR__ . '/vendor/autoload.php';
+
+if ( ! defined( 'TENUP_SNAPSHOTS_DIR' ) ) {
+	require __DIR__ . '/command.php';
+}

@@ -12,6 +12,10 @@ define( 'TESTS_PLUGIN_DIR', dirname( dirname( __DIR__ ) ) );
 
 define( 'PROJECT_ROOT', dirname( dirname( __DIR__ ) ) );
 
+if ( ! defined( 'WP_CLI' ) ) {
+	define( 'WP_CLI', true );
+}
+
 if ( ! defined( 'WP_TESTS_CONFIG_FILE_PATH' ) && false !== getenv( 'WP_PHPUNIT__TESTS_CONFIG' ) ) {
     define( 'WP_TESTS_CONFIG_FILE_PATH', getenv( 'WP_PHPUNIT__TESTS_CONFIG' ) );
 }
@@ -27,10 +31,6 @@ if ( ! function_exists( 'tests_add_filter' ) ) {
 	function tests_add_filter( ...$args ) {}
 
 	throw new Exception( 'Unable to load the WP test suite.' );
-}
-
-if ( ! defined( 'WP_CLI' ) ) {
-	define( 'WP_CLI', true );
 }
 
 /**
