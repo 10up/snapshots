@@ -1,37 +1,38 @@
-# Builds a release zip on merges to the specified branch.
-# The zip is uploaded as an artifact.
-
-name: Build Release Zip
+name: Build release zip
 
 on:
-  push:
-    branches:
-      - develop
+  workflow_dispatch:
+  release:
+    types: [published]
 
 jobs:
-  build-release-zip:
-    name: Build Release Zip
+  build_zip:
+    name: New release
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
 
-      - name: Set PHP version
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.0"
-          tools: cs2pr
-          coverage: none
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: composer install
-        run: composer install --no-dev -o
+    - name: npm install and build
+      run: |
+        composer install --no-dev
+        composer archive --file=$npm_package_name --format=zip
+    - name: Upload the ZIP file as an artifact
+      if: ${{ github.event_name == 'workflow_dispatch' }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ github.event.repository.name }}
+        path: release
+        retention-days: 5
 
-      - name: Build release zip
-        run: composer run build-release-zip
-
-      - name: Upload release zip
-        uses: actions/upload-artifact@v2
-        with:
-          name: release-zip
-          path: release.zip
+    - name: Upload release asset
+      if: ${{ github.event_name == 'release' }}
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ${{github.workspace}}/${{ github.event.repository.name }}.zip
+        asset_name: ${{ github.event.repository.name }}.zip
+        asset_content_type: application/zip

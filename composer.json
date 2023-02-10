@@ -58,5 +58,10 @@
                 "url": "https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar"
             }
         }
+    },
+    "archive": {
+        "exclude": [
+            "!/vendor/"
+        ]
     }
 }
