@@ -14,9 +14,9 @@ use WP_CLI;
 /**
  * Provides the Plugin instance.
  *
- * @return TenUp\Snapshots\Plugin
+ * @return Plugin
  */
-function tenup_snapshots() {
+function tenup_snapshots() : Plugin {
 	static $plugin;
 
 	if ( ! $plugin ) {
