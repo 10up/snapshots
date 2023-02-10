@@ -1,9 +1,9 @@
 name: Build release zip
 
 on:
-  push:
-    branches:
-      - develop
+  workflow_dispatch:
+  release:
+    types: [published]
 
 jobs:
   build_zip:
@@ -25,6 +25,7 @@ jobs:
         composer install --no-dev
         npm run archive
     - name: Upload the ZIP file as an artifact
+      if: ${{ github.event_name == 'workflow_dispatch' }}
       uses: actions/upload-artifact@v3
       with:
         name: ${{ github.event.repository.name }}
@@ -32,6 +33,7 @@ jobs:
         retention-days: 5
 
     - name: Upload release asset
+      if: ${{ github.event_name == 'release' }}
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
