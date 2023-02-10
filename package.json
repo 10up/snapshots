@@ -11,7 +11,7 @@
     "shell": "wp-env run",
     "test:php:coverage": "wp-env run tests-wordpress 'env XDEBUG_MODE=coverage' '/var/www/html/wp-content/plugins/10up-snapshots/vendor/bin/phpunit' -c '/var/www/html/wp-content/plugins/10up-snapshots/phpunit.xml.dist' --verbose --coverage-html '/var/www/html/wp-content/plugins/10up-snapshots/coverage'",
     "test:php": "wp-env run tests-wordpress /var/www/html/wp-content/plugins/10up-snapshots/vendor/bin/phpunit -c /var/www/html/wp-content/plugins/10up-snapshots/phpunit.xml.dist --verbose",
-    "archive": "composer archive --file=$npm_package_name --format=zip"
+    "archive": "composer archive --file=10up-snapshots --format=zip"
   },
   "repository": {
     "type": "git",
