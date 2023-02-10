@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: 10up Snapshots
- * Plugin URI: https://github.com/10up/tenup-snapshots
+ * Plugin URI: https://github.com/10up/10up-snapshots
  * Description: A WordPress plugin to manage snapshots of your WordPress site.
  * Version: 0.1.0
  * Author: 10up

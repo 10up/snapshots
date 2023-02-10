@@ -9,7 +9,7 @@ parameters:
 		- %currentWorkingDirectory%/tests/php/
 	bootstrapFiles:
 		- %currentWorkingDirectory%/vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
-		- %currentWorkingDirectory%/tenup-snapshots.php
+		- %currentWorkingDirectory%/10up-snapshots.php
 		- %currentWorkingDirectory%/vendor/wordpress/wordpress-develop/tests/phpunit/includes/phpunit-adapter-testcase.php
 		- %currentWorkingDirectory%/vendor/wordpress/wordpress-develop/tests/phpunit/includes/abstract-testcase.php
 		- %currentWorkingDirectory%/vendor/wordpress/wordpress-develop/tests/phpunit/includes/testcase.php
