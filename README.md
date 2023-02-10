@@ -1,4 +1,4 @@
-# WP Snapshots
+# 10up Snapshots
 
 A project sharing tool for WordPress.
 
