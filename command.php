@@ -5,8 +5,6 @@
  * @package TenUp\Snapshots
  */
 
-use function TenUp\Snapshots\Utils\tenup_snapshots;
-
 if ( ! defined( 'WP_CLI' ) ) {
 	return;
 }
@@ -17,4 +15,4 @@ if ( ! defined( 'TENUP_SNAPSHOTS_DIR' ) ) {
 
 require_once __DIR__ . '/includes/utils.php';
 
-tenup_snapshots();
+WP_CLI::add_hook( 'after_wp_load', 'TenUp\\Snapshots\\Utils\\tenup_snapshots' );
