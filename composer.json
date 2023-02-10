@@ -6,7 +6,8 @@
     "autoload": {
         "psr-4": {
             "TenUp\\Snapshots\\": "includes/classes/"
-        }
+        },
+        "files": [ "10up-snapshots.php" ]
     },
     "repositories": [
         {
