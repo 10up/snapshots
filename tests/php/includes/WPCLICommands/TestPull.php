@@ -466,7 +466,7 @@ class TestPull extends TestCase {
 			1,
 			[
 				[
-					'plugin activate tenup-snapshots --skip-themes --skip-plugins --skip-packages', [ 'launch' => true, 'return' => 'all', 'exit_error' => false ]
+					'plugin activate 10up-snapshots --skip-themes --skip-plugins --skip-packages', [ 'launch' => true, 'return' => 'all', 'exit_error' => false ]
 				],
 			]
 		);
