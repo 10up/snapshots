@@ -1,14 +1,19 @@
 <?php
+/**
+ * Command entry point.
+ *
+ * @package TenUp\Snapshots
+ */
 
-if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
-    require_once __DIR__ . '/vendor/autoload.php';
+if ( ! defined( 'WP_CLI' ) ) {
+	return;
 }
-
-require_once __DIR__ . '/includes/utils.php';
 
 if ( ! defined( 'TENUP_SNAPSHOTS_DIR' ) ) {
 	define( 'TENUP_SNAPSHOTS_DIR', __DIR__ );
 }
+
+require_once __DIR__ . '/includes/utils.php';
 
 /**
  * Provides the Plugin instance.
