@@ -12,7 +12,7 @@ use Phar;
 use PharData;
 use PHPUnit\Framework\MockObject\MockObject;
 use TenUp\Snapshots\FileSystem;
-use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Snapshots\DynamoDBConnector;
 use TenUp\Snapshots\Snapshots\FileZipper;
 use TenUp\Snapshots\Tests\Fixtures\DirectoryFiltering;
@@ -51,8 +51,8 @@ class TestFileZipper extends TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->file_system = ( new Plugin() )->get_instance( FileSystem::class );
-		$this->file_zipper = ( new Plugin() )->get_instance( FileZipper::class );
+		$this->file_system = ( new Snapshots() )->get_instance( FileSystem::class );
+		$this->file_zipper = ( new Snapshots() )->get_instance( FileZipper::class );
 
 		$this->set_up_directory_filtering();
 	}

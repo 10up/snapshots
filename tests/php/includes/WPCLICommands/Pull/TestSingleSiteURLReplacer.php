@@ -9,7 +9,7 @@ namespace TenUp\Snapshots\Tests\WPCLICommands\Pull;
 
 use TenUp\Snapshots\Exceptions\WPSnapshotsInputValidationException;
 use TenUp\Snapshots\Log\WPCLILogger;
-use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\WPSnapshotsDirectory;
 use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
 use TenUp\Snapshots\Tests\Fixtures\WPCLIMocking;
@@ -45,7 +45,7 @@ class TestSingleSiteURLReplacer extends TestCase {
 
 		$this->set_up_wp_cli_mock();
 
-		$plugin = new Plugin();
+		$plugin = new Snapshots();
 		$this->url_replacer = new SingleSiteURLReplacer(
 			$plugin->get_instance( Prompt::class ),
 			$plugin->get_instance( WPSnapshotsDirectory::class ),

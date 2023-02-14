@@ -8,25 +8,21 @@
 namespace TenUp\Snapshots\Utils;
 
 use TenUp\Snapshots\Exceptions\WPSnapshotsException;
-use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots;
 use WP_CLI;
 
 /**
- * Provides the Plugin instance.
- * 
- * @param bool $register Whether to register the plugin. Defaults to true.
+ * Provides the Snapshots instance.
  *
- * @return Plugin
+ * @return Snapshots
  */
-function tenup_snapshots( bool $register = true ) : Plugin {
+function tenup_snapshots() : Snapshots {
 	static $plugin;
 
 	if ( ! $plugin ) {
-		$plugin = new Plugin();
+		$plugin = new Snapshots();
 
-		if ( $register ) {
-			$plugin->register();
-		}
+		$plugin->register();
 	}
 
 	return $plugin;
@@ -47,7 +43,7 @@ function wp_cli() : object {
 	 *
 	 * @param object $wp_cli Class that wraps WP_CLI and WP_CLI\Utils functions as static methods.
 	 */
-	return apply_filters(
+	return tenup_snapshots_apply_filters(
 		'tenup_snapshots_wpcli',
 		new class() {
 
@@ -98,3 +94,20 @@ function tenup_snapshots_wp_content_dir() : string {
 	return apply_filters( 'tenup_snapshots_wp_content_dir', WP_CONTENT_DIR );
 }
 
+/**
+ * Shims apply filters in contexts where it is not available.
+ *
+ * This mainly allows the command arguments to be displayed if WP is not bootstrapped.
+ *
+ * @param string $tag The name of the filter hook.
+ * @param mixed  $value The value on which the filters hooked to `$tag` are applied on.
+ *
+ * @return mixed The filtered value after all hooked functions are applied to it.
+ */
+function tenup_snapshots_apply_filters( string $tag, $value ) {
+	if ( function_exists( 'apply_filters' ) ) {
+		return apply_filters( $tag, $value );
+	}
+
+	return $value;
+}

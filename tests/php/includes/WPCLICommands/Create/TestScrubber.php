@@ -10,7 +10,7 @@ namespace TenUp\Snapshots\Tests\WPCLICommands\Create;
 use PHPUnit\Framework\MockObject\MockObject;
 use TenUp\Snapshots\Exceptions\WPSnapshotsInputValidationException;
 use TenUp\Snapshots\Log\WPCLILogger;
-use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\WPSnapshotsDirectory;
 use TenUp\Snapshots\Tests\Fixtures\DirectoryFiltering;
 use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
@@ -50,7 +50,7 @@ class TestScrubber extends TestCase {
 		$this->set_up_wp_cli_mock();
 		$this->set_up_directory_filtering();
 
-		$this->scrubber = ( new Plugin() )->get_instance( Scrubber::class );
+		$this->scrubber = ( new Snapshots() )->get_instance( Scrubber::class );
 	}
 
 	/**

@@ -9,7 +9,7 @@ namespace TenUp\Snapshots\Tests\Commands;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use TenUp\Snapshots\Exceptions\WPSnapshotsException;
-use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Snapshots\DynamoDBConnector;
 use TenUp\Snapshots\Tests\Fixtures\{CommandTests, PrivateAccess, WPCLIMocking};
 use TenUp\Snapshots\WPCLI\WPCLICommand;
@@ -41,7 +41,7 @@ class TestSearch extends TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->command = ( new Plugin() )->get_instance( Search::class );
+		$this->command = ( new Snapshots() )->get_instance( Search::class );
 
 		$this->set_up_wp_cli_mock();
 	}

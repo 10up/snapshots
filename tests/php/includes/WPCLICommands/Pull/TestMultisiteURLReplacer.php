@@ -10,7 +10,7 @@ namespace TenUp\Snapshots\Tests\WPCLICommands\Pull;
 use PHPUnit\Framework\MockObject\MockObject;
 use TenUp\Snapshots\Exceptions\WPSnapshotsInputValidationException;
 use TenUp\Snapshots\Log\WPCLILogger;
-use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\WPSnapshotsDirectory;
 use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
 use TenUp\Snapshots\Tests\Fixtures\WPCLIMocking;
@@ -58,7 +58,7 @@ class TestMultisiteURLReplacer extends TestCase {
 		require_once ABSPATH . 'wp-includes/ms-site.php';
 		require_once ABSPATH . 'wp-includes/class-wp-site.php';
 
-		$plugin = new Plugin();
+		$plugin = new Snapshots();
 		$this->url_replacer = new MultisiteURLReplacer(
 			$plugin->get_instance( Prompt::class ),
 			$plugin->get_instance( WPSnapshotsDirectory::class ),

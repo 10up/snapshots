@@ -8,7 +8,7 @@
 namespace TenUp\Snapshots\Tests\WordPress;
 
 use TenUp\Snapshots\Exceptions\WPSnapshotsException;
-use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
 use TenUp\Snapshots\WordPress\Database;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
@@ -37,7 +37,7 @@ class TestDatabase extends TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->wordpress_database = ( new Plugin() )->get_instance( Database::class );
+		$this->wordpress_database = ( new Snapshots() )->get_instance( Database::class );
 	}
 
 	public function test_constructor() {

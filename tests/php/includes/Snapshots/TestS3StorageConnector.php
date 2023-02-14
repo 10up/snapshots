@@ -9,7 +9,7 @@ namespace TenUp\Snapshots\Tests\Snapshots;
 
 use Aws\S3\S3Client;
 use TenUp\Snapshots\Exceptions\WPSnapshotsException;
-use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Snapshots\S3StorageConnector;
 use TenUp\Snapshots\Tests\Fixtures\DirectoryFiltering;
 use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
@@ -39,7 +39,7 @@ class TestS3StorageConnector extends TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->connector = ( new Plugin() )->get_instance( S3StorageConnector::class );
+		$this->connector = ( new Snapshots() )->get_instance( S3StorageConnector::class );
 
 		$this->set_up_directory_filtering();
 	}

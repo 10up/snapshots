@@ -9,7 +9,7 @@ namespace TenUp\Snapshots\Tests;
 
 use TenUp\Snapshots\Exceptions\WPSnapshotsException;
 use TenUp\Snapshots\FileSystem;
-use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Tests\Fixtures\DirectoryFiltering;
 use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
@@ -39,7 +39,7 @@ class TestFileSystem extends TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->filesystem = ( new Plugin() )->get_instance( FileSystem::class );
+		$this->filesystem = ( new Snapshots() )->get_instance( FileSystem::class );
 
 		$this->set_up_directory_filtering();
 	}

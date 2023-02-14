@@ -9,7 +9,7 @@ namespace TenUp\Snapshots\Tests\WPCLI;
 
 use TenUp\Snapshots\Exceptions\WPSnapshotsException;
 use TenUp\Snapshots\Exceptions\WPSnapshotsInputValidationException;
-use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Tests\Fixtures\WPCLIMocking;
 use TenUp\Snapshots\WPCLI\Prompt;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
@@ -39,7 +39,7 @@ class TestPrompt extends TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->prompt = ( new Plugin() )->get_instance( Prompt::class );
+		$this->prompt = ( new Snapshots() )->get_instance( Prompt::class );
 
 		$this->set_up_wp_cli_mock();
 	}

@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin container.
+ * Snapshots container.
  *
  * @package TenUp\Snapshots
  */
@@ -17,31 +17,14 @@ use TenUp\Snapshots\WPCLICommands\Create\{Scrubber, WPCLIDBExport, Trimmer};
 use TenUp\Snapshots\WPCLICommands\Pull\URLReplacerFactory;
 use TenUp\Snapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
 
+use function TenUp\Snapshots\Utils\tenup_snapshots_apply_filters;
+
 /**
- * Plugin container.
+ * Snapshots container.
  *
  * @package TenUp\Snapshots
  */
-final class Plugin extends Container {
-
-	/**
-	 * Provides command classes.
-	 * 
-	 * @return string[]
-	 */
-	public static function get_commands(): array {
-		return [
-			'wpcli_commands/configure'         => Configure::class,
-			'wpcli_commands/create_repository' => CreateRepository::class,
-			'wpcli_commands/create'            => Create::class,
-			'wpcli_commands/delete'            => Delete::class,
-			'wpcli_commands/download'          => Download::class,
-			'wpcli_commands/pull'              => Pull::class,
-			'wpcli_commands/push'              => Push::class,
-			'wpcli_commands/search'            => Search::class,
-		];
-	}
-
+final class Snapshots extends Container {
 
 	/**
 	 * Provides components for the plugin.
@@ -51,12 +34,23 @@ final class Plugin extends Container {
 	 * @return string[]
 	 */
 	protected function get_modules(): array {
+		$commands = [
+			'wpcli_commands/configure'         => Configure::class,
+			'wpcli_commands/create_repository' => CreateRepository::class,
+			'wpcli_commands/create'            => Create::class,
+			'wpcli_commands/delete'            => Delete::class,
+			'wpcli_commands/download'          => Download::class,
+			'wpcli_commands/pull'              => Pull::class,
+			'wpcli_commands/push'              => Push::class,
+			'wpcli_commands/search'            => Search::class,
+		];
+
 		/**
 		 * Filters the components for the plugin.
 		 *
 		 * @param array $components Client components.
 		 */
-		return (array) apply_filters( 'tenup_snapshots_components', self::get_commands() );
+		return (array) tenup_snapshots_apply_filters( 'tenup_snapshots_components', $commands );
 	}
 
 	/**
@@ -89,6 +83,6 @@ final class Plugin extends Container {
 		 *
 		 * @param array $services Service modules.
 		 */
-		return (array) apply_filters( 'tenup_snapshots_services', $services );
+		return (array) tenup_snapshots_apply_filters( 'tenup_snapshots_services', $services );
 	}
 }

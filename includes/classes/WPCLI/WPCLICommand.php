@@ -146,7 +146,11 @@ abstract class WPCLICommand implements Conditional, Module {
 	 * Registers the module.
 	 */
 	public function register() {
-		wp_cli()::add_command( 'snapshots ' . $this->get_command(), [ $this, 'execute' ], $this->get_command_parameters() );
+		wp_cli()::add_command(
+			'snapshots ' . static::get_command(),
+			[ $this, 'execute' ],
+			array_merge( static::get_command_parameters(), [ 'when' => 'after_wp_load' ] )
+		);
 	}
 
 	/**
@@ -295,12 +299,12 @@ abstract class WPCLICommand implements Conditional, Module {
 	 *
 	 * @return string
 	 */
-	abstract public function get_command() : string;
+	abstract public static function get_command() : string;
 
 	/**
 	 * Gets the parameters.
 	 *
 	 * @return array
 	 */
-	abstract public function get_command_parameters() : array;
+	abstract public static function get_command_parameters() : array;
 }

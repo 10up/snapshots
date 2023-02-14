@@ -121,7 +121,7 @@ final class Pull extends WPCLICommand {
 	 *
 	 * @inheritDoc
 	 */
-	public function get_command() : string {
+	public static function get_command() : string {
 		return 'pull';
 	}
 
@@ -130,7 +130,7 @@ final class Pull extends WPCLICommand {
 	 *
 	 * @inheritDoc
 	 */
-	public function get_command_parameters() : array {
+	public static function get_command_parameters() : array {
 		return [
 			'shortdesc' => 'Pull a snapshot into a WordPress instance',
 			'synopsis'  => [

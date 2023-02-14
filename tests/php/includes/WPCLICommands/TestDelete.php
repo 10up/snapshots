@@ -7,7 +7,7 @@
 
 namespace TenUp\Snapshots\Tests\Commands;
 
-use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Tests\Fixtures\{CommandTests, PrivateAccess, WPCLIMocking};
 use TenUp\Snapshots\WPCLI\WPCLICommand;
 use TenUp\Snapshots\WPCLICommands\Delete;
@@ -37,7 +37,7 @@ class TestDelete extends TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->command = ( new Plugin() )->get_instance( Delete::class );
+		$this->command = ( new Snapshots() )->get_instance( Delete::class );
 
 		$this->set_up_wp_cli_mock();
 

@@ -8,7 +8,7 @@
 namespace TenUp\Snapshots\Tests\Commands;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Snapshots\DynamoDBConnector;
 use TenUp\Snapshots\Snapshots\S3StorageConnector;
 use TenUp\Snapshots\Tests\Fixtures\{CommandTests, PrivateAccess, WPCLIMocking};
@@ -40,7 +40,7 @@ class TestCreateRepository extends TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->command = ( new Plugin() )->get_instance( CreateRepository::class );
+		$this->command = ( new Snapshots() )->get_instance( CreateRepository::class );
 
 		$this->set_up_wp_cli_mock();
 	}

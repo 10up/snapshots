@@ -19,7 +19,7 @@ final class Push extends Create {
 	 *
 	 * @inheritDoc
 	 */
-	public function get_command() : string {
+	public static function get_command() : string {
 		return 'push';
 	}
 
