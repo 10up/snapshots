@@ -66,7 +66,7 @@ class Delete extends WPCLICommand {
 	 *
 	 * @inheritDoc
 	 */
-	protected function get_command_parameters() : array {
+	public function get_command_parameters() : array {
 		return [
 			'shortdesc' => 'Delete a remote snapshot',
 			'synopsis'  => [

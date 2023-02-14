@@ -13,15 +13,20 @@ use WP_CLI;
 
 /**
  * Provides the Plugin instance.
+ * 
+ * @param bool $register Whether to register the plugin. Defaults to true.
  *
  * @return Plugin
  */
-function tenup_snapshots() : Plugin {
+function tenup_snapshots( bool $register = true ) : Plugin {
 	static $plugin;
 
 	if ( ! $plugin ) {
 		$plugin = new Plugin();
-		$plugin->register();
+
+		if ( $register ) {
+			$plugin->register();
+		}
 	}
 
 	return $plugin;

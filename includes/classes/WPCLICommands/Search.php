@@ -50,7 +50,7 @@ final class Search extends WPCLICommand {
 	 *
 	 * @inheritDoc
 	 */
-	protected function get_command_parameters() : array {
+	public function get_command_parameters() : array {
 		return [
 			'shortdesc' => 'Search for snapshots within a repository.',
 			'synopsis'  => [

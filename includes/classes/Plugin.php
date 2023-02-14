@@ -25,14 +25,12 @@ use TenUp\Snapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
 final class Plugin extends Container {
 
 	/**
-	 * Provides components for the plugin.
-	 *
-	 * Modules are classes that are instantiated and registered with the container.
-	 *
+	 * Provides command classes.
+	 * 
 	 * @return string[]
 	 */
-	protected function get_modules(): array {
-		$components = [
+	public static function get_commands(): array {
+		return [
 			'wpcli_commands/configure'         => Configure::class,
 			'wpcli_commands/create_repository' => CreateRepository::class,
 			'wpcli_commands/create'            => Create::class,
@@ -42,13 +40,23 @@ final class Plugin extends Container {
 			'wpcli_commands/push'              => Push::class,
 			'wpcli_commands/search'            => Search::class,
 		];
+	}
 
+
+	/**
+	 * Provides components for the plugin.
+	 *
+	 * Modules are classes that are instantiated and registered with the container.
+	 *
+	 * @return string[]
+	 */
+	protected function get_modules(): array {
 		/**
 		 * Filters the components for the plugin.
 		 *
 		 * @param array $components Client components.
 		 */
-		return (array) apply_filters( 'tenup_snapshots_components', $components );
+		return (array) apply_filters( 'tenup_snapshots_components', self::get_commands() );
 	}
 
 	/**

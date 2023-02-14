@@ -94,7 +94,7 @@ class Create extends WPCLICommand {
 	 *
 	 * @inheritDoc
 	 */
-	protected function get_command_parameters() : array {
+	public function get_command_parameters() : array {
 		return [
 			'shortdesc' => 'Create a snapshot locally.',
 			'synopsis'  => [

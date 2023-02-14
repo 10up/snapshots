@@ -58,7 +58,7 @@ final class Download extends WPCLICommand {
 	 *
 	 * @inheritDoc
 	 */
-	protected function get_command_parameters() : array {
+	public function get_command_parameters() : array {
 		return [
 			'shortdesc' => 'Download a snapshot from the repository.',
 			'synopsis'  => [

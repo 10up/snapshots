@@ -56,7 +56,7 @@ final class CreateRepository extends WPCLICommand {
 	 *
 	 * @inheritDoc
 	 */
-	protected function get_command_parameters() : array {
+	public function get_command_parameters() : array {
 		return [
 			'shortdesc' => 'Create new WP Snapshots repository.',
 			'synopsis'  => [

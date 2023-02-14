@@ -295,12 +295,12 @@ abstract class WPCLICommand implements Conditional, Module {
 	 *
 	 * @return string
 	 */
-	abstract protected function get_command() : string;
+	abstract public function get_command() : string;
 
 	/**
 	 * Gets the parameters.
 	 *
 	 * @return array
 	 */
-	abstract protected function get_command_parameters() : array;
+	abstract public function get_command_parameters() : array;
 }
