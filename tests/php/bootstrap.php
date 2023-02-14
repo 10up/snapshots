@@ -37,7 +37,7 @@ if ( ! function_exists( 'tests_add_filter' ) ) {
  * Manually load the plugin being tested.
  */
 function _manually_load_plugin() {
-	require_once dirname( __DIR__, 2 ) . '/10up-snapshots.php';
+	require_once dirname( __DIR__, 2 ) . '/snapshots.php';
 }
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 

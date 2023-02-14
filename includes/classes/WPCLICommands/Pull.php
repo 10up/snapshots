@@ -523,7 +523,7 @@ final class Pull extends WPCLICommand {
 	private function activate_this_plugin( bool $network_activate = false ) {
 		$this->log( 'Reactivating this plugin...' );
 
-		$command = 'plugin activate 10up-snapshots --skip-themes --skip-plugins --skip-packages';
+		$command = 'plugin activate snapshots --skip-themes --skip-plugins --skip-packages';
 
 		if ( $network_activate ) {
 			$command .= ' --network';

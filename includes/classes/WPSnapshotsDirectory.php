@@ -244,7 +244,7 @@ class WPSnapshotsDirectory implements SharedService {
 	public function unzip_snapshot_files( string $id, string $destination ) : array {
 		$errors = [];
 
-		// Recursively delete everything in the wp-content directory except plugins/10up-snapshots.
+		// Recursively delete everything in the wp-content directory except plugins/snapshots.
 		$this->file_system->delete_directory_contents( $destination, true, [ TENUP_SNAPSHOTS_DIR ] );
 
 		$gzipped_tar_file        = $this->get_file_path( 'files.tar.gz', $id );

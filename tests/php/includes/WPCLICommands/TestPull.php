@@ -1,7 +1,7 @@
 <?php
 /**
  * Tests covering the Pull command class.
- * 
+ *
  * @package TenUp\Snapshots
  */
 
@@ -28,7 +28,7 @@ use function TenUp\Snapshots\Utils\tenup_snapshots_wp_content_dir;
  * Class TestPull
  *
  * @package TenUp\Snapshots\Tests\Commands
- * 
+ *
  * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\Pull
  */
 class TestPull extends TestCase {
@@ -37,7 +37,7 @@ class TestPull extends TestCase {
 
 	/**
 	 * Pull instance.
-	 * 
+	 *
 	 * @var Pull
 	 */
 	private $command;
@@ -68,7 +68,7 @@ class TestPull extends TestCase {
 
 	/**
 	 * Test that the command instance extends WPCLICommand.
-	 * 
+	 *
 	 * @covers ::__construct
 	 */
 	public function test_command_instance() {
@@ -91,7 +91,7 @@ class TestPull extends TestCase {
 	public function test_get_meta_when_both_local_and_remote_are_empty() {
 		/**
 		 * Mock the SnapshotMeta class.
-		 * 
+		 *
 		 * @var MockObject $snapshot_meta_mock
 		 */
 		$snapshot_meta_mock = $this->createMock( SnapshotMeta::class );
@@ -124,7 +124,7 @@ class TestPull extends TestCase {
 
 		/**
 		 * Mock the SnapshotMeta class.
-		 * 
+		 *
 		 * @var MockObject $snapshot_meta_mock
 		 */
 		$snapshot_meta_mock = $this->createMock( SnapshotMeta::class );
@@ -155,7 +155,7 @@ class TestPull extends TestCase {
 
 		/**
 		 * Mock the SnapshotMeta class.
-		 * 
+		 *
 		 * @var MockObject $snapshot_meta_mock
 		 */
 		$snapshot_meta_mock = $this->createMock( SnapshotMeta::class );
@@ -188,7 +188,7 @@ class TestPull extends TestCase {
 
 		/**
 		 * Mock the SnapshotMeta class.
-		 * 
+		 *
 		 * @var MockObject $snapshot_meta_mock
 		 */
 		$snapshot_meta_mock = $this->createMock( SnapshotMeta::class );
@@ -216,7 +216,7 @@ class TestPull extends TestCase {
 
 		/**
 		 * Mock the SnapshotMeta class.
-		 * 
+		 *
 		 * @var MockObject $snapshot_meta_mock
 		 */
 		$snapshot_meta_mock = $this->createMock( SnapshotMeta::class );
@@ -239,7 +239,7 @@ class TestPull extends TestCase {
 
 		/**
 		 * Mock the SnapshotMeta class.
-		 * 
+		 *
 		 * @var MockObject $snapshot_meta_mock
 		 */
 		$snapshot_meta_mock = $this->createMock( SnapshotMeta::class );
@@ -292,7 +292,7 @@ class TestPull extends TestCase {
 	public function test_pull_db() {
 		/**
 		 * Mock the snapshots_filesystem variable.
-		 * 
+		 *
 		 * @var MockObject|WPSnapshotsDirectory $snapshots_filesystem_mock
 		 */
 		$snapshots_filesystem_mock = $this->createMock( WPSnapshotsDirectory::class );
@@ -302,14 +302,14 @@ class TestPull extends TestCase {
 
 		/**
 		 * Mock WP_File_System
-		 * 
+		 *
 		 * @var MockObject|WP_Filesystem_Base $wp_filesystem_mock
 		 */
 		$wp_filesystem_mock = $this->createMock( WP_Filesystem_Base::class );
 
 		/**
 		 * Mock the filesystem variable.
-		 * 
+		 *
 		 * @var MockObject|FileSystem $filesystem
 		 */
 		$filesystem = $this->createMock( FileSystem::class );
@@ -357,7 +357,7 @@ class TestPull extends TestCase {
 
 		/**
 		 * Mock the Database class.
-		 * 
+		 *
 		 * @var MockObject $database_mock
 		 */
 		$database_mock = $this->createMock( Database::class );
@@ -406,7 +406,7 @@ class TestPull extends TestCase {
 
 		/**
 		 * Mock snapshot_filesystem.
-		 * 
+		 *
 		 * @var MockObject $snapshots_filesystem_mock
 		 */
 		$snapshots_filesystem_mock = $this->createMock( WPSnapshotsDirectory::class );
@@ -435,7 +435,7 @@ class TestPull extends TestCase {
 
 		/**
 		 * Mock snapshot_filesystem.
-		 * 
+		 *
 		 * @var MockObject $snapshots_filesystem_mock
 		 */
 		$snapshots_filesystem_mock = $this->createMock( WPSnapshotsDirectory::class );
@@ -466,7 +466,7 @@ class TestPull extends TestCase {
 			1,
 			[
 				[
-					'plugin activate 10up-snapshots --skip-themes --skip-plugins --skip-packages', [ 'launch' => true, 'return' => 'all', 'exit_error' => false ]
+					'plugin activate snapshots --skip-themes --skip-plugins --skip-packages', [ 'launch' => true, 'return' => 'all', 'exit_error' => false ]
 				],
 			]
 		);
@@ -482,14 +482,14 @@ class TestPull extends TestCase {
 
 		/**
 		 * Mock URLReplacerFactory.
-		 * 
+		 *
 		 * @var MockObject $url_replacer_factory_mock
 		 */
 		$url_replacer_factory_mock = $this->createMock( URLReplacerFactory::class );
 
 		/**
 		 * Mock URLReplacer.
-		 * 
+		 *
 		 * @var MockObject $url_replacer_mock
 		 */
 		$url_replacer_mock = $this->createMock( URLReplacer::class );
@@ -524,14 +524,14 @@ class TestPull extends TestCase {
 
 		/**
 		 * Mock URLReplacerFactory.
-		 * 
+		 *
 		 * @var MockObject $url_replacer_factory_mock
 		 */
 		$url_replacer_factory_mock = $this->createMock( URLReplacerFactory::class );
 
 		/**
 		 * Mock URLReplacer.
-		 * 
+		 *
 		 * @var MockObject $url_replacer_mock
 		 */
 		$url_replacer_mock = $this->createMock( URLReplacer::class );
@@ -744,7 +744,7 @@ class TestPull extends TestCase {
 
 		/**
 		 * Mock snapshot_meta.
-		 * 
+		 *
 		 * @var MockObject $snapshot_meta_mock
 		 */
 		$snapshot_meta_mock = $this->createMock( SnapshotMeta::class );
