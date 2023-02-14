@@ -58,16 +58,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.258.7",
+            "version": "3.258.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "09808d51cdb3cf01df1564dda4236da61ed9c804"
+                "reference": "e164c9c5faf3965bd27ff2a4e9b7b3048ba8a337"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/09808d51cdb3cf01df1564dda4236da61ed9c804",
-                "reference": "09808d51cdb3cf01df1564dda4236da61ed9c804",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/e164c9c5faf3965bd27ff2a4e9b7b3048ba8a337",
+                "reference": "e164c9c5faf3965bd27ff2a4e9b7b3048ba8a337",
                 "shasum": ""
             },
             "require": {
@@ -146,9 +146,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.258.7"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.258.10"
             },
-            "time": "2023-02-09T19:23:14+00:00"
+            "time": "2023-02-14T19:21:16+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1990,12 +1990,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "670b5b2efa46eb58bb101661d478e6d1fc3d736e"
+                "reference": "8083be52c6f5ba5a48eafa154e0aeefd96bda098"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/670b5b2efa46eb58bb101661d478e6d1fc3d736e",
-                "reference": "670b5b2efa46eb58bb101661d478e6d1fc3d736e",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/8083be52c6f5ba5a48eafa154e0aeefd96bda098",
+                "reference": "8083be52c6f5ba5a48eafa154e0aeefd96bda098",
                 "shasum": ""
             },
             "require": {
@@ -2059,7 +2059,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-02-09T14:11:18+00:00"
+            "time": "2023-02-11T08:53:26+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -2308,12 +2308,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "9492c8cfddb7b8664f9b82e70472e05c9b2c8f17"
+                "reference": "4e6f3c050b54192d0a28c6f314a3567c00a7d017"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/9492c8cfddb7b8664f9b82e70472e05c9b2c8f17",
-                "reference": "9492c8cfddb7b8664f9b82e70472e05c9b2c8f17",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/4e6f3c050b54192d0a28c6f314a3567c00a7d017",
+                "reference": "4e6f3c050b54192d0a28c6f314a3567c00a7d017",
                 "shasum": ""
             },
             "require": {
@@ -2402,7 +2402,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-02-10T08:56:27+00:00"
+            "time": "2023-02-14T15:49:39+00:00"
         },
         {
             "name": "rmccue/requests",
