@@ -5,8 +5,6 @@
  * @package TenUp\Snapshots
  */
 
-use TenUp\Snapshots\Snapshots;
-
 use function TenUp\Snapshots\Utils\tenup_snapshots;
 
 if ( ! defined( 'WP_CLI' ) ) {
