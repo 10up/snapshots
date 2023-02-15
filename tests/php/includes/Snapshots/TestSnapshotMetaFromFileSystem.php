@@ -8,7 +8,7 @@
 namespace TenUp\Snapshots\Tests\Snapshots;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Snapshots\DynamoDBConnector;
 use TenUp\Snapshots\Snapshots\SnapshotMeta;
 use TenUp\Snapshots\Snapshots\SnapshotMetaFromFileSystem;
@@ -41,7 +41,7 @@ class TestSnapshotMetaFromFileSystem extends TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->meta = ( new Plugin() )->get_instance( SnapshotMetaFromFileSystem::class );
+		$this->meta = ( new Snapshots() )->get_instance( SnapshotMetaFromFileSystem::class );
 		$this->set_up_directory_filtering();
 	}
 

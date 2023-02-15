@@ -10,7 +10,7 @@ namespace TenUp\Snapshots\Tests\Commands;
 use PHPUnit\Framework\MockObject\MockObject;
 use TenUp\Snapshots\Exceptions\WPSnapshotsException;
 use TenUp\Snapshots\FileSystem;
-use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Snapshots\SnapshotMeta;
 use TenUp\Snapshots\WPSnapshotsDirectory;
 use TenUp\Snapshots\Tests\Fixtures\{CommandTests, DirectoryFiltering, PrivateAccess, WPCLIMocking};
@@ -48,7 +48,7 @@ class TestPull extends TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->command = ( new Plugin() )->get_instance( Pull::class );
+		$this->command = ( new Snapshots() )->get_instance( Pull::class );
 
 		$this->set_up_wp_cli_mock();
 

@@ -7,7 +7,7 @@
 
 namespace TenUp\Snapshots\Tests\Config;
 
-use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Tests\Fixtures\DirectoryFiltering;
 use TenUp\Snapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
 use TenUp\Snapshots\WPSnapshotsConfig\WPSnapshotsConfigInterface;
@@ -37,7 +37,7 @@ class TestConfigFromFileSystem extends TestCase {
     public function set_up() {
         parent::set_up();
 
-        $this->config = ( new Plugin() )->get_instance( WPSnapshotsConfigFromFileSystem::class );
+        $this->config = ( new Snapshots() )->get_instance( WPSnapshotsConfigFromFileSystem::class );
 
         $this->set_up_directory_filtering();
     }

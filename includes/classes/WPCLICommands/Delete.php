@@ -57,7 +57,7 @@ class Delete extends WPCLICommand {
 	 *
 	 * @inheritDoc
 	 */
-	public function get_command() : string {
+	protected function get_command() : string {
 		return 'delete';
 	}
 

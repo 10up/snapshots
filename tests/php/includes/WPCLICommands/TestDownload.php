@@ -8,7 +8,7 @@
 namespace TenUp\Snapshots\Tests\Commands;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Snapshots\S3StorageConnector;
 use TenUp\Snapshots\Snapshots\SnapshotMeta;
 use TenUp\Snapshots\Tests\Fixtures\{CommandTests, PrivateAccess, WPCLIMocking};
@@ -40,7 +40,7 @@ class TestDownload extends TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->command = ( new Plugin() )->get_instance( Download::class );
+		$this->command = ( new Snapshots() )->get_instance( Download::class );
 
 		$this->set_up_wp_cli_mock();
 	}

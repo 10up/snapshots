@@ -12,7 +12,7 @@ use TenUp\Snapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
 use TenUp\Snapshots\Infrastructure\Container;
 use TenUp\Snapshots\Log\WPCLILogger;
 use TenUp\Snapshots\WPSnapshotsDirectory;
-use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Snapshots\DynamoDBConnector;
 use TenUp\Snapshots\Snapshots\FileZipper;
 use TenUp\Snapshots\Snapshots\S3StorageConnector;
@@ -55,7 +55,7 @@ class TestContainer extends TestCase {
 		}
 		
 		$this->set_up_wp_cli_mock();
-		$this->container = new Plugin();
+		$this->container = new Snapshots();
 	}
 
 	/**

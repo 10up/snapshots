@@ -10,8 +10,7 @@
     "env": "wp-env",
     "shell": "wp-env run",
     "test:php:coverage": "wp-env run tests-wordpress 'env XDEBUG_MODE=coverage' '/var/www/html/wp-content/plugins/snapshots/vendor/bin/phpunit' -c '/var/www/html/wp-content/plugins/snapshots/phpunit.xml.dist' --verbose --coverage-html '/var/www/html/wp-content/plugins/snapshots/coverage'",
-    "test:php": "wp-env run tests-wordpress /var/www/html/wp-content/plugins/snapshots/vendor/bin/phpunit -c /var/www/html/wp-content/plugins/snapshots/phpunit.xml.dist --verbose",
-    "archive": "composer archive --file=snapshots --format=zip"
+    "test:php": "wp-env run tests-wordpress /var/www/html/wp-content/plugins/snapshots/vendor/bin/phpunit -c /var/www/html/wp-content/plugins/snapshots/phpunit.xml.dist --verbose"
   },
   "repository": {
     "type": "git",

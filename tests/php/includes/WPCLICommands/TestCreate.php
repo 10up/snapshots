@@ -9,7 +9,7 @@ namespace TenUp\Snapshots\Tests\Commands;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use TenUp\Snapshots\Exceptions\WPSnapshotsException;
-use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Snapshots\FileZipper;
 use TenUp\Snapshots\Snapshots\SnapshotMeta;
 use TenUp\Snapshots\Tests\Fixtures\{CommandTests, PrivateAccess, WPCLIMocking};
@@ -42,7 +42,7 @@ class TestCreate extends TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->command = ( new Plugin() )->get_instance( Create::class );
+		$this->command = ( new Snapshots() )->get_instance( Create::class );
 
 		$this->set_up_wp_cli_mock();
 

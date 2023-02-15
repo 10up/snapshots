@@ -7,18 +7,18 @@
 
 namespace TenUp\Snapshots\Tests;
 
-use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
- * Class PluginTest
+ * Class TestPackage
  *
  * @package TenUp\Snapshots\Tests
  * 
- * @coversDefaultClass \TenUp\Snapshots\Plugin
+ * @coversDefaultClass \TenUp\Snapshots\Snapshots
  */
-class PluginTest extends TestCase {
+class TestPackage extends TestCase {
 
     use PrivateAccess;
 
@@ -26,7 +26,7 @@ class PluginTest extends TestCase {
      * @covers ::get_modules
      */
     public function test_get_modules() {
-        $plugin = new Plugin();
+        $plugin = new Snapshots();
         $modules = $this->call_private_method( $plugin, 'get_modules' );
 
         $this->assertIsArray( $modules );
@@ -37,7 +37,7 @@ class PluginTest extends TestCase {
      * @covers ::get_services
      */
     public function test_get_services() {
-        $plugin = new Plugin();
+        $plugin = new Snapshots();
         $services = $this->call_private_method( $plugin, 'get_services' );
 
         $this->assertIsArray( $services );

@@ -7,7 +7,7 @@
 
 namespace TenUp\Snapshots\Tests\WPCLICommands\Create;
 
-use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
 use TenUp\Snapshots\Tests\Fixtures\WPCLIMocking;
 use TenUp\Snapshots\WPCLICommands\Create\Trimmer;
@@ -37,7 +37,7 @@ class TestTrimmer extends TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->trimmer = ( new Plugin() )->get_instance( Trimmer::class );
+		$this->trimmer = ( new Snapshots() )->get_instance( Trimmer::class );
 		$this->set_up_wp_cli_mock();
 	}
 
@@ -65,7 +65,7 @@ class TestTrimmer extends TestCase {
 		
 		add_filter( 'tenup_snapshots_trimmer_limits', $limits_filter );
 
-		$this->trimmer = ( new Plugin() )->get_instance( Trimmer::class );
+		$this->trimmer = ( new Snapshots() )->get_instance( Trimmer::class );
 
 		$this->assertEquals( 10, $this->get_private_property( $this->trimmer, 'limits' )['posts'] );
 		$this->assertEquals( 10, $this->get_private_property( $this->trimmer, 'limits' )['comments'] );

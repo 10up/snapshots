@@ -9,7 +9,7 @@ namespace TenUp\Snapshots\Tests\WPCLICommands\Pull;
 
 use TenUp\Snapshots\Exceptions\WPSnapshotsException;
 use TenUp\Snapshots\Exceptions\WPSnapshotsInputValidationException;
-use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\WPSnapshotsDirectory;
 use TenUp\Snapshots\WordPress\Database;
 use TenUp\Snapshots\WPCLI\Prompt;
@@ -40,7 +40,7 @@ class TestURLReplacerFactory extends TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$plugin = new Plugin();
+		$plugin = new Snapshots();
 		$this->url_replacer_factory = $plugin->get_instance( URLReplacerFactory::class );
 	}
 

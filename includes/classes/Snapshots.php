@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin container.
+ * Snapshots container.
  *
  * @package TenUp\Snapshots
  */
@@ -17,22 +17,24 @@ use TenUp\Snapshots\WPCLICommands\Create\{Scrubber, WPCLIDBExport, Trimmer};
 use TenUp\Snapshots\WPCLICommands\Pull\URLReplacerFactory;
 use TenUp\Snapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
 
+use function TenUp\Snapshots\Utils\tenup_snapshots_apply_filters;
+
 /**
- * Plugin container.
+ * Snapshots container.
  *
  * @package TenUp\Snapshots
  */
-final class Plugin extends Container {
+final class Snapshots extends Container {
 
 	/**
-	 * Provides components for the plugin.
+	 * Provides modules.
 	 *
 	 * Modules are classes that are instantiated and registered with the container.
 	 *
 	 * @return string[]
 	 */
 	protected function get_modules(): array {
-		$components = [
+		$modules = [
 			'wpcli_commands/configure'         => Configure::class,
 			'wpcli_commands/create_repository' => CreateRepository::class,
 			'wpcli_commands/create'            => Create::class,
@@ -44,15 +46,15 @@ final class Plugin extends Container {
 		];
 
 		/**
-		 * Filters the components for the plugin.
+		 * Filters the modules.
 		 *
 		 * @param array $components Client components.
 		 */
-		return (array) apply_filters( 'tenup_snapshots_components', $components );
+		return (array) tenup_snapshots_apply_filters( 'tenup_snapshots_components', $modules );
 	}
 
 	/**
-	 * Provides the services for the plugin.
+	 * Provides the services.
 	 *
 	 * Services are classes that are instantiated on demand when components are instantiated.
 	 *
@@ -81,6 +83,6 @@ final class Plugin extends Container {
 		 *
 		 * @param array $services Service modules.
 		 */
-		return (array) apply_filters( 'tenup_snapshots_services', $services );
+		return (array) tenup_snapshots_apply_filters( 'tenup_snapshots_services', $services );
 	}
 }

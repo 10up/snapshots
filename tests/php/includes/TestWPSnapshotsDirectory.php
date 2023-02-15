@@ -10,7 +10,7 @@ namespace TenUp\Snapshots\Tests;
 use Phar;
 use PharData;
 use TenUp\Snapshots\Exceptions\WPSnapshotsException;
-use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\WPSnapshotsDirectory;
 use TenUp\Snapshots\Snapshots\FileZipper;
 use TenUp\Snapshots\Tests\Fixtures\DirectoryFiltering;
@@ -41,7 +41,7 @@ class TestWPSnapshotsDirectory extends TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->snapshots_fs = ( new Plugin() )->get_instance( WPSnapshotsDirectory::class );
+		$this->snapshots_fs = ( new Snapshots() )->get_instance( WPSnapshotsDirectory::class );
 
 		$this->set_up_directory_filtering();
 	}
@@ -208,7 +208,7 @@ class TestWPSnapshotsDirectory extends TestCase {
 
 	/** @covers ::unzip_snapshot_files */
 	public function test_unzip_snapshot_files() {
-		$file_zipper = ( new Plugin() )->get_instance( FileZipper::class );
+		$file_zipper = ( new Snapshots() )->get_instance( FileZipper::class );
 
 		$snapshot_id = 'test-snapshot-id';
 		$destination_directory = $this->get_directory_path() . '/destination';

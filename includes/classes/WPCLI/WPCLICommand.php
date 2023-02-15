@@ -146,7 +146,11 @@ abstract class WPCLICommand implements Conditional, Module {
 	 * Registers the module.
 	 */
 	public function register() {
-		wp_cli()::add_command( 'snapshots ' . $this->get_command(), [ $this, 'execute' ], $this->get_command_parameters() );
+		wp_cli()::add_command(
+			'snapshots ' . $this->get_command(),
+			[ $this, 'execute' ],
+			array_merge( $this->get_command_parameters(), [ 'when' => 'after_wp_load' ] )
+		);
 	}
 
 	/**

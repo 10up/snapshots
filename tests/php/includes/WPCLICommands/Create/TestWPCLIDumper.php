@@ -8,7 +8,7 @@
 namespace TenUp\Snapshots\Tests\WPCLICommands\Create;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use TenUp\Snapshots\Plugin;
+use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Tests\Fixtures\DirectoryFiltering;
 use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
 use TenUp\Snapshots\Tests\Fixtures\WPCLIMocking;
@@ -44,7 +44,7 @@ class TestWPCLIDBExport extends TestCase {
 		$this->set_up_wp_cli_mock();
 		$this->set_up_directory_filtering();
 
-		$this->wpcli_dumper = ( new Plugin() )->get_instance( WPCLIDBExport::class );
+		$this->wpcli_dumper = ( new Snapshots() )->get_instance( WPCLIDBExport::class );
 	}
 
 	/**
