@@ -27,14 +27,14 @@ use function TenUp\Snapshots\Utils\tenup_snapshots_apply_filters;
 final class Snapshots extends Container {
 
 	/**
-	 * Provides components for the plugin.
+	 * Provides modules.
 	 *
 	 * Modules are classes that are instantiated and registered with the container.
 	 *
 	 * @return string[]
 	 */
 	protected function get_modules(): array {
-		$commands = [
+		$modules = [
 			'wpcli_commands/configure'         => Configure::class,
 			'wpcli_commands/create_repository' => CreateRepository::class,
 			'wpcli_commands/create'            => Create::class,
@@ -46,15 +46,15 @@ final class Snapshots extends Container {
 		];
 
 		/**
-		 * Filters the components for the plugin.
+		 * Filters the modules.
 		 *
 		 * @param array $components Client components.
 		 */
 		return (array) tenup_snapshots_apply_filters( 'tenup_snapshots_components', $commands );
-	}
+	}modules
 
 	/**
-	 * Provides the services for the plugin.
+	 * Provides the services.
 	 *
 	 * Services are classes that are instantiated on demand when components are instantiated.
 	 *

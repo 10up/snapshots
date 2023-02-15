@@ -12,13 +12,13 @@ use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
- * Class PluginTest
+ * Class TestPackage
  *
  * @package TenUp\Snapshots\Tests
  * 
  * @coversDefaultClass \TenUp\Snapshots\Snapshots
  */
-class PluginTest extends TestCase {
+class TestPackage extends TestCase {
 
     use PrivateAccess;
 

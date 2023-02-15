@@ -31,9 +31,9 @@ A snapshot can contain files, the database, or both. Snapshot files (`wp-content
 
 ## Install
 
-WP Snapshots is a WordPress plugin designed to be used in conjuction with WP CLI. An environment with WP CLI enabled is required, and it's highly recommended you run WP Snapshots from WITHIN your dev environment (inside VM or container). 
+WP Snapshots is a WP CLI package. An environment with WP CLI enabled is required, and it's highly recommended you run WP Snapshots from WITHIN your dev environment (inside VM or container). 
 
-- TODO - WordPress plugin installation. Depends on build process and whether the repo is public.
+- TODO - Package installation. Depends on build process and whether the repo is public.
 
 ## Authentication
 
