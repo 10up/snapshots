@@ -15,6 +15,10 @@ use TenUp\Snapshots\Infrastructure\SharedService;
 use TenUp\Snapshots\Log\{LoggerInterface, Logging};
 use WP_Filesystem_Base;
 
+use function TenUp\Snapshots\Utils\tenup_snapshots_add_trailing_slash;
+use function TenUp\Snapshots\Utils\tenup_snapshots_apply_filters;
+use function TenUp\Snapshots\Utils\tenup_snapshots_remove_trailing_slash;
+
 /**
  * WPSnapshotsDirectory class.
  *
@@ -140,7 +144,7 @@ class WPSnapshotsDirectory implements SharedService {
 	 * @throws WPSnapshotsException If the snapshot directory cannot be created.
 	 */
 	public function create_directory( $id = null, $hard = false ) {
-		$snapshots_directory = trailingslashit( $this->get_directory() );
+		$snapshots_directory = tenup_snapshots_add_trailing_slash( $this->get_directory() );
 
 		if ( ! $this->get_wp_filesystem()->exists( $snapshots_directory ) ) {
 			try {
@@ -292,7 +296,7 @@ class WPSnapshotsDirectory implements SharedService {
 		 *
 		 * @param string $tmp_dir Path to the tmp directory to use for WP snapshots.
 		 */
-		$tmp_dir = apply_filters( 'tenup_snapshots_tmp_dir', trailingslashit( $tenup_snapshots_directory ) . 'tmp' );
+		$tmp_dir = tenup_snapshots_apply_filters( 'tenup_snapshots_tmp_dir', trailingslashit( $tenup_snapshots_directory ) . 'tmp' );
 
 		if ( ! empty( $subpath ) ) {
 			$tmp_dir = trailingslashit( $tmp_dir ) . preg_replace( '/^\//', '', $subpath );
@@ -319,12 +323,12 @@ class WPSnapshotsDirectory implements SharedService {
 		 *
 		 * @param string $file Snapshots directory.
 		 */
-		$directory = apply_filters( 'tenup_snapshots_directory', $directory );
+		$directory = tenup_snapshots_apply_filters( 'tenup_snapshots_directory', $directory );
 
 		if ( ! $this->get_wp_filesystem()->is_dir( $directory ) && ! $this->get_wp_filesystem()->mkdir( $directory ) ) {
 			throw new WPSnapshotsException( 'Unable to create ' . $directory );
 		}
 
-		return untrailingslashit( $directory . ( ! empty( $id ) ? '/' . preg_replace( '/^\//', '', $id ) : '' ) );
+		return tenup_snapshots_remove_trailing_slash( $directory . ( ! empty( $id ) ? '/' . preg_replace( '/^\//', '', $id ) : '' ) );
 	}
 }

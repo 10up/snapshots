@@ -38,11 +38,18 @@ trait CommandTests {
 
     /** @covers ::get_command_parameters */
 	public function test_get_command_parameters() {
-		$this->assertEquals(
-			[
-				'shortdesc',
-				'synopsis',
-			],
+        $params = [
+            'shortdesc',
+            'synopsis',
+            'when',
+        ];
+
+        if ( 'configure' === $this->call_private_method( $this->command, 'get_command' ) ) {
+            $params[] = 'longdesc';
+        }
+
+		$this->assertEqualsCanonicalizing(
+			$params,
 			array_keys( $this->call_private_method( $this->command, 'get_command_parameters' ) )
 		);
 	}

@@ -195,13 +195,13 @@ class WPSnapshotsConfigFromFileSystem implements WPSnapshotsConfigInterface {
 			$this->save();
 		}
 
-		$this->config = wp_parse_args( $config, $defaults );
+		$this->config = array_merge( $defaults, $config );
 	}
 
 	/**
 	 * Saves the configuration to a file.
 	 */
 	public function save() {
-		$this->snapshots_file_system->update_file_contents( 'config.json', wp_json_encode( $this->config ) );
+		$this->snapshots_file_system->update_file_contents( 'config.json', json_encode( $this->config ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode
 	}
 }

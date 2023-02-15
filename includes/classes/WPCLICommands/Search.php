@@ -80,6 +80,7 @@ final class Search extends WPCLICommand {
 					'default'     => 'us-west-1',
 				],
 			],
+			'when'      => 'before_wp_load',
 		];
 	}
 

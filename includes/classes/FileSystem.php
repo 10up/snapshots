@@ -21,7 +21,7 @@ class FileSystem implements SharedService {
 	/**
 	 * The WP_Filesystem_Direct instance.
 	 *
-	 * @var ?WP_Filesystem_Base
+	 * @var ?mixed
 	 */
 	private $wp_filesystem;
 
@@ -35,7 +35,14 @@ class FileSystem implements SharedService {
 
 		if ( ! $this->wp_filesystem ) {
 			if ( ! $wp_filesystem ) {
-				WP_Filesystem( false, false, true );
+				if ( function_exists( 'WP_Filesystem' ) ) {
+					WP_Filesystem( false, false, true );
+
+				} else {
+					require_once TENUP_SNAPSHOTS_DIR . '/includes/lib/wp-file-system-direct-shim.php';
+
+					$wp_filesystem = new \WP_Filesystem_Direct_Shim();
+				}
 			}
 
 			$this->wp_filesystem = $wp_filesystem;

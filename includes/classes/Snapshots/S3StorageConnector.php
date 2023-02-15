@@ -215,7 +215,7 @@ class S3StorageConnector implements StorageConnectorInterface {
 					'version' => 'latest',
 					'region'  => $region,
 					'retries' => 3,
-					'scheme'  => get_site_url( get_current_blog_id() ) === 'https://' ? 'https' : 'http',
+					'scheme'  => function_exists( 'get_site_url' ) && get_site_url( get_current_blog_id() ) === 'https://' ? 'https' : 'http',
 				]
 			);
 		}
