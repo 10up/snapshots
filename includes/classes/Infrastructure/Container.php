@@ -1,6 +1,6 @@
 <?php
 /**
- * Auto-initialize all services in the plugin.
+ * Auto-initialize all services.
  *
  * @package TenUp\Snapshots
  */
@@ -16,7 +16,7 @@ use TenUp\Snapshots\Exceptions\WPSnapshotsException;
 /**
  * Container class.
  *
- * @package TenUpPlugin
+ * @package TenUp\Snapshots\Infrastructure
  */
 abstract class Container {
 
@@ -35,7 +35,7 @@ abstract class Container {
 	abstract protected function get_modules() : array;
 
 	/**
-	 * Provides the services for the plugin.
+	 * Provides the services.
 	 *
 	 * Services are classes that are instantiated on demand when modules are instantiated.
 	 *

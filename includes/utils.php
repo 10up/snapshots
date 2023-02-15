@@ -17,15 +17,15 @@ use WP_CLI;
  * @return Snapshots
  */
 function tenup_snapshots() : Snapshots {
-	static $plugin;
+	static $snapshots;
 
-	if ( ! $plugin ) {
-		$plugin = new Snapshots();
+	if ( ! $snapshots ) {
+		$snapshots = new Snapshots();
 
-		$plugin->register();
+		$snapshots->register();
 	}
 
-	return $plugin;
+	return $snapshots;
 }
 
 /**
