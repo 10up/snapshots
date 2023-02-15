@@ -47,7 +47,7 @@ final class Configure extends WPCLICommand {
 	 *
 	 * @return array
 	 */
-	public static function get_command_parameters() : array {
+	protected function get_command_parameters() : array {
 		return [
 			'longdesc'  => '## EXAMPLES' . PHP_EOL . PHP_EOL . 'wp snapshots configure 10up' . PHP_EOL . 'wp snapshots configure 10up --region=us-west-1 --user_name=John --user_email=john.doe@example.com',
 			'shortdesc' => 'Configures WP Snapshots for your environment.',
@@ -86,7 +86,7 @@ final class Configure extends WPCLICommand {
 	 *
 	 * @return string
 	 */
-	public static function get_command() : string {
+	protected function get_command() : string {
 		return 'configure';
 	}
 

@@ -49,7 +49,7 @@ final class Download extends WPCLICommand {
 	 *
 	 * @inheritDoc
 	 */
-	public static function get_command() : string {
+	protected function get_command() : string {
 		return 'download';
 	}
 
@@ -58,7 +58,7 @@ final class Download extends WPCLICommand {
 	 *
 	 * @inheritDoc
 	 */
-	public static function get_command_parameters() : array {
+	protected function get_command_parameters() : array {
 		return [
 			'shortdesc' => 'Download a snapshot from the repository.',
 			'synopsis'  => [
