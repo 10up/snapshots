@@ -41,7 +41,7 @@ class FileSystem implements SharedService {
 				} else {
 					require_once TENUP_SNAPSHOTS_DIR . '/includes/lib/wp-file-system-direct-shim.php';
 
-					$wp_filesystem = new \WP_Filesystem_Direct_Shim();
+					$wp_filesystem = new \WP_Filesystem_Direct_Shim(); // @phpstan-ignore-line
 				}
 			}
 
