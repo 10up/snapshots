@@ -50,8 +50,8 @@ final class Snapshots extends Container {
 		 *
 		 * @param array $components Client components.
 		 */
-		return (array) tenup_snapshots_apply_filters( 'tenup_snapshots_components', $commands );
-	}modules
+		return (array) tenup_snapshots_apply_filters( 'tenup_snapshots_components', $modules );
+	}
 
 	/**
 	 * Provides the services.
