@@ -229,6 +229,7 @@ final class Pull extends WPCLICommand {
 					'optional'    => true,
 				],
 			],
+			'when'      => 'after_wp_load',
 		];
 	}
 

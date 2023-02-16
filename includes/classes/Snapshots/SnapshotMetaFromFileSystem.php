@@ -54,7 +54,7 @@ class SnapshotMetaFromFileSystem extends SnapshotMeta {
 	 * @return int Number of bytes written
 	 */
 	public function save_local( string $id, array $meta ) {
-		$this->snapshot_files->update_file_contents( 'meta.json', wp_json_encode( $meta ), false, $id );
+		$this->snapshot_files->update_file_contents( 'meta.json', json_encode( $meta ), false, $id ); // @phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode
 
 		return $this->snapshot_files->get_file_size( 'meta.json', $id );
 	}

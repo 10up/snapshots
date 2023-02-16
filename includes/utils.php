@@ -111,3 +111,25 @@ function tenup_snapshots_apply_filters( string $tag, $value ) {
 
 	return $value;
 }
+
+/**
+ * Removes the trailing slash from a string.
+ *
+ * @param string $string The string to remove the trailing slash from.
+ *
+ * @return string The string without the trailing slash.
+ */
+function tenup_snapshots_remove_trailing_slash( string $string ) : string {
+	return rtrim( $string, '/' );
+}
+
+/**
+ * Adds a trailing slash to a string.
+ *
+ * @param string $string The string to add the trailing slash to.
+ *
+ * @return string The string with the trailing slash.
+ */
+function tenup_snapshots_add_trailing_slash( string $string ) : string {
+	return rtrim( $string, '/' ) . '/';
+}

@@ -49,7 +49,6 @@ final class Configure extends WPCLICommand {
 	 */
 	protected function get_command_parameters() : array {
 		return [
-			'longdesc'  => '## EXAMPLES' . PHP_EOL . PHP_EOL . 'wp snapshots configure 10up' . PHP_EOL . 'wp snapshots configure 10up --region=us-west-1 --user_name=John --user_email=john.doe@example.com',
 			'shortdesc' => 'Configures WP Snapshots for your environment.',
 			'synopsis'  => [
 				[
@@ -78,6 +77,8 @@ final class Configure extends WPCLICommand {
 					'optional'    => true,
 				],
 			],
+			'when'      => 'before_wp_load',
+			'longdesc'  => '## EXAMPLES' . PHP_EOL . PHP_EOL . 'wp snapshots configure 10up' . PHP_EOL . 'wp snapshots configure 10up --region=us-west-1 --user_name=John --user_email=john.doe@example.com',
 		];
 	}
 

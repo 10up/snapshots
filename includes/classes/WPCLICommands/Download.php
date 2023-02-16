@@ -96,6 +96,7 @@ final class Download extends WPCLICommand {
 					'default'     => true,
 				],
 			],
+			'when'      => 'before_wp_load',
 		];
 	}
 

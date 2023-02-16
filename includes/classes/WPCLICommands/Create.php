@@ -183,6 +183,7 @@ class Create extends WPCLICommand {
 					'default'     => '',
 				],
 			],
+			'when'      => 'after_wp_load',
 		];
 	}
 

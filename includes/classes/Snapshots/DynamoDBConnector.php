@@ -167,7 +167,7 @@ class DynamoDBConnector implements DBConnectorInterface {
 		];
 
 		$snapshot_item = array_merge( $snapshot_item, $meta );
-		$snapshot_json = wp_json_encode( $snapshot_item );
+		$snapshot_json = json_encode( $snapshot_item ); // phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode
 
 		$this->get_client( $region )->putItem(
 			[

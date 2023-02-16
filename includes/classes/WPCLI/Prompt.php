@@ -10,6 +10,7 @@ namespace TenUp\Snapshots\WPCLI;
 use TenUp\Snapshots\Exceptions\WPSnapshotsInputValidationException;
 use TenUp\Snapshots\Infrastructure\SharedService;
 
+use function TenUp\Snapshots\Utils\tenup_snapshots_apply_filters;
 use function TenUp\Snapshots\Utils\wp_cli;
 
 /**
@@ -120,7 +121,7 @@ class Prompt implements SharedService {
 		 *
 		 * @param array $answers Acceptable answers.
 		 */
-		$acceptable_answers = apply_filters( 'tenup_snapshots_get_flag_or_prompt_answers', [ 'y', 'n', 'Y', 'N', '' ] );
+		$acceptable_answers = tenup_snapshots_apply_filters( 'tenup_snapshots_get_flag_or_prompt_answers', [ 'y', 'n', 'Y', 'N', '' ] );
 
 		do {
 			$answer = $this->readline( $prompt . ' ' . ( true === $default ? '[Y/n]:' : '[y/N]:' ) . ' ' );
@@ -148,7 +149,7 @@ class Prompt implements SharedService {
 		 *
 		 * @param callable $readline Readline callable.
 		 */
-		$readline = apply_filters( 'tenup_snapshots_readline', 'readline' );
+		$readline = tenup_snapshots_apply_filters( 'tenup_snapshots_readline', 'readline' );
 
 		$result = $readline( $prompt );
 

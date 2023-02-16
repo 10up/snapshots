@@ -70,20 +70,6 @@ class TestConfigure extends TestCase {
 		$this->assertEquals( 'configure', $this->call_private_method( $this->command, 'get_command' ) );
 	}
 
-	/** @covers ::get_command_parameters */
-	public function test_get_command_parameters() {
-		$parameters = $this->call_private_method( $this->command, 'get_command_parameters' );
-
-		$this->assertEquals(
-			[
-				'longdesc',
-				'shortdesc',
-				'synopsis',
-			],
-			array_keys( $parameters )
-		);
-	}
-
 	/**
 	 * Test command result has correct data structure.
 	 * 

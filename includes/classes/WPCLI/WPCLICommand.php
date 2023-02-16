@@ -149,7 +149,7 @@ abstract class WPCLICommand implements Conditional, Module {
 		wp_cli()::add_command(
 			'snapshots ' . $this->get_command(),
 			[ $this, 'execute' ],
-			array_merge( $this->get_command_parameters(), [ 'when' => 'after_wp_load' ] )
+			$this->get_command_parameters()
 		);
 	}
 
