@@ -62,4 +62,12 @@ interface StorageConnectorInterface extends SharedService {
 	 * @param  string $region AWS region
 	 */
 	public function delete_snapshot( string $id, string $project, string $repository, string $region ) : void;
+
+	/**
+	 * Tests the user's AWS credentials.
+	 *
+	 * @param string $repository Repository name.
+	 * @param string $region AWS region.
+	 */
+	public function test( string $repository, string $region );
 }

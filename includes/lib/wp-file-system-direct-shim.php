@@ -13,11 +13,11 @@ use function TenUp\Snapshots\Utils\tenup_snapshots_remove_trailing_slash;
 // phpcs:disable
 
 if ( ! defined( 'FS_CHMOD_FILE' ) ) {
-    define( 'FS_CHMOD_FILE', '0644' );
+    define( 'FS_CHMOD_FILE', 0777 );
 }
 
 if ( ! defined( 'FS_CHMOD_DIR' ) ) {
-	define( 'FS_CHMOD_DIR', '0755' );
+	define( 'FS_CHMOD_DIR', 0777 );
 }
 
 if ( ! function_exists( 'mbstring_binary_safe_encoding' ) ) {

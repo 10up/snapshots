@@ -109,7 +109,7 @@ class WPSnapshotsDirectory implements SharedService {
 			}
 		}
 
-		if ( ! $this->get_wp_filesystem()->put_contents( $file, $contents ) ) {
+		if ( ! $this->get_wp_filesystem()->put_contents( $file, $contents ) || ! $this->get_wp_filesystem()->is_readable( $file ) ) {
 			throw new WPSnapshotsException( 'Unable to write to file: ' . $file );
 		}
 	}
@@ -325,7 +325,7 @@ class WPSnapshotsDirectory implements SharedService {
 		 */
 		$directory = tenup_snapshots_apply_filters( 'tenup_snapshots_directory', $directory );
 
-		if ( ! $this->get_wp_filesystem()->is_dir( $directory ) && ! $this->get_wp_filesystem()->mkdir( $directory ) ) {
+		if ( ! $this->get_wp_filesystem()->is_dir( $directory ) && ( ! $this->get_wp_filesystem()->mkdir( $directory, 0755 ) || ! $this->get_wp_filesystem()->is_writable( $directory ) ) ) {
 			throw new WPSnapshotsException( 'Unable to create ' . $directory );
 		}
 
