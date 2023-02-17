@@ -187,7 +187,7 @@ class TestConfigure extends TestCase {
 		$this->get_wp_cli_mock()
 			->assertMethodCalled(
 				'line',
-				3
+				4
 			);
 	}
 
