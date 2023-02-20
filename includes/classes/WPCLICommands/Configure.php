@@ -7,6 +7,7 @@
 
 namespace TenUp\Snapshots\WPCLICommands;
 
+use Exception;
 use TenUp\Snapshots\Exceptions\WPSnapshotsException;
 use TenUp\Snapshots\WPCLI\WPCLICommand;
 
@@ -32,9 +33,17 @@ final class Configure extends WPCLICommand {
 
 			$this->config->set_user_name( $this->get_user_name() );
 			$this->config->set_user_email( $this->get_user_email() );
+
 			$this->config->set_repositories( $this->get_updated_repository_info() );
 
 			$this->config->save();
+
+			try {
+				$this->log( 'Testing repository connection...' );
+				$this->storage_connector->test( $this->get_repository_name( true, 0 ), $this->get_region() );
+			} catch ( Exception $e ) {
+				wp_cli()::error( 'Your Snapshots configuration is saved, but we were unable to connect to the repository. Please check your AWS credentials.' );
+			}
 
 			wp_cli()::success( 'WP Snapshots configuration saved.' );
 		} catch ( WPSnapshotsException $e ) {

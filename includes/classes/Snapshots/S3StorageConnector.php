@@ -203,6 +203,20 @@ class S3StorageConnector implements StorageConnectorInterface {
 	}
 
 	/**
+	 * Tests the user's AWS credentials.
+	 *
+	 * @param string $repository Repository name.
+	 * @param string $region AWS region.
+	 */
+	public function test( string $repository, string $region ) {
+		$client = $this->get_client( $region );
+
+		$bucket_name = $this->get_bucket_name( $repository );
+
+		$client->listObjects( [ 'Bucket' => $bucket_name ] );
+	}
+
+	/**
 	 * Configures the client.
 	 *
 	 * @param string $region AWS region.
