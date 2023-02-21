@@ -1,6 +1,6 @@
 <?php
 /**
- * WPSnapshotsDirectory class.
+ * SnapshotsDirectory class.
  *
  * @package TenUp\Snapshots
  */
@@ -10,21 +10,21 @@ namespace TenUp\Snapshots;
 use Exception;
 use Phar;
 use PharData;
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\Infrastructure\SharedService;
 use TenUp\Snapshots\Log\{LoggerInterface, Logging};
 use WP_Filesystem_Base;
 
-use function TenUp\Snapshots\Utils\tenup_snapshots_add_trailing_slash;
-use function TenUp\Snapshots\Utils\tenup_snapshots_apply_filters;
-use function TenUp\Snapshots\Utils\tenup_snapshots_remove_trailing_slash;
+use function TenUp\Snapshots\Utils\snapshots_add_trailing_slash;
+use function TenUp\Snapshots\Utils\snapshots_apply_filters;
+use function TenUp\Snapshots\Utils\snapshots_remove_trailing_slash;
 
 /**
- * WPSnapshotsDirectory class.
+ * SnapshotsDirectory class.
  *
  * @package TenUp\Snapshots
  */
-class WPSnapshotsDirectory implements SharedService {
+class SnapshotsDirectory implements SharedService {
 
 	use Logging;
 
@@ -67,7 +67,7 @@ class WPSnapshotsDirectory implements SharedService {
 	 * @param ?string $id   Snapshot ID.
 	 * @return string $contents File contents.
 	 *
-	 * @throws WPSnapshotsException If unable to read file.
+	 * @throws SnapshotsException If unable to read file.
 	 */
 	public function get_file_contents( string $file_name, string $id = null ) : string {
 		$file = $this->get_file_path( $file_name, $id );
@@ -75,10 +75,10 @@ class WPSnapshotsDirectory implements SharedService {
 		try {
 			$contents = $this->get_wp_filesystem()->get_contents( $file );
 			if ( false === $contents ) {
-				throw new WPSnapshotsException( 'Unable to read file: ' . $file );
+				throw new SnapshotsException( 'Unable to read file: ' . $file );
 			}
 		} catch ( Exception $e ) {
-			throw new WPSnapshotsException( 'Unable to read file: ' . $file );
+			throw new SnapshotsException( 'Unable to read file: ' . $file );
 		}
 
 		return $contents;
@@ -92,7 +92,7 @@ class WPSnapshotsDirectory implements SharedService {
 	 * @param bool    $append Whether to append to the file.
 	 * @param ?string $id Snapshot ID.
 	 *
-	 * @throws WPSnapshotsException If unable to write to file.
+	 * @throws SnapshotsException If unable to write to file.
 	 */
 	public function update_file_contents( string $file_name, string $contents, bool $append = false, string $id = null ) {
 		$file = $this->get_file_path( $file_name, $id );
@@ -110,7 +110,7 @@ class WPSnapshotsDirectory implements SharedService {
 		}
 
 		if ( ! $this->get_wp_filesystem()->put_contents( $file, $contents ) || ! $this->get_wp_filesystem()->is_readable( $file ) ) {
-			throw new WPSnapshotsException( 'Unable to write to file: ' . $file );
+			throw new SnapshotsException( 'Unable to write to file: ' . $file );
 		}
 	}
 
@@ -141,40 +141,40 @@ class WPSnapshotsDirectory implements SharedService {
 	 * @param  string $id   Optional ID. Setting this will create the snapshot directory.
 	 * @param  bool   $hard Overwrite an existing snapshot
 	 *
-	 * @throws WPSnapshotsException If the snapshot directory cannot be created.
+	 * @throws SnapshotsException If the snapshot directory cannot be created.
 	 */
 	public function create_directory( $id = null, $hard = false ) {
-		$snapshots_directory = tenup_snapshots_add_trailing_slash( $this->get_directory() );
+		$snapshots_directory = snapshots_add_trailing_slash( $this->get_directory() );
 
 		if ( ! $this->get_wp_filesystem()->exists( $snapshots_directory ) ) {
 			try {
 				if ( ! $this->get_wp_filesystem()->mkdir( $snapshots_directory ) ) {
-					throw new WPSnapshotsException( 'Could not create snapshot directory' );
+					throw new SnapshotsException( 'Could not create snapshot directory' );
 				}
 			} catch ( Exception $e ) {
-				throw new WPSnapshotsException( 'Could not create snapshot directory: ' . $e->getMessage() );
+				throw new SnapshotsException( 'Could not create snapshot directory: ' . $e->getMessage() );
 			}
 		}
 
 		if ( ! $this->get_wp_filesystem()->is_writable( $snapshots_directory ) ) {
-			throw new WPSnapshotsException( 'Snapshot directory is not writable' );
+			throw new SnapshotsException( 'Snapshot directory is not writable' );
 		}
 
 		if ( ! empty( $id ) ) {
 			if ( $hard && $this->get_wp_filesystem()->exists( $snapshots_directory . $id . '/' ) ) {
 				if ( ! $this->get_wp_filesystem()->rmdir( $snapshots_directory . $id . '/', true ) ) {
-					throw new WPSnapshotsException( 'Could not remove existing snapshot directory' );
+					throw new SnapshotsException( 'Could not remove existing snapshot directory' );
 				}
 			}
 
 			if ( ! $this->get_wp_filesystem()->exists( $snapshots_directory . $id . '/' ) ) {
 				if ( ! $this->get_wp_filesystem()->mkdir( $snapshots_directory . $id . '/' ) ) {
-					throw new WPSnapshotsException( 'Could not create snapshot directory' );
+					throw new SnapshotsException( 'Could not create snapshot directory' );
 				}
 			}
 
 			if ( ! $this->get_wp_filesystem()->is_writable( $snapshots_directory . $id . '/' ) ) {
-				throw new WPSnapshotsException( 'Snapshot directory is not writable' );
+				throw new SnapshotsException( 'Snapshot directory is not writable' );
 			}
 		}
 	}
@@ -186,7 +186,7 @@ class WPSnapshotsDirectory implements SharedService {
 	 * @param string $id  Snapshot ID.
 	 * @return array $lines File contents as lines.
 	 *
-	 * @throws WPSnapshotsException If unable to read file.
+	 * @throws SnapshotsException If unable to read file.
 	 */
 	public function get_file_lines( string $file, string $id = '' ) : array {
 		$file = $this->get_file_path( $file, $id );
@@ -194,7 +194,7 @@ class WPSnapshotsDirectory implements SharedService {
 		$lines = $this->get_wp_filesystem()->get_contents_array( $file );
 
 		if ( ! is_array( $lines ) ) {
-			throw new WPSnapshotsException( 'Unable to read file: ' . $file );
+			throw new SnapshotsException( 'Unable to read file: ' . $file );
 		}
 
 		return $lines;
@@ -243,7 +243,7 @@ class WPSnapshotsDirectory implements SharedService {
 	 *
 	 * @return string[] Errors.
 	 *
-	 * @throws WPSnapshotsException If there is an error.
+	 * @throws SnapshotsException If there is an error.
 	 */
 	public function unzip_snapshot_files( string $id, string $destination ) : array {
 		$errors = [];
@@ -256,7 +256,7 @@ class WPSnapshotsDirectory implements SharedService {
 
 		// Copy the gzipped tar file to a new file so that we can unzip it.
 		if ( ! $this->get_wp_filesystem()->copy( $gzipped_tar_file, $copied_gzipped_tar_file, true ) ) {
-			throw new WPSnapshotsException( 'Could not copy gzipped tar file' );
+			throw new SnapshotsException( 'Could not copy gzipped tar file' );
 		}
 
 		$tar_file = str_replace( '.gz', '', $copied_gzipped_tar_file );
@@ -289,14 +289,14 @@ class WPSnapshotsDirectory implements SharedService {
 	 * @return string
 	 */
 	public function get_tmp_dir( string $subpath = '' ) : string {
-		$tenup_snapshots_directory = $this->get_directory();
+		$snapshots_directory = $this->get_directory();
 
 		/**
 		 * Filters the path to the tmp directory to use for WP snapshots.
 		 *
 		 * @param string $tmp_dir Path to the tmp directory to use for WP snapshots.
 		 */
-		$tmp_dir = tenup_snapshots_apply_filters( 'tenup_snapshots_tmp_dir', trailingslashit( $tenup_snapshots_directory ) . 'tmp' );
+		$tmp_dir = snapshots_apply_filters( 'snapshots_tmp_dir', trailingslashit( $snapshots_directory ) . 'tmp' );
 
 		if ( ! empty( $subpath ) ) {
 			$tmp_dir = trailingslashit( $tmp_dir ) . preg_replace( '/^\//', '', $subpath );
@@ -311,7 +311,7 @@ class WPSnapshotsDirectory implements SharedService {
 	 * @param ?string $id Snapshot ID.
 	 * @return string $file Snapshots directory.
 	 *
-	 * @throws WPSnapshotsException If unable to create directory.
+	 * @throws SnapshotsException If unable to create directory.
 	 */
 	private function get_directory( ?string $id = null ) : string {
 
@@ -323,12 +323,12 @@ class WPSnapshotsDirectory implements SharedService {
 		 *
 		 * @param string $file Snapshots directory.
 		 */
-		$directory = tenup_snapshots_apply_filters( 'tenup_snapshots_directory', $directory );
+		$directory = snapshots_apply_filters( 'snapshots_directory', $directory );
 
 		if ( ! $this->get_wp_filesystem()->is_dir( $directory ) && ( ! $this->get_wp_filesystem()->mkdir( $directory, 0755 ) || ! $this->get_wp_filesystem()->is_writable( $directory ) ) ) {
-			throw new WPSnapshotsException( 'Unable to create ' . $directory );
+			throw new SnapshotsException( 'Unable to create ' . $directory );
 		}
 
-		return tenup_snapshots_remove_trailing_slash( $directory . ( ! empty( $id ) ? '/' . preg_replace( '/^\//', '', $id ) : '' ) );
+		return snapshots_remove_trailing_slash( $directory . ( ! empty( $id ) ? '/' . preg_replace( '/^\//', '', $id ) : '' ) );
 	}
 }

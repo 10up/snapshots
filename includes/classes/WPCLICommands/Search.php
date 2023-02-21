@@ -8,7 +8,7 @@
 namespace TenUp\Snapshots\WPCLICommands;
 
 use Exception;
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\WPCLI\WPCLICommand;
 
 use function TenUp\Snapshots\Utils\wp_cli;
@@ -89,13 +89,13 @@ final class Search extends WPCLICommand {
 	 *
 	 * @return string
 	 *
-	 * @throws WPSnapshotsException If no search string is provided.
+	 * @throws SnapshotsException If no search string is provided.
 	 */
 	private function get_search_string() : string {
 		$search_string = $this->get_args()[0] ?? '';
 
 		if ( empty( $search_string ) ) {
-			throw new WPSnapshotsException( 'Please provide a search string.' );
+			throw new SnapshotsException( 'Please provide a search string.' );
 		}
 
 		return $search_string;

@@ -1,14 +1,14 @@
 <?php
 /**
  * Tests for the S3StorageConnector class.
- * 
+ *
  * @package TenUp\Snapshots
  */
 
 namespace TenUp\Snapshots\Tests\Snapshots;
 
 use Aws\S3\S3Client;
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Snapshots\S3StorageConnector;
 use TenUp\Snapshots\Tests\Fixtures\DirectoryFiltering;
@@ -19,7 +19,7 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
  * Class TestS3StorageConnector
  *
  * @package TenUp\Snapshots\Tests\Snapshots
- * 
+ *
  * @coversDefaultClass \TenUp\Snapshots\Snapshots\S3StorageConnector
  */
 class TestS3StorageConnector extends TestCase {
@@ -28,7 +28,7 @@ class TestS3StorageConnector extends TestCase {
 
 	/**
 	 * S3StorageConnector instance.
-	 * 
+	 *
 	 * @var S3StorageConnector
 	 */
 	private $connector;
@@ -68,7 +68,7 @@ class TestS3StorageConnector extends TestCase {
 			->disableOriginalConstructor()
 			->addMethods( [ 'getObject' ] )
 			->getMock();
-		
+
 		$client->expects( $this->once() )
 			->method( 'getObject' )
 			->with( [
@@ -97,7 +97,7 @@ class TestS3StorageConnector extends TestCase {
 			->disableOriginalConstructor()
 			->addMethods( [ 'getObject' ] )
 			->getMock();
-		
+
 		$client->expects( $this->once() )
 			->method( 'getObject' )
 			->with( [
@@ -126,7 +126,7 @@ class TestS3StorageConnector extends TestCase {
 			->disableOriginalConstructor()
 			->addMethods( [ 'getObject' ] )
 			->getMock();
-		
+
 		$client->expects( $this->exactly( 2 ) )
 			->method( 'getObject' )
 			->withConsecutive(
@@ -167,7 +167,7 @@ class TestS3StorageConnector extends TestCase {
 			->addMethods( [ 'createBucket', 'listBuckets' ] )
 			->getMock();
 		$client->method( 'listBuckets' )->willReturn( [ 'Buckets' => [] ] );
-		
+
 		$client->expects( $this->once() )
 			->method( 'createBucket' )
 			->with( [
@@ -190,17 +190,17 @@ class TestS3StorageConnector extends TestCase {
 			->addMethods( [ 'createBucket', 'listBuckets' ] )
 			->getMock();
 		$client->method( 'listBuckets' )->willReturn( [ 'Buckets' => [ [ 'Name' => 'wpsnapshots-test-repo' ] ] ] );
-		
+
 		$client->expects( $this->never() )
 			->method( 'createBucket' );
 
 		$this->set_private_property( $this->connector, 'clients', [ 'test-region' => $client ] );
 
-		$this->expectException( WPSnapshotsException::class );
+		$this->expectException( SnapshotsException::class );
 		$this->expectExceptionMessage( 'S3 bucket already exists.' );
 
 		$this->connector->create_bucket( 'test-repo', 'test-region' );
-		
+
 	}
 
 	/** @covers ::get_client */

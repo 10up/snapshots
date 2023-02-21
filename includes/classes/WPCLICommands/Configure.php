@@ -8,7 +8,7 @@
 namespace TenUp\Snapshots\WPCLICommands;
 
 use Exception;
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\WPCLI\WPCLICommand;
 
 use function TenUp\Snapshots\Utils\wp_cli;
@@ -21,7 +21,7 @@ use function TenUp\Snapshots\Utils\wp_cli;
 final class Configure extends WPCLICommand {
 
 	/**
-	 * Configures WP Snapshots for your environment.
+	 * Configures Snapshots for your environment.
 	 *
 	 * @param array $args Arguments passed to the command.
 	 * @param array $assoc_args Associative arguments passed to the command.
@@ -45,8 +45,8 @@ final class Configure extends WPCLICommand {
 				wp_cli()::error( 'Your Snapshots configuration is saved, but we were unable to connect to the repository. Please check your AWS credentials.' );
 			}
 
-			wp_cli()::success( 'WP Snapshots configuration saved.' );
-		} catch ( WPSnapshotsException $e ) {
+			wp_cli()::success( 'Snapshots configuration saved.' );
+		} catch ( SnapshotsException $e ) {
 			wp_cli()::error( $e->getMessage() );
 		}
 	}
@@ -58,7 +58,7 @@ final class Configure extends WPCLICommand {
 	 */
 	protected function get_command_parameters() : array {
 		return [
-			'shortdesc' => 'Configures WP Snapshots for your environment.',
+			'shortdesc' => 'Configures Snapshots for your environment.',
 			'synopsis'  => [
 				[
 					'type'        => 'positional',

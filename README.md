@@ -2,9 +2,9 @@
 
 A project sharing tool for WordPress.
 
-[![Support Level](https://img.shields.io/badge/support-active-green.svg)](#support-level) [![MIT License](https://img.shields.io/github/license/10up/wpsnapshots.svg)](https://github.com/10up/tenup-snapshots/blob/develop/LICENSE.md)
+[![Support Level](https://img.shields.io/badge/support-active-green.svg)](#support-level) [![MIT License](https://img.shields.io/github/license/10up/snapshots.svg)](https://github.com/10up/tenup-snapshots/blob/develop/LICENSE.md)
 
-## Table of Contents  
+## Table of Contents
 * [Overview](#overview)
 * [Installation](#install)
 * [Authentication](#authentication)
@@ -23,21 +23,21 @@ A project sharing tool for WordPress.
 
 ## Overview
 
-WP Snapshots is a project-sharing tool for WordPress. Operated via the command line with WP CLI, this tool empowers developers to easily push snapshots of projects into the cloud for sharing with team members. Team members can pull snapshots, either creating new WordPress development environments or into existing installs such that everything "just works." No more downloading files, matching WordPress versions, SQL dumps, fixing table prefixes, running search/replace commands, etc. WP Snapshots even works with multisite.
+Snapshots is a project-sharing tool for WordPress. Operated via the command line with WP CLI, this tool empowers developers to easily push snapshots of projects into the cloud for sharing with team members. Team members can pull snapshots, either creating new WordPress development environments or into existing installs such that everything "just works." No more downloading files, matching WordPress versions, SQL dumps, fixing table prefixes, running search/replace commands, etc. Snapshots even works with multisite.
 
-WP Snapshots stores snapshots in a centralized repository (AWS). Users set up WP Snapshots with their team's AWS credentials. Users can then push, pull, and search for snapshots. When a user pushes a snapshot, an instance of their current environment (`wp-content/`, database, etc.) is pushed to AWS and associated with a particular project slug. When a snapshot is pulled, files are pulled from the cloud either by creating a new WordPress install with the pulled database or by replacing `wp-content/` and intelligently merging the database. WP Snapshots will ensure your local version of WordPress matches the snapshot.
+Snapshots stores snapshots in a centralized repository (AWS). Users set up Snapshots with their team's AWS credentials. Users can then push, pull, and search for snapshots. When a user pushes a snapshot, an instance of their current environment (`wp-content/`, database, etc.) is pushed to AWS and associated with a particular project slug. When a snapshot is pulled, files are pulled from the cloud either by creating a new WordPress install with the pulled database or by replacing `wp-content/` and intelligently merging the database. Snapshots will ensure your local version of WordPress matches the snapshot.
 
 A snapshot can contain files, the database, or both. Snapshot files (`wp-content/`) and WordPress database tables are stored in Amazon S3. General snapshot meta data is stored in Amazon DynamoDB.
 
 ## Install
 
-WP Snapshots is a WP CLI package. An environment with WP CLI enabled is required, and it's highly recommended you run WP Snapshots from WITHIN your dev environment (inside VM or container). 
+Snapshots is a WP CLI package. An environment with WP CLI enabled is required, and it's highly recommended you run Snapshots from WITHIN your dev environment (inside VM or container).
 
 - TODO - Package installation. Depends on build process and whether the repo is public.
 
 ## Authentication
 
-WP Snapshots does not support authenticating with AWS by passing commands via the command line. Instead, you must set up your AWS credentials in your local environment. There are [a few methods](https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/guide_credentials.html) for setting credentials in your environment; once you do so, the WP Snapshot script will automatically detect your credentials and use them to authenticate all requests. The easiest options are outlined below.
+Snapshots does not support authenticating with AWS by passing commands via the command line. Instead, you must set up your AWS credentials in your local environment. There are [a few methods](https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/guide_credentials.html) for setting credentials in your environment; once you do so, the WP Snapshot script will automatically detect your credentials and use them to authenticate all requests. The easiest options are outlined below.
 
 ### Option 1: AWS Credentials File
 
@@ -59,13 +59,13 @@ Set the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables. S
 
 ## Usage
 
-WP Snapshots revolves around pushing, pulling, and searching for snapshots. Any WordPress installation can be pushed. To pull, all you need is a working WordPress installation with this plugin installed and active.
+Snapshots revolves around pushing, pulling, and searching for snapshots. Any WordPress installation can be pushed. To pull, all you need is a working WordPress installation with this plugin installed and active.
 
 Documentation for each operation is below.
 
 ### configure
 
-WP Snapshots relies on AWS to store files and data. As such, you need to connect to a repository hosted on AWS. Each command supports a `--repository` argument to tell the script which AWS repository to use, but to bypass requiring that argument on every command, you can store the setting using the command below. After you have done so, WP Snapshots will use the first repository stored in your configuration by default.
+Snapshots relies on AWS to store files and data. As such, you need to connect to a repository hosted on AWS. Each command supports a `--repository` argument to tell the script which AWS repository to use, but to bypass requiring that argument on every command, you can store the setting using the command below. After you have done so, Snapshots will use the first repository stored in your configuration by default.
 
 #### Command
 
@@ -101,7 +101,7 @@ wp snapshots configure 10up --region=us-west-1 --user_name="John Doe" --user_ema
 
 ### create-repository
 
-If WP Snapshots has not been set up for your team/company, you'll need to create the WP Snapshots repository. If a repository has already been created, this command will do nothing.
+If Snapshots has not been set up for your team/company, you'll need to create the Snapshots repository. If a repository has already been created, this command will do nothing.
 
 #### Command
 
@@ -127,7 +127,7 @@ __wp snapshots create-repository <repository> [--region=\<region\>]__
 
 This command pushes a snapshot of a WordPress install to the repository. When finished, the command will return a snapshot ID that you can pass to team members. When pushing a snapshot, you can include files and/or the database.
 
-WP Snapshots scrubs all user information including names, emails, and passwords.
+Snapshots scrubs all user information including names, emails, and passwords.
 
 Pushing a snapshot will not replace older snapshots with the same name. Each time you push, a new copy is created. Old snapshots no longer needed can be removed from AWS with the `delete` command (see below).
 
@@ -492,13 +492,13 @@ __wp snapshots download <snapshot_id> [--repository=\<repository\>] [--region=\<
 
 ## Identity Access Management
 
-WP Snapshots relies on AWS for access management. Each snapshot is associated with a project slug. Using AWS IAM, specific users can be restricted to specific projects.
+Snapshots relies on AWS for access management. Each snapshot is associated with a project slug. Using AWS IAM, specific users can be restricted to specific projects.
 
 ## Troubleshooting
 
 * __wp snapshots push or pull is crashing.__
 
-  A fatal error is most likely occuring when bootstrapping WordPress. Look at your error log to see what's happening. Often this happens because of a missing PHP class (Memcached) which is a result of not running WP Snapshots inside your environment (container or VM).
+  A fatal error is most likely occuring when bootstrapping WordPress. Look at your error log to see what's happening. Often this happens because of a missing PHP class (Memcached) which is a result of not running Snapshots inside your environment (container or VM).
 
 ## Support Level
 

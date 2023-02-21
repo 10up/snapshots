@@ -1,18 +1,18 @@
 <?php
 /**
- * WPSnapshotsDirectory class.
+ * SnapshotsDirectory class.
  *
  * @package TenUp\Snapshots
  */
 
 namespace TenUp\Snapshots;
 
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\Infrastructure\SharedService;
 use WP_Filesystem_Base;
 
 /**
- * WPSnapshotsDirectory class.
+ * SnapshotsDirectory class.
  *
  * @package TenUp\Snapshots
  */
@@ -60,7 +60,7 @@ class FileSystem implements SharedService {
 	 *
 	 * @return bool
 	 *
-	 * @throws WPSnapshotsException If unable to delete directory.
+	 * @throws SnapshotsException If unable to delete directory.
 	 */
 	public function delete_directory_contents( string $directory, bool $delete_root = true, array $excluded_files = [] ) : bool {
 		$files = $this->get_wp_filesystem()->dirlist( $directory );
@@ -114,7 +114,7 @@ class FileSystem implements SharedService {
 	 * @param string $file File to unzip.
 	 * @param string $destination Destination to unzip to.
 	 *
-	 * @throws WPSnapshotsException If unable to unzip file.
+	 * @throws SnapshotsException If unable to unzip file.
 	 */
 	public function unzip_file( string $file, string $destination ) {
 		if ( ! function_exists( 'unzip_file' ) ) {
@@ -130,14 +130,14 @@ class FileSystem implements SharedService {
 		if ( is_wp_error( $result ) && 'incompatible_archive' === $result->get_error_code() && strpos( $file, '.sql.gz' ) !== false ) {
 			$gzipped = gzopen( $file, 'rb' );
 			if ( ! $gzipped ) {
-				throw new WPSnapshotsException( 'Could not open gzipped file.' );
+				throw new SnapshotsException( 'Could not open gzipped file.' );
 			}
 
 			$data = '';
 			while ( ! gzeof( $gzipped ) ) {
 				$unzipped_content = gzread( $gzipped, 4096 );
 				if ( false === $unzipped_content ) {
-					throw new WPSnapshotsException( 'Could not read gzipped file.' );
+					throw new SnapshotsException( 'Could not read gzipped file.' );
 				}
 
 				$data .= $unzipped_content;
@@ -147,9 +147,9 @@ class FileSystem implements SharedService {
 
 			$this->get_wp_filesystem()->put_contents( trailingslashit( $destination ) . str_replace( '.gz', '', basename( $file ) ), $data );
 		} elseif ( is_wp_error( $result ) ) {
-			throw new WPSnapshotsException( $result->get_error_message() );
+			throw new SnapshotsException( $result->get_error_message() );
 		} else {
-			throw new WPSnapshotsException( 'Unable to unzip file.' );
+			throw new SnapshotsException( 'Unable to unzip file.' );
 		}
 
 		return $result;

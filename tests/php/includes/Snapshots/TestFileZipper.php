@@ -1,7 +1,7 @@
 <?php
 /**
  * Tests for the FileZipper class.
- * 
+ *
  * @package TenUp\Snapshots
  */
 
@@ -24,7 +24,7 @@ use ZipArchive;
  * Class FileZipper
  *
  * @package TenUp\Snapshots\Tests\Snapshots
- * 
+ *
  * @coversDefaultClass \TenUp\Snapshots\Snapshots\FileZipper
  */
 class TestFileZipper extends TestCase {
@@ -33,14 +33,14 @@ class TestFileZipper extends TestCase {
 
 	/**
 	 * FileSystem instance.
-	 * 
+	 *
 	 * @var FileSystem
 	 */
 	private $file_system;
 
 	/**
 	 * FileZipper instance.
-	 * 
+	 *
 	 * @var FileZipper
 	 */
 	private $file_zipper;
@@ -76,7 +76,7 @@ class TestFileZipper extends TestCase {
 	 * @covers ::build_file_list_recursively
 	 */
 	public function test_zip_files() {
-		add_filter( 'tenup_snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
+		add_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
 		$id = 'test-id';
 		$args = [
@@ -88,7 +88,7 @@ class TestFileZipper extends TestCase {
 
 		$this->assertFileExists( '/tenup-snapshots-tmp/test-id/files.tar.gz' );
 
-		remove_filter( 'tenup_snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
+		remove_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
 		// Unzip the file and check the contents.
 		$phar = new PharData( '/tenup-snapshots-tmp/test-id/files.tar.gz' );
@@ -118,7 +118,7 @@ class TestFileZipper extends TestCase {
 	 * @covers ::build_file_list_recursively
 	 */
 	public function test_zip_files_with_excludes() {
-		add_filter( 'tenup_snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
+		add_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
 		$id = 'test-id-2';
 		$args = [
@@ -133,7 +133,7 @@ class TestFileZipper extends TestCase {
 
 		$this->assertFileExists( '/tenup-snapshots-tmp/test-id-2/files.tar.gz' );
 
-		remove_filter( 'tenup_snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
+		remove_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
 		// Unzip the file and check the contents.
 		$phar = new PharData( '/tenup-snapshots-tmp/test-id-2/files.tar.gz' );

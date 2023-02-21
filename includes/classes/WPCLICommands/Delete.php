@@ -8,7 +8,7 @@
 namespace TenUp\Snapshots\WPCLICommands;
 
 use Exception;
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\WPCLI\WPCLICommand;
 
 use function TenUp\Snapshots\Utils\wp_cli;
@@ -26,7 +26,7 @@ class Delete extends WPCLICommand {
 	 * @param array $args Arguments passed to the command.
 	 * @param array $assoc_args Associative arguments passed to the command.
 	 *
-	 * @throws WPSnapshotsException If the snapshot cannot be created.
+	 * @throws SnapshotsException If the snapshot cannot be created.
 	 */
 	public function execute( array $args, array $assoc_args ) {
 		try {
@@ -40,7 +40,7 @@ class Delete extends WPCLICommand {
 			$snapshot = $this->db_connector->get_snapshot( $id, $repository_name, $region );
 
 			if ( ! $snapshot ) {
-				throw new WPSnapshotsException( sprintf( 'Snapshot %s not found in repository %s.', $id, $repository_name ) );
+				throw new SnapshotsException( sprintf( 'Snapshot %s not found in repository %s.', $id, $repository_name ) );
 			}
 
 			$this->storage_connector->delete_snapshot( $id, $snapshot['project'], $repository_name, $region );

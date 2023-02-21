@@ -8,7 +8,7 @@
  * @subpackage Filesystem
  */
 
-use function TenUp\Snapshots\Utils\tenup_snapshots_remove_trailing_slash;
+use function TenUp\Snapshots\Utils\snapshots_remove_trailing_slash;
 
 // phpcs:disable
 
@@ -572,7 +572,7 @@ class WP_Filesystem_Direct_Shim {
 	 */
 	public function mkdir( $path, $chmod = false, $chown = false, $chgrp = false ) {
 		// Safe mode fails with a trailing slash under certain PHP versions.
-		$path = tenup_snapshots_remove_trailing_slash( $path );
+		$path = snapshots_remove_trailing_slash( $path );
 
 		if ( empty( $path ) ) {
 			return false;

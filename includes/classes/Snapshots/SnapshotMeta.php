@@ -7,7 +7,7 @@
 
 namespace TenUp\Snapshots\Snapshots;
 
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\Snapshots\DBConnectorInterface;
 
 /**
@@ -49,7 +49,7 @@ abstract class SnapshotMeta implements SnapshotMetaInterface {
 	 * @param  string $repository Repository name
 	 * @return mixed
 	 *
-	 * @throws WPSnapshotsException Snapshot meta invalid.
+	 * @throws SnapshotsException Snapshot meta invalid.
 	 */
 	abstract public function get_local( string $id, string $repository );
 

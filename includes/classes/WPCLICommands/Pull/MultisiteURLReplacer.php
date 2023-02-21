@@ -7,7 +7,7 @@
 
 namespace TenUp\Snapshots\WPCLICommands\Pull;
 
-use TenUp\Snapshots\Exceptions\WPSnapshotsInputValidationException;
+use TenUp\Snapshots\Exceptions\SnapshotsInputValidationException;
 
 /**
  * MultisiteURLReplacer
@@ -116,11 +116,11 @@ define('BLOG_ID_CURRENT_SITE', " . ( ( ! empty( $this->meta['blog_id_current_sit
 	 *
 	 * @return string
 	 *
-	 * @throws WPSnapshotsInputValidationException If the domain is not valid.
+	 * @throws SnapshotsInputValidationException If the domain is not valid.
 	 */
 	protected function domain_validator( string $domain ) : string {
 		if ( '' === trim( $domain ) || false !== strpos( $domain, ' ' ) || preg_match( '#https?:#i', $domain ) ) {
-			throw new WPSnapshotsInputValidationException(
+			throw new SnapshotsInputValidationException(
 				'Domain not valid. The domain should be in the form of `google.com`, no https:// needed'
 			);
 		}

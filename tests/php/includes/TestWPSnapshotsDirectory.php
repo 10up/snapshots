@@ -1,7 +1,7 @@
 <?php
 /**
- * Tests for the WPSnapshotsDirectory class.
- * 
+ * Tests for the SnapshotsDirectory class.
+ *
  * @package TenUp\Snapshots
  */
 
@@ -9,29 +9,29 @@ namespace TenUp\Snapshots\Tests;
 
 use Phar;
 use PharData;
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\Snapshots;
-use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\SnapshotsDirectory;
 use TenUp\Snapshots\Snapshots\FileZipper;
 use TenUp\Snapshots\Tests\Fixtures\DirectoryFiltering;
 use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
- * Class TestWPSnapshotsDirectory
+ * Class TestSnapshotsDirectory
  *
  * @package TenUp\Snapshots\Tests
- * 
- * @coversDefaultClass \TenUp\Snapshots\WPSnapshotsDirectory
+ *
+ * @coversDefaultClass \TenUp\Snapshots\SnapshotsDirectory
  */
-class TestWPSnapshotsDirectory extends TestCase {
-	
+class TestSnapshotsDirectory extends TestCase {
+
     use PrivateAccess, DirectoryFiltering;
 
 	/**
-	 * WPSnapshotsDirectory instance.
-	 * 
-	 * @var WPSnapshotsDirectory
+	 * SnapshotsDirectory instance.
+	 *
+	 * @var SnapshotsDirectory
 	 */
 	private $snapshots_fs;
 
@@ -41,7 +41,7 @@ class TestWPSnapshotsDirectory extends TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->snapshots_fs = ( new Snapshots() )->get_instance( WPSnapshotsDirectory::class );
+		$this->snapshots_fs = ( new Snapshots() )->get_instance( SnapshotsDirectory::class );
 
 		$this->set_up_directory_filtering();
 	}
@@ -56,7 +56,7 @@ class TestWPSnapshotsDirectory extends TestCase {
 	}
 
 	public function test_constructor() {
-		$this->assertInstanceOf( WPSnapshotsDirectory::class, $this->snapshots_fs );
+		$this->assertInstanceOf( SnapshotsDirectory::class, $this->snapshots_fs );
 	}
 
 	/** @covers ::get_directory */
@@ -65,11 +65,11 @@ class TestWPSnapshotsDirectory extends TestCase {
 			return '/tmp';
 		};
 
-		add_filter( 'tenup_snapshots_directory',  $filter );
+		add_filter( 'snapshots_directory',  $filter );
 
 		$this->assertEquals( '/tmp', $this->call_private_method( $this->snapshots_fs, 'get_directory' ) );
 
-		remove_filter( 'tenup_snapshots_directory', $filter );
+		remove_filter( 'snapshots_directory', $filter );
 	}
 
 	/** @covers ::get_directory */
@@ -78,11 +78,11 @@ class TestWPSnapshotsDirectory extends TestCase {
 			return '/tmp';
 		};
 
-		add_filter( 'tenup_snapshots_directory', $filter );
+		add_filter( 'snapshots_directory', $filter );
 
 		$this->assertEquals( '/tmp', $this->call_private_method( $this->snapshots_fs, 'get_directory' ) );
 
-		remove_filter( 'tenup_snapshots_directory', $filter );
+		remove_filter( 'snapshots_directory', $filter );
 	}
 
 	/**
@@ -113,7 +113,7 @@ class TestWPSnapshotsDirectory extends TestCase {
 	 * @covers ::get_file_contents
 	 */
 	public function test_get_file_contents_throws_when_nonexistent_path() {
-		$this->expectException( WPSnapshotsException::class );
+		$this->expectException( SnapshotsException::class );
 		$this->expectExceptionMessage( 'Unable to read file: /tenup-snapshots-tmp/nonexistent.txt' );
 
 		$this->snapshots_fs->get_file_contents( 'nonexistent.txt' );
@@ -200,7 +200,7 @@ class TestWPSnapshotsDirectory extends TestCase {
 
 	/** @covers ::get_file_lines */
 	public function test_get_file_lines_throws_when_nonexistent_path() {
-		$this->expectException( WPSnapshotsException::class );
+		$this->expectException( SnapshotsException::class );
 		$this->expectExceptionMessage( 'Unable to read file: /tenup-snapshots-tmp/nonexistent.txt' );
 
 		$this->snapshots_fs->get_file_lines( 'nonexistent.txt' );

@@ -11,7 +11,7 @@ use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 
 /**
  * Container class.
@@ -71,7 +71,7 @@ abstract class Container {
 	 * @param string $class Module or service class.
 	 * @return object
 	 *
-	 * @throws WPSnapshotsException If an unknown module or service is encountered.
+	 * @throws SnapshotsException If an unknown module or service is encountered.
 	 */
 	public function get_instance( string $class ) {
 		$class_implements = class_implements( $class );
@@ -83,16 +83,16 @@ abstract class Container {
 
 		// Verify the class is either a module or a service.
 		if ( ! in_array( $class, array_merge( $this->get_modules(), $this->get_services() ), true ) ) {
-			throw new WPSnapshotsException( sprintf( 'Unknown module or service: %s', $class ) );
+			throw new SnapshotsException( sprintf( 'Unknown module or service: %s', $class ) );
 		}
 
 		if ( ! in_array( Module::class, $class_implements, true ) && ! in_array( Service::class, $class_implements, true ) ) {
-			throw new WPSnapshotsException( sprintf( 'Class is neither a module nor a service: %s', $class ) );
+			throw new SnapshotsException( sprintf( 'Class is neither a module nor a service: %s', $class ) );
 		}
 
 		// Modules shouldn't be shared.
 		if ( $is_shared && is_a( Module::class, $class, true ) ) {
-			throw new WPSnapshotsException( sprintf( 'Modules should not be shared: %s', $class ) );
+			throw new SnapshotsException( sprintf( 'Modules should not be shared: %s', $class ) );
 		}
 
 		$reflection  = new ReflectionClass( $class );
@@ -123,7 +123,7 @@ abstract class Container {
 	 * @param ReflectionMethod    $constructor Constructor.
 	 * @return object|array
 	 *
-	 * @throws WPSnapshotsException If an unknown module or service is encountered.
+	 * @throws SnapshotsException If an unknown module or service is encountered.
 	 */
 	private function get_instance_from_parameter( ReflectionParameter $parameter, ReflectionMethod $constructor ) : object|array {
 		$type = $parameter->getType();
@@ -134,7 +134,7 @@ abstract class Container {
 		}
 
 		if ( ! is_a( $type, ReflectionNamedType::class, true ) ) {
-			throw new WPSnapshotsException( sprintf( 'Unable to get type for parameter: %s', $parameter->getName() ) );
+			throw new SnapshotsException( sprintf( 'Unable to get type for parameter: %s', $parameter->getName() ) );
 		}
 
 		$dependency_class            = $type->getName();
@@ -174,7 +174,7 @@ abstract class Container {
 	 * @param string $interface Interface name.
 	 * @return string
 	 *
-	 * @throws WPSnapshotsException If no concrete class is found for the given interface.
+	 * @throws SnapshotsException If no concrete class is found for the given interface.
 	 */
 	private function get_concrete_service_name( string $interface ) : string {
 		$services = $this->get_services();
@@ -188,11 +188,11 @@ abstract class Container {
 		);
 
 		if ( 0 === count( $services_implementing_interface ) ) {
-			throw new WPSnapshotsException( sprintf( 'No concrete service class found for interface %s', $interface ) );
+			throw new SnapshotsException( sprintf( 'No concrete service class found for interface %s', $interface ) );
 		}
 
 		if ( 1 < count( $services_implementing_interface ) ) {
-			throw new WPSnapshotsException( sprintf( 'Multiple concrete service classes found for interface %s. Only one is allowed in the system at a time.', $interface ) );
+			throw new SnapshotsException( sprintf( 'Multiple concrete service classes found for interface %s. Only one is allowed in the system at a time.', $interface ) );
 		}
 
 		return reset( $services_implementing_interface );

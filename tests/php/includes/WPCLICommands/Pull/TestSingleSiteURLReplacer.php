@@ -1,16 +1,16 @@
 <?php
 /**
  * Tests for SingleSiteURLReplacer.
- * 
+ *
  * @package TenUp\Snapshots
  */
 
 namespace TenUp\Snapshots\Tests\WPCLICommands\Pull;
 
-use TenUp\Snapshots\Exceptions\WPSnapshotsInputValidationException;
+use TenUp\Snapshots\Exceptions\SnapshotsInputValidationException;
 use TenUp\Snapshots\Log\WPCLILogger;
 use TenUp\Snapshots\Snapshots;
-use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\SnapshotsDirectory;
 use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
 use TenUp\Snapshots\Tests\Fixtures\WPCLIMocking;
 use TenUp\Snapshots\WordPress\Database;
@@ -21,9 +21,9 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class TestSingleSiteURLReplacer
- * 
+ *
  * @package TenUp\Snapshots\Tests\WPCLICommands\Pull
- * 
+ *
  * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\Pull\SingleSiteURLReplacer
  */
 class TestSingleSiteURLReplacer extends TestCase {
@@ -32,7 +32,7 @@ class TestSingleSiteURLReplacer extends TestCase {
 
 	/**
 	 * URLReplacer instance.
-	 * 
+	 *
 	 * @var SingleSiteURLReplacer
 	 */
 	protected $url_replacer;
@@ -48,7 +48,7 @@ class TestSingleSiteURLReplacer extends TestCase {
 		$plugin = new Snapshots();
 		$this->url_replacer = new SingleSiteURLReplacer(
 			$plugin->get_instance( Prompt::class ),
-			$plugin->get_instance( WPSnapshotsDirectory::class ),
+			$plugin->get_instance( SnapshotsDirectory::class ),
 			$plugin->get_instance( Database ::class ),
 			$plugin->get_instance( WPCLILogger::class ),
 			[
@@ -116,7 +116,7 @@ class TestSingleSiteURLReplacer extends TestCase {
 
 	/** @covers ::url_validator */
 	public function test_url_validator_with_invalid_urls() {
-		$this->expectException( WPSnapshotsInputValidationException::class );
+		$this->expectException( SnapshotsInputValidationException::class );
 		$this->expectExceptionMessage( 'URL not valid. The URL should be in the form of `https://google.com`, no trailing slash needed' );
 
 		$this->call_private_method( $this->url_replacer, 'url_validator', [ 'example.com' ] );

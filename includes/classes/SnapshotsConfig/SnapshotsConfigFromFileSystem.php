@@ -5,22 +5,22 @@
  * @package TenUp\Snapshots
  */
 
-namespace TenUp\Snapshots\WPSnapshotsConfig;
+namespace TenUp\Snapshots\SnapshotsConfig;
 
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
-use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
+use TenUp\Snapshots\SnapshotsDirectory;
 
 /**
  * Handle getting and setting of configuration values.
  *
- * @package TenUp\Snapshots\WPSnapshotsConfig
+ * @package TenUp\Snapshots\SnapshotsConfig
  */
-class WPSnapshotsConfigFromFileSystem implements WPSnapshotsConfigInterface {
+class SnapshotsConfigFromFileSystem implements SnapshotsConfigInterface {
 
 	/**
 	 * Data instance.
 	 *
-	 * @var WPSnapshotsDirectory
+	 * @var SnapshotsDirectory
 	 */
 	private $snapshots_file_system;
 
@@ -34,9 +34,9 @@ class WPSnapshotsConfigFromFileSystem implements WPSnapshotsConfigInterface {
 	/**
 	 * Config constructor.
 	 *
-	 * @param WPSnapshotsDirectory $snapshots_file_system WPSnapshotsDirectory instance.
+	 * @param SnapshotsDirectory $snapshots_file_system SnapshotsDirectory instance.
 	 */
-	public function __construct( WPSnapshotsDirectory $snapshots_file_system ) {
+	public function __construct( SnapshotsDirectory $snapshots_file_system ) {
 		$this->snapshots_file_system = $snapshots_file_system;
 	}
 
@@ -121,7 +121,7 @@ class WPSnapshotsConfigFromFileSystem implements WPSnapshotsConfigInterface {
 	 * @param string $repository Repository name.
 	 * @return ?array $settings Repository settings.
 	 *
-	 * @throws WPSnapshotsException If the repository does not exist.
+	 * @throws SnapshotsException If the repository does not exist.
 	 */
 	public function get_repository_settings( string $repository = '' ) : ?array {
 		$repositories = $this->get_repositories();
@@ -184,7 +184,7 @@ class WPSnapshotsConfigFromFileSystem implements WPSnapshotsConfigInterface {
 	private function load() {
 		try {
 			$config = json_decode( $this->snapshots_file_system->get_file_contents( 'config.json' ), true );
-		} catch ( WPSnapshotsException $e ) {
+		} catch ( SnapshotsException $e ) {
 			$config = null;
 		}
 

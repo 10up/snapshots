@@ -1,14 +1,14 @@
 <?php
 /**
  * Tests covering the Configure command class.
- * 
+ *
  * @package TenUp\Snapshots
  */
 
 namespace TenUp\Snapshots\Tests\Commands;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Snapshots\S3StorageConnector;
 use TenUp\Snapshots\Tests\Fixtures\{CommandTests, PrivateAccess, DirectoryFiltering, WPCLIMocking};
@@ -20,7 +20,7 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
  * Class TestConfigure
  *
  * @package TenUp\Snapshots\Tests\Commands
- * 
+ *
  * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\Configure
  */
 class TestConfigure extends TestCase {
@@ -29,7 +29,7 @@ class TestConfigure extends TestCase {
 
 	/**
 	 * Configure instance.
-	 * 
+	 *
 	 * @var Configure
 	 */
 	private $command;
@@ -58,7 +58,7 @@ class TestConfigure extends TestCase {
 
 	/**
 	 * Test that the command instance extends WPCLICommand.
-	 * 
+	 *
 	 * @covers ::__construct
 	 */
 	public function test_command_instance() {
@@ -72,7 +72,7 @@ class TestConfigure extends TestCase {
 
 	/**
 	 * Test command result has correct data structure.
-	 * 
+	 *
 	 * @covers ::execute
 	 * @covers ::get_assoc_args
 	 * @covers ::get_assoc_arg
@@ -107,13 +107,13 @@ class TestConfigure extends TestCase {
 			->assertMethodCalled(
 				'success',
 				1,
-				[ [ 'WP Snapshots configuration saved.' ] ]
+				[ [ 'Snapshots configuration saved.' ] ]
 			);
 	}
 
 	/**
 	 * Test that an exception is thrown if no repository is provided.
-	 * 
+	 *
 	 * @covers ::execute
 	 * @covers ::get_repository_name
 	 */
@@ -128,7 +128,7 @@ class TestConfigure extends TestCase {
 				'success',
 				0
 			);
-		
+
 		$this->get_wp_cli_mock()
 			->assertMethodCalled(
 				'error',
@@ -139,7 +139,7 @@ class TestConfigure extends TestCase {
 
 	/**
 	 * Test that the command requests confirmation if a file already exists and has the repository already configured.
-	 * 
+	 *
 	 * @covers ::execute
 	 * @covers ::get_updated_repository_info
 	 */
@@ -178,7 +178,7 @@ class TestConfigure extends TestCase {
 
 	/**
 	 * Test prompts when no CLI args are passed.
-	 * 
+	 *
 	 * @covers ::execute
 	 */
 	public function test_command_result_prompts() {

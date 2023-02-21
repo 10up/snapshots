@@ -7,8 +7,8 @@
 
 namespace TenUp\Snapshots\Snapshots;
 
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
-use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
+use TenUp\Snapshots\SnapshotsDirectory;
 use TenUp\Snapshots\WordPress\Database;
 
 /**
@@ -19,9 +19,9 @@ use TenUp\Snapshots\WordPress\Database;
 class SnapshotMetaFromFileSystem extends SnapshotMeta {
 
 	/**
-	 * WPSnapshotsDirectory instance.
+	 * SnapshotsDirectory instance.
 	 *
-	 * @var WPSnapshotsDirectory
+	 * @var SnapshotsDirectory
 	 */
 	private $snapshot_files;
 
@@ -35,11 +35,11 @@ class SnapshotMetaFromFileSystem extends SnapshotMeta {
 	/**
 	 * Meta constructor
 	 *
-	 * @param WPSnapshotsDirectory $snapshot_files WPSnapshotsDirectory instance.
+	 * @param SnapshotsDirectory $snapshot_files SnapshotsDirectory instance.
 	 * @param Database             $wordpress_database Database instance.
 	 * @param array                ...$args Arguments.
 	 */
-	public function __construct( WPSnapshotsDirectory $snapshot_files, Database $wordpress_database, ...$args ) {
+	public function __construct( SnapshotsDirectory $snapshot_files, Database $wordpress_database, ...$args ) {
 		parent::__construct( ...$args ); // @phpstan-ignore-line
 
 		$this->snapshot_files     = $snapshot_files;
@@ -66,12 +66,12 @@ class SnapshotMetaFromFileSystem extends SnapshotMeta {
 	 * @param  string $repository Repository name
 	 * @return mixed
 	 *
-	 * @throws WPSnapshotsException Snapshot meta invalid.
+	 * @throws SnapshotsException Snapshot meta invalid.
 	 */
 	public function get_local( string $id, string $repository ) {
 		try {
 			$meta_file_contents = $this->snapshot_files->get_file_contents( 'meta.json', $id );
-		} catch ( WPSnapshotsException $e ) {
+		} catch ( SnapshotsException $e ) {
 			return [];
 		}
 
@@ -89,7 +89,7 @@ class SnapshotMetaFromFileSystem extends SnapshotMeta {
 		}
 
 		if ( empty( $meta['contains_files'] ) && empty( $meta['contains_db'] ) ) {
-			throw new WPSnapshotsException( 'Snapshot meta invalid.' );
+			throw new SnapshotsException( 'Snapshot meta invalid.' );
 		}
 
 		return $meta;

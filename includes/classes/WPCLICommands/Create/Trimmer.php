@@ -12,7 +12,7 @@ use TenUp\Snapshots\Log\{LoggerInterface, Logging};
 use TenUp\Snapshots\WordPress\Database;
 use WP_Site;
 
-use function TenUp\Snapshots\Utils\tenup_snapshots_apply_filters;
+use function TenUp\Snapshots\Utils\snapshots_apply_filters;
 
 /**
  * Class Trimmer
@@ -55,8 +55,8 @@ class Trimmer implements SharedService {
 		 *    @type int $comments Number of comments to keep.
 		 * }
 		 */
-		$this->limits = tenup_snapshots_apply_filters(
-			'tenup_snapshots_trimmer_limits',
+		$this->limits = snapshots_apply_filters(
+			'snapshots_trimmer_limits',
 			[
 				'posts'    => 300,
 				'comments' => 500,

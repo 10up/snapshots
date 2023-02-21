@@ -1,17 +1,17 @@
 <?php
 /**
  * Tests for Scrubber.
- * 
+ *
  * @package TenUp\Snapshots
  */
 
 namespace TenUp\Snapshots\Tests\WPCLICommands\Create;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use TenUp\Snapshots\Exceptions\WPSnapshotsInputValidationException;
+use TenUp\Snapshots\Exceptions\SnapshotsInputValidationException;
 use TenUp\Snapshots\Log\WPCLILogger;
 use TenUp\Snapshots\Snapshots;
-use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\SnapshotsDirectory;
 use TenUp\Snapshots\Tests\Fixtures\DirectoryFiltering;
 use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
 use TenUp\Snapshots\Tests\Fixtures\WPCLIMocking;
@@ -25,9 +25,9 @@ use Yoast\WPTestUtils\WPIntegration\TestCase;
 
 /**
  * Class Scrubber
- * 
+ *
  * @package TenUp\Snapshots\Tests\WPCLICommands\Create
- * 
+ *
  * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\Create\Scrubber
  */
 class TestScrubber extends TestCase {
@@ -36,7 +36,7 @@ class TestScrubber extends TestCase {
 
 	/**
 	 * Scrubber instance.
-	 * 
+	 *
 	 * @var Scrubber
 	 */
 	protected $scrubber;

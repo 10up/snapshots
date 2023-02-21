@@ -8,7 +8,7 @@
 namespace TenUp\Snapshots\WPCLICommands;
 
 use Exception;
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\WPCLI\WPCLICommand;
 
 use function TenUp\Snapshots\Utils\wp_cli;
@@ -114,7 +114,7 @@ final class Download extends WPCLICommand {
 	 *
 	 * @return array
 	 *
-	 * @throws WPSnapshotsException If there is no snapshot meta, meta is invalid, or user has not chosen to include either files or db.
+	 * @throws SnapshotsException If there is no snapshot meta, meta is invalid, or user has not chosen to include either files or db.
 	 */
 	private function get_meta() : array {
 		$id = $this->get_id();
@@ -122,11 +122,11 @@ final class Download extends WPCLICommand {
 		$meta = $this->snapshot_meta->get_remote( $id, $this->get_repository_name(), $this->get_assoc_arg( 'region' ) );
 
 		if ( empty( $meta ) ) {
-			throw new WPSnapshotsException( 'Snapshot does not exist.' );
+			throw new SnapshotsException( 'Snapshot does not exist.' );
 		}
 
 		if ( empty( $meta['project'] ) ) {
-			throw new WPSnapshotsException( 'Missing critical snapshot data.' );
+			throw new SnapshotsException( 'Missing critical snapshot data.' );
 		}
 
 		/**
@@ -149,7 +149,7 @@ final class Download extends WPCLICommand {
 		}
 
 		if ( ! $include_files && ! $include_db ) {
-			throw new WPSnapshotsException( 'You must include either files or database in the download.' );
+			throw new SnapshotsException( 'You must include either files or database in the download.' );
 		}
 
 		$meta['contains_files'] = $include_files;
