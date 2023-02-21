@@ -8,8 +8,8 @@
 namespace TenUp\Snapshots\Snapshots;
 
 use Aws\S3\S3Client;
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
-use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
+use TenUp\Snapshots\SnapshotsDirectory;
 
 /**
  * Class S3StorageConnector
@@ -26,9 +26,9 @@ class S3StorageConnector implements StorageConnectorInterface {
 	private $clients = [];
 
 	/**
-	 * WPSnapshotsDirectory instance.
+	 * SnapshotsDirectory instance.
 	 *
-	 * @var WPSnapshotsDirectory
+	 * @var SnapshotsDirectory
 	 */
 	private $snapshots_file_system;
 
@@ -42,10 +42,10 @@ class S3StorageConnector implements StorageConnectorInterface {
 	/**
 	 * Class constructor.
 	 *
-	 * @param WPSnapshotsDirectory  $snapshots_file_system WPSnapshotsDirectory instance.
+	 * @param SnapshotsDirectory  $snapshots_file_system SnapshotsDirectory instance.
 	 * @param SnapshotMetaInterface $snapshot_meta SnapshotMeta instance.
 	 */
-	public function __construct( WPSnapshotsDirectory $snapshots_file_system, SnapshotMetaInterface $snapshot_meta ) {
+	public function __construct( SnapshotsDirectory $snapshots_file_system, SnapshotMetaInterface $snapshot_meta ) {
 		$this->snapshots_file_system = $snapshots_file_system;
 		$this->snapshot_meta         = $snapshot_meta;
 	}
@@ -83,12 +83,12 @@ class S3StorageConnector implements StorageConnectorInterface {
 	}
 
 	/**
-	 * Create WP Snapshots S3 bucket
+	 * Create Snapshots S3 bucket
 	 *
 	 * @param string $repository Repository name.
 	 * @param string $region AWS region.
 	 *
-	 * @throws WPSnapshotsException If bucket already exists.
+	 * @throws SnapshotsException If bucket already exists.
 	 */
 	public function create_bucket( string $repository, string $region ) {
 		$client              = $this->get_client( $region );
@@ -97,7 +97,7 @@ class S3StorageConnector implements StorageConnectorInterface {
 
 		foreach ( $list_buckets_result['Buckets'] as $bucket ) {
 			if ( $bucket_name === $bucket['Name'] ) {
-				throw new WPSnapshotsException( $this->get_bucket_already_exists_message() );
+				throw new SnapshotsException( $this->get_bucket_already_exists_message() );
 			}
 		}
 

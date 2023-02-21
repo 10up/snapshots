@@ -7,15 +7,15 @@
 
 namespace TenUp\Snapshots\WPCLI;
 
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\FileSystem;
 use TenUp\Snapshots\Infrastructure\{Module, Conditional};
 use TenUp\Snapshots\Log\{Logging, WPCLILogger};
 use TenUp\Snapshots\Snapshots\{DBConnectorInterface, SnapshotMetaFromFileSystem, SnapshotMetaInterface, StorageConnectorInterface};
-use TenUp\Snapshots\WPSnapshotsConfig\WPSnapshotsConfigInterface;
-use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\SnapshotsConfig\SnapshotsConfigInterface;
+use TenUp\Snapshots\SnapshotsDirectory;
 use TenUp\Snapshots\WordPress\Database;
-use TenUp\Snapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
+use TenUp\Snapshots\SnapshotsConfig\SnapshotsConfigFromFileSystem;
 
 use function TenUp\Snapshots\Utils\wp_cli;
 
@@ -38,7 +38,7 @@ abstract class WPCLICommand implements Conditional, Module {
 	/**
 	 * ConfigConnectorInterface instance.
 	 *
-	 * @var WPSnapshotsConfigInterface
+	 * @var SnapshotsConfigInterface
 	 */
 	protected $config;
 
@@ -64,9 +64,9 @@ abstract class WPCLICommand implements Conditional, Module {
 	protected $snapshot_meta;
 
 	/**
-	 * WPSnapshotsDirectory instance.
+	 * SnapshotsDirectory instance.
 	 *
-	 * @var WPSnapshotsDirectory
+	 * @var SnapshotsDirectory
 	 */
 	protected $snapshots_filesystem;
 
@@ -112,22 +112,22 @@ abstract class WPCLICommand implements Conditional, Module {
 	 *
 	 * @param WPCLILogger                $logger WPCLILogger instance.
 	 * @param Prompt                     $prompt Prompt instance.
-	 * @param WPSnapshotsConfigInterface $config ConfigConnectorInterface instance.
+	 * @param SnapshotsConfigInterface $config ConfigConnectorInterface instance.
 	 * @param StorageConnectorInterface  $storage_connector StorageConnectorInterface instance.
 	 * @param DBConnectorInterface       $db_connector DBConnectorInterface instance.
 	 * @param SnapshotMetaInterface      $snapshot_meta SnapshotMetaInterface instance.
-	 * @param WPSnapshotsDirectory       $snapshots_filesystem WPSnapshotsDirectory instance.
+	 * @param SnapshotsDirectory       $snapshots_filesystem SnapshotsDirectory instance.
 	 * @param Database                   $wordpress_database Database instance.
 	 * @param FileSystem                 $filesystem FileSystem instance.
 	 */
 	public function __construct(
 		WPCLILogger $logger,
 		Prompt $prompt,
-		WPSnapshotsConfigInterface $config,
+		SnapshotsConfigInterface $config,
 		StorageConnectorInterface $storage_connector,
 		DBConnectorInterface $db_connector,
 		SnapshotMetaInterface $snapshot_meta,
-		WPSnapshotsDirectory $snapshots_filesystem,
+		SnapshotsDirectory $snapshots_filesystem,
 		Database $wordpress_database,
 		FileSystem $filesystem
 	) {
@@ -231,7 +231,7 @@ abstract class WPCLICommand implements Conditional, Module {
 	 * @param ?int $positional_arg_index Positional arg index. If null, the repository will be retrieved form assoc args.
 	 * @return string
 	 *
-	 * @throws WPSnapshotsException If no repository name is provided.
+	 * @throws SnapshotsException If no repository name is provided.
 	 */
 	protected function get_repository_name( bool $required = true, ?int $positional_arg_index = null ) : string {
 		if ( is_int( $positional_arg_index ) ) {
@@ -248,7 +248,7 @@ abstract class WPCLICommand implements Conditional, Module {
 		}
 
 		if ( ! $repository_name && $required ) {
-			throw new WPSnapshotsException( 'A repository name is required. Please run the configure command or pass a --repository argument.' );
+			throw new SnapshotsException( 'A repository name is required. Please run the configure command or pass a --repository argument.' );
 		}
 
 		return $repository_name;

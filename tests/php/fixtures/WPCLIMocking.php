@@ -1,7 +1,7 @@
 <?php
 /**
  * Helper trait that allows mocking of WP_CLI.
- * 
+ *
  * @package TenUp\Snapshots
  */
 
@@ -16,7 +16,7 @@ trait WPCLIMocking {
 
 	/**
 	 * Mock object.
-	 * 
+	 *
 	 * @var ?WPCLIMock
 	 */
 	protected $wpcli_mock;
@@ -27,15 +27,15 @@ trait WPCLIMocking {
 	public function set_up_wp_cli_mock() {
 		$this->get_wp_cli_mock();
 
-		add_filter( 'tenup_snapshots_wpcli', function() {
+		add_filter( 'snapshots_wpcli', function() {
 			return $this->get_wp_cli_mock();
 		} );
-	
-		add_filter( 'tenup_snapshots_readline', function() {
+
+		add_filter( 'snapshots_readline', function() {
 			return [ $this->get_wp_cli_mock(), 'readline' ];
 		} );
 
-		add_filter( 'tenup_snapshots_get_flag_or_prompt_answers', function() {
+		add_filter( 'snapshots_get_flag_or_prompt_answers', function() {
 			return null;
 		} );
 	}
@@ -45,9 +45,9 @@ trait WPCLIMocking {
 	 * Tear down
 	 */
 	public function tear_down_wp_cli_mock() {
-		remove_all_filters( 'tenup_snapshots_wpcli' );
-		remove_all_filters( 'tenup_snapshots_readline' );
-		remove_all_filters( 'tenup_snapshots_get_flag_or_prompt_answers' );
+		remove_all_filters( 'snapshots_wpcli' );
+		remove_all_filters( 'snapshots_readline' );
+		remove_all_filters( 'snapshots_get_flag_or_prompt_answers' );
 
 		$this->wpcli_mock->reset_wpcli_mock_calls();
 		$this->wpcli_mock = null;
@@ -55,7 +55,7 @@ trait WPCLIMocking {
 
 	/**
 	 * Get the mock object.
-	 * 
+	 *
 	 * @return WPCLIMock
 	 */
 	protected function get_wp_cli_mock() : WPCLIMock {

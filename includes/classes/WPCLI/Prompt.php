@@ -7,10 +7,10 @@
 
 namespace TenUp\Snapshots\WPCLI;
 
-use TenUp\Snapshots\Exceptions\WPSnapshotsInputValidationException;
+use TenUp\Snapshots\Exceptions\SnapshotsInputValidationException;
 use TenUp\Snapshots\Infrastructure\SharedService;
 
-use function TenUp\Snapshots\Utils\tenup_snapshots_apply_filters;
+use function TenUp\Snapshots\Utils\snapshots_apply_filters;
 use function TenUp\Snapshots\Utils\wp_cli;
 
 /**
@@ -88,7 +88,7 @@ class Prompt implements SharedService {
 		if ( is_callable( $validate_callback ) ) {
 			try {
 				call_user_func( $validate_callback, $result );
-			} catch ( WPSnapshotsInputValidationException $e ) {
+			} catch ( SnapshotsInputValidationException $e ) {
 				wp_cli()::line( $e->getMessage() );
 				return $this->get_arg_or_prompt( $assoc_args, $args );
 			}
@@ -121,7 +121,7 @@ class Prompt implements SharedService {
 		 *
 		 * @param array $answers Acceptable answers.
 		 */
-		$acceptable_answers = tenup_snapshots_apply_filters( 'tenup_snapshots_get_flag_or_prompt_answers', [ 'y', 'n', 'Y', 'N', '' ] );
+		$acceptable_answers = snapshots_apply_filters( 'snapshots_get_flag_or_prompt_answers', [ 'y', 'n', 'Y', 'N', '' ] );
 
 		do {
 			$answer = $this->readline( $prompt . ' ' . ( true === $default ? '[Y/n]:' : '[y/N]:' ) . ' ' );
@@ -149,7 +149,7 @@ class Prompt implements SharedService {
 		 *
 		 * @param callable $readline Readline callable.
 		 */
-		$readline = tenup_snapshots_apply_filters( 'tenup_snapshots_readline', 'readline' );
+		$readline = snapshots_apply_filters( 'snapshots_readline', 'readline' );
 
 		$result = $readline( $prompt );
 
@@ -160,7 +160,7 @@ class Prompt implements SharedService {
 		if ( is_callable( $validator ) ) {
 			try {
 				$result = call_user_func( $validator, $result );
-			} catch ( WPSnapshotsInputValidationException $e ) {
+			} catch ( SnapshotsInputValidationException $e ) {
 				wp_cli()::line( $e->getMessage() );
 				return $this->readline( $prompt, $validator );
 			}

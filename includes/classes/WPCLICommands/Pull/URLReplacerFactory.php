@@ -7,10 +7,10 @@
 
 namespace TenUp\Snapshots\WPCLICommands\Pull;
 
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\Infrastructure\Factory;
 use TenUp\Snapshots\Log\{LoggerInterface, Logging};
-use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\SnapshotsDirectory;
 use TenUp\Snapshots\WordPress\Database;
 use TenUp\Snapshots\WPCLI\Prompt;
 
@@ -31,9 +31,9 @@ class URLReplacerFactory implements Factory {
 	protected $prompt;
 
 	/**
-	 * WPSnapshotsDirectory instance.
+	 * SnapshotsDirectory instance.
 	 *
-	 * @var WPSnapshotsDirectory
+	 * @var SnapshotsDirectory
 	 */
 	protected $snapshots_filesystem;
 
@@ -48,11 +48,11 @@ class URLReplacerFactory implements Factory {
 	 * Constructor.
 	 *
 	 * @param Prompt               $prompt Prompt instance.
-	 * @param WPSnapshotsDirectory $snapshots_filesystem WPSnapshotsDirectory instance.
+	 * @param SnapshotsDirectory $snapshots_filesystem SnapshotsDirectory instance.
 	 * @param Database             $wordpress_database Database instance.
 	 * @param LoggerInterface      $logger WPCLILogger instance.
 	 */
-	public function __construct( Prompt $prompt, WPSnapshotsDirectory $snapshots_filesystem, Database $wordpress_database, LoggerInterface $logger ) {
+	public function __construct( Prompt $prompt, SnapshotsDirectory $snapshots_filesystem, Database $wordpress_database, LoggerInterface $logger ) {
 		$this->prompt               = $prompt;
 		$this->snapshots_filesystem = $snapshots_filesystem;
 		$this->wordpress_database   = $wordpress_database;
@@ -66,7 +66,7 @@ class URLReplacerFactory implements Factory {
 	 *
 	 * @return object
 	 *
-	 * @throws WPSnapshotsException If the first argument is not 'single' or 'multi'.
+	 * @throws SnapshotsException If the first argument is not 'single' or 'multi'.
 	 */
 	public function get( ...$args ) : object {
 		/**
@@ -77,7 +77,7 @@ class URLReplacerFactory implements Factory {
 		$single_or_multi = array_shift( $args );
 
 		if ( ! in_array( $single_or_multi, [ 'single', 'multi' ], true ) ) {
-			throw new WPSnapshotsException( 'Invalid argument passed to URLReplacerFactory::get()' );
+			throw new SnapshotsException( 'Invalid argument passed to URLReplacerFactory::get()' );
 		}
 
 		if ( 'single' === $single_or_multi ) {

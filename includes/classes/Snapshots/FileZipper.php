@@ -11,12 +11,12 @@ use ArrayIterator;
 use Iterator;
 use Phar;
 use PharData;
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\FileSystem;
 use TenUp\Snapshots\Infrastructure\SharedService;
-use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\SnapshotsDirectory;
 
-use function TenUp\Snapshots\Utils\tenup_snapshots_wp_content_dir;
+use function TenUp\Snapshots\Utils\snapshots_wp_content_dir;
 
 /**
  * Class FileZipper
@@ -26,9 +26,9 @@ use function TenUp\Snapshots\Utils\tenup_snapshots_wp_content_dir;
 class FileZipper implements SharedService {
 
 	/**
-	 * WPSnapshotsDirectory instance.
+	 * SnapshotsDirectory instance.
 	 *
-	 * @var WPSnapshotsDirectory
+	 * @var SnapshotsDirectory
 	 */
 	private $snapshot_files;
 
@@ -42,10 +42,10 @@ class FileZipper implements SharedService {
 	/**
 	 * Class constructor.
 	 *
-	 * @param WPSnapshotsDirectory $snapshot_files WPSnapshotsDirectory instance.
+	 * @param SnapshotsDirectory $snapshot_files SnapshotsDirectory instance.
 	 * @param FileSystem           $file_system FileSystem instance.
 	 */
-	public function __construct( WPSnapshotsDirectory $snapshot_files, FileSystem $file_system ) {
+	public function __construct( SnapshotsDirectory $snapshot_files, FileSystem $file_system ) {
 		$this->snapshot_files = $snapshot_files;
 		$this->file_system    = $file_system;
 	}
@@ -58,11 +58,11 @@ class FileZipper implements SharedService {
 	 *
 	 * @return int The size of the created file.
 	 *
-	 * @throws WPSnapshotsException If could not create zip.
+	 * @throws SnapshotsException If could not create zip.
 	 */
 	public function zip_files( string $id, array $args ) : int {
 		if ( ! class_exists( 'PharData' ) ) {
-			throw new WPSnapshotsException( 'PharData class not found.' );
+			throw new SnapshotsException( 'PharData class not found.' );
 		}
 
 		$this->snapshot_files->create_directory( $id );
@@ -97,19 +97,19 @@ class FileZipper implements SharedService {
 			$excludes[] = 'uploads';
 		}
 
-		$excludes[] = trailingslashit( str_replace( tenup_snapshots_wp_content_dir(), '', TENUP_SNAPSHOTS_DIR ) );
+		$excludes[] = trailingslashit( str_replace( snapshots_wp_content_dir(), '', TENUP_SNAPSHOTS_DIR ) );
 
 		$excludes = array_map(
 			function( $exclude ) {
-				$full_exclude = trailingslashit( tenup_snapshots_wp_content_dir() ) . $exclude;
+				$full_exclude = trailingslashit( snapshots_wp_content_dir() ) . $exclude;
 				// Remove double slashes.
 				return preg_replace( '#/+#', '/', $full_exclude );
 			},
 			$excludes
 		);
 
-		$initial_files = $this->file_system->get_wp_filesystem()->dirlist( tenup_snapshots_wp_content_dir() );
-		$file_list     = $this->build_file_list_recursively( $initial_files, tenup_snapshots_wp_content_dir(), $excludes );
+		$initial_files = $this->file_system->get_wp_filesystem()->dirlist( snapshots_wp_content_dir() );
+		$file_list     = $this->build_file_list_recursively( $initial_files, snapshots_wp_content_dir(), $excludes );
 
 		return new ArrayIterator( $file_list );
 	}
@@ -126,7 +126,7 @@ class FileZipper implements SharedService {
 	private function build_file_list_recursively( array $files, string $base_dir, array $excludes ) : array {
 		$file_list = [];
 
-		$wp_content_dir = tenup_snapshots_wp_content_dir();
+		$wp_content_dir = snapshots_wp_content_dir();
 
 		foreach ( $files as $file ) {
 			$full_path = trailingslashit( $base_dir ) . $file['name'];
@@ -136,7 +136,7 @@ class FileZipper implements SharedService {
 			}
 
 			foreach ( $excludes as $exclude ) {
-				$path_without_wp_content = str_replace( tenup_snapshots_wp_content_dir(), '', $full_path );
+				$path_without_wp_content = str_replace( snapshots_wp_content_dir(), '', $full_path );
 
 				if ( 0 === strpos( $path_without_wp_content, $exclude ) ) {
 					continue 2;

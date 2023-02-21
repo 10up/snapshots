@@ -1,27 +1,27 @@
 <?php
 /**
  * Tests covering the Search command class.
- * 
+ *
  * @package TenUp\Snapshots
  */
 
 namespace TenUp\Snapshots\Tests\Commands;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Snapshots\DynamoDBConnector;
 use TenUp\Snapshots\Tests\Fixtures\{CommandTests, PrivateAccess, WPCLIMocking};
 use TenUp\Snapshots\WPCLI\WPCLICommand;
 use TenUp\Snapshots\WPCLICommands\Search;
-use TenUp\Snapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
+use TenUp\Snapshots\SnapshotsConfig\SnapshotsConfigFromFileSystem;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class TestSearch
  *
  * @package TenUp\Snapshots\Tests\Commands
- * 
+ *
  * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\Search
  */
 class TestSearch extends TestCase {
@@ -30,7 +30,7 @@ class TestSearch extends TestCase {
 
 	/**
 	 * Search instance.
-	 * 
+	 *
 	 * @var Search
 	 */
 	private $command;
@@ -57,7 +57,7 @@ class TestSearch extends TestCase {
 
 	/**
 	 * Test that the command instance extends WPCLICommand.
-	 * 
+	 *
 	 * @covers ::__construct
 	 */
 	public function test_command_instance() {
@@ -79,7 +79,7 @@ class TestSearch extends TestCase {
 
 	/** @covers ::get_search_string */
 	public function test_get_search_string_throws_if_empty() {
-		$this->expectException( WPSnapshotsException::class );
+		$this->expectException( SnapshotsException::class );
 		$this->expectExceptionMessage( 'Please provide a search string.' );
 
 		$this->call_private_method( $this->command, 'get_search_string' );
@@ -106,20 +106,20 @@ class TestSearch extends TestCase {
 		$this->set_private_property( $this->command, 'db_connector', $mock_db_connector );
 
 		/**
-		 * @var WPSnapshotsConfigFromFileSystem|MockObject $mock_tenup_snapshots_config
+		 * @var SnapshotsConfigFromFileSystem|MockObject $mock_snapshots_config
 		 */
-		$mock_tenup_snapshots_config = $this->createMock( WPSnapshotsConfigFromFileSystem::class );
-		$mock_tenup_snapshots_config->method( 'get_repository_settings' )->willReturn(
+		$mock_snapshots_config = $this->createMock( SnapshotsConfigFromFileSystem::class );
+		$mock_snapshots_config->method( 'get_repository_settings' )->willReturn(
 			[
 				'region' => 'test',
 				'repository' => 'test',
 			]
 		);
-		$this->set_private_property( $this->command, 'config', $mock_tenup_snapshots_config );
+		$this->set_private_property( $this->command, 'config', $mock_snapshots_config );
 
 		$this->command->set_assoc_arg( 'repository', 'test' );
 		$this->command->set_args( [ 'test' ] );
-		
+
 		$actual_results = $this->call_private_method( $this->command, 'search', [ 'test-region' ] );
 
 		$this->assertEquals( $return_array, $actual_results );

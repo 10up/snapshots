@@ -12,7 +12,7 @@
         <env name="WP_TESTS_DIR" value="/wordpress-phpunit" />
 	</php>
 	<testsuites>
-		<testsuite name="wpsnapshots">
+		<testsuite name="snapshots">
 			<directory prefix="Test" suffix=".php">
 				./tests/php/
 			</directory>

@@ -1,7 +1,7 @@
 <?php
 /**
  * Tests covering the Download command class.
- * 
+ *
  * @package TenUp\Snapshots
  */
 
@@ -20,7 +20,7 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
  * Class TestDownload
  *
  * @package TenUp\Snapshots\Tests\Commands
- * 
+ *
  * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\Download
  */
 class TestDownload extends TestCase {
@@ -29,7 +29,7 @@ class TestDownload extends TestCase {
 
 	/**
 	 * Download instance.
-	 * 
+	 *
 	 * @var Download
 	 */
 	private $command;
@@ -56,7 +56,7 @@ class TestDownload extends TestCase {
 
 	/**
 	 * Test that the command instance extends WPCLICommand.
-	 * 
+	 *
 	 * @covers ::__construct
 	 */
 	public function test_command_instance() {
@@ -87,7 +87,7 @@ class TestDownload extends TestCase {
 	 */
 	public function test_get_meta() {
 		$this->set_private_property( $this->command, 'args', [ 'test-id' ] );
-		
+
 		/**
 		 * @var SnapshotMeta|MockObject $mock_snapshot_meta
 		 */
@@ -103,7 +103,7 @@ class TestDownload extends TestCase {
 		$this->set_private_property( $this->command, 'snapshot_meta', $mock_snapshot_meta );
 		$this->command->set_assoc_arg( 'repository', '10up' );
 
-		add_filter( 'tenup_snapshots_readline', function() {
+		add_filter( 'snapshots_readline', function() {
 			return function() {
 				return 'Y';
 			};
@@ -201,7 +201,7 @@ class TestDownload extends TestCase {
 			'test-region'
 		);
 
-		add_filter( 'tenup_snapshots_readline', function() {
+		add_filter( 'snapshots_readline', function() {
 			return function() {
 				return 'Y';
 			};

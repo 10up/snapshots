@@ -8,7 +8,7 @@
 namespace TenUp\Snapshots\WPCLICommands\Create;
 
 use TenUp\Snapshots\Infrastructure\SharedService;
-use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\SnapshotsDirectory;
 use TenUp\Snapshots\Log\{LoggerInterface, Logging};
 
 use function TenUp\Snapshots\Utils\wp_cli;
@@ -25,17 +25,17 @@ class Scrubber implements SharedService {
 	/**
 	 * File system.
 	 *
-	 * @var WPSnapshotsDirectory
+	 * @var SnapshotsDirectory
 	 */
 	private $snapshot_files;
 
 	/**
 	 * ScrubberV1 constructor.
 	 *
-	 * @param WPSnapshotsDirectory $snapshot_files File system.
+	 * @param SnapshotsDirectory $snapshot_files File system.
 	 * @param LoggerInterface      $logger Logger.
 	 */
-	public function __construct( WPSnapshotsDirectory $snapshot_files, LoggerInterface $logger ) {
+	public function __construct( SnapshotsDirectory $snapshot_files, LoggerInterface $logger ) {
 		$this->snapshot_files = $snapshot_files;
 		$this->set_logger( $logger );
 	}

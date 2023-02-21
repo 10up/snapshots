@@ -1,17 +1,17 @@
 <?php
 /**
  * Tests for MultisiteURLReplacer.
- * 
+ *
  * @package TenUp\Snapshots
  */
 
 namespace TenUp\Snapshots\Tests\WPCLICommands\Pull;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use TenUp\Snapshots\Exceptions\WPSnapshotsInputValidationException;
+use TenUp\Snapshots\Exceptions\SnapshotsInputValidationException;
 use TenUp\Snapshots\Log\WPCLILogger;
 use TenUp\Snapshots\Snapshots;
-use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\SnapshotsDirectory;
 use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
 use TenUp\Snapshots\Tests\Fixtures\WPCLIMocking;
 use TenUp\Snapshots\WordPress\Database;
@@ -22,9 +22,9 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class TestMultisiteURLReplacer
- * 
+ *
  * @package TenUp\Snapshots\Tests\WPCLICommands\Pull
- * 
+ *
  * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\Pull\MultisiteURLReplacer
  */
 class TestMultisiteURLReplacer extends TestCase {
@@ -33,14 +33,14 @@ class TestMultisiteURLReplacer extends TestCase {
 
 	/**
 	 * URLReplacer instance.
-	 * 
+	 *
 	 * @var MultisiteURLReplacer
 	 */
 	protected $url_replacer;
 
 	/**
 	 * Whether the blogs table was created.
-	 * 
+	 *
 	 * @var bool
 	 */
 	protected $blogs_table_created = false;
@@ -61,7 +61,7 @@ class TestMultisiteURLReplacer extends TestCase {
 		$plugin = new Snapshots();
 		$this->url_replacer = new MultisiteURLReplacer(
 			$plugin->get_instance( Prompt::class ),
-			$plugin->get_instance( WPSnapshotsDirectory::class ),
+			$plugin->get_instance( SnapshotsDirectory::class ),
 			$plugin->get_instance( Database ::class ),
 			$plugin->get_instance( WPCLILogger::class ),
 			[
@@ -177,7 +177,7 @@ class TestMultisiteURLReplacer extends TestCase {
 
 		$this->assertEquals( $valid_domain, $this->call_private_method( $this->url_replacer, 'domain_validator', [ $valid_domain ] ) );
 
-		$this->expectException( WPSnapshotsInputValidationException::class );
+		$this->expectException( SnapshotsInputValidationException::class );
 		$this->call_private_method( $this->url_replacer, 'domain_validator', [ $invalid_domain ] );
 	}
 
@@ -257,9 +257,9 @@ define( 'SOME_OTHER_CONSTANT', 'somevalue' );",
 
 	/** @covers ::get_tables_to_update */
 	public function test_get_tables_to_update_with_excluded_tables_and_prefix() {
-		/** 
+		/**
 		 * Mock Database class.
-		 * 
+		 *
 		 * @var MockObject|Database $database
 		 */
 		$database = $this->createMock( Database::class );

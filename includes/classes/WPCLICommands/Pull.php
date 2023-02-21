@@ -8,12 +8,12 @@
 namespace TenUp\Snapshots\WPCLICommands;
 
 use Exception;
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\WPCLI\WPCLICommand;
 use TenUp\Snapshots\WPCLICommands\Pull\URLReplacerFactory;
 
 use function TenUp\Snapshots\Utils\wp_cli;
-use function TenUp\Snapshots\Utils\tenup_snapshots_wp_content_dir;
+use function TenUp\Snapshots\Utils\snapshots_wp_content_dir;
 
 /**
  * Pull command
@@ -75,14 +75,14 @@ final class Pull extends WPCLICommand {
 	 * @param array $args Arguments passed to the command.
 	 * @param array $assoc_args Associative arguments passed to the command.
 	 *
-	 * @throws WPSnapshotsException If there is an error.
+	 * @throws SnapshotsException If there is an error.
 	 */
 	public function execute( array $args, array $assoc_args ) {
 		try {
 			$this->set_args( $args );
 			$this->set_assoc_args( $assoc_args );
 
-			$this->log( 'Security Warning: WP Snapshots creates copies of your codebase and database. This could result in data retention policy issues, please exercise extreme caution when using production data.', 'warning' );
+			$this->log( 'Security Warning: Snapshots creates copies of your codebase and database. This could result in data retention policy issues, please exercise extreme caution when using production data.', 'warning' );
 
 			$meta = $this->get_meta();
 
@@ -90,7 +90,7 @@ final class Pull extends WPCLICommand {
 			$include_db    = $meta['contains_db'] && $this->prompt->get_flag_or_prompt( $this->get_assoc_args(), 'include_db', 'Do you want to pull the database?' );
 
 			if ( ! $include_db && ! $include_files ) {
-				throw new WPSnapshotsException( 'You must include either the DB, the files, or both.' );
+				throw new SnapshotsException( 'You must include either the DB, the files, or both.' );
 			}
 
 			if ( ! wp_cli()::get_flag_value( $this->get_assoc_args(), 'confirm' ) ) {
@@ -110,7 +110,7 @@ final class Pull extends WPCLICommand {
 				$this->log( 'Make sure the following entry is in your hosts file: "127.0.0.1 ' . wp_parse_url( $this->new_home_url, PHP_URL_HOST ) . '"', 'success' );
 			}
 
-			$this->log( 'Admin login: username - "wpsnapshots", password - "password"', 'success' );
+			$this->log( 'Admin login: username - "snapshots", password - "password"', 'success' );
 		} catch ( Exception $e ) {
 			wp_cli()::error( $e->getMessage() );
 		}
@@ -262,7 +262,7 @@ final class Pull extends WPCLICommand {
 	/**
 	 * Gets the snapshot meta.
 	 *
-	 * @throws WPSnapshotsException If the snapshot does not exist.
+	 * @throws SnapshotsException If the snapshot does not exist.
 	 */
 	private function set_up_meta() {
 		if ( ! is_null( $this->meta ) && ! is_null( $this->should_download ) ) {
@@ -289,11 +289,11 @@ final class Pull extends WPCLICommand {
 				$this->should_download = false;
 				break;
 			default:
-				throw new WPSnapshotsException( 'Snapshot does not exist.' );
+				throw new SnapshotsException( 'Snapshot does not exist.' );
 		}
 
 		if ( empty( $this->meta ) || ( empty( $this->meta['contains_files'] ) && empty( $this->meta['contains_db'] ) ) ) {
-			throw new WPSnapshotsException( 'Snapshot is not valid.' );
+			throw new SnapshotsException( 'Snapshot is not valid.' );
 		}
 	}
 
@@ -339,7 +339,7 @@ final class Pull extends WPCLICommand {
 			}
 
 			$pull_actions[] = function() {
-				$this->create_tenup_snapshots_user( $this->get_meta()['multisite'] );
+				$this->create_snapshots_user( $this->get_meta()['multisite'] );
 			};
 		}
 
@@ -396,7 +396,7 @@ final class Pull extends WPCLICommand {
 	 * @param bool $include_db    Whether to include the database in the snapshot.
 	 * @param bool $include_files Whether to include the files in the snapshot.
 	 *
-	 * @throws WPSnapshotsException If the snapshot does not exist or is not valid.
+	 * @throws SnapshotsException If the snapshot does not exist or is not valid.
 	 */
 	private function download_snapshot( bool $include_db = true, bool $include_files = true ) {
 		$command = 'snapshots download ' . $this->get_id() . ' --quiet --repository=' . $this->get_repository_name() . ' --region=' . $this->get_assoc_arg( 'region' );
@@ -498,12 +498,12 @@ final class Pull extends WPCLICommand {
 	/**
 	 * Pulls files from the snapshot into the environment.
 	 *
-	 * @throws WPSnapshotsException If WP_CONTENT_DIR is not defined.
+	 * @throws SnapshotsException If WP_CONTENT_DIR is not defined.
 	 */
 	private function pull_files() {
 		$this->log( 'Pulling files and replacing /wp-content. This could take a while...' );
 
-		$errors = $this->snapshots_filesystem->unzip_snapshot_files( $this->get_id(), tenup_snapshots_wp_content_dir() );
+		$errors = $this->snapshots_filesystem->unzip_snapshot_files( $this->get_id(), snapshots_wp_content_dir() );
 
 		if ( ! empty( $errors ) ) {
 			$this->log( 'There were errors pulling files:', 'error' );
@@ -551,7 +551,7 @@ final class Pull extends WPCLICommand {
 			$this->get_meta(),
 			$this->get_site_mapping(),
 			$this->get_skip_table_search_replace(),
-			$multisite && $this->prompt->get_flag_or_prompt( $this->get_assoc_args(), 'confirm_ms_constant_update', 'Constants need to be updated in your wp-config.php file. Want WP Snapshots to do this automatically?', true ),
+			$multisite && $this->prompt->get_flag_or_prompt( $this->get_assoc_args(), 'confirm_ms_constant_update', 'Constants need to be updated in your wp-config.php file. Want Snapshots to do this automatically?', true ),
 			$multisite ? $this->get_main_domain() : null
 		)->replace_urls();
 	}
@@ -561,15 +561,15 @@ final class Pull extends WPCLICommand {
 	 *
 	 * @param bool $multisite Whether this is a multisite install.
 	 */
-	private function create_tenup_snapshots_user( bool $multisite ) : void {
-		$this->log( 'Creating wpsnapshots user...' );
+	private function create_snapshots_user( bool $multisite ) : void {
+		$this->log( 'Creating snapshots user...' );
 
-		$user = get_user_by( 'login', 'wpsnapshots' );
+		$user = get_user_by( 'login', 'snapshots' );
 
 		$user_args = [
-			'user_login' => 'wpsnapshots',
+			'user_login' => 'snapshots',
 			'user_pass'  => 'password',
-			'user_email' => 'wpsnapshots@wpsnapshots.test',
+			'user_email' => 'snapshots@snapshots.test',
 			'role'       => 'administrator',
 		];
 
@@ -581,7 +581,7 @@ final class Pull extends WPCLICommand {
 		$user_id = wp_insert_user( $user_args );
 
 		if ( is_wp_error( $user_id ) ) {
-			$this->log( 'There was an error creating the wpsnapshots user.', 'error' );
+			$this->log( 'There was an error creating the snapshots user.', 'error' );
 			$this->log( $user_id->get_error_message(), 'error' );
 		} else {
 			if ( $multisite && function_exists( 'grant_super_admin' ) ) {

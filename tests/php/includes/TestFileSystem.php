@@ -1,13 +1,13 @@
 <?php
 /**
  * Tests for the FileSystem class.
- * 
+ *
  * @package TenUp\Snapshots
  */
 
 namespace TenUp\Snapshots\Tests;
 
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\FileSystem;
 use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Tests\Fixtures\DirectoryFiltering;
@@ -19,16 +19,16 @@ use ZipArchive;
  * Class TestFileSystem
  *
  * @package TenUp\Snapshots\Tests
- * 
+ *
  * @coversDefaultClass \TenUp\Snapshots\FileSystem
  */
 class TestFileSystem extends TestCase {
-	
+
     use PrivateAccess, DirectoryFiltering;
 
 	/**
-	 * WPSnapshotsDirectory instance.
-	 * 
+	 * SnapshotsDirectory instance.
+	 *
 	 * @var FileSystem
 	 */
 	private $filesystem;
@@ -115,7 +115,7 @@ class TestFileSystem extends TestCase {
 		$this->assertFileExists( $directory );
 
 		$this->filesystem->get_wp_filesystem()->delete( $directory, true );
-		
+
 	}
 
 	/** @covers ::delete_directory_contents */
@@ -194,7 +194,7 @@ class TestFileSystem extends TestCase {
 		// Create a gzipped sql file.
 		$gzipped_sql_file = $this->get_directory_path() . '/test.sql.gz';
 		$gzipped_sql_handle = gzopen( $gzipped_sql_file, 'w' );
-		
+
 		// Add the sql file to the gzipped sql file.
 		gzwrite( $gzipped_sql_handle, file_get_contents( $sql_file ) );
 		gzclose( $gzipped_sql_handle );
@@ -216,7 +216,7 @@ class TestFileSystem extends TestCase {
 		// Create the destination directory.
 		mkdir( $destination_directory );
 
-		$this->expectException( WPSnapshotsException::class );
+		$this->expectException( SnapshotsException::class );
 		$this->expectExceptionMessage( 'Incompatible Archive' );
 
 		$this->filesystem->unzip_file( 'nonexistent-file', $destination_directory, );

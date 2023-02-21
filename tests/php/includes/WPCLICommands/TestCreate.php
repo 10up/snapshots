@@ -1,14 +1,14 @@
 <?php
 /**
  * Tests covering the Create command class.
- * 
+ *
  * @package TenUp\Snapshots
  */
 
 namespace TenUp\Snapshots\Tests\Commands;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Snapshots\FileZipper;
 use TenUp\Snapshots\Snapshots\SnapshotMeta;
@@ -22,7 +22,7 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
  * Class TestCreate
  *
  * @package TenUp\Snapshots\Tests\Commands
- * 
+ *
  * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\Create
  */
 class TestCreate extends TestCase {
@@ -31,7 +31,7 @@ class TestCreate extends TestCase {
 
 	/**
 	 * Create instance.
-	 * 
+	 *
 	 * @var Create
 	 */
 	private $command;
@@ -59,7 +59,7 @@ class TestCreate extends TestCase {
 
 	/**
 	 * Test that the command instance extends WPCLICommand.
-	 * 
+	 *
 	 * @covers ::__construct
 	 */
 	public function test_command_instance() {
@@ -80,21 +80,21 @@ class TestCreate extends TestCase {
 	public function test_execute() {
 		/**
 		 * FileZipper mock
-		 * 
+		 *
 		 * @var MockObject $mock_file_zipper
 		 */
 		$mock_file_zipper = $this->createMock( FileZipper::class );
 
 		/**
 		 * DBDumper mock.
-		 * 
+		 *
 		 * @var MockObject $mock_dumper
 		 */
 		$mock_dumper = $this->createMock( WPCLIDBExport::class );
 
 		/**
 		 * SnapshotMeta mock.
-		 * 
+		 *
 		 * @var MockObject $mock_snapshot_meta
 		 */
 		$mock_snapshot_meta = $this->createMock( SnapshotMeta::class );
@@ -146,21 +146,21 @@ class TestCreate extends TestCase {
 	public function test_execute_with_args_passed_in() {
 		/**
 		 * FileZipper mock
-		 * 
+		 *
 		 * @var MockObject $mock_file_zipper
 		 */
 		$mock_file_zipper = $this->createMock( FileZipper::class );
 
 		/**
 		 * DBDumper mock.
-		 * 
+		 *
 		 * @var MockObject $mock_dumper
 		 */
 		$mock_dumper = $this->createMock( WPCLIDBExport::class );
 
 		/**
 		 * SnapshotMeta mock.
-		 * 
+		 *
 		 * @var MockObject $mock_snapshot_meta
 		 */
 		$mock_snapshot_meta = $this->createMock( SnapshotMeta::class );
@@ -206,7 +206,7 @@ class TestCreate extends TestCase {
 	public function test_validate_slug() {
 		$this->assertTrue( $this->call_private_method( $this->command, 'validate_slug', [ 'slug' ] ) );
 
-		$this->expectException( WPSnapshotsException::class );
+		$this->expectException( SnapshotsException::class );
 		$this->expectExceptionMessage( 'Input must be letters, numbers, _, and - only.' );
 
 		$this->call_private_method( $this->command, 'validate_slug', [ 'slug!' ] );
@@ -218,21 +218,21 @@ class TestCreate extends TestCase {
 	public function test_create() {
 		/**
 		 * FileZipper mock
-		 * 
+		 *
 		 * @var MockObject $mock_file_zipper
 		 */
 		$mock_file_zipper = $this->createMock( FileZipper::class );
 
 		/**
 		 * DBDumper mock.
-		 * 
+		 *
 		 * @var MockObject $mock_dumper
 		 */
 		$mock_dumper = $this->createMock( WPCLIDBExport::class );
 
 		/**
 		 * SnapshotMeta mock.
-		 * 
+		 *
 		 * @var MockObject $mock_snapshot_meta
 		 */
 		$mock_snapshot_meta = $this->createMock( SnapshotMeta::class );
@@ -263,9 +263,9 @@ class TestCreate extends TestCase {
 	 * @covers ::create
 	 */
 	public function test_create_will_throw_exception_if_nothing_to_create() {
-		$this->expectException( WPSnapshotsException::class );
+		$this->expectException( SnapshotsException::class );
 		$this->expectExceptionMessage( 'Snapshot must contain either database or files.' );
 
 		$this->command->create( [], 'test-id' );
-	}	
+	}
 }

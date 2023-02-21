@@ -8,9 +8,9 @@
 namespace TenUp\Snapshots\WPCLICommands\Create;
 
 use TenUp\Snapshots\Log\{LoggerInterface, Logging};
-use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\SnapshotsDirectory;
 use TenUp\Snapshots\WordPress\Database;
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\Snapshots\{DBExportInterface};
 
 use function TenUp\Snapshots\Utils\wp_cli;
@@ -32,9 +32,9 @@ class WPCLIDBExport implements DBExportInterface {
 	private $trimmer;
 
 	/**
-	 * WPSnapshotsDirectory instance.
+	 * SnapshotsDirectory instance.
 	 *
-	 * @var WPSnapshotsDirectory
+	 * @var SnapshotsDirectory
 	 */
 	private $snapshot_files;
 
@@ -56,12 +56,12 @@ class WPCLIDBExport implements DBExportInterface {
 	 * Class constructor.
 	 *
 	 * @param Trimmer              $trimmer Trimmer instance.
-	 * @param WPSnapshotsDirectory $snapshot_files WPSnapshotsDirectory instance.
+	 * @param SnapshotsDirectory $snapshot_files SnapshotsDirectory instance.
 	 * @param Scrubber             $scrubber Scrubber instance.
 	 * @param Database             $wordpress_database Database instance.
 	 * @param LoggerInterface      $logger LoggerInterface instance.
 	 */
-	public function __construct( Trimmer $trimmer, WPSnapshotsDirectory $snapshot_files, Scrubber $scrubber, Database $wordpress_database, LoggerInterface $logger ) {
+	public function __construct( Trimmer $trimmer, SnapshotsDirectory $snapshot_files, Scrubber $scrubber, Database $wordpress_database, LoggerInterface $logger ) {
 		$this->trimmer            = $trimmer;
 		$this->snapshot_files     = $snapshot_files;
 		$this->scrubber           = $scrubber;
@@ -77,7 +77,7 @@ class WPCLIDBExport implements DBExportInterface {
 	 *
 	 * @return int The size of the created file.
 	 *
-	 * @throws WPSnapshotsException If an error occurs.
+	 * @throws SnapshotsException If an error occurs.
 	 */
 	public function dump( string $id, array $args ) : int {
 		if ( ! empty( $args['small'] ) ) {
@@ -93,7 +93,7 @@ class WPCLIDBExport implements DBExportInterface {
 		$this->log( 'Compressing database backup...' );
 
 		if ( ! class_exists( 'PharData' ) ) {
-			throw new WPSnapshotsException( 'PharData class not found.' );
+			throw new SnapshotsException( 'PharData class not found.' );
 		}
 
 		$sql_file = $this->snapshot_files->get_file_path( 'data.sql', $id );
@@ -172,12 +172,12 @@ class WPCLIDBExport implements DBExportInterface {
 	 *
 	 * @param string $id The snapshot ID.
 	 *
-	 * @throws WPSnapshotsException If an error occurs.
+	 * @throws SnapshotsException If an error occurs.
 	 */
 	private function scrub( string $id ) {
 		try {
 			$this->scrubber->scrub( $id );
-		} catch ( WPSnapshotsException $e ) {
+		} catch ( SnapshotsException $e ) {
 
 			// Delete the file if it exists.
 			if ( $this->snapshot_files->file_exists( 'data.sql', $id ) ) {

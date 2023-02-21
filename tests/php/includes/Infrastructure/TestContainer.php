@@ -1,17 +1,17 @@
 <?php
 /**
  * Tests for the abstract Container class.
- * 
+ *
  * @package TenUp\Snapshots
  */
 
 namespace TenUp\Snapshots\Tests\Infrastructure;
 
 use TenUp\Snapshots\FileSystem;
-use TenUp\Snapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
+use TenUp\Snapshots\SnapshotsConfig\SnapshotsConfigFromFileSystem;
 use TenUp\Snapshots\Infrastructure\Container;
 use TenUp\Snapshots\Log\WPCLILogger;
-use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\SnapshotsDirectory;
 use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Snapshots\DynamoDBConnector;
 use TenUp\Snapshots\Snapshots\FileZipper;
@@ -30,7 +30,7 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
  * Class ContainerTest
  *
  * @package TenUp\Snapshots\Tests\Infrastructure
- * 
+ *
  * @coversDefaultClass \TenUp\Snapshots\Infrastructure\Container
  */
 class TestContainer extends TestCase {
@@ -39,7 +39,7 @@ class TestContainer extends TestCase {
 
 	/**
 	 * Container instance.
-	 * 
+	 *
 	 * @var Container
 	 */
 	private $container;
@@ -53,7 +53,7 @@ class TestContainer extends TestCase {
 		if ( ! defined( 'WP_CLI' ) ) {
 			define( 'WP_CLI', true );
 		}
-		
+
 		$this->set_up_wp_cli_mock();
 		$this->container = new Snapshots();
 	}
@@ -84,13 +84,13 @@ class TestContainer extends TestCase {
 			Prompt::class,
 			S3StorageConnector::class,
 			Scrubber::class,
-			WPSnapshotsDirectory::class,
+			SnapshotsDirectory::class,
 			SnapshotMetaFromFileSystem::class,
 			Trimmer::class,
 			URLReplacerFactory::class,
 			WPCLIDBExport::class,
 			WPCLILogger::class,
-			WPSnapshotsConfigFromFileSystem::class,
+			SnapshotsConfigFromFileSystem::class,
 		];
 
 		sort( $expected );

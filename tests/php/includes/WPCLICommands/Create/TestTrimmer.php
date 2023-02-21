@@ -1,7 +1,7 @@
 <?php
 /**
  * Tests for the Trimmer class.
- * 
+ *
  * @package TenUp\Snapshots
  */
 
@@ -17,7 +17,7 @@ use Yoast\WPTestUtils\WPIntegration\TestCase;
  * Class TestTrimmer
  *
  * @package TenUp\Snapshots\Tests\WPCLICommands\Create
- * 
+ *
  * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\Create\Trimmer
  */
 class TestTrimmer extends TestCase {
@@ -26,7 +26,7 @@ class TestTrimmer extends TestCase {
 
 	/**
 	 * Test instance
-	 * 
+	 *
 	 * @var Trimmer
 	 */
 	private $trimmer;
@@ -62,8 +62,8 @@ class TestTrimmer extends TestCase {
 				'comments' => 10,
 			];
 		};
-		
-		add_filter( 'tenup_snapshots_trimmer_limits', $limits_filter );
+
+		add_filter( 'snapshots_trimmer_limits', $limits_filter );
 
 		$this->trimmer = ( new Snapshots() )->get_instance( Trimmer::class );
 
@@ -99,7 +99,7 @@ class TestTrimmer extends TestCase {
 				'comments' => 10,
 			]
 		);
-		
+
 		// Create a term and assign it to a post.
 		$term = $this->factory()->term->create( [
 			'taxonomy' => 'category',

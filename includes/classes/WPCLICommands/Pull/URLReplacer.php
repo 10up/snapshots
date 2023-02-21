@@ -7,10 +7,10 @@
 
 namespace TenUp\Snapshots\WPCLICommands\Pull;
 
-use TenUp\Snapshots\Exceptions\WPSnapshotsInputValidationException;
+use TenUp\Snapshots\Exceptions\SnapshotsInputValidationException;
 use TenUp\Snapshots\Log\LoggerInterface;
 use TenUp\Snapshots\Log\Logging;
-use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\SnapshotsDirectory;
 use TenUp\Snapshots\WordPress\Database;
 use TenUp\Snapshots\WPCLI\Prompt;
 
@@ -40,9 +40,9 @@ abstract class URLReplacer {
 	protected $prompt;
 
 	/**
-	 * WPSnapshotsDirectory instance.
+	 * SnapshotsDirectory instance.
 	 *
-	 * @var WPSnapshotsDirectory
+	 * @var SnapshotsDirectory
 	 */
 	protected $snapshots_filesystem;
 
@@ -92,7 +92,7 @@ abstract class URLReplacer {
 	 * Constructor.
 	 *
 	 * @param Prompt               $prompt Prompt instance.
-	 * @param WPSnapshotsDirectory $snapshots_filesystem WPSnapshotsDirectory instance.
+	 * @param SnapshotsDirectory $snapshots_filesystem SnapshotsDirectory instance.
 	 * @param Database             $wordpress_database Database instance.
 	 * @param LoggerInterface      $logger WPCLILogger instance.
 	 * @param array                $meta The snapshot meta.
@@ -103,7 +103,7 @@ abstract class URLReplacer {
 	 */
 	public function __construct(
 		Prompt $prompt,
-		WPSnapshotsDirectory $snapshots_filesystem,
+		SnapshotsDirectory $snapshots_filesystem,
 		Database $wordpress_database,
 		LoggerInterface $logger,
 		array $meta,
@@ -163,11 +163,11 @@ abstract class URLReplacer {
 	 *
 	 * @return string
 	 *
-	 * @throws WPSnapshotsInputValidationException If the URL is not valid.
+	 * @throws SnapshotsInputValidationException If the URL is not valid.
 	 */
 	protected function url_validator( string $url ) : string {
 		if ( '' === trim( $url ) || false !== strpos( $url, ' ' ) || ! preg_match( '#https?://#i', $url ) ) {
-			throw new WPSnapshotsInputValidationException(
+			throw new SnapshotsInputValidationException(
 				'URL not valid. The URL should be in the form of `https://google.com`, no trailing slash needed'
 			);
 		}

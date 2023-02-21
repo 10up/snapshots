@@ -8,11 +8,11 @@
 namespace TenUp\Snapshots\Tests\Commands;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\FileSystem;
 use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Snapshots\SnapshotMeta;
-use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\SnapshotsDirectory;
 use TenUp\Snapshots\Tests\Fixtures\{CommandTests, DirectoryFiltering, PrivateAccess, WPCLIMocking};
 use TenUp\Snapshots\WordPress\Database;
 use TenUp\Snapshots\WPCLI\WPCLICommand;
@@ -22,7 +22,7 @@ use TenUp\Snapshots\WPCLICommands\Pull\URLReplacerFactory;
 use WP_Filesystem_Base;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
-use function TenUp\Snapshots\Utils\tenup_snapshots_wp_content_dir;
+use function TenUp\Snapshots\Utils\snapshots_wp_content_dir;
 
 /**
  * Class TestPull
@@ -100,7 +100,7 @@ class TestPull extends TestCase {
 
 		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository' ] );
 
-		$this->expectException( WPSnapshotsException::class );
+		$this->expectException( SnapshotsException::class );
 		$this->expectExceptionMessage( 'Snapshot does not exist.' );
 
 		$this->set_private_property( $this->command, 'snapshot_meta', $snapshot_meta_mock );
@@ -227,7 +227,7 @@ class TestPull extends TestCase {
 
 		$this->set_private_property( $this->command, 'snapshot_meta', $snapshot_meta_mock );
 
-		$this->expectException( WPSnapshotsException::class );
+		$this->expectException( SnapshotsException::class );
 		$this->expectExceptionMessage( 'Snapshot is not valid.' );
 
 		$this->call_private_method( $this->command, 'set_up_meta' );
@@ -293,9 +293,9 @@ class TestPull extends TestCase {
 		/**
 		 * Mock the snapshots_filesystem variable.
 		 *
-		 * @var MockObject|WPSnapshotsDirectory $snapshots_filesystem_mock
+		 * @var MockObject|SnapshotsDirectory $snapshots_filesystem_mock
 		 */
-		$snapshots_filesystem_mock = $this->createMock( WPSnapshotsDirectory::class );
+		$snapshots_filesystem_mock = $this->createMock( SnapshotsDirectory::class );
 		$snapshots_filesystem_mock->method( 'get_file_path' )->willReturn( 'test' );
 
 		$this->set_private_property( $this->command, 'snapshots_filesystem', $snapshots_filesystem_mock );
@@ -409,12 +409,12 @@ class TestPull extends TestCase {
 		 *
 		 * @var MockObject $snapshots_filesystem_mock
 		 */
-		$snapshots_filesystem_mock = $this->createMock( WPSnapshotsDirectory::class );
+		$snapshots_filesystem_mock = $this->createMock( SnapshotsDirectory::class );
 		$snapshots_filesystem_mock->method( 'unzip_snapshot_files' )->willReturn( [] );
 
 		$snapshots_filesystem_mock->expects( $this->once() )
 			->method( 'unzip_snapshot_files' )
-			->with( 'test-id', tenup_snapshots_wp_content_dir() );
+			->with( 'test-id', snapshots_wp_content_dir() );
 
 		$this->set_private_property( $this->command, 'snapshots_filesystem', $snapshots_filesystem_mock );
 
@@ -438,7 +438,7 @@ class TestPull extends TestCase {
 		 *
 		 * @var MockObject $snapshots_filesystem_mock
 		 */
-		$snapshots_filesystem_mock = $this->createMock( WPSnapshotsDirectory::class );
+		$snapshots_filesystem_mock = $this->createMock( SnapshotsDirectory::class );
 		$snapshots_filesystem_mock->method( 'unzip_snapshot_files' )->willReturn( [ 'test-error' ] );
 
 		$this->set_private_property( $this->command, 'snapshots_filesystem', $snapshots_filesystem_mock );
@@ -556,22 +556,22 @@ class TestPull extends TestCase {
 		$this->call_private_method( $this->command, 'replace_urls' );
 	}
 
-	/** @covers ::create_tenup_snapshots_user */
+	/** @covers ::create_snapshots_user */
 	public function test_create_snapshots_user() {
 
 		// Assert user does not exist.
-		$this->assertFalse( get_user_by( 'login', 'wpsnapshots' ) );
+		$this->assertFalse( get_user_by( 'login', 'snapshots' ) );
 
-		$this->call_private_method( $this->command, 'create_tenup_snapshots_user', [ false ] );
+		$this->call_private_method( $this->command, 'create_snapshots_user', [ false ] );
 
 		// Assert user exists.
-		$this->assertNotFalse( get_user_by( 'login', 'wpsnapshots' ) );
+		$this->assertNotFalse( get_user_by( 'login', 'snapshots' ) );
 
 		$this->get_wp_cli_mock()->assertMethodCalled(
 			'line',
 			1,
 			[
-				[ 'Creating wpsnapshots user...' ],
+				[ 'Creating snapshots user...' ],
 			]
 		);
 	}

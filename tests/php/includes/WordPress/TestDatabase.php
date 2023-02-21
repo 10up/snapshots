@@ -1,13 +1,13 @@
 <?php
 /**
  * Tests for the Database class.
- * 
+ *
  * @package TenUp\Snapshots
  */
 
 namespace TenUp\Snapshots\Tests\WordPress;
 
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
 use TenUp\Snapshots\WordPress\Database;
@@ -17,16 +17,16 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
  * Class TestDatabase
  *
  * @package TenUp\Snapshots\Tests
- * 
+ *
  * @coversDefaultClass \TenUp\Snapshots\WordPress\Database
  */
 class TestDatabase extends TestCase {
-	
+
     use PrivateAccess;
 
 	/**
 	 * Database instance.
-	 * 
+	 *
 	 * @var Database
 	 */
 	private $wordpress_database;
@@ -47,7 +47,7 @@ class TestDatabase extends TestCase {
 	/**
 	 * @covers ::get_tables
 	 * @covers ::get_wpdb
-	 */	
+	 */
 	public function test_get_tables() {
 		global $wpdb;
 
@@ -68,7 +68,7 @@ class TestDatabase extends TestCase {
 		// Drop table if it exists.
 		$wpdb->query( "DROP TABLE IF EXISTS test_table" );
 	}
-	
+
 	/**
 	 * @covers ::rename_table
 	 * @covers ::get_wpdb

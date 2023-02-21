@@ -8,7 +8,7 @@
 namespace TenUp\Snapshots\WPCLICommands;
 
 use Exception;
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\Infrastructure\Service;
 use TenUp\Snapshots\Snapshots\DBExportInterface;
 use TenUp\Snapshots\Snapshots\FileZipper;
@@ -58,7 +58,7 @@ class Create extends WPCLICommand {
 	 * @param array $args Arguments passed to the command.
 	 * @param array $assoc_args Associative arguments passed to the command.
 	 *
-	 * @throws WPSnapshotsException If the snapshot cannot be created.
+	 * @throws SnapshotsException If the snapshot cannot be created.
 	 */
 	public function execute( array $args, array $assoc_args ) {
 		try {
@@ -69,7 +69,7 @@ class Create extends WPCLICommand {
 			$contains_files = $this->prompt->get_flag_or_prompt( $this->get_assoc_args(), 'include_files', 'Include files in snapshot?', true );
 
 			if ( ! $contains_db && ! $contains_files ) {
-				throw new WPSnapshotsException( 'You must include either the database or files in the snapshot.' );
+				throw new SnapshotsException( 'You must include either the database or files in the snapshot.' );
 			}
 
 			$id = $this->run( $contains_db, $contains_files );
@@ -195,7 +195,7 @@ class Create extends WPCLICommand {
 	 *
 	 * @return string
 	 *
-	 * @throws WPSnapshotsException If the snapshot cannot be created.
+	 * @throws SnapshotsException If the snapshot cannot be created.
 	 */
 	public function run( bool $contains_db, bool $contains_files ) : string {
 		$id = md5( time() . wp_rand() );
@@ -211,11 +211,11 @@ class Create extends WPCLICommand {
 	 *
 	 * @return string Snapshot ID
 	 *
-	 * @throws WPSnapshotsException Throw exception if snapshot can't be created.
+	 * @throws SnapshotsException Throw exception if snapshot can't be created.
 	 */
 	public function create( array $args, ?string $id = null ) : string {
 		if ( empty( $args['contains_db'] ) && empty( $args['contains_files'] ) ) {
-			throw new WPSnapshotsException( 'Snapshot must contain either database or files.' );
+			throw new SnapshotsException( 'Snapshot must contain either database or files.' );
 		}
 
 		/**
@@ -253,7 +253,7 @@ class Create extends WPCLICommand {
 	 *
 	 * @return array
 	 *
-	 * @throws WPSnapshotsException If the snapshot cannot be created.
+	 * @throws SnapshotsException If the snapshot cannot be created.
 	 */
 	protected function get_create_args( bool $contains_db, bool $contains_files ) : array {
 		return [
@@ -316,11 +316,11 @@ class Create extends WPCLICommand {
 	 *
 	 * @return bool
 	 *
-	 * @throws WPSnapshotsException If the slug is invalid.
+	 * @throws SnapshotsException If the slug is invalid.
 	 */
 	protected function validate_slug( string $slug ) : bool {
 		if ( ! preg_match( '/^[a-z0-9_-]+$/', $slug ) ) {
-			throw new WPSnapshotsException( 'Input must be letters, numbers, _, and - only.' );
+			throw new SnapshotsException( 'Input must be letters, numbers, _, and - only.' );
 		}
 
 		return true;

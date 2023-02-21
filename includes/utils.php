@@ -7,7 +7,7 @@
 
 namespace TenUp\Snapshots\Utils;
 
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\Snapshots;
 use WP_CLI;
 
@@ -16,7 +16,7 @@ use WP_CLI;
  *
  * @return Snapshots
  */
-function tenup_snapshots() : Snapshots {
+function snapshots() : Snapshots {
 	static $snapshots;
 
 	if ( ! $snapshots ) {
@@ -43,8 +43,8 @@ function wp_cli() : object {
 	 *
 	 * @param object $wp_cli Class that wraps WP_CLI and WP_CLI\Utils functions as static methods.
 	 */
-	return tenup_snapshots_apply_filters(
-		'tenup_snapshots_wpcli',
+	return snapshots_apply_filters(
+		'snapshots_wpcli',
 		new class() {
 
 			/**
@@ -55,7 +55,7 @@ function wp_cli() : object {
 			 *
 			 * @return mixed
 			 *
-			 * @throws WPSnapshotsException If the function does not exist.
+			 * @throws SnapshotsException If the function does not exist.
 			 */
 			public static function __callStatic( string $name, array $arguments ) {
 				$util = '\\WP_CLI\\Utils\\' . $name;
@@ -68,7 +68,7 @@ function wp_cli() : object {
 					return call_user_func_array( [ WP_CLI::class, $name ], $arguments );
 				}
 
-				throw new WPSnapshotsException( sprintf( 'WP_CLI function %s does not exist.', $name ) );
+				throw new SnapshotsException( sprintf( 'WP_CLI function %s does not exist.', $name ) );
 			}
 		}
 	);
@@ -79,11 +79,11 @@ function wp_cli() : object {
  *
  * @return string
  *
- * @throws WPSnapshotsException If WP_CONTENT_DIR is not defined.
+ * @throws SnapshotsException If WP_CONTENT_DIR is not defined.
  */
-function tenup_snapshots_wp_content_dir() : string {
+function snapshots_wp_content_dir() : string {
 	if ( ! defined( 'WP_CONTENT_DIR' ) ) {
-		throw new WPSnapshotsException( 'WP_CONTENT_DIR is not defined.' );
+		throw new SnapshotsException( 'WP_CONTENT_DIR is not defined.' );
 	}
 
 	/**
@@ -91,7 +91,7 @@ function tenup_snapshots_wp_content_dir() : string {
 	 *
 	 * @param string $wp_content_dir Path to the wp-content directory.
 	 */
-	return apply_filters( 'tenup_snapshots_wp_content_dir', WP_CONTENT_DIR );
+	return apply_filters( 'snapshots_wp_content_dir', WP_CONTENT_DIR );
 }
 
 /**
@@ -104,7 +104,7 @@ function tenup_snapshots_wp_content_dir() : string {
  *
  * @return mixed The filtered value after all hooked functions are applied to it.
  */
-function tenup_snapshots_apply_filters( string $tag, $value ) {
+function snapshots_apply_filters( string $tag, $value ) {
 	if ( function_exists( 'apply_filters' ) ) {
 		return apply_filters( $tag, $value );
 	}
@@ -119,7 +119,7 @@ function tenup_snapshots_apply_filters( string $tag, $value ) {
  *
  * @return string The string without the trailing slash.
  */
-function tenup_snapshots_remove_trailing_slash( string $string ) : string {
+function snapshots_remove_trailing_slash( string $string ) : string {
 	return rtrim( $string, '/' );
 }
 
@@ -130,6 +130,6 @@ function tenup_snapshots_remove_trailing_slash( string $string ) : string {
  *
  * @return string The string with the trailing slash.
  */
-function tenup_snapshots_add_trailing_slash( string $string ) : string {
+function snapshots_add_trailing_slash( string $string ) : string {
 	return rtrim( $string, '/' ) . '/';
 }

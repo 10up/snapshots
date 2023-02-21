@@ -1,7 +1,7 @@
 <?php
 /**
- * Tests for the WPSnapshotsConfigFromFileSystem class.
- * 
+ * Tests for the SnapshotsConfigFromFileSystem class.
+ *
  * @package TenUp\Snapshots
  */
 
@@ -9,25 +9,25 @@ namespace TenUp\Snapshots\Tests\Config;
 
 use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Tests\Fixtures\DirectoryFiltering;
-use TenUp\Snapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem;
-use TenUp\Snapshots\WPSnapshotsConfig\WPSnapshotsConfigInterface;
+use TenUp\Snapshots\SnapshotsConfig\SnapshotsConfigFromFileSystem;
+use TenUp\Snapshots\SnapshotsConfig\SnapshotsConfigInterface;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class TestConfigFromFileSystem
  *
  * @package TenUp\Snapshots\Tests\Config
- * 
- * @coversDefaultClass \TenUp\Snapshots\WPSnapshotsConfig\WPSnapshotsConfigFromFileSystem
+ *
+ * @coversDefaultClass \TenUp\Snapshots\SnapshotsConfig\SnapshotsConfigFromFileSystem
  */
 class TestConfigFromFileSystem extends TestCase {
 
     use DirectoryFiltering;
 
     /**
-     * WPSnapshotsConfigFromFileSystem instance.
-     * 
-     * @var WPSnapshotsConfigFromFileSystem
+     * SnapshotsConfigFromFileSystem instance.
+     *
+     * @var SnapshotsConfigFromFileSystem
      */
     private $config;
 
@@ -37,7 +37,7 @@ class TestConfigFromFileSystem extends TestCase {
     public function set_up() {
         parent::set_up();
 
-        $this->config = ( new Snapshots() )->get_instance( WPSnapshotsConfigFromFileSystem::class );
+        $this->config = ( new Snapshots() )->get_instance( SnapshotsConfigFromFileSystem::class );
 
         $this->set_up_directory_filtering();
     }
@@ -53,9 +53,9 @@ class TestConfigFromFileSystem extends TestCase {
 
     /** @covers ::__construct */
     public function test_constructor() {
-        $this->assertInstanceOf( WPSnapshotsConfigFromFileSystem::class, $this->config );
+        $this->assertInstanceOf( SnapshotsConfigFromFileSystem::class, $this->config );
         $implements = class_implements( $this->config );
-        $this->assertArrayHasKey( WPSnapshotsConfigInterface::class, $implements );
+        $this->assertArrayHasKey( SnapshotsConfigInterface::class, $implements );
     }
 
     /**

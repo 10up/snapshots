@@ -1,6 +1,6 @@
 <?php
 /**
- * WPSnapshotsInputValidationException class.
+ * SnapshotsInputValidationException class.
  *
  * @package TenUp\Snapshots
  */
@@ -10,8 +10,8 @@ namespace TenUp\Snapshots\Exceptions;
 use Exception;
 
 /**
- * WPSnapshotsException class.
+ * SnapshotsException class.
  *
  * @package TenUp\Snapshots
  */
-class WPSnapshotsInputValidationException extends Exception {}
+class SnapshotsInputValidationException extends Exception {}

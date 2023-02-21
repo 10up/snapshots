@@ -5,7 +5,7 @@
  * Description: A WordPress plugin to manage snapshots of your WordPress site.
  * Version: 0.1.0
  * Author: 10up
- * Author URI: https://get10up.com
+ * Author URI: https://10up.com
  * License: MIT
  *
  * @package TenUp\Snapshots

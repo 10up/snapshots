@@ -7,7 +7,7 @@
 
 namespace TenUp\Snapshots\Snapshots;
 
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\Infrastructure\SharedService;
 
 /**
@@ -43,7 +43,7 @@ interface SnapshotMetaInterface extends SharedService {
 	 * @param  string $repository Repository name
 	 * @return mixed
 	 *
-	 * @throws WPSnapshotsException Snapshot meta invalid.
+	 * @throws SnapshotsException Snapshot meta invalid.
 	 */
 	public function get_local( string $id, string $repository );
 

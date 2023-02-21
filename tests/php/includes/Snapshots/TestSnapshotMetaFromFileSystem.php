@@ -1,7 +1,7 @@
 <?php
 /**
  * Tests for the SnapshotMetaFromFileSystem class.
- * 
+ *
  * @package TenUp\Snapshots
  */
 
@@ -12,7 +12,7 @@ use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Snapshots\DynamoDBConnector;
 use TenUp\Snapshots\Snapshots\SnapshotMeta;
 use TenUp\Snapshots\Snapshots\SnapshotMetaFromFileSystem;
-use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\SnapshotsDirectory;
 use TenUp\Snapshots\Tests\Fixtures\DirectoryFiltering;
 use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
@@ -21,7 +21,7 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
  * Class TestSnapshotMetaFromFileSystem
  *
  * @package TenUp\Snapshots\Tests\Snapshots
- * 
+ *
  * @coversDefaultClass \TenUp\Snapshots\Snapshots\SnapshotMetaFromFileSystem
  */
 class TestSnapshotMetaFromFileSystem extends TestCase {
@@ -30,7 +30,7 @@ class TestSnapshotMetaFromFileSystem extends TestCase {
 
 	/**
 	 * Test instance
-	 * 
+	 *
 	 * @var SnapshotMetaFromFileSystem
 	 */
 	private $meta;
@@ -63,7 +63,7 @@ class TestSnapshotMetaFromFileSystem extends TestCase {
 		$this->assertInstanceOf( SnapshotMeta::class, $this->meta );
 
 		$this->assertInstanceOf( DynamoDBConnector::class, $this->get_private_property( $this->meta, 'db' ) );
-		$this->assertInstanceOf( WPSnapshotsDirectory::class, $this->get_private_property( $this->meta, 'snapshot_files' ) );
+		$this->assertInstanceOf( SnapshotsDirectory::class, $this->get_private_property( $this->meta, 'snapshot_files' ) );
 	}
 
 	/**
@@ -85,7 +85,7 @@ class TestSnapshotMetaFromFileSystem extends TestCase {
 	public function test_get_remote_when_snapshot_is_empty() {
 		/**
 		 * DynamoDBClient mock.
-		 * 
+		 *
 		 * @var MockObject|DynamoDBConnector $mock_db
 		 */
 		$mock_db = $this->getMockBuilder( DynamoDBConnector::class )
@@ -104,7 +104,7 @@ class TestSnapshotMetaFromFileSystem extends TestCase {
 	public function test_get_remote_when_snapshot_is_not_empty() {
 		/**
 		 * DynamoDBClient mock.
-		 * 
+		 *
 		 * @var MockObject|DynamoDBConnector $mock_db
 		 */
 		$mock_db = $this->getMockBuilder( DynamoDBConnector::class )
@@ -123,7 +123,7 @@ class TestSnapshotMetaFromFileSystem extends TestCase {
 	public function test_get_remote_when_snapshot_is_not_empty_and_contains_files_and_contains_db_are_false() {
 		/**
 		 * DynamoDBClient mock.
-		 * 
+		 *
 		 * @var MockObject|DynamoDBConnector $mock_db
 		 */
 		$mock_db = $this->getMockBuilder( DynamoDBConnector::class )

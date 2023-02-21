@@ -1,16 +1,16 @@
 <?php
 /**
  * Tests for URLReplacerFactory.
- * 
+ *
  * @package TenUp\Snapshots
  */
 
 namespace TenUp\Snapshots\Tests\WPCLICommands\Pull;
 
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
-use TenUp\Snapshots\Exceptions\WPSnapshotsInputValidationException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsInputValidationException;
 use TenUp\Snapshots\Snapshots;
-use TenUp\Snapshots\WPSnapshotsDirectory;
+use TenUp\Snapshots\SnapshotsDirectory;
 use TenUp\Snapshots\WordPress\Database;
 use TenUp\Snapshots\WPCLI\Prompt;
 use TenUp\Snapshots\WPCLICommands\Pull\MultisiteURLReplacer;
@@ -21,15 +21,15 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class TestURLReplacerFactory
- * 
+ *
  * @package TenUp\Snapshots\Tests\WPCLICommands\Pull
- * 
+ *
  * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\Pull\URLReplacerFactory
  */
 class TestURLReplacerFactory extends TestCase {
 	/**
 	 * URLReplacerFactory instance.
-	 * 
+	 *
 	 * @var URLReplacerFactory
 	 */
 	protected $url_replacer_factory;
@@ -67,7 +67,7 @@ class TestURLReplacerFactory extends TestCase {
 
 		$this->assertInstanceOf( MultisiteURLReplacer::class, $url_replacer );
 
-		$this->expectException( WPSnapshotsException::class );
+		$this->expectException( SnapshotsException::class );
 		$this->expectExceptionMessage( 'Invalid argument passed to URLReplacerFactory::get()' );
 
 		$this->url_replacer_factory->get(

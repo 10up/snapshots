@@ -7,7 +7,7 @@
 
 namespace TenUp\Snapshots\Snapshots;
 
-use TenUp\Snapshots\Exceptions\WPSnapshotsException;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\Infrastructure\SharedService;
 
 /**
@@ -28,12 +28,12 @@ interface StorageConnectorInterface extends SharedService {
 	public function download_snapshot( string $id, array $snapshot_meta, string $repository, string $region );
 
 	/**
-	 * Create WP Snapshots S3 bucket
+	 * Create Snapshots S3 bucket
 	 *
 	 * @param string $repository Repository name.
 	 * @param string $region AWS region.
 	 *
-	 * @throws WPSnapshotsException If bucket already exists.
+	 * @throws SnapshotsException If bucket already exists.
 	 */
 	public function create_bucket( string $repository, string $region );
 
