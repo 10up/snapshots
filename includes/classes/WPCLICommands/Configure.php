@@ -85,6 +85,12 @@ final class Configure extends WPCLICommand {
 					'description' => 'The user email to use. If it\'s not provided, user will be prompted for it.',
 					'optional'    => true,
 				],
+				[
+					'type'        => 'assoc',
+					'name'        => 'aws_profile',
+					'description' => 'The AWS profile to use. Defaults to \'default\'.',
+					'optional'    => true,
+				],
 			],
 			'when'      => 'before_wp_load',
 			'longdesc'  => '## EXAMPLES' . PHP_EOL . PHP_EOL . 'wp snapshots configure 10up' . PHP_EOL . 'wp snapshots configure 10up --region=us-west-1 --user_name=John --user_email=john.doe@example.com',
@@ -116,6 +122,7 @@ final class Configure extends WPCLICommand {
 		$repositories[ $repository_name ] = [
 			'region'     => $this->get_region(),
 			'repository' => $repository_name,
+			'profile'    => $this->get_profile(),
 		];
 
 		return $repositories;
@@ -152,5 +159,21 @@ final class Configure extends WPCLICommand {
 	 */
 	private function get_user_email() : string {
 		return $this->get_assoc_arg( 'user_email', [ 'prompt' => 'Your email' ] );
+	}
+
+	/**
+	 * Gets the profile.
+	 *
+	 * @return string
+	 */
+	private function get_profile() : string {
+		return $this->get_assoc_arg(
+			'aws_profile',
+			[
+
+				'prompt'  => 'Which AWS authentication profile should this repository use?',
+				'default' => 'default',
+			]
+		);
 	}
 }

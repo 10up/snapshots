@@ -110,15 +110,15 @@ abstract class WPCLICommand implements Conditional, Module {
 	/**
 	 * WPCLICommand constructor.
 	 *
-	 * @param WPCLILogger                $logger WPCLILogger instance.
-	 * @param Prompt                     $prompt Prompt instance.
-	 * @param SnapshotsConfigInterface $config ConfigConnectorInterface instance.
-	 * @param StorageConnectorInterface  $storage_connector StorageConnectorInterface instance.
-	 * @param DBConnectorInterface       $db_connector DBConnectorInterface instance.
-	 * @param SnapshotMetaInterface      $snapshot_meta SnapshotMetaInterface instance.
-	 * @param SnapshotsDirectory       $snapshots_filesystem SnapshotsDirectory instance.
-	 * @param Database                   $wordpress_database Database instance.
-	 * @param FileSystem                 $filesystem FileSystem instance.
+	 * @param WPCLILogger               $logger WPCLILogger instance.
+	 * @param Prompt                    $prompt Prompt instance.
+	 * @param SnapshotsConfigInterface  $config ConfigConnectorInterface instance.
+	 * @param StorageConnectorInterface $storage_connector StorageConnectorInterface instance.
+	 * @param DBConnectorInterface      $db_connector DBConnectorInterface instance.
+	 * @param SnapshotMetaInterface     $snapshot_meta SnapshotMetaInterface instance.
+	 * @param SnapshotsDirectory        $snapshots_filesystem SnapshotsDirectory instance.
+	 * @param Database                  $wordpress_database Database instance.
+	 * @param FileSystem                $filesystem FileSystem instance.
 	 */
 	public function __construct(
 		WPCLILogger $logger,
