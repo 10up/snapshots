@@ -262,18 +262,9 @@ abstract class WPCLICommand implements Conditional, Module {
 	 * @throws SnapshotsException If no profile is found.
 	 */
 	protected function get_profile_for_repository() : string {
-		$profile = $this->get_assoc_arg( 'profile' );
-		if ( $profile ) {
-			return $profile;
-		}
-
 		$repository_name = $this->get_repository_name();
 
 		$profile = $this->config->get_repository_profile( $repository_name );
-
-		if ( ! $profile ) {
-			throw new SnapshotsException( 'No profile found for repository ' . $repository_name . '. Please run the configure command.' );
-		}
 
 		return $profile;
 	}

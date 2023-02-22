@@ -121,19 +121,19 @@ class SnapshotsConfigFromFileSystem implements SnapshotsConfigInterface {
 	}
 
 	/**
-	 * Gets the profile property from a repository.
+	 * Gets the profile property from a repository. Defaults to 'default'.
 	 *
 	 * @param string $repository Repository name.
-	 * @return ?string $profile Profile name.
+	 * @return string $profile Profile name.
 	 */
-	public function get_repository_profile( string $repository = '' ) : ?string {
+	public function get_repository_profile( string $repository = '' ) : string {
 		$settings = $this->get_repository_settings( $repository );
 
 		if ( is_array( $settings ) ) {
-			return $settings['profile'] ?? null;
+			return $settings['profile'] ?? 'default';
 		}
 
-		return null;
+		return 'default';
 	}
 
 	/**

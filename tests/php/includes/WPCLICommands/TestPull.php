@@ -98,7 +98,7 @@ class TestPull extends TestCase {
 		$snapshot_meta_mock->method( 'get_remote' )->willReturn( [] );
 		$snapshot_meta_mock->method( 'get_local' )->willReturn( [] );
 
-		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository', 'profile' => 'default' ] );
+		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository' ] );
 
 		$this->expectException( SnapshotsException::class );
 		$this->expectExceptionMessage( 'Snapshot does not exist.' );
@@ -131,7 +131,7 @@ class TestPull extends TestCase {
 		$snapshot_meta_mock->method( 'get_remote' )->willReturn( $test_remote_meta );
 		$snapshot_meta_mock->method( 'get_local' )->willReturn( [] );
 
-		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository', 'profile' => 'default' ] );
+		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository' ] );
 
 		$this->set_private_property( $this->command, 'snapshot_meta', $snapshot_meta_mock );
 
@@ -162,7 +162,7 @@ class TestPull extends TestCase {
 		$snapshot_meta_mock->method( 'get_remote' )->willReturn( [] );
 		$snapshot_meta_mock->method( 'get_local' )->willReturn( $test_local_meta );
 
-		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository', 'profile' => 'default' ] );
+		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository' ] );
 
 		$this->set_private_property( $this->command, 'snapshot_meta', $snapshot_meta_mock );
 
@@ -195,7 +195,7 @@ class TestPull extends TestCase {
 		$snapshot_meta_mock->method( 'get_remote' )->willReturn( $test_remote_meta );
 		$snapshot_meta_mock->method( 'get_local' )->willReturn( $test_local_meta );
 
-		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository', 'overwrite_local_copy' => true, 'profile' => 'default' ] );
+		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository', 'overwrite_local_copy' => true ] );
 
 		$this->set_private_property( $this->command, 'snapshot_meta', $snapshot_meta_mock );
 
@@ -223,7 +223,7 @@ class TestPull extends TestCase {
 		$snapshot_meta_mock->method( 'get_remote' )->willReturn( $test_remote_meta );
 		$snapshot_meta_mock->method( 'get_local' )->willReturn( $test_local_meta );
 
-		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository', 'profile' => 'default' ] );
+		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository' ] );
 
 		$this->set_private_property( $this->command, 'snapshot_meta', $snapshot_meta_mock );
 
@@ -248,7 +248,6 @@ class TestPull extends TestCase {
 
 		$this->set_private_property( $this->command, 'snapshot_meta', $snapshot_meta_mock );
 		$this->command->set_assoc_arg( 'repository', '10up' );
-		$this->command->set_assoc_arg( 'profile', 'default' );
 
 		$this->assertFalse( $this->call_private_method( $this->command, 'get_should_update_wp' ) );
 	}
@@ -352,7 +351,7 @@ class TestPull extends TestCase {
 		// Set up meta.
 		$test_local_meta = [ 'contains_files' => true, 'contains_db' => true, 'table_prefix' => 'test_' ];
 
-		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository', 'profile' => 'default' ] );
+		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository' ] );
 
 		$this->mock_snapshot_meta( $test_local_meta );
 
@@ -477,7 +476,7 @@ class TestPull extends TestCase {
 	public function test_replace_urls_single_site() {
 		$test_local_meta = [ 'contains_files' => true, 'contains_db' => true, 'multisite' => false ];
 
-		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository', 'profile' => 'default' ] );
+		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository' ] );
 
 		$this->mock_snapshot_meta( $test_local_meta );
 
@@ -519,7 +518,7 @@ class TestPull extends TestCase {
 	public function test_replace_urls_multisite() {
 		$test_local_meta = [ 'contains_files' => true, 'contains_db' => true, 'multisite' => true ];
 
-		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository', 'skip_table_search_replace' => 'table1,table2', 'main_domain' => 'test-domain', 'profile' => 'default' ] );
+		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository', 'skip_table_search_replace' => 'table1,table2', 'main_domain' => 'test-domain' ] );
 
 		$this->mock_snapshot_meta( $test_local_meta );
 
@@ -598,7 +597,6 @@ class TestPull extends TestCase {
 
 		$this->command->set_assoc_arg( 'site_mapping', json_encode( $to_encode ) );
 		$this->command->set_assoc_arg( 'repository', '10up' );
-		$this->command->set_assoc_arg( 'profile', 'default' );
 
 		$this->assertEquals(
 			[
@@ -631,7 +629,6 @@ class TestPull extends TestCase {
 
 		$this->command->set_assoc_arg( 'site_mapping', $filename );
 		$this->command->set_assoc_arg( 'repository', '10up' );
-		$this->command->set_assoc_arg( 'profile', 'default' );
 
 		$this->assertEquals(
 			[
@@ -658,7 +655,6 @@ class TestPull extends TestCase {
 
 		$this->command->set_assoc_arg( 'site_mapping', json_encode( $to_encode ) );
 		$this->command->set_assoc_arg( 'repository', '10up' );
-		$this->command->set_assoc_arg( 'profile', 'default' );
 
 		$this->mock_snapshot_meta( $test_local_meta );
 
@@ -700,7 +696,6 @@ class TestPull extends TestCase {
 		];
 
 		$this->command->set_assoc_arg( 'repository', '10up' );
-		$this->command->set_assoc_arg( 'profile', 'default' );
 
 		$this->mock_snapshot_meta( $test_local_meta );
 
@@ -724,7 +719,6 @@ class TestPull extends TestCase {
 		];
 
 		$this->command->set_assoc_arg( 'repository', '10up' );
-		$this->command->set_assoc_arg( 'profile', 'default' );
 
 		$this->mock_snapshot_meta( $test_local_meta );
 

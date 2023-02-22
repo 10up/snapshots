@@ -118,7 +118,6 @@ class TestSearch extends TestCase {
 		$this->set_private_property( $this->command, 'config', $mock_snapshots_config );
 
 		$this->command->set_assoc_arg( 'repository', 'test' );
-		$this->command->set_assoc_arg( 'profile', 'default' );
 		$this->command->set_args( [ 'test' ] );
 
 		$actual_results = $this->call_private_method( $this->command, 'search', [ 'test-region' ] );

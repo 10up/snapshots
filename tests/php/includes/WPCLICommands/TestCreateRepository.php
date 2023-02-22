@@ -106,7 +106,7 @@ class TestCreateRepository extends TestCase {
 		$this->set_private_property( $this->command, 'storage_connector', $storage_connector );
 		$this->set_private_property( $this->command, 'db_connector', $db_connector );
 
-		$this->command->execute( [ 'test-repo' ], [ 'region' => 'test-region', 'profile' => 'default' ] );
+		$this->command->execute( [ 'test-repo' ], [ 'region' => 'test-region', 'repository' => '10up' ] );
 
 		// Check success message.
 		$this->get_wp_cli_mock()->assertMethodCalled( 'success', 1, [ [ 'Repository created.' ] ] );

@@ -120,9 +120,6 @@ __wp snapshots create-repository <repository> [--region=\<region\>]__
     ---
     default: us-west-1
     ---
-
-  [--profile=<profile>]
-    The AWS profile to use. Defaults to 'default'.
 ```
 </details>
 
@@ -216,9 +213,6 @@ __wp snapshots push [--repository=\<repository\>] [--region=\<region\>] [--exclu
     ---
     default: true
     ---
-
-  [--profile=<profile>]
-    The AWS profile to use. Defaults to 'default'.
 ```
 </details>
 
@@ -309,9 +303,6 @@ __wp snapshots pull <snapshot_id> [--repository=\<repository\>] [--region=\<regi
     default: false
     ---
 
-  [--profile=<profile>]
-    The AWS profile to use. Defaults to 'default'.
-
 ```
 </details>
 
@@ -342,9 +333,6 @@ __wp snapshots search <search_text> [--repository=\<repository\>] [--format=\<fo
     ---
     default: us-west-1
     ---
-
-  [--profile=<profile>]
-    The AWS profile to use. Defaults to 'default'.
 ```
 
 </details>
@@ -372,9 +360,6 @@ __wp snapshots delete <snapshot_id> [--repository=\<repository\>] [--region=\<re
     ---
     default: us-west-1
     ---
-
-  [--profile=<profile>]
-    The AWS profile to use. Defaults to 'default'.
 ```
 </details>
 
@@ -462,9 +447,6 @@ __wp snapshots create [--repository=\<repository\>] [--region=\<region\>] [--exc
     ---
     default: true
     ---
-
-  [--profile=<profile>]
-    The AWS profile to use. Defaults to 'default'.
 ```
 </details>
 
@@ -504,9 +486,6 @@ __wp snapshots download <snapshot_id> [--repository=\<repository\>] [--region=\<
     ---
     default: true
     ---
-
-  [--profile=<profile>]
-    The AWS profile to use. Defaults to 'default'.
 ```
 </details>
 

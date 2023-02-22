@@ -102,7 +102,6 @@ class TestDownload extends TestCase {
 		);
 		$this->set_private_property( $this->command, 'snapshot_meta', $mock_snapshot_meta );
 		$this->command->set_assoc_arg( 'repository', '10up' );
-		$this->command->set_assoc_arg( 'profile', 'default' );
 
 		add_filter( 'snapshots_readline', function() {
 			return function() {
@@ -209,7 +208,7 @@ class TestDownload extends TestCase {
 			};
 		} );
 
-		$this->command->execute( [ 'test-id' ], [ 'region' => 'test-region', 'repository' => 'test-repo', 'profile' => 'default' ] );
+		$this->command->execute( [ 'test-id' ], [ 'region' => 'test-region', 'repository' => 'test-repo' ] );
 
 		// Confirm success message.
 		$this->get_wp_cli_mock()->assertMethodCalled( 'success', 1, [ [ 'Snapshot downloaded.' ] ]);
