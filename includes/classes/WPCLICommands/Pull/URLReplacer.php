@@ -91,15 +91,15 @@ abstract class URLReplacer {
 	/**
 	 * Constructor.
 	 *
-	 * @param Prompt               $prompt Prompt instance.
+	 * @param Prompt             $prompt Prompt instance.
 	 * @param SnapshotsDirectory $snapshots_filesystem SnapshotsDirectory instance.
-	 * @param Database             $wordpress_database Database instance.
-	 * @param LoggerInterface      $logger WPCLILogger instance.
-	 * @param array                $meta The snapshot meta.
-	 * @param array                $site_mapping The site mapping.
-	 * @param array                $skip_table_search_replace The tables to skip.
-	 * @param bool                 $update_multisite_constants Whether to update multisite constants.
-	 * @param ?string              $main_domain The main domain.
+	 * @param Database           $wordpress_database Database instance.
+	 * @param LoggerInterface    $logger WPCLILogger instance.
+	 * @param array              $meta The snapshot meta.
+	 * @param array              $site_mapping The site mapping.
+	 * @param array              $skip_table_search_replace The tables to skip.
+	 * @param bool               $update_multisite_constants Whether to update multisite constants.
+	 * @param ?string            $main_domain The main domain.
 	 */
 	public function __construct(
 		Prompt $prompt,

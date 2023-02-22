@@ -33,7 +33,7 @@ class Scrubber implements SharedService {
 	 * ScrubberV1 constructor.
 	 *
 	 * @param SnapshotsDirectory $snapshot_files File system.
-	 * @param LoggerInterface      $logger Logger.
+	 * @param LoggerInterface    $logger Logger.
 	 */
 	public function __construct( SnapshotsDirectory $snapshot_files, LoggerInterface $logger ) {
 		$this->snapshot_files = $snapshot_files;

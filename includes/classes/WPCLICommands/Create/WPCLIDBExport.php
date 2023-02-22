@@ -55,11 +55,11 @@ class WPCLIDBExport implements DBExportInterface {
 	/**
 	 * Class constructor.
 	 *
-	 * @param Trimmer              $trimmer Trimmer instance.
+	 * @param Trimmer            $trimmer Trimmer instance.
 	 * @param SnapshotsDirectory $snapshot_files SnapshotsDirectory instance.
-	 * @param Scrubber             $scrubber Scrubber instance.
-	 * @param Database             $wordpress_database Database instance.
-	 * @param LoggerInterface      $logger LoggerInterface instance.
+	 * @param Scrubber           $scrubber Scrubber instance.
+	 * @param Database           $wordpress_database Database instance.
+	 * @param LoggerInterface    $logger LoggerInterface instance.
 	 */
 	public function __construct( Trimmer $trimmer, SnapshotsDirectory $snapshot_files, Scrubber $scrubber, Database $wordpress_database, LoggerInterface $logger ) {
 		$this->trimmer            = $trimmer;
