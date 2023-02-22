@@ -42,7 +42,7 @@ class S3StorageConnector implements StorageConnectorInterface {
 	/**
 	 * Class constructor.
 	 *
-	 * @param SnapshotsDirectory  $snapshots_file_system SnapshotsDirectory instance.
+	 * @param SnapshotsDirectory    $snapshots_file_system SnapshotsDirectory instance.
 	 * @param SnapshotMetaInterface $snapshot_meta SnapshotMeta instance.
 	 */
 	public function __construct( SnapshotsDirectory $snapshots_file_system, SnapshotMetaInterface $snapshot_meta ) {
@@ -55,14 +55,15 @@ class S3StorageConnector implements StorageConnectorInterface {
 	 *
 	 * @param  string $id Snapshot ID
 	 * @param array  $snapshot_meta Snapshot meta.
+	 * @param string $profile AWS profile.
 	 * @param string $repository Repository name.
 	 * @param string $region AWS region.
 	 */
-	public function download_snapshot( string $id, array $snapshot_meta, string $repository, string $region ) {
+	public function download_snapshot( string $id, array $snapshot_meta, string $profile, string $repository, string $region ) {
 		$this->snapshots_file_system->create_directory( $id );
 
 		if ( $snapshot_meta['contains_db'] ) {
-			$this->get_client( $region )->getObject(
+			$this->get_client( $profile, $region )->getObject(
 				[
 					'Bucket' => $this->get_bucket_name( $repository ),
 					'Key'    => $snapshot_meta['project'] . '/' . $id . '/data.sql.gz',
@@ -72,7 +73,7 @@ class S3StorageConnector implements StorageConnectorInterface {
 		}
 
 		if ( $snapshot_meta['contains_files'] ) {
-			$this->get_client( $region )->getObject(
+			$this->get_client( $profile, $region )->getObject(
 				[
 					'Bucket' => $this->get_bucket_name( $repository ),
 					'Key'    => $snapshot_meta['project'] . '/' . $id . '/files.tar.gz',
@@ -85,13 +86,14 @@ class S3StorageConnector implements StorageConnectorInterface {
 	/**
 	 * Create Snapshots S3 bucket
 	 *
+	 * @param string $profile AWS profile.
 	 * @param string $repository Repository name.
 	 * @param string $region AWS region.
 	 *
 	 * @throws SnapshotsException If bucket already exists.
 	 */
-	public function create_bucket( string $repository, string $region ) {
-		$client              = $this->get_client( $region );
+	public function create_bucket( string $profile, string $repository, string $region ) {
+		$client              = $this->get_client( $profile, $region );
 		$list_buckets_result = $client->listBuckets();
 		$bucket_name         = $this->get_bucket_name( $repository );
 
@@ -122,12 +124,13 @@ class S3StorageConnector implements StorageConnectorInterface {
 	 * Upload a snapshot to S3
 	 *
 	 * @param  string $id Snapshot ID
+	 * @param string $profile AWS profile.
 	 * @param string $repository Repository name.
 	 * @param string $region AWS region.
 	 */
-	public function put_snapshot( string $id, string $repository, string $region ) : void {
+	public function put_snapshot( string $id, string $profile, string $repository, string $region ) : void {
 		$meta   = $this->snapshot_meta->get_local( $id, $repository );
-		$client = $this->get_client( $region );
+		$client = $this->get_client( $profile, $region );
 
 		if ( $meta['contains_db'] ) {
 			$client->putObject(
@@ -178,11 +181,12 @@ class S3StorageConnector implements StorageConnectorInterface {
 	 *
 	 * @param  string $id Snapshot id
 	 * @param  string $project Project name
+	 * @param string $profile AWS profile.
 	 * @param  string $repository Repository name
 	 * @param  string $region AWS region
 	 */
-	public function delete_snapshot( string $id, string $project, string $repository, string $region ) : void {
-		$this->get_client( $region )->deleteObjects(
+	public function delete_snapshot( string $id, string $project, string $profile, string $repository, string $region ) : void {
+		$this->get_client( $profile, $region )->deleteObjects(
 			[
 				'Bucket' => $this->get_bucket_name( $repository ),
 				'Delete' => [
@@ -205,11 +209,12 @@ class S3StorageConnector implements StorageConnectorInterface {
 	/**
 	 * Tests the user's AWS credentials.
 	 *
+	 * @param string $profile AWS profile.
 	 * @param string $repository Repository name.
 	 * @param string $region AWS region.
 	 */
-	public function test( string $repository, string $region ) {
-		$client = $this->get_client( $region );
+	public function test( string $profile, string $repository, string $region ) {
+		$client = $this->get_client( $profile, $region );
 
 		$bucket_name = $this->get_bucket_name( $repository );
 
@@ -219,10 +224,11 @@ class S3StorageConnector implements StorageConnectorInterface {
 	/**
 	 * Configures the client.
 	 *
+	 * @param string $profile AWS profile.
 	 * @param string $region AWS region.
 	 * @return S3Client
 	 */
-	private function get_client( string $region ) : S3Client {
+	private function get_client( string $profile, string $region ) : S3Client {
 		if ( ! isset( $this->clients[ $region ] ) ) {
 			$this->clients[ $region ] = new S3Client(
 				[
@@ -230,6 +236,7 @@ class S3StorageConnector implements StorageConnectorInterface {
 					'region'  => $region,
 					'retries' => 3,
 					'scheme'  => function_exists( 'get_site_url' ) && get_site_url( get_current_blog_id() ) === 'https://' ? 'https' : 'http',
+					'profile' => $profile,
 				]
 			);
 		}

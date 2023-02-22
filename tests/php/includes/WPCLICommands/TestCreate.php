@@ -109,7 +109,7 @@ class TestCreate extends TestCase {
 		$mock_snapshot_meta->expects( $this->once() )
 			->method( 'generate' );
 
-		$this->command->execute( [], [ 'include_db' => true ] );
+		$this->command->execute( [], [ 'include_db' => true, 'profile' => 'default' ] );
 
 		$this->get_wp_cli_mock()->assertMethodCalled(
 			'line',
@@ -179,6 +179,7 @@ class TestCreate extends TestCase {
 			'repository' => 'my-repo',
 			'slug' => 'Slug3',
 			'small' => true,
+			'profile' => 'default',
 		] );
 
 		$this->get_wp_cli_mock()->assertMethodCalled(

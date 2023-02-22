@@ -26,11 +26,12 @@ class DynamoDBConnector implements DBConnectorInterface {
 	 * Searches the database.
 	 *
 	 * @param  string|array $query Search query string
+	 * @param string       $profile AWS profile.
 	 * @param  string       $repository Repository name
 	 * @param string       $region AWS region
 	 * @return array
 	 */
-	public function search( $query, string $repository, string $region ) : array {
+	public function search( $query, string $profile, string $repository, string $region ) : array {
 		$marshaler = new Marshaler();
 
 		$args = [
@@ -64,7 +65,7 @@ class DynamoDBConnector implements DBConnectorInterface {
 			];
 		}
 
-		$search_scan = $this->get_client( $region )->getIterator( 'Scan', $args );
+		$search_scan = $this->get_client( $profile, $region )->getIterator( 'Scan', $args );
 
 		$instances = [];
 
@@ -79,12 +80,13 @@ class DynamoDBConnector implements DBConnectorInterface {
 	 * Get a snapshot given an id
 	 *
 	 * @param  string $id Snapshot ID
+	 * @param string $profile AWS profile.
 	 * @param string $repository Repository name.
 	 * @param string $region AWS region.
 	 * @return mixed
 	 */
-	public function get_snapshot( string $id, string $repository, string $region ) {
-		$result = $this->get_client( $region )->getItem(
+	public function get_snapshot( string $id, string $profile, string $repository, string $region ) {
+		$result = $this->get_client( $profile, $region )->getItem(
 			[
 				'ConsistentRead' => true,
 				'TableName'      => 'wpsnapshots-' . $repository,
@@ -112,12 +114,13 @@ class DynamoDBConnector implements DBConnectorInterface {
 	/**
 	 * Create default DB tables. Only need to do this once ever for repo setup.
 	 *
+	 * @param string $profile AWS profile.
 	 * @param string $repository Repository name.
 	 * @param string $region AWS region.
 	 */
-	public function create_tables( string $repository, string $region ) {
+	public function create_tables( string $profile, string $repository, string $region ) {
 		$table_name = 'wpsnapshots-' . $repository;
-		$client     = $this->get_client( $region );
+		$client     = $this->get_client( $profile, $region );
 
 		$client->createTable(
 			[
@@ -153,11 +156,12 @@ class DynamoDBConnector implements DBConnectorInterface {
 	 * Insert a snapshot into the DB
 	 *
 	 * @param  string $id Snapshot ID
+	 * @param string $profile AWS profile.
 	 * @param  string $repository Repository name.
 	 * @param string $region AWS region.
 	 * @param array  $meta Snapshot meta.
 	 */
-	public function insert_snapshot( string $id, string $repository, string $region, array $meta ) : void {
+	public function insert_snapshot( string $id, string $profile, string $repository, string $region, array $meta ) : void {
 		$marshaler = new Marshaler();
 
 		$snapshot_item = [
@@ -169,7 +173,7 @@ class DynamoDBConnector implements DBConnectorInterface {
 		$snapshot_item = array_merge( $snapshot_item, $meta );
 		$snapshot_json = json_encode( $snapshot_item ); // phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode
 
-		$this->get_client( $region )->putItem(
+		$this->get_client( $profile, $region )->putItem(
 			[
 				'TableName' => 'wpsnapshots-' . $repository,
 				'Item'      => $marshaler->marshalJson( $snapshot_json ),
@@ -181,11 +185,12 @@ class DynamoDBConnector implements DBConnectorInterface {
 	 * Delete a snapshot given an id
 	 *
 	 * @param  string $id Snapshot ID
+	 * @param string $profile AWS profile.
 	 * @param string $repository Repository name.
 	 * @param string $region AWS region.
 	 */
-	public function delete_snapshot( string $id, string $repository, string $region ) : void {
-		$this->get_client( $region )->deleteItem(
+	public function delete_snapshot( string $id, string $profile, string $repository, string $region ) : void {
+		$this->get_client( $profile, $region )->deleteItem(
 			[
 				'TableName' => 'wpsnapshots-' . $repository,
 				'Key'       => [
@@ -200,16 +205,18 @@ class DynamoDBConnector implements DBConnectorInterface {
 	/**
 	 * Provides the client.
 	 *
+	 * @param string $profile AWS profile.
 	 * @param string $region AWS region.
 	 *
 	 * @return DynamoDbClient
 	 */
-	private function get_client( string $region ) : DynamoDbClient {
+	private function get_client( string $profile, string $region ) : DynamoDbClient {
 		if ( ! isset( $this->clients[ $region ] ) ) {
 			$this->clients[ $region ] = new DynamoDbClient(
 				[
 					'version' => 'latest',
 					'region'  => $region,
+					'profile' => $profile,
 				]
 			);
 		}

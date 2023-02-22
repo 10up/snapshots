@@ -36,15 +36,16 @@ class Delete extends WPCLICommand {
 			$id              = $this->get_id();
 			$repository_name = $this->get_repository_name();
 			$region          = $this->get_assoc_arg( 'region' );
+			$profile         = $this->get_profile_for_repository();
 
-			$snapshot = $this->db_connector->get_snapshot( $id, $repository_name, $region );
+			$snapshot = $this->db_connector->get_snapshot( $id, $profile, $repository_name, $region );
 
 			if ( ! $snapshot ) {
 				throw new SnapshotsException( sprintf( 'Snapshot %s not found in repository %s.', $id, $repository_name ) );
 			}
 
-			$this->storage_connector->delete_snapshot( $id, $snapshot['project'], $repository_name, $region );
-			$this->db_connector->delete_snapshot( $id, $repository_name, $region );
+			$this->storage_connector->delete_snapshot( $id, $snapshot['project'], $profile, $repository_name, $region );
+			$this->db_connector->delete_snapshot( $id, $profile, $repository_name, $region );
 
 			wp_cli()::success( sprintf( 'Snapshot %s deleted.', $id ) );
 		} catch ( Exception $e ) {
@@ -88,6 +89,12 @@ class Delete extends WPCLICommand {
 					'description' => 'AWS region to use. Defaults to us-west-1.',
 					'optional'    => true,
 					'default'     => 'us-west-1',
+				],
+				[
+					'type'        => 'assoc',
+					'name'        => 'profile',
+					'description' => 'AWS profile to use. Defaults to the profile stored for the repository in the wpsnapshots configuration file.',
+					'optional'    => true,
 				],
 			],
 			'when'      => 'before_wp_load',

@@ -32,9 +32,10 @@ final class CreateRepository extends WPCLICommand {
 
 			$repository_name = $this->get_repository_name( true, 0 );
 			$region          = $this->get_assoc_arg( 'region' );
+			$profile         = $this->get_profile_for_repository();
 
-			$this->storage_connector->create_bucket( $repository_name, $region );
-			$this->db_connector->create_tables( $repository_name, $region );
+			$this->storage_connector->create_bucket( $profile, $repository_name, $region );
+			$this->db_connector->create_tables( $profile, $repository_name, $region );
 		} catch ( Exception $e ) {
 			wp_cli()::error( $e->getMessage() );
 		}
@@ -72,6 +73,12 @@ final class CreateRepository extends WPCLICommand {
 					'description' => 'The AWS region to use. Defaults to us-west-1.',
 					'optional'    => true,
 					'default'     => 'us-west-1',
+				],
+				[
+					'type'        => 'assoc',
+					'name'        => 'profile',
+					'description' => 'AWS profile to use. Defaults to the profile stored for the repository in the wpsnapshots configuration file.',
+					'optional'    => true,
 				],
 			],
 			'when'      => 'before_wp_load',

@@ -36,8 +36,8 @@ class SnapshotMetaFromFileSystem extends SnapshotMeta {
 	 * Meta constructor
 	 *
 	 * @param SnapshotsDirectory $snapshot_files SnapshotsDirectory instance.
-	 * @param Database             $wordpress_database Database instance.
-	 * @param array                ...$args Arguments.
+	 * @param Database           $wordpress_database Database instance.
+	 * @param array              ...$args Arguments.
 	 */
 	public function __construct( SnapshotsDirectory $snapshot_files, Database $wordpress_database, ...$args ) {
 		parent::__construct( ...$args ); // @phpstan-ignore-line

@@ -19,30 +19,18 @@ interface SnapshotsConfigInterface extends SharedService {
 	/**
 	 * Gets the user name.
 	 *
-	 * @return ?string
+	 * @param string $repository Repository name.
+	 * @return ?string $user_name User name.
 	 */
-	public function get_user_name() : ?string;
-
-	/**
-	 * Sets the user name.
-	 *
-	 * @param string $user_name User name.
-	 */
-	public function set_user_name( string $user_name );
+	public function get_user_name( string $repository = '' ) : ?string;
 
 	/**
 	 * Gets the user email.
 	 *
-	 * @return ?string
+	 * @param string $repository Repository name.
+	 * @return ?string $user_email User email.
 	 */
-	public function get_user_email() : ?string;
-
-	/**
-	 * Sets the user email.
-	 *
-	 * @param string $user_email User email.
-	 */
-	public function set_user_email( string $user_email );
+	public function get_user_email( string $repository = '' ) : ?string;
 
 	/**
 	 * Gets the default repository name.
@@ -50,6 +38,14 @@ interface SnapshotsConfigInterface extends SharedService {
 	 * @return ?string
 	 */
 	public function get_default_repository_name() : ?string;
+
+	/**
+	 * Gets the profile property from a repository.
+	 *
+	 * @param string $repository Repository name.
+	 * @return ?string $profile Profile name.
+	 */
+	public function get_repository_profile( string $repository = '' ) : ?string;
 
 	/**
 	 * Gets repositories.

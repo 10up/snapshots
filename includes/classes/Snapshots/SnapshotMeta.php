@@ -57,12 +57,13 @@ abstract class SnapshotMeta implements SnapshotMetaInterface {
 	 * Download meta from remote DB
 	 *
 	 * @param string $id Snapshot ID
+	 * @param string $profile AWS profile
 	 * @param string $repository Repository name
 	 * @param string $region AWS region
 	 * @return array
 	 */
-	public function get_remote( string $id, string $repository, string $region ) : array {
-		$snapshot_meta = $this->db->get_snapshot( $id, $repository, $region );
+	public function get_remote( string $id, string $profile, string $repository, string $region ) : array {
+		$snapshot_meta = $this->db->get_snapshot( $id, $profile, $repository, $region );
 
 		if ( empty( $snapshot_meta ) ) {
 			return [];

@@ -93,7 +93,7 @@ class TestCreateRepository extends TestCase {
 		$storage_connector = $this->createMock( S3StorageConnector::class );
 		$storage_connector->expects( $this->once() )
 			->method( 'create_bucket' )
-			->with( 'test-repo', 'test-region' );
+			->with( 'default', 'test-repo', 'test-region' );
 
 		/**
 		 * @var MockObject $db_connector
@@ -101,12 +101,12 @@ class TestCreateRepository extends TestCase {
 		$db_connector = $this->createMock( DynamoDBConnector::class );
 		$db_connector->expects( $this->once() )
 			->method( 'create_tables' )
-			->with( 'test-repo', 'test-region' );
+			->with( 'default', 'test-repo', 'test-region' );
 
 		$this->set_private_property( $this->command, 'storage_connector', $storage_connector );
 		$this->set_private_property( $this->command, 'db_connector', $db_connector );
 
-		$this->command->execute( [ 'test-repo' ], [ 'region' => 'test-region' ] );
+		$this->command->execute( [ 'test-repo' ], [ 'region' => 'test-region', 'profile' => 'default' ] );
 
 		// Check success message.
 		$this->get_wp_cli_mock()->assertMethodCalled( 'success', 1, [ [ 'Repository created.' ] ] );

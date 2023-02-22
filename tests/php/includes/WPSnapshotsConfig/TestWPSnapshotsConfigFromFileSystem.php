@@ -59,39 +59,6 @@ class TestConfigFromFileSystem extends TestCase {
     }
 
     /**
-     * @covers ::get_user_name
-     * @covers ::set_user_name
-     * @covers ::save
-     * @covers ::load
-     * @covers ::get_config
-     * @covers ::get_defaults
-     */
-    public function test_get_user_name_method_returns_default_value() {
-        // Delete file
-        exec( 'rm -rf ' . $this->get_directory_path() );
-
-        $this->assertFileDoesNotExist( $this->get_directory_path() );
-
-        $this->config->set_user_name( 'test' );
-
-        $this->assertFileExists( $this->get_directory_path() );
-
-        $this->assertEquals( 'test', $this->config->get_user_name() );
-    }
-
-    /**
-     * @covers ::get_user_email
-     * @covers ::set_user_email
-     */
-    public function test_get_user_email_method_returns_default_value() {
-        $this->assertEquals( '', $this->config->get_user_email() );
-
-        $this->config->set_user_email( 'test' );
-
-        $this->assertEquals( 'test', $this->config->get_user_email() );
-    }
-
-    /**
      * @covers ::get_repositories
      * @covers ::set_repositories
      */

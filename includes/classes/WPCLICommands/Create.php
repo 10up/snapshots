@@ -182,6 +182,12 @@ class Create extends WPCLICommand {
 					'optional'    => true,
 					'default'     => '',
 				],
+				[
+					'type'        => 'assoc',
+					'name'        => 'profile',
+					'description' => 'AWS profile to use. Defaults to the profile stored for the repository in the wpsnapshots configuration file.',
+					'optional'    => true,
+				],
 			],
 			'when'      => 'after_wp_load',
 		];

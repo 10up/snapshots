@@ -79,6 +79,12 @@ final class Search extends WPCLICommand {
 					'optional'    => true,
 					'default'     => 'us-west-1',
 				],
+				[
+					'type'        => 'assoc',
+					'name'        => 'profile',
+					'description' => 'AWS profile to use. Defaults to the profile stored for the repository in the wpsnapshots configuration file.',
+					'optional'    => true,
+				],
 			],
 			'when'      => 'before_wp_load',
 		];
@@ -107,7 +113,7 @@ final class Search extends WPCLICommand {
 	 * @return array
 	 */
 	private function search() {
-		return $this->db_connector->search( $this->get_search_string(), $this->get_repository_name(), $this->get_assoc_arg( 'region' ) );
+		return $this->db_connector->search( $this->get_search_string(), $this->get_profile_for_repository(), $this->get_repository_name(), $this->get_assoc_arg( 'region' ) );
 	}
 
 	/**
