@@ -91,12 +91,13 @@ class TestConfigure extends TestCase {
 
 		$this->assertEquals(
 			[
-				'user_name' => 'Jane Doe',
-				'user_email' => 'jane.doe@example.com',
 				'repositories' => [
 					'10up' => [
 						'repository' => '10up',
-						'region' => 'us-east-1'
+						'region' => 'us-east-1',
+						'profile' => 'readline4',
+						'user_name' => 'Jane Doe',
+						'user_email' => 'jane.doe@example.com',
 					]
 				]
 			],
@@ -146,12 +147,13 @@ class TestConfigure extends TestCase {
 	public function test_command_result_existing_file() {
 		// Create a config file with the repository already configured.
 		$config = [
-			'user_name' => 'Jane Doe',
-			'user_email' => 'jane.doe@example.com',
 			'repositories' => [
 				'10up' => [
 					'repository' => '10up',
-					'region' => 'us-east-1'
+					'region' => 'us-east-1',
+					'profile' => 'readline5',
+					'user_name' => 'Jane Doe',
+					'user_email' => 'jane.doe@example.com',
 				]
 			]
 		];
@@ -187,7 +189,7 @@ class TestConfigure extends TestCase {
 		$this->get_wp_cli_mock()
 			->assertMethodCalled(
 				'line',
-				4
+				5
 			);
 	}
 

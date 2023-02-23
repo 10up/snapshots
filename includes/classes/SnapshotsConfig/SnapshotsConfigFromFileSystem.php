@@ -7,6 +7,7 @@
 
 namespace TenUp\Snapshots\SnapshotsConfig;
 
+use Exception;
 use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\SnapshotsDirectory;
 
@@ -43,52 +44,34 @@ class SnapshotsConfigFromFileSystem implements SnapshotsConfigInterface {
 	/**
 	 * Gets the user name.
 	 *
+	 * @param string $repository Repository name.
 	 * @return ?string $user_name User name.
 	 */
-	public function get_user_name() : ?string {
-		return $this->get_config()['user_name'];
-	}
-
-	/**
-	 * Sets the user name.
-	 *
-	 * @param string $user_name User name.
-	 * @param bool   $save      Whether to save the configuration.
-	 */
-	public function set_user_name( string $user_name, bool $save = true ) {
-		$config              = $this->get_config();
-		$config['user_name'] = $user_name;
-		$this->config        = $config;
-
-		if ( $save ) {
-			$this->save();
+	public function get_user_name( string $repository = '' ) : ?string {
+		try {
+			return $this->get_repository_settings( $repository )['user_name'];
+		} catch ( Exception $e ) {
+			return null;
 		}
 	}
 
 	/**
 	 * Gets the user email.
 	 *
+	 * @param string $repository Repository name.
 	 * @return ?string $user_email User email.
 	 */
-	public function get_user_email() : ?string {
-		return $this->get_config()['user_email'];
+	public function get_user_email( string $repository = '' ) : ?string {
+		try {
+			return $this->get_repository_settings( $repository )['user_email'];
+		} catch ( Exception $e ) {
+			return null;
+		}
 	}
 
 	/**
-	 * Sets the user email.
-	 *
-	 * @param string $user_email User email.
-	 * @param bool   $save       Whether to save the configuration.
+	 * Sets the profile.
 	 */
-	public function set_user_email( string $user_email, bool $save = true ) {
-		$config               = $this->get_config();
-		$config['user_email'] = $user_email;
-		$this->config         = $config;
-
-		if ( $save ) {
-			$this->save();
-		}
-	}
 
 	/**
 	 * Gets the repositories.
@@ -138,6 +121,22 @@ class SnapshotsConfigFromFileSystem implements SnapshotsConfigInterface {
 	}
 
 	/**
+	 * Gets the profile property from a repository. Defaults to 'default'.
+	 *
+	 * @param string $repository Repository name.
+	 * @return string $profile Profile name.
+	 */
+	public function get_repository_profile( string $repository = '' ) : string {
+		$settings = $this->get_repository_settings( $repository );
+
+		if ( is_array( $settings ) ) {
+			return $settings['profile'] ?? 'default';
+		}
+
+		return 'default';
+	}
+
+	/**
 	 * Gets the default repository name.
 	 *
 	 * @return ?string $repository Default repository name.
@@ -172,8 +171,6 @@ class SnapshotsConfigFromFileSystem implements SnapshotsConfigInterface {
 	 */
 	private function get_defaults() : array {
 		return [
-			'user_name'    => null,
-			'user_email'   => null,
 			'repositories' => [],
 		];
 	}

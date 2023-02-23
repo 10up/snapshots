@@ -55,7 +55,7 @@ class TestDBConnector extends TestCase {
 
 	/** @covers ::get_client */
 	public function test_get_client() {
-		$client = $this->call_private_method( $this->connector, 'get_client', [ 'test-repo' ] );
+		$client = $this->call_private_method( $this->connector, 'get_client', [ 'default', 'test-repo' ] );
 
 		$this->assertInstanceOf( DynamoDbClient::class, $client );
 	}
@@ -93,7 +93,7 @@ class TestDBConnector extends TestCase {
 		);
 
 		// Call search method.
-		$this->connector->search( 'search term', 'test-repo', 'test-region' );
+		$this->connector->search( 'search term', 'default', 'test-repo', 'test-region' );
 	}
 
 	/** @covers ::get_snapshot */
@@ -124,7 +124,7 @@ class TestDBConnector extends TestCase {
 		);
 
 		// Call get_snapshot method.
-		$this->connector->get_snapshot( 'snapshot-id', 'test-repo', 'test-region' );
+		$this->connector->get_snapshot( 'snapshot-id', 'default', 'test-repo', 'test-region' );
 	}
 
 	/** @covers ::create_tables */
@@ -176,6 +176,6 @@ class TestDBConnector extends TestCase {
 		);
 
 		// Call create_tables method.
-		$this->connector->create_tables( 'test-repo', 'test-region' );
+		$this->connector->create_tables( 'default', 'test-repo', 'test-region' );
 	}
 }

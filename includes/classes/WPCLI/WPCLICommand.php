@@ -110,15 +110,15 @@ abstract class WPCLICommand implements Conditional, Module {
 	/**
 	 * WPCLICommand constructor.
 	 *
-	 * @param WPCLILogger                $logger WPCLILogger instance.
-	 * @param Prompt                     $prompt Prompt instance.
-	 * @param SnapshotsConfigInterface $config ConfigConnectorInterface instance.
-	 * @param StorageConnectorInterface  $storage_connector StorageConnectorInterface instance.
-	 * @param DBConnectorInterface       $db_connector DBConnectorInterface instance.
-	 * @param SnapshotMetaInterface      $snapshot_meta SnapshotMetaInterface instance.
-	 * @param SnapshotsDirectory       $snapshots_filesystem SnapshotsDirectory instance.
-	 * @param Database                   $wordpress_database Database instance.
-	 * @param FileSystem                 $filesystem FileSystem instance.
+	 * @param WPCLILogger               $logger WPCLILogger instance.
+	 * @param Prompt                    $prompt Prompt instance.
+	 * @param SnapshotsConfigInterface  $config ConfigConnectorInterface instance.
+	 * @param StorageConnectorInterface $storage_connector StorageConnectorInterface instance.
+	 * @param DBConnectorInterface      $db_connector DBConnectorInterface instance.
+	 * @param SnapshotMetaInterface     $snapshot_meta SnapshotMetaInterface instance.
+	 * @param SnapshotsDirectory        $snapshots_filesystem SnapshotsDirectory instance.
+	 * @param Database                  $wordpress_database Database instance.
+	 * @param FileSystem                $filesystem FileSystem instance.
 	 */
 	public function __construct(
 		WPCLILogger $logger,
@@ -252,6 +252,21 @@ abstract class WPCLICommand implements Conditional, Module {
 		}
 
 		return $repository_name;
+	}
+
+	/**
+	 * Gets the profile property from the repository.
+	 *
+	 * @return string
+	 *
+	 * @throws SnapshotsException If no profile is found.
+	 */
+	protected function get_profile_for_repository() : string {
+		$repository_name = $this->get_repository_name();
+
+		$profile = $this->config->get_repository_profile( $repository_name );
+
+		return $profile;
 	}
 
 	/**

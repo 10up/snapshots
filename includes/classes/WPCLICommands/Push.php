@@ -39,9 +39,10 @@ final class Push extends Create {
 
 		$repository_name = $this->get_repository_name();
 		$region          = $this->get_assoc_arg( 'region' );
+		$profile         = $this->get_profile_for_repository();
 
-		$this->storage_connector->put_snapshot( $id, $repository_name, $region );
-		$this->db_connector->insert_snapshot( $id, $repository_name, $region, $this->snapshot_meta->get_local( $id, $repository_name ) );
+		$this->storage_connector->put_snapshot( $id, $profile, $repository_name, $region );
+		$this->db_connector->insert_snapshot( $id, $profile, $repository_name, $region, $this->snapshot_meta->get_local( $id, $repository_name ) );
 
 		return $id;
 	}

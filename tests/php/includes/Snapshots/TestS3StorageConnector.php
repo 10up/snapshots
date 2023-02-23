@@ -86,6 +86,7 @@ class TestS3StorageConnector extends TestCase {
 				'contains_files' => false,
 				'project' => 'test-project',
 			],
+			'default',
 			'test-repo',
 			'test-region'
 		);
@@ -115,6 +116,7 @@ class TestS3StorageConnector extends TestCase {
 				'contains_files' => true,
 				'project' => 'test-project',
 			],
+			'default',
 			'test-repo',
 			'test-region'
 		);
@@ -155,6 +157,7 @@ class TestS3StorageConnector extends TestCase {
 				'contains_files' => true,
 				'project' => 'test-project',
 			],
+			'default',
 			'test-repo',
 			'test-region'
 		);
@@ -177,7 +180,7 @@ class TestS3StorageConnector extends TestCase {
 
 		$this->set_private_property( $this->connector, 'clients', [ 'test-region' => $client ] );
 
-		$this->connector->create_bucket( 'test-repo', 'test-region' );
+		$this->connector->create_bucket( 'default', 'test-repo', 'test-region' );
 	}
 
 	/**
@@ -199,13 +202,13 @@ class TestS3StorageConnector extends TestCase {
 		$this->expectException( SnapshotsException::class );
 		$this->expectExceptionMessage( 'S3 bucket already exists.' );
 
-		$this->connector->create_bucket( 'test-repo', 'test-region' );
+		$this->connector->create_bucket( 'default', 'test-repo', 'test-region' );
 
 	}
 
 	/** @covers ::get_client */
 	public function test_get_client_returns_client() {
-		$client = $this->call_private_method( $this->connector, 'get_client', [ 'test-region' ] );
+		$client = $this->call_private_method( $this->connector, 'get_client', [ 'default', 'test-region' ] );
 
 		$this->assertInstanceOf( S3Client::class, $client );
 	}

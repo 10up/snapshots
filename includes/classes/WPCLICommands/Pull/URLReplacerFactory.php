@@ -47,10 +47,10 @@ class URLReplacerFactory implements Factory {
 	/**
 	 * Constructor.
 	 *
-	 * @param Prompt               $prompt Prompt instance.
+	 * @param Prompt             $prompt Prompt instance.
 	 * @param SnapshotsDirectory $snapshots_filesystem SnapshotsDirectory instance.
-	 * @param Database             $wordpress_database Database instance.
-	 * @param LoggerInterface      $logger WPCLILogger instance.
+	 * @param Database           $wordpress_database Database instance.
+	 * @param LoggerInterface    $logger WPCLILogger instance.
 	 */
 	public function __construct( Prompt $prompt, SnapshotsDirectory $snapshots_filesystem, Database $wordpress_database, LoggerInterface $logger ) {
 		$this->prompt               = $prompt;

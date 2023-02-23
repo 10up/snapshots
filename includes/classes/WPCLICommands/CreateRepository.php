@@ -32,9 +32,10 @@ final class CreateRepository extends WPCLICommand {
 
 			$repository_name = $this->get_repository_name( true, 0 );
 			$region          = $this->get_assoc_arg( 'region' );
+			$profile         = $this->get_profile_for_repository();
 
-			$this->storage_connector->create_bucket( $repository_name, $region );
-			$this->db_connector->create_tables( $repository_name, $region );
+			$this->storage_connector->create_bucket( $profile, $repository_name, $region );
+			$this->db_connector->create_tables( $profile, $repository_name, $region );
 		} catch ( Exception $e ) {
 			wp_cli()::error( $e->getMessage() );
 		}
