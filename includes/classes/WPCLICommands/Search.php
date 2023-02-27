@@ -128,17 +128,7 @@ final class Search extends WPCLICommand {
 		wp_cli()::format_items(
 			$this->get_output_format(),
 			$rows,
-			[
-				'ID',
-				'Project',
-				'Contains files',
-				'Contains database',
-				'Description',
-				'Author',
-				'Size',
-				'Multisite',
-				'Created',
-			]
+			array_keys( reset( $rows ) )
 		);
 	}
 
