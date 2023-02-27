@@ -255,6 +255,23 @@ abstract class WPCLICommand implements Conditional, Module {
 	}
 
 	/**
+	 * Gets the region from the repository.
+	 *
+	 * @param ?string $repository_name Repository name.
+	 *
+	 * @return string
+	 */
+	protected function get_region( ?string $repository_name = null ) : string {
+		if ( ! $repository_name ) {
+			$repository_name = $this->get_repository_name();
+		}
+
+		$region = $this->config->get_repository_region( $repository_name );
+
+		return $region;
+	}
+
+	/**
 	 * Gets the profile property from the repository.
 	 *
 	 * @return string

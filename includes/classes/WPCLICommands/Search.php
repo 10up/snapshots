@@ -72,13 +72,6 @@ final class Search extends WPCLICommand {
 					'description' => 'Render output in a particular format. Available options: table and json. Defaults to table.',
 					'optional'    => true,
 				],
-				[
-					'type'        => 'assoc',
-					'name'        => 'region',
-					'description' => 'The AWS region to search in. Defaults to the first region set in the config file.',
-					'optional'    => true,
-					'default'     => 'us-west-1',
-				],
 			],
 			'when'      => 'before_wp_load',
 		];
@@ -107,7 +100,7 @@ final class Search extends WPCLICommand {
 	 * @return array
 	 */
 	private function search() {
-		return $this->db_connector->search( $this->get_search_string(), $this->get_profile_for_repository(), $this->get_repository_name(), $this->get_assoc_arg( 'region' ) );
+		return $this->db_connector->search( $this->get_search_string(), $this->get_profile_for_repository(), $this->get_repository_name(), $this->get_region() );
 	}
 
 	/**

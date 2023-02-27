@@ -57,21 +57,13 @@ class Prompt implements SharedService {
 		$full_prompt = $prompt;
 		$append      = '';
 
-		if ( empty( $default ) ) {
-			$append = ' (enter x to cancel)';
-		}
-
 		if ( ! empty( $default ) ) {
-			$append = " (default \"$default\"; x to cancel)";
+			$append = " (default \"$default\")";
 		}
 
 		wp_cli()::line( $full_prompt . $append . ':' );
 
 		$result = trim( $this->readline( '' ) );
-
-		if ( 'x' === $result ) {
-			wp_cli()::halt( 0 );
-		}
 
 		if ( ! $result ) {
 			if ( empty( $default ) ) {

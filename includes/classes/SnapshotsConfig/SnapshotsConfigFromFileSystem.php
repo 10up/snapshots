@@ -152,6 +152,23 @@ class SnapshotsConfigFromFileSystem implements SnapshotsConfigInterface {
 	}
 
 	/**
+	 * Gets the region for a repository.
+	 *
+	 * @param string $repository Repository name.
+	 *
+	 * @return string
+	 */
+	public function get_repository_region( string $repository ) : string {
+		$settings = $this->get_repository_settings( $repository );
+
+		if ( is_array( $settings ) ) {
+			return $settings['region'] ?? 'us-west-1';
+		}
+
+		return 'us-west-1';
+	}
+
+	/**
 	 * Gets the configuration.
 	 *
 	 * @return array $config Configuration.
