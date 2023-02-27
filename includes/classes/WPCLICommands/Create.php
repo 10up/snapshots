@@ -107,13 +107,6 @@ class Create extends WPCLICommand {
 				],
 				[
 					'type'        => 'assoc',
-					'name'        => 'region',
-					'description' => 'The AWS region to use. Defaults to us-west-1.',
-					'optional'    => true,
-					'default'     => 'us-west-1',
-				],
-				[
-					'type'        => 'assoc',
 					'name'        => 'exclude',
 					'description' => 'Exclude a file or directory from the snapshot. Enter a comma-separated list of files or directories to exclude, relative to the WP content directory.',
 					'optional'    => true,
@@ -256,6 +249,16 @@ class Create extends WPCLICommand {
 	 * @throws SnapshotsException If the snapshot cannot be created.
 	 */
 	protected function get_create_args( bool $contains_db, bool $contains_files ) : array {
+		$repository = $this->get_assoc_arg(
+			'repository',
+			[
+				'key'               => 'repository',
+				'prompt'            => 'Repository Slug (letters, numbers, _, and - only)',
+				'sanitize_callback' => 'strtolower',
+				'validate_callback' => [ $this, 'validate_slug' ],
+			]
+		);
+
 		return [
 			'author'          => [
 				'name'  => $this->config->get_user_name() ?? $this->get_assoc_arg(
@@ -293,16 +296,8 @@ class Create extends WPCLICommand {
 					'validate_callback' => [ $this, 'validate_slug' ],
 				]
 			),
-			'region'          => $this->get_assoc_arg( 'region' ),
-			'repository'      => $this->get_assoc_arg(
-				'repository',
-				[
-					'key'               => 'repository',
-					'prompt'            => 'Repository Slug (letters, numbers, _, and - only)',
-					'sanitize_callback' => 'strtolower',
-					'validate_callback' => [ $this, 'validate_slug' ],
-				]
-			),
+			'region'          => $this->get_region( $repository ),
+			'repository'      => $repository,
 			'small'           => $this->get_assoc_arg( 'small' ),
 			'wp_version'      => $this->get_assoc_arg( 'wp_version' ),
 		];

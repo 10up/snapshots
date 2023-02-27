@@ -98,7 +98,7 @@ class TestPull extends TestCase {
 		$snapshot_meta_mock->method( 'get_remote' )->willReturn( [] );
 		$snapshot_meta_mock->method( 'get_local' )->willReturn( [] );
 
-		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository' ] );
+		$this->command->set_assoc_args( [ 'repository' => 'test-repository' ] );
 
 		$this->expectException( SnapshotsException::class );
 		$this->expectExceptionMessage( 'Snapshot does not exist.' );
@@ -106,7 +106,7 @@ class TestPull extends TestCase {
 		$this->set_private_property( $this->command, 'snapshot_meta', $snapshot_meta_mock );
 
 		$snapshot_meta_mock->expects( $this->once() )->method( 'get_remote' )
-			->with( 'test-id', 'default', 'test-repository', 'test-region' );
+			->with( 'test-id', 'default', 'test-repository', 'us-west-1' );
 		$snapshot_meta_mock->expects( $this->once() )->method( 'get_local' )
 			->with( 'test-id', 'test-repository' );
 
@@ -223,7 +223,7 @@ class TestPull extends TestCase {
 		$snapshot_meta_mock->method( 'get_remote' )->willReturn( $test_remote_meta );
 		$snapshot_meta_mock->method( 'get_local' )->willReturn( $test_local_meta );
 
-		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository' ] );
+		$this->command->set_assoc_args( [ 'repository' => 'test-repository' ] );
 
 		$this->set_private_property( $this->command, 'snapshot_meta', $snapshot_meta_mock );
 
@@ -274,7 +274,7 @@ class TestPull extends TestCase {
 			1,
 			[
 				[
-					'snapshots download test-id --quiet --repository=test-repository --region=test-region --include_db --include_files', [ 'launch' => true, 'exit_error' => false, 'return' => 'all' ],
+					'snapshots download test-id --quiet --repository=test-repository --include_db --include_files', [ 'launch' => true, 'exit_error' => false, 'return' => 'all' ],
 				],
 			]
 		);

@@ -78,16 +78,16 @@ __wp snapshots configure <repository> [--region=\<region\>] [--user_name=\<user_
   <repository>
     The name of the repository to configure.
 
-  [--region=\<region\>]
+  [--region=<region>]
     The AWS region to use. Defaults to us-west-1.
     ---
     default: us-west-1
     ---
 
-  [--user_name=\<user_name\>]
+  [--user_name=<user_name>]
     The username to use. If it's not provided, user will be prompted for it.
 
-  [--user_email=\<user_email\>]
+  [--user_email=<user_email>]
     The user email to use. If it's not provided, user will be prompted for it.
 ```
 </details>
@@ -105,7 +105,7 @@ If Snapshots has not been set up for your team/company, you'll need to create th
 
 #### Command
 
-__wp snapshots create-repository <repository> [--region=\<region\>]__
+__wp snapshots create-repository <repository>__
 
 
 <details>
@@ -114,12 +114,6 @@ __wp snapshots create-repository <repository> [--region=\<region\>]__
 ```
   <repository>
     The repository to create
-
-  [--region=\<region\>]
-    The AWS region to use. Defaults to us-west-1.
-    ---
-    default: us-west-1
-    ---
 ```
 </details>
 
@@ -135,7 +129,7 @@ Pushing a snapshot will not replace older snapshots with the same name. Each tim
 
 #### Command
 
-__wp snapshots push [--repository=\<repository\>] [--region=\<region\>] [--exclude=\<exclude\>] [--slug=\<slug\>] [--description=\<description\>] [--wp_version=\<wp_version\>] [--author_name=\<author_name\>]
+__wp snapshots push [--repository=\<repository\>] [--exclude=\<exclude\>] [--slug=\<slug\>] [--description=\<description\>] [--wp_version=\<wp_version\>] [--author_name=\<author_name\>]
   [--author_email=\<author_email\>] [--exclude_uploads] [--small] [--include_files] [--include_db]__
 
 <details>
@@ -148,43 +142,37 @@ __wp snapshots push [--repository=\<repository\>] [--region=\<region\>] [--exclu
     default: 10up
     ---
 
-  [--region=\<region\>]
-    The AWS region to use. Defaults to us-west-1.
-    ---
-    default: us-west-1
-    ---
-
-  [--exclude=\<exclude\>]
+  [--exclude=<exclude>]
     Exclude a file or directory from the snapshot. Enter a comma-separated list of files or directories to exclude, relative to the WP content directory.
     ---
     default: ""
     ---
 
-  [--slug=\<slug\>]
+  [--slug=<slug>]
     Project slug for snapshot.
     ---
     default: ""
     ---
 
-  [--description=\<description\>]
+  [--description=<description>]
     Description of snapshot.
     ---
     default: ""
     ---
 
-  [--wp_version=\<wp_version\>]
+  [--wp_version=<wp_version>]
     Override the WordPress version.
     ---
     default: ""
     ---
 
-  [--author_name=\<author_name\>]
+  [--author_name=<author_name>]
     Snapshot creator name.
     ---
     default: ""
     ---
 
-  [--author_email=\<author_email\>]
+  [--author_email=<author_email>]
     Snapshot creator email.
     ---
     default: ""
@@ -224,7 +212,7 @@ After pulling, you can log in as admin with the user `wpsnapshots`, password `pa
 
 #### Command
 
-__wp snapshots pull <snapshot_id> [--repository=\<repository\>] [--region=\<region\>] [--skip_table_search_replace=\<skip_table_search_replace\>] [--site_mapping=\<site_mapping\>] [--main_domain=\<main_domain\>]
+__wp snapshots pull <snapshot_id> [--repository=\<repository\>] [--skip_table_search_replace=\<skip_table_search_replace\>] [--site_mapping=\<site_mapping\>] [--main_domain=\<main_domain\>]
   [--confirm] [--confirm_wp_download] [--confirm_config_create] [--confirm_wp_version_change] [--confirm_ms_constant_update] [--overwrite_local_copy] [--include_files] [--include_db]__
 
 <details>
@@ -234,25 +222,19 @@ __wp snapshots pull <snapshot_id> [--repository=\<repository\>] [--region=\<regi
   <snapshot_id>
     Snapshot ID to pull.
 
-  [--repository=\<repository\>]
+  [--repository=<repository>]
     Repository to use.
 
-  [--region=\<region\>]
-    AWS region to use. Defaults to us-west-1.
-    ---
-    default: us-west-1
-    ---
-
-  [--skip_table_search_replace=\<skip_table_search_replace\>]
+  [--skip_table_search_replace=<skip_table_search_replace>]
     Skip search and replacing specific tables. Enter a comma-separated list, leaving out the table prefix.
     ---
     default: ""
     ---
 
-  [--site_mapping=\<site_mapping\>]
+  [--site_mapping=<site_mapping>]
     JSON or path to site mapping file.
 
-  [--main_domain=\<main_domain\>]
+  [--main_domain=<main_domain>]
     Main domain for multisite snapshots.
 
   [--confirm]
@@ -311,7 +293,7 @@ __wp snapshots pull <snapshot_id> [--repository=\<repository\>] [--region=\<regi
 
 This command searches the repository for snapshots. `<search_text>` will be compared against project names and authors. Multiple queries can be used to search snapshots in different projects. Searching for "\*" will return all snapshots.
 
-__wp snapshots search <search_text> [--repository=\<repository\>] [--format=\<format\>] [--region=\<region\>]__
+__wp snapshots search <search_text> [--repository=\<repository\>] [--format=\<format\>]__
 
 #### Command
 
@@ -327,12 +309,6 @@ __wp snapshots search <search_text> [--repository=\<repository\>] [--format=\<fo
 
   [--format=\<format\>]
     Render output in a particular format. Available options: table and json. Defaults to table.
-
-  [--region=\<region\>]
-    The AWS region to search in. Defaults to the first region set in the config file.
-    ---
-    default: us-west-1
-    ---
 ```
 
 </details>
@@ -341,7 +317,7 @@ __wp snapshots search <search_text> [--repository=\<repository\>] [--format=\<fo
 
 This command deletes a snapshot from the remote repository. If you have the snapshot cached locally, your cached copy will not be deleted. (Local copies can be deleted manually within the `~/.wpsnapshots` directory.)
 
-__wp snapshots delete <snapshot_id> [--repository=\<repository\>] [--region=\<region\>]__
+__wp snapshots delete <snapshot_id> [--repository=\<repository\>]__
 
 #### Command
 
@@ -355,11 +331,6 @@ __wp snapshots delete <snapshot_id> [--repository=\<repository\>] [--region=\<re
   [--repository=\<repository\>]
     Repository to use.
 
-  [--region=\<region\>]
-    AWS region to use. Defaults to us-west-1.
-    ---
-    default: us-west-1
-    ---
 ```
 </details>
 
@@ -369,56 +340,50 @@ The `create` command performs most of the same operations as `push`, but it does
 
 #### Command
 
-__wp snapshots create [--repository=\<repository\>] [--region=\<region\>] [--exclude=\<exclude\>] [--slug=\<slug\>] [--description=\<description\>] [--wp_version=\<wp_version\>] [--author_name=\<author_name\>]
+__wp snapshots create [--repository=\<repository\>] [--exclude=\<exclude\>] [--slug=\<slug\>] [--description=\<description\>] [--wp_version=\<wp_version\>] [--author_name=\<author_name\>]
   [--author_email=\<author_email\>] [--exclude_uploads] [--small] [--include_files] [--include_db]__
 
 <details>
 <summary>Show Arguments</summary>
 
 ```
-  [--repository=\<repository\>]
+  [--repository=<repository>]
     Repository to use.
     ---
     default: 10up
     ---
 
-  [--region=\<region\>]
-    The AWS region to use. Defaults to us-west-1.
-    ---
-    default: us-west-1
-    ---
-
-  [--exclude=\<exclude\>]
+  [--exclude=<exclude>]
     Exclude a file or directory from the snapshot. Enter a comma-separated list of files or directories to exclude, relative to the WP content directory.
     ---
     default: ""
     ---
 
-  [--slug=\<slug\>]
+  [--slug=<slug>]
     Project slug for snapshot.
     ---
     default: ""
     ---
 
-  [--description=\<description\>]
+  [--description=<description>]
     Description of snapshot.
     ---
     default: ""
     ---
 
-  [--wp_version=\<wp_version\>]
+  [--wp_version=<wp_version>]
     Override the WordPress version.
     ---
     default: ""
     ---
 
-  [--author_name=\<author_name\>]
+  [--author_name=<author_name>]
     Snapshot creator name.
     ---
     default: ""
     ---
 
-  [--author_email=\<author_email\>]
+  [--author_email=<author_email>]
     Snapshot creator email.
     ---
     default: ""
@@ -456,7 +421,7 @@ This command downloads a snapshot from the remote repository and stores it in th
 
 #### Command
 
-__wp snapshots download <snapshot_id> [--repository=\<repository\>] [--region=\<region\>] [--include_files] [--include_db]__
+__wp snapshots download <snapshot_id> [--repository=\<repository\>] [--include_files] [--include_db]__
 
 <details>
 <summary>Show Arguments</summary>
@@ -466,14 +431,8 @@ __wp snapshots download <snapshot_id> [--repository=\<repository\>] [--region=\<
   <snapshot_id>
     Snapshot ID to download.
 
-  [--repository=\<repository\>]
+  [--repository=<repository>]
     Repository to use.
-
-  [--region=\<region\>]
-    AWS region to use. Defaults to us-west-1.
-    ---
-    default: us-west-1
-    ---
 
   [--include_files]
     Include files in the download.

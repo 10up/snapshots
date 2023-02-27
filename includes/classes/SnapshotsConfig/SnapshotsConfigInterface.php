@@ -40,6 +40,15 @@ interface SnapshotsConfigInterface extends SharedService {
 	public function get_default_repository_name() : ?string;
 
 	/**
+	 * Gets the region for a repository.
+	 *
+	 * @param string $repository Repository name.
+	 *
+	 * @return ?string
+	 */
+	public function get_repository_region( string $repository ) : ?string;
+
+	/**
 	 * Gets the profile property from a repository.
 	 *
 	 * @param string $repository Repository name.

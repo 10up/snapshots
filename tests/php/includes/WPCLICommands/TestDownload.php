@@ -199,7 +199,7 @@ class TestDownload extends TestCase {
 			$meta,
 			'default',
 			'test-repo',
-			'test-region'
+			'us-west-1'
 		);
 
 		add_filter( 'snapshots_readline', function() {
@@ -208,7 +208,7 @@ class TestDownload extends TestCase {
 			};
 		} );
 
-		$this->command->execute( [ 'test-id' ], [ 'region' => 'test-region', 'repository' => 'test-repo' ] );
+		$this->command->execute( [ 'test-id' ], [ 'repository' => 'test-repo' ] );
 
 		// Confirm success message.
 		$this->get_wp_cli_mock()->assertMethodCalled( 'success', 1, [ [ 'Snapshot downloaded.' ] ]);

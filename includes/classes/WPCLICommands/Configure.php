@@ -37,7 +37,7 @@ final class Configure extends WPCLICommand {
 
 			try {
 				$this->log( 'Testing repository connection...' );
-				$this->storage_connector->test( $this->get_profile(), $this->get_repository_name( true, 0 ), $this->get_region() );
+				$this->storage_connector->test( $this->get_profile(), $this->get_repository_name( true, 0 ), $this->get_region_arg() );
 			} catch ( Exception $e ) {
 				wp_cli()::error( 'Your Snapshots configuration is saved, but we were unable to connect to the repository. Please check your AWS credentials.' );
 			}
@@ -117,7 +117,7 @@ final class Configure extends WPCLICommand {
 		}
 
 		$repositories[ $repository_name ] = [
-			'region'     => $this->get_region(),
+			'region'     => $this->get_region_arg(),
 			'repository' => $repository_name,
 			'profile'    => $this->get_profile(),
 			'user_name'  => $this->get_user_name(),
@@ -132,7 +132,7 @@ final class Configure extends WPCLICommand {
 	 *
 	 * @return string
 	 */
-	private function get_region() : string {
+	private function get_region_arg() : string {
 		return $this->get_assoc_arg(
 			'region',
 			[

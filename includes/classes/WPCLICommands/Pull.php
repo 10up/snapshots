@@ -147,13 +147,6 @@ final class Pull extends WPCLICommand {
 					'optional'    => true,
 				],
 				[
-					'type'        => 'assoc',
-					'name'        => 'region',
-					'description' => 'AWS region to use. Defaults to us-west-1.',
-					'optional'    => true,
-					'default'     => 'us-west-1',
-				],
-				[
 					'type'        => 'flag',
 					'name'        => 'confirm',
 					'description' => 'Confirm pull operation.',
@@ -272,7 +265,7 @@ final class Pull extends WPCLICommand {
 		$id              = $this->get_id();
 		$repository_name = $this->get_repository_name();
 
-		$remote_meta = $this->snapshot_meta->get_remote( $id, $this->get_profile_for_repository(), $repository_name, $this->get_assoc_arg( 'region' ) );
+		$remote_meta = $this->snapshot_meta->get_remote( $id, $this->get_profile_for_repository(), $repository_name, $this->get_region() );
 		$local_meta  = $this->snapshot_meta->get_local( $id, $repository_name );
 
 		switch ( true ) {
@@ -399,7 +392,7 @@ final class Pull extends WPCLICommand {
 	 * @throws SnapshotsException If the snapshot does not exist or is not valid.
 	 */
 	private function download_snapshot( bool $include_db = true, bool $include_files = true ) {
-		$command = 'snapshots download ' . $this->get_id() . ' --quiet --repository=' . $this->get_repository_name() . ' --region=' . $this->get_assoc_arg( 'region' );
+		$command = 'snapshots download ' . $this->get_id() . ' --quiet --repository=' . $this->get_repository_name();
 
 		if ( $include_db ) {
 			$command .= ' --include_db';
