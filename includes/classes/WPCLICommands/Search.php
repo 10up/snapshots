@@ -129,15 +129,15 @@ final class Search extends WPCLICommand {
 			$this->get_output_format(),
 			$rows,
 			[
-				'id',
-				'project',
-				'contains_files',
-				'contains_db',
-				'description',
-				'author',
-				'size',
-				'multisite',
-				'created',
+				'ID',
+				'Project',
+				'Contains files',
+				'Contains database',
+				'Description',
+				'Author',
+				'Size',
+				'Multisite',
+				'Created',
 			]
 		);
 	}
@@ -200,15 +200,15 @@ final class Search extends WPCLICommand {
 		}
 
 		$rows[ $instance['time'] ] = [
-			'id'             => ( ! empty( $instance['id'] ) ) ? $instance['id'] : '',
-			'project'        => ( ! empty( $instance['project'] ) ) ? $instance['project'] : '',
-			'contains_files' => $contains_files,
-			'contains_db'    => $contains_db,
-			'description'    => ( ! empty( $instance['description'] ) ) ? $instance['description'] : '',
-			'author'         => ( ! empty( $instance['author']['name'] ) ) ? $instance['author']['name'] : '',
-			'size'           => $size,
-			'multisite'      => ( ! empty( $instance['multisite'] ) ) ? 'Yes' : 'No',
-			'created'        => gmdate( $date_format, $instance['time'] ),
+			'ID'                => ( ! empty( $instance['id'] ) ) ? $instance['id'] : '',
+			'Project'           => ( ! empty( $instance['project'] ) ) ? $instance['project'] : '',
+			'Contains files'    => $contains_files,
+			'Contains database' => $contains_db,
+			'Description'       => ( ! empty( $instance['description'] ) ) ? $instance['description'] : '',
+			'Author'            => ( ! empty( $instance['author']['name'] ) ) ? $instance['author']['name'] : '',
+			'Size'              => $size,
+			'Multisite'         => ( ! empty( $instance['multisite'] ) ) ? 'Yes' : 'No',
+			'Created'           => gmdate( $date_format, $instance['time'] ),
 		];
 
 		return $rows;
