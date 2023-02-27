@@ -116,19 +116,19 @@ class TestCreate extends TestCase {
 			6,
 			[
 				[
-					'Repository Slug (letters, numbers, _, and - only) (enter x to cancel):',
+					'Repository Slug (letters, numbers, _, and - only):',
 				],
 				[
-					'Your name (enter x to cancel):'
+					'Your name:'
 				],
 				[
-					'Your email (enter x to cancel):',
+					'Your email:',
 				],
 				[
-					'Snapshot Description (e.g. Local environment) (enter x to cancel):',
+					'Snapshot Description (e.g. Local environment):',
 				],
 				[
-					'Project Slug (letters, numbers, _, and - only) (enter x to cancel):',
+					'Project Slug (letters, numbers, _, and - only):',
 				],
 				[
 					'Saving database...'
