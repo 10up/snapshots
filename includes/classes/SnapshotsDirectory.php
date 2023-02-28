@@ -248,35 +248,14 @@ class SnapshotsDirectory implements SharedService {
 	public function unzip_snapshot_files( string $id, string $destination ) : array {
 		$errors = [];
 
-		// Recursively delete everything in the wp-content directory except plugins/snapshots.
-		$this->file_system->delete_directory_contents( $destination, true, [ TENUP_SNAPSHOTS_DIR ] );
-
-		$gzipped_tar_file        = $this->get_file_path( 'files.tar.gz', $id );
-		$copied_gzipped_tar_file = str_replace( 'files', 'files-copy', $gzipped_tar_file );
-
-		// Copy the gzipped tar file to a new file so that we can unzip it.
-		if ( ! $this->get_wp_filesystem()->copy( $gzipped_tar_file, $copied_gzipped_tar_file, true ) ) {
-			throw new SnapshotsException( 'Could not copy gzipped tar file' );
-		}
-
-		$tar_file = str_replace( '.gz', '', $copied_gzipped_tar_file );
-
 		try {
-			$phar = new PharData( $copied_gzipped_tar_file );
-			$phar->decompress(); // creates files.tar
+			// Recursively delete everything in the wp-content directory except plugins/snapshots.
+			$this->file_system->delete_directory_contents( $destination, false, [ TENUP_SNAPSHOTS_DIR ] );
 
-			$phar = new PharData( $tar_file );
-			$phar->extractTo( $destination, null, true );
-
-			// Clean up.
-			unset( $phar );
-			Phar::unlinkArchive( $tar_file );
-			Phar::unlinkArchive( $copied_gzipped_tar_file );
+			$gzipped_tar_file = $this->get_file_path( 'files.tar.gz', $id );
+			exec( 'tar -C "' . $destination . '" -xf "' . $gzipped_tar_file . '"' ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.system_calls_exec -- exec is required because using PharData->extractTo results in a 'Cannot extract ".", internal error' error that is not fixable.
 		} catch ( Exception $e ) {
 			$errors[] = $e->getMessage();
-		} finally {
-			$this->get_wp_filesystem()->delete( $tar_file );
-			$this->get_wp_filesystem()->delete( $copied_gzipped_tar_file );
 		}
 
 		return $errors;
