@@ -135,9 +135,12 @@ class S3StorageConnector implements StorageConnectorInterface {
 		if ( $meta['contains_db'] ) {
 			$client->putObject(
 				[
-					'Bucket'     => $this->get_bucket_name( $repository ),
-					'Key'        => $meta['project'] . '/' . $id . '/data.sql.gz',
-					'SourceFile' => realpath( $this->snapshots_file_system->get_file_path( 'data.sql.gz', $id ) ),
+					'Bucket'          => $this->get_bucket_name( $repository ),
+					'Key'             => $meta['project'] . '/' . $id . '/data.sql.gz',
+					'SourceFile'      => realpath( $this->snapshots_file_system->get_file_path( 'data.sql.gz', $id ) ),
+					'ContentEncoding' => 'gzip',
+					'ContentMD5'      => base64_encode( md5_file( $this->snapshots_file_system->get_file_path( 'data.sql.gz', $id ), true ) ), // phpcs:ignore
+					'ContentType'     => 'application/x-gzip',
 				]
 			);
 		}
@@ -145,9 +148,12 @@ class S3StorageConnector implements StorageConnectorInterface {
 		if ( $meta['contains_files'] ) {
 			$client->putObject(
 				[
-					'Bucket'     => $this->get_bucket_name( $repository ),
-					'Key'        => $meta['project'] . '/' . $id . '/files.tar.gz',
-					'SourceFile' => realpath( $this->snapshots_file_system->get_file_path( 'files.tar.gz', $id ) ),
+					'Bucket'          => $this->get_bucket_name( $repository ),
+					'Key'             => $meta['project'] . '/' . $id . '/files.tar.gz',
+					'SourceFile'      => realpath( $this->snapshots_file_system->get_file_path( 'files.tar.gz', $id ) ),
+					'ContentEncoding' => 'gzip',
+					'ContentMD5'      => base64_encode( md5_file( $this->snapshots_file_system->get_file_path( 'files.tar.gz', $id ), true ) ), // phpcs:ignore
+					'ContentType'     => 'application/x-gzip',
 				]
 			);
 		}
