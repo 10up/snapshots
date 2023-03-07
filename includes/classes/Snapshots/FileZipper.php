@@ -109,7 +109,7 @@ class FileZipper implements SharedService {
 		);
 
 		$initial_files = $this->file_system->get_wp_filesystem()->dirlist( snapshots_wp_content_dir() );
-		$file_list     = $this->build_file_list_recursively( $initial_files, snapshots_wp_content_dir(), $excludes );
+		$file_list     = $this->build_file_list_recursively( $initial_files, snapshots_wp_content_dir(), $excludes, $args['include_node_modules'], $args['exclude_vendor'] );
 
 		return new ArrayIterator( $file_list );
 	}
@@ -120,10 +120,12 @@ class FileZipper implements SharedService {
 	 * @param array  $files    List of files.
 	 * @param string $base_dir Base directory.
 	 * @param array  $excludes List of files to exclude.
+	 * @param bool   $include_node_modules Whether to include node_modules.
+	 * @param bool   $exclude_vendor Whether to exclude vendor.
 	 *
 	 * @return array
 	 */
-	private function build_file_list_recursively( array $files, string $base_dir, array $excludes ) : array {
+	private function build_file_list_recursively( array $files, string $base_dir, array $excludes, bool $include_node_modules = false, bool $exclude_vendor = false ) : array {
 		$file_list = [];
 
 		$wp_content_dir = snapshots_wp_content_dir();
@@ -155,8 +157,16 @@ class FileZipper implements SharedService {
 
 				$file_list[ str_replace( $wp_content_dir, '', $full_path ) ] = $full_path;
 			} elseif ( 'd' === $file['type'] ) {
+				if ( 'node_modules' === $file['name'] && ! $include_node_modules ) {
+					continue;
+				}
+
+				if ( 'vendor' === $file['name'] && $exclude_vendor ) {
+					continue;
+				}
+
 				$dir_files = $this->file_system->get_wp_filesystem()->dirlist( $full_path );
-				$file_list = array_merge( $file_list, $this->build_file_list_recursively( $dir_files, $full_path, $excludes ) );
+				$file_list = array_merge( $file_list, $this->build_file_list_recursively( $dir_files, $full_path, $excludes, $include_node_modules, $exclude_vendor ) );
 			}
 		}
 
