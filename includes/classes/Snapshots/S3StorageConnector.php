@@ -135,12 +135,10 @@ class S3StorageConnector implements StorageConnectorInterface {
 		if ( $meta['contains_db'] ) {
 			$client->putObject(
 				[
-					'Bucket'          => $this->get_bucket_name( $repository ),
-					'Key'             => $meta['project'] . '/' . $id . '/data.sql.gz',
-					'SourceFile'      => realpath( $this->snapshots_file_system->get_file_path( 'data.sql.gz', $id ) ),
-					'ContentEncoding' => 'gzip',
-					'ContentMD5'      => base64_encode( md5_file( $this->snapshots_file_system->get_file_path( 'data.sql.gz', $id ), true ) ), // phpcs:ignore
-					'ContentType'     => 'application/x-gzip',
+					'Bucket'     => $this->get_bucket_name( $repository ),
+					'Key'        => $meta['project'] . '/' . $id . '/data.sql.gz',
+					'SourceFile' => realpath( $this->snapshots_file_system->get_file_path( 'data.sql.gz', $id ) ),
+					'ContentMD5' => base64_encode( md5_file( $this->snapshots_file_system->get_file_path( 'data.sql.gz', $id ), true ) ), // phpcs:ignore
 				]
 			);
 		}
@@ -148,12 +146,10 @@ class S3StorageConnector implements StorageConnectorInterface {
 		if ( $meta['contains_files'] ) {
 			$client->putObject(
 				[
-					'Bucket'          => $this->get_bucket_name( $repository ),
-					'Key'             => $meta['project'] . '/' . $id . '/files.tar.gz',
-					'SourceFile'      => realpath( $this->snapshots_file_system->get_file_path( 'files.tar.gz', $id ) ),
-					'ContentEncoding' => 'gzip',
-					'ContentMD5'      => base64_encode( md5_file( $this->snapshots_file_system->get_file_path( 'files.tar.gz', $id ), true ) ), // phpcs:ignore
-					'ContentType'     => 'application/x-gzip',
+					'Bucket'     => $this->get_bucket_name( $repository ),
+					'Key'        => $meta['project'] . '/' . $id . '/files.tar.gz',
+					'SourceFile' => realpath( $this->snapshots_file_system->get_file_path( 'files.tar.gz', $id ) ),
+					'ContentMD5' => base64_encode( md5_file( $this->snapshots_file_system->get_file_path( 'files.tar.gz', $id ), true ) ), // phpcs:ignore
 				]
 			);
 		}
@@ -238,11 +234,11 @@ class S3StorageConnector implements StorageConnectorInterface {
 		if ( ! isset( $this->clients[ $region ] ) ) {
 			$this->clients[ $region ] = new S3Client(
 				[
-					'version' => 'latest',
-					'region'  => $region,
-					'retries' => 3,
-					'scheme'  => function_exists( 'get_site_url' ) && get_site_url( get_current_blog_id() ) === 'https://' ? 'https' : 'http',
-					'profile' => $profile,
+					'region'    => $region,
+					'profile'   => $profile,
+					'signature' => 'v4',
+					'version'   => '2006-03-01',
+					'csm'       => false,
 				]
 			);
 		}
