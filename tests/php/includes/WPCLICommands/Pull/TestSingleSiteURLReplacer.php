@@ -97,7 +97,7 @@ class TestSingleSiteURLReplacer extends TestCase {
 			1,
 			[
 				[
-					'search-replace http://search.com http://replace.com table1 table2 --skip-columns=guid --precise --skip-themes --skip-plugins --skip-packages',
+					'search-replace http://search.com http://replace.com table1 table2 --precise --skip-themes --skip-plugins --skip-packages',
 					[
 						'launch' => true,
 						'exit_error' => false,
@@ -131,7 +131,7 @@ class TestSingleSiteURLReplacer extends TestCase {
 			2,
 			[
 				[
-					'search-replace http://home-url.com readline2 wp_commentmeta wp_comments wp_links wp_options wp_postmeta wp_posts wp_termmeta wp_usermeta wp_users --skip-columns=guid --precise --skip-themes --skip-plugins --skip-packages',
+					'search-replace http://home-url.com readline2 wp_commentmeta wp_comments wp_links wp_options wp_postmeta wp_posts wp_termmeta wp_usermeta wp_users --precise --skip-themes --skip-plugins --skip-packages',
 					[
 						'launch' => true,
 						'exit_error' => false,
@@ -139,7 +139,7 @@ class TestSingleSiteURLReplacer extends TestCase {
 					],
 				],
 				[
-					'search-replace http://site-url.com readline3 wp_commentmeta wp_comments wp_links wp_options wp_postmeta wp_posts wp_termmeta wp_usermeta wp_users --skip-columns=guid --precise --skip-themes --skip-plugins --skip-packages',
+					'search-replace http://site-url.com readline3 wp_commentmeta wp_comments wp_links wp_options wp_postmeta wp_posts wp_termmeta wp_usermeta wp_users --precise --skip-themes --skip-plugins --skip-packages',
 					[
 						'launch' => true,
 						'exit_error' => false,

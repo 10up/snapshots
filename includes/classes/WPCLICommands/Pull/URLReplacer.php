@@ -139,7 +139,7 @@ abstract class URLReplacer {
 	 * @param bool   $multisite Whether to run multisite search and replace.
 	 */
 	protected function run_search_and_replace( string $search, string $replace, array $tables_to_update, bool $multisite = false ) : void {
-		$command = 'search-replace ' . $search . ' ' . $replace . ' ' . implode( ' ', $tables_to_update ) . ' --skip-columns=guid --precise --skip-themes --skip-plugins --skip-packages';
+		$command = 'search-replace ' . $search . ' ' . $replace . ' ' . implode( ' ', $tables_to_update ) . ' --precise --skip-themes --skip-plugins --skip-packages';
 
 		if ( $multisite ) {
 			$command .= ' --network';
