@@ -10,6 +10,7 @@ namespace TenUp\Snapshots\WPCLICommands;
 use Exception;
 use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\WPCLI\WPCLICommand;
+use jc21\CliTable;
 
 use function TenUp\Snapshots\Utils\wp_cli;
 
@@ -118,11 +119,53 @@ final class Search extends WPCLICommand {
 
 		ksort( $rows );
 
-		wp_cli()::format_items(
-			$this->get_output_format(),
-			$rows,
-			array_keys( reset( $rows ) )
-		);
+		$output_format = $this->get_output_format();
+
+		if ( 'table' === $output_format ) {
+			$table = new CliTable();
+			$table->setTableColor( 'blue' );
+			$table->setHeaderColor( 'cyan' );
+
+			$table->addField( 'ID', 'ID', false );
+			$table->addField( 'Project', 'Project', false );
+			$table->addField( 'Files', 'Contains files', false );
+			$table->addField( 'DB', 'Contains database', false );
+			$table->addField( 'Description', 'Description', false );
+			$table->addField( 'Author', 'Author', false );
+			$table->addField( 'Size', 'Size', false );
+			$table->addField( 'Multisite', 'Multisite', false );
+			$table->addField( 'Created', 'Created', false );
+
+			// Max out the description at 40 chars and the project at 35, and remove the time from the created field.
+			$rows = array_map(
+				function( $row ) {
+					if ( strlen( $row['Description'] ) > 40 ) {
+
+						$row['Description'] = substr( $row['Description'], 0, 37 ) . '...';
+					}
+
+					if ( strlen( $row['Project'] ) > 30 ) {
+						$row['Project'] = substr( $row['Project'], 0, 27 ) . '...';
+					}
+
+					// Remove everything from the second comma.
+					$row['Created'] = substr( $row['Created'], 0, strpos( $row['Created'], ',', strpos( $row['Created'], ',' ) + 1 ) );
+					return $row;
+				},
+				$rows
+			);
+
+			$table->injectData( $rows );
+
+			$table->display();
+
+		} else {
+			wp_cli()::format_items(
+				$output_format,
+				$rows,
+				array_keys( reset( $rows ) )
+			);
+		}
 	}
 
 	/**
@@ -131,7 +174,7 @@ final class Search extends WPCLICommand {
 	 * @return string
 	 */
 	private function get_output_format() {
-		return $this->get_assoc_arg( 'format' ) ?? 'yaml';
+		return $this->get_assoc_arg( 'format' ) ?? 'table';
 	}
 
 	/**
