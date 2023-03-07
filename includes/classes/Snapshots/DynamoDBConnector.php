@@ -214,9 +214,10 @@ class DynamoDBConnector implements DBConnectorInterface {
 		if ( ! isset( $this->clients[ $region ] ) ) {
 			$this->clients[ $region ] = new DynamoDbClient(
 				[
-					'version' => 'latest',
 					'region'  => $region,
 					'profile' => $profile,
+					'version' => '2012-08-10',
+					'csm'     => false,
 				]
 			);
 		}
