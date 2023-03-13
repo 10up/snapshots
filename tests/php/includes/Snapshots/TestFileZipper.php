@@ -7,18 +7,14 @@
 
 namespace TenUp\Snapshots\Tests\Snapshots;
 
-use Aws\DynamoDb\DynamoDbClient;
 use Phar;
 use PharData;
-use PHPUnit\Framework\MockObject\MockObject;
 use TenUp\Snapshots\FileSystem;
 use TenUp\Snapshots\Snapshots;
-use TenUp\Snapshots\Snapshots\DynamoDBConnector;
 use TenUp\Snapshots\Snapshots\FileZipper;
 use TenUp\Snapshots\Tests\Fixtures\DirectoryFiltering;
 use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
-use ZipArchive;
 
 /**
  * Class FileZipper
@@ -55,6 +51,8 @@ class TestFileZipper extends TestCase {
 		$this->file_zipper = ( new Snapshots() )->get_instance( FileZipper::class );
 
 		$this->set_up_directory_filtering();
+
+		$this->file_system->get_wp_filesystem()->delete( '/tmp/files', true );
 	}
 
 	/**
@@ -64,6 +62,10 @@ class TestFileZipper extends TestCase {
 		parent::tear_down();
 
 		$this->tear_down_directory_filtering();
+
+		$this->file_system->get_wp_filesystem()->delete( '/tenup-snapshots-tmp', true );
+		$this->file_system->get_wp_filesystem()->delete( '/tmp/files', true );
+		$this->file_system->get_wp_filesystem()->delete( '/tmp/wp-content', true );
 	}
 
 	public function test_constructor() {
@@ -82,6 +84,8 @@ class TestFileZipper extends TestCase {
 		$args = [
 			'excludes' => [],
 			'exclude_uploads' => false,
+			'include_node_modules' => false,
+			'exclude_vendor' => false,
 		];
 
 		$this->file_zipper->zip_files( $id, $args );
@@ -104,12 +108,6 @@ class TestFileZipper extends TestCase {
 		$this->assertFileExists( '/tmp/files/themes/test-file.txt' );
 		$this->assertFileExists( '/tmp/files/themes/test-theme/test-file.txt' );
 		$this->assertFileExists( '/tmp/files/themes/test-theme/test-file-2.txt' );
-
-		$this->file_system->get_wp_filesystem()->delete( '/tenup-snapshots-tmp', true );
-		$this->file_system->get_wp_filesystem()->delete( '/tmp/files', true );
-		$this->file_system->get_wp_filesystem()->delete( '/tmp/wp-content', true );
-
-
 	}
 
 	/**
@@ -127,6 +125,8 @@ class TestFileZipper extends TestCase {
 				'themes/test-theme',
 			],
 			'exclude_uploads' => true,
+			'include_node_modules' => false,
+			'exclude_vendor' => false,
 		];
 
 		$this->file_zipper->zip_files( $id, $args );
@@ -152,10 +152,158 @@ class TestFileZipper extends TestCase {
 		$this->assertFileDoesNotExist( '/tmp/files/themes/test-theme/test-file-2.txt' );
 		$this->assertFileExists( '/tmp/files/themes/' );
 		$this->assertFileDoesNotExist( '/tmp/files/themes/test-theme' );
+	}
 
-		$this->file_system->get_wp_filesystem()->delete( '/tenup-snapshots-tmp', true );
-		$this->file_system->get_wp_filesystem()->delete( '/tmp/files', true );
-		$this->file_system->get_wp_filesystem()->delete( '/tmp/wp-content', true );
+	/**
+	 * @covers ::zip_files
+	 * @covers ::get_build_from_iterator_iterator
+	 * @covers ::build_file_list_recursively
+	 */
+	public function test_zip_files_with_exclude_node_modules() {
+		add_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
+
+		$id = 'test-id-3';
+		$args = [
+			'excludes' => [],
+			'exclude_uploads' => true,
+			'include_node_modules' => false,
+			'exclude_vendor' => false,
+		];
+
+		$this->file_zipper->zip_files( $id, $args );
+
+		$this->assertFileExists( '/tenup-snapshots-tmp/test-id-3/files.tar.gz' );
+
+		remove_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
+
+		// Unzip the file and check the contents.
+		$phar = new PharData( '/tenup-snapshots-tmp/test-id-3/files.tar.gz' );
+		$phar->decompress();
+		$phar->extractTo( '/tmp/files' );
+
+		unset( $phar );
+		Phar::unlinkArchive( '/tenup-snapshots-tmp/test-id-3/files.tar.gz' );
+
+		$this->assertFileDoesNotExist( '/tmp/files/plugins/test-plugin/node_modules' );
+		$this->assertFileDoesNotExist( '/tmp/files/plugins/test-plugin/node_modules/test-file.txt' );
+		$this->assertFileDoesNotExist( '/tmp/files/plugins/test-plugin/node_modules/test-file-2.txt' );
+		$this->assertFileDoesNotExist( '/tmp/files/themes/test-theme/node_modules' );
+		$this->assertFileDoesNotExist( '/tmp/files/themes/test-theme/node_modules/test-file.txt' );
+		$this->assertFileDoesNotExist( '/tmp/files/themes/test-theme/node_modules/test-file-2.txt' );
+	}
+
+	/**
+	 * @covers ::zip_files
+	 * @covers ::get_build_from_iterator_iterator
+	 * @covers ::build_file_list_recursively
+	 */
+	public function test_zip_files_with_include_node_modules() {
+		add_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
+
+		$id = 'test-id-4';
+		$args = [
+			'excludes' => [],
+			'exclude_uploads' => true,
+			'include_node_modules' => true,
+			'exclude_vendor' => false,
+		];
+
+		$this->file_zipper->zip_files( $id, $args );
+
+		$this->assertFileExists( '/tenup-snapshots-tmp/test-id-4/files.tar.gz' );
+
+		remove_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
+
+		// Unzip the file and check the contents.
+		$phar = new PharData( '/tenup-snapshots-tmp/test-id-4/files.tar.gz' );
+		$phar->decompress();
+		$phar->extractTo( '/tmp/files' );
+
+		unset( $phar );
+		Phar::unlinkArchive( '/tenup-snapshots-tmp/test-id-4/files.tar.gz' );
+
+		$this->assertFileExists( '/tmp/files/plugins/test-plugin/node_modules' );
+		$this->assertFileExists( '/tmp/files/plugins/test-plugin/node_modules/test-file.txt' );
+		$this->assertFileExists( '/tmp/files/plugins/test-plugin/node_modules/test-file-2.txt' );
+		$this->assertFileExists( '/tmp/files/themes/test-theme/node_modules' );
+		$this->assertFileExists( '/tmp/files/themes/test-theme/node_modules/test-file.txt' );
+		$this->assertFileExists( '/tmp/files/themes/test-theme/node_modules/test-file-2.txt' );
+	}
+
+	/**
+	 * @covers ::zip_files
+	 * @covers ::get_build_from_iterator_iterator
+	 * @covers ::build_file_list_recursively
+	 */
+	public function test_zip_files_with_include_vendor() {
+		add_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
+
+		$id = 'test-id-5';
+		$args = [
+			'excludes' => [],
+			'exclude_uploads' => true,
+			'include_node_modules' => false,
+			'exclude_vendor' => false,
+		];
+
+		$this->file_zipper->zip_files( $id, $args );
+
+		$this->assertFileExists( '/tenup-snapshots-tmp/test-id-5/files.tar.gz' );
+
+		remove_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
+
+		// Unzip the file and check the contents.
+		$phar = new PharData( '/tenup-snapshots-tmp/test-id-5/files.tar.gz' );
+		$phar->decompress();
+		$phar->extractTo( '/tmp/files' );
+
+		unset( $phar );
+		Phar::unlinkArchive( '/tenup-snapshots-tmp/test-id-5/files.tar.gz' );
+
+		$this->assertFileExists( '/tmp/files/plugins/test-plugin/vendor' );
+		$this->assertFileExists( '/tmp/files/plugins/test-plugin/vendor/test-file.txt' );
+		$this->assertFileExists( '/tmp/files/plugins/test-plugin/vendor/test-file-2.txt' );
+		$this->assertFileExists( '/tmp/files/themes/test-theme/vendor' );
+		$this->assertFileExists( '/tmp/files/themes/test-theme/vendor/test-file.txt' );
+		$this->assertFileExists( '/tmp/files/themes/test-theme/vendor/test-file-2.txt' );
+	}
+
+	/**
+	 * @covers ::zip_files
+	 * @covers ::get_build_from_iterator_iterator
+	 * @covers ::build_file_list_recursively
+	 */
+	public function test_zip_files_with_exclude_vendor() {
+		add_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
+
+		$id = 'test-id-6';
+		$args = [
+			'excludes' => [],
+			'exclude_uploads' => true,
+			'include_node_modules' => false,
+			'exclude_vendor' => true,
+		];
+
+		$this->file_zipper->zip_files( $id, $args );
+
+		$this->assertFileExists( '/tenup-snapshots-tmp/test-id-6/files.tar.gz' );
+
+		remove_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
+
+		// Unzip the file and check the contents.
+		$phar = new PharData( '/tenup-snapshots-tmp/test-id-6/files.tar.gz' );
+		$phar->decompress();
+		$phar->extractTo( '/tmp/files' );
+
+		unset( $phar );
+		Phar::unlinkArchive( '/tenup-snapshots-tmp/test-id-6/files.tar.gz' );
+
+		$this->assertFileDoesNotExist( '/tmp/files/plugins/test-plugin/vendor' );
+		$this->assertFileDoesNotExist( '/tmp/files/plugins/test-plugin/vendor/test-file.txt' );
+		$this->assertFileDoesNotExist( '/tmp/files/plugins/test-plugin/vendor/test-file-2.txt' );
+		$this->assertFileDoesNotExist( '/tmp/files/themes/test-theme/vendor' );
+		$this->assertFileDoesNotExist( '/tmp/files/themes/test-theme/vendor/test-file.txt' );
+		$this->assertFileDoesNotExist( '/tmp/files/themes/test-theme/vendor/test-file-2.txt' );
 	}
 
 	public function filter_wp_content() {
@@ -225,6 +373,74 @@ class TestFileZipper extends TestCase {
 		$theme_file = $theme . '/test-file-2.txt';
 
 		file_put_contents( $theme_file, 'test' );
+
+		// create a vendor directory.
+		$vendor = $theme . '/vendor';
+
+		if ( ! file_exists( $vendor ) ) {
+			mkdir( $vendor );
+		}
+
+		$vendor_file = $vendor . '/test-file.txt';
+
+		file_put_contents( $vendor_file, 'test' );
+
+		// create another vendor file
+		$vendor_file = $vendor . '/test-file-2.txt';
+
+		file_put_contents( $vendor_file, 'test' );
+
+		// Do the same in a plugin.
+		$vendor = $plugin . '/vendor';
+
+		if ( ! file_exists( $vendor ) ) {
+			mkdir( $vendor );
+		}
+
+		$vendor_file = $vendor . '/test-file.txt';
+
+		file_put_contents( $vendor_file, 'test' );
+
+		// create another vendor file
+		$vendor_file = $vendor . '/test-file-2.txt';
+
+		file_put_contents( $vendor_file, 'test' );
+
+		// create files in the plugin node_modules directory.
+
+		$node_modules = $plugin . '/node_modules';
+
+		if ( ! file_exists( $node_modules ) ) {
+			mkdir( $node_modules );
+		}
+
+		$this->assertFileExists( $node_modules );
+
+		$node_modules_file = $node_modules . '/test-file.txt';
+
+		file_put_contents( $node_modules_file, 'test' );
+
+		// create another node_modules file
+		$node_modules_file = $node_modules . '/test-file-2.txt';
+
+		file_put_contents( $node_modules_file, 'test' );
+
+		// Create node_modules in the theme.
+		$node_modules = $theme . '/node_modules';
+
+		if ( ! file_exists( $node_modules ) ) {
+			mkdir( $node_modules );
+		}
+
+		$node_modules_file = $node_modules . '/test-file.txt';
+
+		file_put_contents( $node_modules_file, 'test' );
+
+		// create another node_modules file
+
+		$node_modules_file = $node_modules . '/test-file-2.txt';
+
+		file_put_contents( $node_modules_file, 'test' );
 
 		return $path;
 	}

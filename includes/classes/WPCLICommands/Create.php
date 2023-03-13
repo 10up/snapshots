@@ -175,6 +175,20 @@ class Create extends WPCLICommand {
 					'optional'    => true,
 					'default'     => '',
 				],
+				[
+					'type'        => 'flag',
+					'name'        => 'include_node_modules',
+					'description' => 'Include node_modules in snapshot.',
+					'optional'    => true,
+					'default'     => false,
+				],
+				[
+					'type'        => 'flag',
+					'name'        => 'exclude_vendor',
+					'description' => 'Exclude vendor directory from snapshot.',
+					'optional'    => true,
+					'default'     => false,
+				],
 			],
 			'when'      => 'after_wp_load',
 		];
@@ -260,7 +274,7 @@ class Create extends WPCLICommand {
 		);
 
 		return [
-			'author'          => [
+			'author'               => [
 				'name'  => $this->config->get_user_name() ?? $this->get_assoc_arg(
 					'author_name',
 					[
@@ -276,18 +290,20 @@ class Create extends WPCLICommand {
 					]
 				),
 			],
-			'contains_db'     => $contains_db,
-			'contains_files'  => $contains_files,
-			'description'     => $this->get_assoc_arg(
+			'contains_db'          => $contains_db,
+			'contains_files'       => $contains_files,
+			'description'          => $this->get_assoc_arg(
 				'description',
 				[
 					'key'    => 'description',
 					'prompt' => 'Snapshot Description (e.g. Local environment)',
 				]
 			),
-			'exclude_uploads' => ! ! wp_cli()::get_flag_value( $this->get_assoc_args(), 'exclude_uploads' ),
-			'excludes'        => array_filter( array_map( 'trim', explode( ',', $this->get_assoc_arg( 'exclude' ) ) ) ),
-			'project'         => $this->get_assoc_arg(
+			'exclude_uploads'      => ! ! wp_cli()::get_flag_value( $this->get_assoc_args(), 'exclude_uploads' ),
+			'exclude_vendor'       => ! ! wp_cli()::get_flag_value( $this->get_assoc_args(), 'exclude_vendor' ),
+			'excludes'             => array_filter( array_map( 'trim', explode( ',', $this->get_assoc_arg( 'exclude' ) ) ) ),
+			'include_node_modules' => ! ! wp_cli()::get_flag_value( $this->get_assoc_args(), 'include_node_modules' ),
+			'project'              => $this->get_assoc_arg(
 				'slug',
 				[
 					'key'               => 'project',
@@ -296,10 +312,10 @@ class Create extends WPCLICommand {
 					'validate_callback' => [ $this, 'validate_slug' ],
 				]
 			),
-			'region'          => $this->get_region( $repository ),
-			'repository'      => $repository,
-			'small'           => $this->get_assoc_arg( 'small' ),
-			'wp_version'      => $this->get_assoc_arg( 'wp_version' ),
+			'region'               => $this->get_region( $repository ),
+			'repository'           => $repository,
+			'small'                => $this->get_assoc_arg( 'small' ),
+			'wp_version'           => $this->get_assoc_arg( 'wp_version' ),
 		];
 	}
 
