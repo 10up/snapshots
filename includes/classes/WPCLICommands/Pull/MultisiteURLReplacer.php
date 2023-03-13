@@ -192,6 +192,8 @@ define('BLOG_ID_CURRENT_SITE', " . ( ( ! empty( $this->meta['blog_id_current_sit
 	 * @param string $current_table_prefix Current table prefix.
 	 */
 	private function replace_urls_for_site( array $site, array $site_mapping, array $skip_table_search_replace, string $current_table_prefix ) {
+		global $wpdb;
+
 		$this->log( 'Replacing URLs for blog ' . $site['blog_id'] . '.' );
 
 		if ( ! empty( $site_mapping[ (int) $site['blog_id'] ]['home_url'] ) ) {
@@ -241,21 +243,21 @@ define('BLOG_ID_CURRENT_SITE', " . ( ( ! empty( $this->meta['blog_id_current_sit
 			$blog_url .= ':' . wp_parse_url( $new_home_url, PHP_URL_PORT );
 		}
 
-		wp_update_site(
-			(int) $site['blog_id'],
-			[
-				'domain' => $blog_url,
-				'path'   => $blog_path,
-			]
-		);
+		$wpdb->query( $wpdb->prepare( 'UPDATE ' . $current_table_prefix . 'blogs SET path=%s, domain=%s WHERE blog_id=%d', $blog_path, $blog_url, (int) $site['blog_id'] ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		$tables_to_update = $this->get_tables_to_update( $site, $current_table_prefix, $skip_table_search_replace );
 
 		if ( ! empty( $tables_to_update ) ) {
-			$this->run_search_and_replace( $site['home_url'], $new_home_url, $tables_to_update, true );
+			$search_home_url     = str_replace( [ 'http://', 'https://' ], '//', $site['home_url'] );
+			$search_new_home_url = str_replace( [ 'http://', 'https://' ], '//', $new_home_url );
+
+			$this->run_search_and_replace( $search_home_url, $search_new_home_url, $tables_to_update, true );
 
 			if ( $site['home_url'] !== $site['site_url'] ) {
-				$this->run_search_and_replace( $site['site_url'], $new_site_url, $tables_to_update, true );
+				$search_site_url     = str_replace( [ 'http://', 'https://' ], '//', $site['site_url'] );
+				$search_new_site_url = str_replace( [ 'http://', 'https://' ], '//', $new_site_url );
+
+				$this->run_search_and_replace( $search_site_url, $search_new_site_url, $tables_to_update, true );
 			}
 		}
 	}

@@ -138,7 +138,7 @@ class TestMultisiteURLReplacer extends TestCase {
 			2,
 			[
 				[
-					'search-replace http://home-url.com readline0 wp_commentmeta wp_comments wp_links wp_options wp_postmeta wp_posts wp_termmeta wp_usermeta wp_users --skip-columns=guid --precise --skip-themes --skip-plugins --skip-packages --network',
+					'search-replace //home-url.com readline0 wp_commentmeta wp_comments wp_links wp_options wp_postmeta wp_posts wp_termmeta wp_usermeta wp_users --precise --skip-themes --skip-plugins --skip-packages --network',
 					[
 						'launch' => true,
 						'exit_error' => false,
@@ -146,7 +146,7 @@ class TestMultisiteURLReplacer extends TestCase {
 					],
 				],
 				[
-					'search-replace http://site-url.com readline1 wp_commentmeta wp_comments wp_links wp_options wp_postmeta wp_posts wp_termmeta wp_usermeta wp_users --skip-columns=guid --precise --skip-themes --skip-plugins --skip-packages --network',
+					'search-replace //site-url.com readline1 wp_commentmeta wp_comments wp_links wp_options wp_postmeta wp_posts wp_termmeta wp_usermeta wp_users --precise --skip-themes --skip-plugins --skip-packages --network',
 					[
 						'launch' => true,
 						'exit_error' => false,
