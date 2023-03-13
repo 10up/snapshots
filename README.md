@@ -6,6 +6,7 @@ A [WP-CLI](https://wp-cli.org/) based project sharing tool for WordPress. Replac
 
 ## Table of Contents
 * [Overview](#overview)
+* [Why Replace the Old WP Snapshots?](#why-replace-the-old-wp-snapshots)
 * [Installation](#install)
 * [Authentication](#authentication)
 * [Usage](#usage)
@@ -29,7 +30,7 @@ Snapshots stores snapshots in a centralized repository (AWS). Users set up Snaps
 
 A snapshot can contain files, the database, or both. Snapshot files (`wp-content/`) and WordPress database tables are stored in Amazon S3. General snapshot meta data is stored in Amazon DynamoDB.
 
-## Why Replace the Old WP Snapshots
+## Why Replace the Old WP Snapshots?
 
 The old WP Snapshots was built as a standalone PHP script. This made it difficult to use and install on different environments. The new Snapshots is built as a WP-CLI command making it much more flexible.
 
