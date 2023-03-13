@@ -2,7 +2,7 @@
 
 A [WP-CLI](https://wp-cli.org/) based project sharing tool for WordPress. Replaces [WP Snapshots](https://github.com/10up/wpsnapshots).
 
-[![Support Level](https://img.shields.io/badge/support-beta-blueviolet.svg)](#support-level)  [![MIT License](https://img.shields.io/github/license/10up/snapshots.svg)](https://github.com/10up/tenup-snapshots/blob/develop/LICENSE.md)
+[![Support Level](https://img.shields.io/badge/support-beta-blueviolet.svg)](#support-level)  [![MIT License](https://img.shields.io/github/license/10up/snapshots.svg)](https://github.com/10up/snapshots/blob/trunk/LICENSE.md)
 
 ## Table of Contents
 * [Overview](#overview)
