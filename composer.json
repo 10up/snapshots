@@ -24,7 +24,8 @@
         }
     ],
     "require": {
-        "aws/aws-sdk-php": "^3.254"
+        "aws/aws-sdk-php": "^3.254",
+        "jc21/clitable": "dev-master"
     },
     "require-dev": {
         "10up/phpcs-composer": "dev-master",

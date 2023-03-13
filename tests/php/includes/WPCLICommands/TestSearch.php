@@ -134,6 +134,8 @@ class TestSearch extends TestCase {
 	public function test_display_results() {
 		$time = time();
 
+		$this->command->set_assoc_arg( 'format', 'yaml' );
+
 		$this->call_private_method(
 			$this->command,
 			'display_results',
