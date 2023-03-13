@@ -1,8 +1,8 @@
-# 10up Snapshots
+# 10up Snapshots (BETA)
 
-A project sharing tool for WordPress.
+A [WP-CLI](https://wp-cli.org/) based project sharing tool for WordPress. Replaces [WP Snapshots](https://github.com/10up/wpsnapshots).
 
-[![Support Level](https://img.shields.io/badge/support-active-green.svg)](#support-level) [![MIT License](https://img.shields.io/github/license/10up/snapshots.svg)](https://github.com/10up/tenup-snapshots/blob/develop/LICENSE.md)
+[![Support Level](https://img.shields.io/badge/support-beta-blueviolet.svg)](#support-level)  [![MIT License](https://img.shields.io/github/license/10up/snapshots.svg)](https://github.com/10up/tenup-snapshots/blob/develop/LICENSE.md)
 
 ## Table of Contents
 * [Overview](#overview)
@@ -28,6 +28,10 @@ Snapshots is a project-sharing tool for WordPress. Operated via the command line
 Snapshots stores snapshots in a centralized repository (AWS). Users set up Snapshots with their team's AWS credentials. Users can then push, pull, and search for snapshots. When a user pushes a snapshot, an instance of their current environment (`wp-content/`, database, etc.) is pushed to AWS and associated with a particular project slug. When a snapshot is pulled, files are pulled from the cloud either by creating a new WordPress install with the pulled database or by replacing `wp-content/` and intelligently merging the database. Snapshots will ensure your local version of WordPress matches the snapshot.
 
 A snapshot can contain files, the database, or both. Snapshot files (`wp-content/`) and WordPress database tables are stored in Amazon S3. General snapshot meta data is stored in Amazon DynamoDB.
+
+## Why Replace the Old WP Snapshots
+
+The old WP Snapshots was built as a standalone PHP script. This made it difficult to use and install on different environments. The new Snapshots is built as a WP-CLI command making it much more flexible.
 
 ## Install
 
