@@ -65,5 +65,11 @@
         "exclude": [
             "!/vendor/"
         ]
-    }
+    },
+    "authors": [
+        {
+            "name": "10up",
+            "email": "info@10up.com"
+        }
+    ]
 }
