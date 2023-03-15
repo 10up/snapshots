@@ -77,7 +77,7 @@ class TestS3StorageConnector extends TestCase {
 				'SaveAs' => '/tenup-snapshots-tmp/test-id/data.sql.gz',
 			] );
 
-		$this->set_private_property( $this->connector, 'clients', [ 'test-region' => $client ] );
+		$this->set_private_property( $this->connector, 'clients', [ 'default_test-region' => $client ] );
 
 		$this->connector->download_snapshot(
 			'test-id',
@@ -107,7 +107,7 @@ class TestS3StorageConnector extends TestCase {
 				'SaveAs' => '/tenup-snapshots-tmp/test-id/files.tar.gz',
 			] );
 
-		$this->set_private_property( $this->connector, 'clients', [ 'test-region' => $client ] );
+		$this->set_private_property( $this->connector, 'clients', [ 'default_test-region' => $client ] );
 
 		$this->connector->download_snapshot(
 			'test-id',
@@ -148,7 +148,7 @@ class TestS3StorageConnector extends TestCase {
 				]
 			);
 
-		$this->set_private_property( $this->connector, 'clients', [ 'test-region' => $client ] );
+		$this->set_private_property( $this->connector, 'clients', [ 'default_test-region' => $client ] );
 
 		$this->connector->download_snapshot(
 			'test-id',
@@ -178,7 +178,7 @@ class TestS3StorageConnector extends TestCase {
 				'LocationConstraint' => 'test-region',
 			] );
 
-		$this->set_private_property( $this->connector, 'clients', [ 'test-region' => $client ] );
+		$this->set_private_property( $this->connector, 'clients', [ 'default_test-region' => $client ] );
 
 		$this->connector->create_bucket( 'default', 'test-repo', 'test-region' );
 	}
@@ -197,7 +197,7 @@ class TestS3StorageConnector extends TestCase {
 		$client->expects( $this->never() )
 			->method( 'createBucket' );
 
-		$this->set_private_property( $this->connector, 'clients', [ 'test-region' => $client ] );
+		$this->set_private_property( $this->connector, 'clients', [ 'default_test-region' => $client ] );
 
 		$this->expectException( SnapshotsException::class );
 		$this->expectExceptionMessage( 'S3 bucket already exists.' );

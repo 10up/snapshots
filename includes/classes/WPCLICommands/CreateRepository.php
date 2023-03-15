@@ -31,8 +31,8 @@ final class CreateRepository extends WPCLICommand {
 			$this->set_assoc_args( $assoc_args );
 
 			$repository_name = $this->get_repository_name( true, 0 );
-			$region          = $this->get_region();
-			$profile         = $this->get_profile_for_repository();
+			$region          = $this->get_assoc_arg( 'region' );
+			$profile         = $this->get_assoc_arg( 'profile' );
 
 			$this->storage_connector->create_bucket( $profile, $repository_name, $region );
 			$this->db_connector->create_tables( $profile, $repository_name, $region );
@@ -66,6 +66,20 @@ final class CreateRepository extends WPCLICommand {
 					'name'        => 'repository',
 					'description' => 'The repository to create',
 					'optional'    => false,
+				],
+				[
+					'type'        => 'assoc',
+					'name'        => 'region',
+					'description' => 'The region to create the repository in',
+					'optional'    => true,
+					'default'     => 'us-west-1',
+				],
+				[
+					'type'        => 'assoc',
+					'name'        => 'profile',
+					'description' => 'The AWS profile to use',
+					'optional'    => true,
+					'default'     => 'default',
 				],
 			],
 			'when'      => 'before_wp_load',
