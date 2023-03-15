@@ -12,7 +12,7 @@ use TenUp\Snapshots\Tests\Fixtures\PrivateAccess;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
- * Class SnapshotsTest
+ * Class TestSnapshots
  *
  * @package TenUp\Snapshots\Tests
  * 
