@@ -71,7 +71,7 @@ class TestDBConnector extends TestCase {
 		$client->method( 'getIterator' )->willReturn( [] );
 
 		// Set client as private property.
-		$this->set_private_property( $this->connector, 'clients', [ 'test-region' => $client ] );
+		$this->set_private_property( $this->connector, 'clients', [ 'default_test-region' => $client ] );
 
 		// Assert that client's getIterator method was called with expected args.
 		$client->expects( $this->once() )->method( 'getIterator' )->with(
@@ -110,7 +110,7 @@ class TestDBConnector extends TestCase {
 		$client->method( 'getItem' )->willReturn( [] );
 
 		// Set client as private property.
-		$this->set_private_property( $this->connector, 'clients', [ 'test-region' => $client ] );
+		$this->set_private_property( $this->connector, 'clients', [ 'default_test-region' => $client ] );
 
 		// Assert that client's getItem method was called with expected args.
 		$client->expects( $this->once() )->method( 'getItem' )->with(
@@ -143,7 +143,7 @@ class TestDBConnector extends TestCase {
 		$client->method( 'waitUntil' )->willReturn( [] );
 
 		// Set client as private property.
-		$this->set_private_property( $this->connector, 'clients', [ 'test-region' => $client ] );
+		$this->set_private_property( $this->connector, 'clients', [ 'default_test-region' => $client ] );
 
 		// Assert that client's createTable method was called with expected args.
 		$client->expects( $this->once() )->method( 'createTable' )->with(

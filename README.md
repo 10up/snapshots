@@ -119,6 +119,18 @@ __wp snapshots create-repository <repository>__
 ```
   <repository>
     The repository to create
+
+  [--region=<region>]
+    The region to create the repository in
+    ---
+    default: us-west-1
+    ---
+
+  [--profile=<profile>]
+    The AWS profile to use
+    ---
+    default: default
+    ---
 ```
 </details>
 
@@ -141,7 +153,7 @@ __wp snapshots push [--repository=\<repository\>] [--exclude=\<exclude\>] [--slu
 <summary>Show Arguments</summary>
 
 ```
-  [--repository=\<repository\>]
+  [--repository=<repository>]
     Repository to use.
     ---
     default: 10up
@@ -333,7 +345,7 @@ __wp snapshots delete <snapshot_id> [--repository=\<repository\>]__
   <snapshot_id>
     Snapshot ID to pull.
 
-  [--repository=\<repository\>]
+  [--repository=<repository>]
     Repository to use.
 
 ```

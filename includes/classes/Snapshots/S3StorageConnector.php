@@ -231,8 +231,10 @@ class S3StorageConnector implements StorageConnectorInterface {
 	 * @return S3Client
 	 */
 	private function get_client( string $profile, string $region ) : S3Client {
-		if ( ! isset( $this->clients[ $region ] ) ) {
-			$this->clients[ $region ] = new S3Client(
+		$client_key = $profile . '_' . $region;
+
+		if ( ! isset( $this->clients[ $client_key ] ) ) {
+			$this->clients[ $client_key ] = new S3Client(
 				[
 					'region'    => $region,
 					'profile'   => $profile,
@@ -243,7 +245,7 @@ class S3StorageConnector implements StorageConnectorInterface {
 			);
 		}
 
-		return $this->clients[ $region ];
+		return $this->clients[ $client_key ];
 	}
 
 	/**

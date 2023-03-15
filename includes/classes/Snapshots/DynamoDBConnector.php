@@ -211,8 +211,10 @@ class DynamoDBConnector implements DBConnectorInterface {
 	 * @return DynamoDbClient
 	 */
 	private function get_client( string $profile, string $region ) : DynamoDbClient {
-		if ( ! isset( $this->clients[ $region ] ) ) {
-			$this->clients[ $region ] = new DynamoDbClient(
+		$client_key = $profile . '_' . $region;
+
+		if ( ! isset( $this->clients[ $client_key ] ) ) {
+			$this->clients[ $client_key ] = new DynamoDbClient(
 				[
 					'region'  => $region,
 					'profile' => $profile,
@@ -222,6 +224,6 @@ class DynamoDBConnector implements DBConnectorInterface {
 			);
 		}
 
-		return $this->clients[ $region ];
+		return $this->clients[ $client_key ];
 	}
 }
