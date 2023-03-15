@@ -38,7 +38,19 @@ The old WP Snapshots was built as a standalone PHP script. This made it difficul
 
 Snapshots is a WP CLI package. An environment with WP CLI enabled is required, and it's highly recommended you run Snapshots from WITHIN your dev environment (inside VM or container).
 
-- TODO - Package installation. Depends on build process and whether the repo is public.
+The recommended method for installing the package is directly from the GitHub repository:
+
+```bash
+wp package install 10up/snapshots
+```
+
+Alternatively, you can download the package as a zip file from the GitHub repository and install it locally:
+
+```bash
+wp package install /path/to/snapshots.zip
+```
+
+Once installed, the package will be active and ready to use.
 
 ## Authentication
 
