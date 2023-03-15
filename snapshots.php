@@ -3,7 +3,7 @@
  * Plugin Name: 10up Snapshots
  * Plugin URI: https://github.com/10up/snapshots
  * Description: A WordPress plugin to manage snapshots of your WordPress site.
- * Version: 0.1.0
+ * Version: 1.0.0
  * Author: 10up
  * Author URI: https://10up.com
  * License: MIT
