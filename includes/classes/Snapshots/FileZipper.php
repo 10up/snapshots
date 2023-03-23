@@ -151,7 +151,7 @@ class FileZipper implements SharedService {
 
 			if ( 'f' === $file['type'] ) {
 				// If file length is too long, skip it, or else the whole process will fail.
-				if ( strlen( str_replace( $wp_content_dir, '', $full_path ) ) > 100 ) {
+				if ( strlen( basename( str_replace( $wp_content_dir, '', $full_path ) ) ) > 100 ) {
 					continue;
 				}
 
