@@ -11,6 +11,8 @@ use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\Infrastructure\SharedService;
 use WP_Filesystem_Base;
 
+use function TenUp\Snapshots\Utils\snapshots_add_trailing_slash;
+
 /**
  * SnapshotsDirectory class.
  *
@@ -135,24 +137,13 @@ class FileSystem implements SharedService {
 		}
 
 		if ( is_wp_error( $result ) && 'incompatible_archive' === $result->get_error_code() && strpos( $file, '.sql.gz' ) !== false ) {
-			$gzipped = gzopen( $file, 'rb' );
-			if ( ! $gzipped ) {
-				throw new SnapshotsException( 'Could not open gzipped file.' );
+			// Unzip with gzip.
+			$unzip_gzip = sprintf( 'gunzip -c %s > %s', escapeshellarg( $file ), escapeshellarg( snapshots_add_trailing_slash( $destination ) . basename( $file, '.gz' ) ) );
+			$result     = exec( $unzip_gzip ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.system_calls_exec
+
+			if ( false === $result ) {
+				throw new SnapshotsException( 'Unable to unzip file.' );
 			}
-
-			$data = '';
-			while ( ! gzeof( $gzipped ) ) {
-				$unzipped_content = gzread( $gzipped, 4096 );
-				if ( false === $unzipped_content ) {
-					throw new SnapshotsException( 'Could not read gzipped file.' );
-				}
-
-				$data .= $unzipped_content;
-			}
-
-			gzclose( $gzipped );
-
-			$this->get_wp_filesystem()->put_contents( trailingslashit( $destination ) . str_replace( '.gz', '', basename( $file ) ), $data );
 		} elseif ( is_wp_error( $result ) ) {
 			throw new SnapshotsException( $result->get_error_message() );
 		} else {
