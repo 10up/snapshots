@@ -41,8 +41,10 @@ Snapshots is a WP CLI package. An environment with WP CLI enabled is required, a
 The recommended method for installing the package is directly from the GitHub repository:
 
 ```bash
-wp package install 10up/snapshots
+wp package install 10up/snapshots:@stable
 ```
+
+The `@stable` version constraint will install the latest released version.
 
 Alternatively, you can download the package as a zip file from the GitHub repository and install it locally:
 
