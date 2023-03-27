@@ -118,11 +118,11 @@ wp snapshots configure 10up --region=us-west-1 --user_name="John Doe" --user_ema
 
 ### create-repository
 
-If Snapshots has not been set up for your team/company, you'll need to create the Snapshots repository. If a repository has already been created, this command will do nothing.
+If Snapshots has not been set up for your team/company, you'll need to create the Snapshots repository. If a repository has already been created, this command will do nothing. Note that you must have permissions to create DynamoDB tables and S3 buckets in order to create the repository.
 
 #### Command
 
-__wp snapshots create-repository <repository>__
+__wp snapshots create-repository <repository> [--region=\<region\>] [--profile=\<profile\>]__
 
 
 <details>
