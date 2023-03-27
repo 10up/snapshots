@@ -36,6 +36,13 @@ class FileSystem implements SharedService {
 		if ( ! $this->wp_filesystem ) {
 			if ( ! $wp_filesystem ) {
 				if ( function_exists( 'WP_Filesystem' ) ) {
+					add_filter(
+						'filesystem_method',
+						static function () {
+							return 'direct';
+						},
+						PHP_INT_MAX
+					);
 					WP_Filesystem( false, false, true );
 
 				} else {
