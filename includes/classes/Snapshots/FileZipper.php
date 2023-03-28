@@ -71,13 +71,11 @@ class FileZipper implements SharedService {
 
 		if ( true !== $args['include_node_modules'] ) {
 			// Exclude all node_modules directories as a pattern, including the root one.
-			$excludes[] = './node_modules';
 			$excludes[] = './**/node_modules';
 		}
 
 		if ( ! empty( $args['exclude_vendor'] ) ) {
 			// Exclude all vendor directories.
-			$excludes[] = './vendor';
 			$excludes[] = './**/vendor';
 		}
 

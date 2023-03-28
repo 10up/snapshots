@@ -151,8 +151,6 @@ class TestFileZipper extends TestCase {
 	 * @covers ::zip_files
 	 * @covers ::get_build_from_iterator_iterator
 	 * @covers ::build_file_list_recursively
-	 * 
-	 * @group failing
 	 */
 	public function test_zip_files_with_exclude_node_modules() {
 		add_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
