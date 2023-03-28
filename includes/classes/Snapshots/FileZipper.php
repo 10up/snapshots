@@ -7,12 +7,7 @@
 
 namespace TenUp\Snapshots\Snapshots;
 
-use ArrayIterator;
-use Iterator;
-use Phar;
-use PharData;
 use TenUp\Snapshots\Exceptions\SnapshotsException;
-use TenUp\Snapshots\FileSystem;
 use TenUp\Snapshots\Infrastructure\SharedService;
 use TenUp\Snapshots\SnapshotsDirectory;
 
@@ -33,21 +28,12 @@ class FileZipper implements SharedService {
 	private $snapshot_files;
 
 	/**
-	 * FileSystem instance.
-	 *
-	 * @var FileSystem
-	 */
-	private $file_system;
-
-	/**
 	 * Class constructor.
 	 *
 	 * @param SnapshotsDirectory $snapshot_files SnapshotsDirectory instance.
-	 * @param FileSystem         $file_system FileSystem instance.
 	 */
-	public function __construct( SnapshotsDirectory $snapshot_files, FileSystem $file_system ) {
+	public function __construct( SnapshotsDirectory $snapshot_files ) {
 		$this->snapshot_files = $snapshot_files;
-		$this->file_system    = $file_system;
 	}
 
 	/**
@@ -61,119 +47,55 @@ class FileZipper implements SharedService {
 	 * @throws SnapshotsException If could not create zip.
 	 */
 	public function zip_files( string $id, array $args ) : int {
-		if ( ! class_exists( 'PharData' ) ) {
-			throw new SnapshotsException( 'PharData class not found.' );
-		}
-
 		$this->snapshot_files->create_directory( $id );
 
-		$iterator = $this->get_build_from_iterator_iterator( $args );
+		$excludes = [];
 
-		$phar_file = $this->snapshot_files->get_file_path( 'files.tar', $id );
-		$phar      = new PharData( $phar_file );
-
-		$phar->buildFromIterator( $iterator );
-		$phar->compress( Phar::GZ );
-
-		unset( $phar );
-		Phar::unlinkArchive( $phar_file );
-
-		$this->file_system->get_wp_filesystem()->delete( $phar_file );
-
-		return $this->snapshot_files->get_file_size( 'files.tar.gz', $id );
-	}
-
-	/**
-	 * Gets an iterator of files to pass to buildFromIterator.
-	 *
-	 * @param array $args Snapshot arguments.
-	 *
-	 * @return Iterator
-	 */
-	private function get_build_from_iterator_iterator( array $args ) : Iterator {
-		$excludes = $args['excludes'] ?? [];
+		$command = 'cd ' . escapeshellarg( snapshots_wp_content_dir() ) . '/ && tar ';
 
 		if ( ! empty( $args['exclude_uploads'] ) ) {
-			$excludes[] = 'uploads';
+			$excludes[] = './uploads';
 		}
 
-		$excludes[] = trailingslashit( str_replace( snapshots_wp_content_dir(), '', TENUP_SNAPSHOTS_DIR ) );
+		if ( ! empty( $args['excludes'] ) ) {
+			foreach ( $args['excludes'] as $exclude ) {
+				$exclude = trim( $exclude );
 
-		$excludes = array_map(
-			function( $exclude ) {
-				$full_exclude = trailingslashit( snapshots_wp_content_dir() ) . $exclude;
-				// Remove double slashes.
-				return preg_replace( '#/+#', '/', $full_exclude );
-			},
-			$excludes
-		);
-
-		$initial_files = $this->file_system->get_wp_filesystem()->dirlist( snapshots_wp_content_dir() );
-		$file_list     = $this->build_file_list_recursively( $initial_files, snapshots_wp_content_dir(), $excludes, $args['include_node_modules'], $args['exclude_vendor'] );
-
-		return new ArrayIterator( $file_list );
-	}
-
-	/**
-	 * Recursively builds a list of files to pass to buildFromIterator.
-	 *
-	 * @param array  $files    List of files.
-	 * @param string $base_dir Base directory.
-	 * @param array  $excludes List of files to exclude.
-	 * @param bool   $include_node_modules Whether to include node_modules.
-	 * @param bool   $exclude_vendor Whether to exclude vendor.
-	 *
-	 * @return array
-	 */
-	private function build_file_list_recursively( array $files, string $base_dir, array $excludes, bool $include_node_modules = false, bool $exclude_vendor = false ) : array {
-		$file_list = [];
-
-		$wp_content_dir = snapshots_wp_content_dir();
-
-		foreach ( $files as $file ) {
-			$full_path = trailingslashit( $base_dir ) . $file['name'];
-
-			if ( in_array( $full_path, $excludes, true ) || in_array( trailingslashit( $full_path ), $excludes, true ) ) {
-				continue;
-			}
-
-			foreach ( $excludes as $exclude ) {
-				$path_without_wp_content = str_replace( snapshots_wp_content_dir(), '', $full_path );
-
-				if ( 0 === strpos( $path_without_wp_content, $exclude ) ) {
-					continue 2;
+				if ( ! preg_match( '#^\./.*#', $exclude ) ) {
+					$exclude = './' . $exclude;
 				}
 
-				if ( 0 === strpos( $path_without_wp_content, '/' . $exclude ) ) {
-					continue 2;
-				}
-			}
-
-			if ( 'f' === $file['type'] ) {
-				// If any segment of the file path is longer than 100 character, skip it.
-				// This is to avoid a phar exception that will break this whole process.
-				$segments = explode( '/', $full_path );
-				foreach ( $segments as $segment ) {
-					if ( strlen( $segment ) > 100 ) {
-						continue 2;
-					}
-				}
-
-				$file_list[ str_replace( $wp_content_dir, '', $full_path ) ] = $full_path;
-			} elseif ( 'd' === $file['type'] ) {
-				if ( 'node_modules' === $file['name'] && ! $include_node_modules ) {
-					continue;
-				}
-
-				if ( 'vendor' === $file['name'] && $exclude_vendor ) {
-					continue;
-				}
-
-				$dir_files = $this->file_system->get_wp_filesystem()->dirlist( $full_path );
-				$file_list = array_merge( $file_list, $this->build_file_list_recursively( $dir_files, $full_path, $excludes, $include_node_modules, $exclude_vendor ) );
+				$excludes[] = $exclude;
 			}
 		}
 
-		return $file_list;
+		if ( true !== $args['include_node_modules'] ) {
+			// Exclude all node_modules directories as a pattern, including the root one.
+			$excludes[] = './node_modules';
+			$excludes[] = './**/node_modules';
+		}
+
+		if ( ! empty( $args['exclude_vendor'] ) ) {
+			// Exclude all vendor directories.
+			$excludes[] = './vendor';
+			$excludes[] = './**/vendor';
+		}
+
+		if ( ! empty( $excludes ) ) {
+			$command .= '--exclude=' . implode( ' --exclude=', array_map( 'escapeshellarg', $excludes ) ) . ' ';
+		}
+
+		$command .= '-czf ' . escapeshellarg( $this->snapshot_files->get_file_path( 'files.tar.gz', $id ) ) . ' .';
+
+		$exit_code = 0;
+
+		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.system_calls_exec
+		exec( $command, $output, $exit_code );
+
+		if ( 0 !== $exit_code ) {
+			throw new SnapshotsException( 'Could not create zip file.' );
+		}
+
+		return $this->snapshot_files->get_file_size( 'files.tar.gz', $id );
 	}
 }

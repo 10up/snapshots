@@ -292,7 +292,7 @@ class SnapshotsDirectory implements SharedService {
 	 *
 	 * @throws SnapshotsException If unable to create directory.
 	 */
-	private function get_directory( ?string $id = null ) : string {
+	public function get_directory( ?string $id = null ) : string {
 
 		$directory = getenv( 'TENUP_SNAPSHOTS_DIR' );
 		$directory = ! empty( $directory ) ? rtrim( $directory, '/' ) . '/' : rtrim( $_SERVER['HOME'], '/' ) . '/.wpsnapshots/';

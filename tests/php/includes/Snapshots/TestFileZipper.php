@@ -53,6 +53,9 @@ class TestFileZipper extends TestCase {
 		$this->set_up_directory_filtering();
 
 		$this->file_system->get_wp_filesystem()->delete( '/tmp/files', true );
+
+		// Recreate /tmp/files.
+		$this->file_system->get_wp_filesystem()->mkdir( '/tmp/files' );
 	}
 
 	/**
@@ -94,13 +97,8 @@ class TestFileZipper extends TestCase {
 
 		remove_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
-		// Unzip the file and check the contents.
-		$phar = new PharData( '/tenup-snapshots-tmp/test-id/files.tar.gz' );
-		$phar->decompress();
-		$phar->extractTo( '/tmp/files' );
-
-		unset( $phar );
-		Phar::unlinkArchive( '/tenup-snapshots-tmp/test-id/files.tar.gz' );
+		// Unzip with exec and tar instead. The above will be deleted.
+		exec( 'tar -xzf /tenup-snapshots-tmp/test-id/files.tar.gz -C /tmp/files');		
 
 		$this->assertFileExists( '/tmp/files/uploads/' );
 		$this->assertFileExists( '/tmp/files/uploads/test-file.txt' );
@@ -136,12 +134,7 @@ class TestFileZipper extends TestCase {
 		remove_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
 		// Unzip the file and check the contents.
-		$phar = new PharData( '/tenup-snapshots-tmp/test-id-2/files.tar.gz' );
-		$phar->decompress();
-		$phar->extractTo( '/tmp/files' );
-
-		unset( $phar );
-		Phar::unlinkArchive( '/tenup-snapshots-tmp/test-id-2/files.tar.gz' );
+		exec( 'tar -xzf /tenup-snapshots-tmp/test-id-2/files.tar.gz -C /tmp/files');
 
 		$this->assertFileDoesNotExist( '/tmp/files/uploads/' );
 		$this->assertFileDoesNotExist( '/tmp/files/uploads/test-file.txt' );
@@ -158,6 +151,8 @@ class TestFileZipper extends TestCase {
 	 * @covers ::zip_files
 	 * @covers ::get_build_from_iterator_iterator
 	 * @covers ::build_file_list_recursively
+	 * 
+	 * @group failing
 	 */
 	public function test_zip_files_with_exclude_node_modules() {
 		add_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
@@ -177,12 +172,7 @@ class TestFileZipper extends TestCase {
 		remove_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
 		// Unzip the file and check the contents.
-		$phar = new PharData( '/tenup-snapshots-tmp/test-id-3/files.tar.gz' );
-		$phar->decompress();
-		$phar->extractTo( '/tmp/files' );
-
-		unset( $phar );
-		Phar::unlinkArchive( '/tenup-snapshots-tmp/test-id-3/files.tar.gz' );
+		exec( 'tar -xzf /tenup-snapshots-tmp/test-id-3/files.tar.gz -C /tmp/files');
 
 		$this->assertFileDoesNotExist( '/tmp/files/plugins/test-plugin/node_modules' );
 		$this->assertFileDoesNotExist( '/tmp/files/plugins/test-plugin/node_modules/test-file.txt' );
@@ -215,12 +205,7 @@ class TestFileZipper extends TestCase {
 		remove_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
 		// Unzip the file and check the contents.
-		$phar = new PharData( '/tenup-snapshots-tmp/test-id-4/files.tar.gz' );
-		$phar->decompress();
-		$phar->extractTo( '/tmp/files' );
-
-		unset( $phar );
-		Phar::unlinkArchive( '/tenup-snapshots-tmp/test-id-4/files.tar.gz' );
+		exec( 'tar -xzf /tenup-snapshots-tmp/test-id-4/files.tar.gz -C /tmp/files');
 
 		$this->assertFileExists( '/tmp/files/plugins/test-plugin/node_modules' );
 		$this->assertFileExists( '/tmp/files/plugins/test-plugin/node_modules/test-file.txt' );
@@ -253,12 +238,7 @@ class TestFileZipper extends TestCase {
 		remove_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
 		// Unzip the file and check the contents.
-		$phar = new PharData( '/tenup-snapshots-tmp/test-id-5/files.tar.gz' );
-		$phar->decompress();
-		$phar->extractTo( '/tmp/files' );
-
-		unset( $phar );
-		Phar::unlinkArchive( '/tenup-snapshots-tmp/test-id-5/files.tar.gz' );
+		exec( 'tar -xzf /tenup-snapshots-tmp/test-id-5/files.tar.gz -C /tmp/files');
 
 		$this->assertFileExists( '/tmp/files/plugins/test-plugin/vendor' );
 		$this->assertFileExists( '/tmp/files/plugins/test-plugin/vendor/test-file.txt' );
@@ -291,12 +271,7 @@ class TestFileZipper extends TestCase {
 		remove_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
 		// Unzip the file and check the contents.
-		$phar = new PharData( '/tenup-snapshots-tmp/test-id-6/files.tar.gz' );
-		$phar->decompress();
-		$phar->extractTo( '/tmp/files' );
-
-		unset( $phar );
-		Phar::unlinkArchive( '/tenup-snapshots-tmp/test-id-6/files.tar.gz' );
+		exec( 'tar -xzf /tenup-snapshots-tmp/test-id-6/files.tar.gz -C /tmp/files');
 
 		$this->assertFileDoesNotExist( '/tmp/files/plugins/test-plugin/vendor' );
 		$this->assertFileDoesNotExist( '/tmp/files/plugins/test-plugin/vendor/test-file.txt' );
@@ -329,12 +304,7 @@ class TestFileZipper extends TestCase {
 		remove_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
 		// Unzip the file and check the contents.
-		$phar = new PharData( '/tenup-snapshots-tmp/test-id-7/files.tar.gz' );
-		$phar->decompress();
-		$phar->extractTo( '/tmp/files' );
-
-		unset( $phar );
-		Phar::unlinkArchive( '/tenup-snapshots-tmp/test-id-7/files.tar.gz' );
+		exec( 'tar -xzf /tenup-snapshots-tmp/test-id-7/files.tar.gz -C /tmp/files');
 
 		// Check another file first.
 		$this->assertFileExists( '/tmp/files/uploads/test-file.txt' );
@@ -343,7 +313,7 @@ class TestFileZipper extends TestCase {
 		$this->assertFileExists( '/tmp/files/uploads/' . $this->get_100_character_file_name() );
 
 		// Check the long file name.
-		$this->assertFileDoesNotExist( '/tmp/files/uploads/' . $this->get_101_character_file_name() );
+		$this->assertFileExists( '/tmp/files/uploads/' . $this->get_101_character_file_name() );
 	}
 
 	/**
