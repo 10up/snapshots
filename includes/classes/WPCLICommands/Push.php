@@ -26,14 +26,15 @@ final class Push extends Create {
 	/**
 	 * Runs the command.
 	 *
-	 * @param bool $contains_db Whether the snapshot contains a database.
-	 * @param bool $contains_files Whether the snapshot contains files.
-	 *
 	 * @return string
 	 */
-	public function run( bool $contains_db, bool $contains_files ) : string {
-		// Run the parent run method.
-		$id = parent::run( $contains_db, $contains_files );
+	public function run() : string {
+		$id = $this->get_args()[0] ?? null;
+
+		if ( ! $id ) {
+			// Run the parent run method.
+			$id = parent::run();
+		}
 
 		$this->log( 'Pushing snapshot to remote repository...' );
 
@@ -45,6 +46,25 @@ final class Push extends Create {
 		$this->db_connector->insert_snapshot( $id, $profile, $repository_name, $region, $this->snapshot_meta->get_local( $id, $repository_name ) );
 
 		return $id;
+	}
+
+	/**
+	 * Provides command parameters.
+	 *
+	 * @inheritDoc
+	 */
+	protected function get_command_parameters() : array {
+		$parameters = parent::get_command_parameters();
+
+		// Add anid parameter to push a snapshot that already exists locally.
+		$parameters['synopsis'][] = [
+			'type'        => 'positional',
+			'name'        => 'snapshot_id',
+			'description' => 'ID of local snapshot to push',
+			'optional'    => true,
+		];
+
+		return $parameters;
 	}
 
 	/**

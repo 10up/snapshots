@@ -65,14 +65,7 @@ class Create extends WPCLICommand {
 			$this->set_args( $args );
 			$this->set_assoc_args( $assoc_args );
 
-			$contains_db    = $this->prompt->get_flag_or_prompt( $this->get_assoc_args(), 'include_db', 'Include database in snapshot?', true );
-			$contains_files = $this->prompt->get_flag_or_prompt( $this->get_assoc_args(), 'include_files', 'Include files in snapshot?', true );
-
-			if ( ! $contains_db && ! $contains_files ) {
-				throw new SnapshotsException( 'You must include either the database or files in the snapshot.' );
-			}
-
-			$id = $this->run( $contains_db, $contains_files );
+			$id = $this->run();
 
 			wp_cli()::success( $this->get_success_message( $id ) );
 		} catch ( Exception $e ) {
@@ -197,14 +190,18 @@ class Create extends WPCLICommand {
 	/**
 	 * Runs the command.
 	 *
-	 * @param bool $contains_db Whether the snapshot contains a database.
-	 * @param bool $contains_files Whether the snapshot contains files.
-	 *
 	 * @return string
 	 *
 	 * @throws SnapshotsException If the snapshot cannot be created.
 	 */
-	public function run( bool $contains_db, bool $contains_files ) : string {
+	public function run() : string {
+		$contains_db    = $this->prompt->get_flag_or_prompt( $this->get_assoc_args(), 'include_db', 'Include database in snapshot?', true );
+		$contains_files = $this->prompt->get_flag_or_prompt( $this->get_assoc_args(), 'include_files', 'Include files in snapshot?', true );
+
+		if ( ! $contains_db && ! $contains_files ) {
+			throw new SnapshotsException( 'You must include either the database or files in the snapshot.' );
+		}
+
 		$id = md5( time() . wp_rand() );
 		$this->snapshots_filesystem->create_directory( $id );
 		return $this->create( $this->get_create_args( $contains_db, $contains_files ), $id );

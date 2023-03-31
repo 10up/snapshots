@@ -160,13 +160,16 @@ Pushing a snapshot will not replace older snapshots with the same name. Each tim
 
 #### Command
 
-__wp snapshots push [--repository=\<repository\>] [--exclude=\<exclude\>] [--slug=\<slug\>] [--description=\<description\>] [--wp_version=\<wp_version\>] [--author_name=\<author_name\>]
+__wp snapshots push [<snapshot_id>] [--repository=\<repository\>] [--exclude=\<exclude\>] [--slug=\<slug\>] [--description=\<description\>] [--wp_version=\<wp_version\>] [--author_name=\<author_name\>]
   [--author_email=\<author_email\>] [--exclude_uploads] [--small] [--include_files] [--include_db]__
 
 <details>
 <summary>Show Arguments</summary>
 
 ```
+  <snapshot_id>
+    ID of local snapshot to push.
+
   [--repository=<repository>]
     Repository to use.
     ---
