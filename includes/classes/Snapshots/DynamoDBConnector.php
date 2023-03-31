@@ -213,15 +213,21 @@ class DynamoDBConnector implements DBConnectorInterface {
 	private function get_client( string $profile, string $region ) : DynamoDbClient {
 		$client_key = $profile . '_' . $region;
 
+		$args = [
+			'region'  => $region,
+			'profile' => $profile,
+			'version' => '2012-08-10',
+			'csm'     => false,
+		];
+
+		// Check if the necessary AWS env vars are set; if so, the profile arg is not needed.
+		// These are the same env vars the SDK checks for in CredentialProvider.php.
+		if ( getenv( 'AWS_ACCESS_KEY_ID' ) && getenv( 'AWS_SECRET_ACCESS_KEY' ) ) {
+			unset( $args['profile'] );
+		}
+
 		if ( ! isset( $this->clients[ $client_key ] ) ) {
-			$this->clients[ $client_key ] = new DynamoDbClient(
-				[
-					'region'  => $region,
-					'profile' => $profile,
-					'version' => '2012-08-10',
-					'csm'     => false,
-				]
-			);
+			$this->clients[ $client_key ] = new DynamoDbClient( $args );
 		}
 
 		return $this->clients[ $client_key ];
