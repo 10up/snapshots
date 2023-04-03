@@ -132,7 +132,7 @@ class S3StorageConnector implements StorageConnectorInterface {
 		$meta   = $this->snapshot_meta->get_local( $id, $repository );
 		$client = $this->get_client( $profile, $region );
 
-		if ( $meta['contains_db'] ) {
+		if ( $meta['contains_db'] && file_exists( $this->snapshots_file_system->get_file_path( 'data.sql.gz', $id ) ) ) {
 			$client->putObject(
 				[
 					'Bucket'     => $this->get_bucket_name( $repository ),
@@ -143,7 +143,7 @@ class S3StorageConnector implements StorageConnectorInterface {
 			);
 		}
 
-		if ( $meta['contains_files'] ) {
+		if ( $meta['contains_files'] && file_exists( $this->snapshots_file_system->get_file_path( 'files.tar.gz', $id ) ) ) {
 			$client->putObject(
 				[
 					'Bucket'     => $this->get_bucket_name( $repository ),

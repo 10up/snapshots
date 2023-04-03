@@ -49,7 +49,7 @@ class FileZipper implements SharedService {
 	public function zip_files( string $id, array $args ) : int {
 		$this->snapshot_files->create_directory( $id );
 
-		$excludes = [];
+		$excludes = [ './plugins/snapshots' ];
 
 		$command = 'cd ' . escapeshellarg( snapshots_wp_content_dir() ) . '/ && tar ';
 
@@ -79,10 +79,7 @@ class FileZipper implements SharedService {
 			$excludes[] = './**/vendor';
 		}
 
-		if ( ! empty( $excludes ) ) {
-			$command .= '--exclude=' . implode( ' --exclude=', array_map( 'escapeshellarg', $excludes ) ) . ' ';
-		}
-
+		$command .= '--exclude=' . implode( ' --exclude=', array_map( 'escapeshellarg', $excludes ) ) . ' ';
 		$command .= '-czf ' . escapeshellarg( $this->snapshot_files->get_file_path( 'files.tar.gz', $id ) ) . ' .';
 
 		$exit_code = 0;
