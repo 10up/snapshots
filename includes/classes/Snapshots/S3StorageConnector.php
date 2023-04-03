@@ -233,16 +233,22 @@ class S3StorageConnector implements StorageConnectorInterface {
 	private function get_client( string $profile, string $region ) : S3Client {
 		$client_key = $profile . '_' . $region;
 
+		$args = [
+			'region'    => $region,
+			'profile'   => $profile,
+			'signature' => 'v4',
+			'version'   => '2006-03-01',
+			'csm'       => false,
+		];
+
+		// Check if the necessary AWS env vars are set; if so, the profile arg is not needed.
+		// These are the same env vars the SDK checks for in CredentialProvider.php.
+		if ( getenv( 'AWS_ACCESS_KEY_ID' ) && getenv( 'AWS_SECRET_ACCESS_KEY' ) ) {
+			unset( $args['profile'] );
+		}
+
 		if ( ! isset( $this->clients[ $client_key ] ) ) {
-			$this->clients[ $client_key ] = new S3Client(
-				[
-					'region'    => $region,
-					'profile'   => $profile,
-					'signature' => 'v4',
-					'version'   => '2006-03-01',
-					'csm'       => false,
-				]
-			);
+			$this->clients[ $client_key ] = new S3Client( $args );
 		}
 
 		return $this->clients[ $client_key ];
