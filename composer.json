@@ -1,75 +1,77 @@
 {
-    "name": "10up/snapshots",
-    "type": "wordpress-plugin",
-    "license": "MIT",
-    "minimum-stability": "dev",
-    "autoload": {
-        "psr-4": {
-            "TenUp\\Snapshots\\": "includes/classes/"
-        },
-        "files": [ "command.php" ]
+  "name": "10up/snapshots",
+  "type": "wordpress-plugin",
+  "license": "MIT",
+  "minimum-stability": "dev",
+  "autoload": {
+    "psr-4": {
+      "TenUp\\Snapshots\\": "includes/classes/"
     },
-    "repositories": [
-        {
-            "type": "package",
-            "package": {
-                "name": "wordpress/wordpress-develop",
-                "version": "dev-trunk",
-                "source": {
-                    "type": "git",
-                    "url": "https://github.com/WordPress/wordpress-develop",
-                    "reference": "trunk"
-                }
-            }
-        }
-    ],
-    "require": {
-        "aws/aws-sdk-php": "^3.254",
-        "jc21/clitable": "dev-master"
-    },
-    "require-dev": {
-        "10up/phpcs-composer": "dev-master",
-        "yoast/wp-test-utils": "^1.1",
-        "wp-cli/wp-cli": "2.8.x-dev",
-        "civicrm/composer-downloads-plugin": "dev-master",
-        "php-stubs/wordpress-stubs": "^6.1",
-        "php-stubs/wordpress-tests-stubs": "^6.1",
-        "php": ">=8.0",
-        "wordpress/wordpress-develop": "dev-trunk"
-    },
-    "scripts": {
-        "lint": "phpcs .",
-        "lint-fix": "phpcbf .",
-        "static": "WP_TESTS_DIR=vendor/wordpress/wordpress-develop/tests/phpunit phpstan analyze --ansi --memory-limit=2G",
-        "test": "phpunit",
-        "post-install-cmd": [
-            "php -r \"copy('vendor/wordpress/wordpress-develop/wp-tests-config-sample.php', 'vendor/wordpress/wordpress-develop/wp-tests-config.php');\""
-        ]
-    },
-    "config": {
-        "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true,
-            "civicrm/composer-downloads-plugin": true
-        }
-    },
-    "extra": {
-        "downloads": {
-            "phpstan": {
-                "path": "vendor/bin/phpstan",
-                "type": "phar",
-                "url": "https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar"
-            }
-        }
-    },
-    "archive": {
-        "exclude": [
-            "!/vendor/"
-        ]
-    },
-    "authors": [
-        {
-            "name": "10up",
-            "email": "info@10up.com"
-        }
+    "files": [
+      "command.php"
     ]
+  },
+  "repositories": [
+    {
+      "type": "package",
+      "package": {
+        "name": "wordpress/wordpress-develop",
+        "version": "dev-trunk",
+        "source": {
+          "type": "git",
+          "url": "https://github.com/WordPress/wordpress-develop",
+          "reference": "trunk"
+        }
+      }
+    }
+  ],
+  "require": {
+    "aws/aws-sdk-php": "^3.254",
+    "jc21/clitable": "dev-master"
+  },
+  "require-dev": {
+    "10up/phpcs-composer": "dev-master",
+    "yoast/wp-test-utils": "^1.1",
+    "wp-cli/wp-cli": "2.8.x-dev",
+    "civicrm/composer-downloads-plugin": "dev-master",
+    "php-stubs/wordpress-stubs": "^6.1",
+    "php-stubs/wordpress-tests-stubs": "^6.1",
+    "php": ">=7.3",
+    "wordpress/wordpress-develop": "dev-trunk"
+  },
+  "scripts": {
+    "lint": "phpcs .",
+    "lint-fix": "phpcbf .",
+    "static": "WP_TESTS_DIR=vendor/wordpress/wordpress-develop/tests/phpunit phpstan analyze --ansi --memory-limit=2G",
+    "test": "phpunit",
+    "post-install-cmd": [
+      "php -r \"copy('vendor/wordpress/wordpress-develop/wp-tests-config-sample.php', 'vendor/wordpress/wordpress-develop/wp-tests-config.php');\""
+    ]
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "civicrm/composer-downloads-plugin": true
+    }
+  },
+  "extra": {
+    "downloads": {
+      "phpstan": {
+        "path": "vendor/bin/phpstan",
+        "type": "phar",
+        "url": "https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar"
+      }
+    }
+  },
+  "archive": {
+    "exclude": [
+      "!/vendor/"
+    ]
+  },
+  "authors": [
+    {
+      "name": "10up",
+      "email": "info@10up.com"
+    }
+  ]
 }

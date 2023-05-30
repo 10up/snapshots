@@ -56,6 +56,8 @@ Alternatively, you can download the package as a zip file from the GitHub reposi
 wp package install /path/to/snapshots.zip
 ```
 
+Note: PHP 7.3+ is required.
+
 ### 2. Authentication
 
 You must set up your AWS credentials in your local environment. Option 1 is the preferred method.
