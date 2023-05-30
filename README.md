@@ -34,7 +34,11 @@ A snapshot can contain files, the database, or both. Snapshot files (`wp-content
 
 The old WP Snapshots was built as a standalone PHP script. This made it difficult to use and install on different environments. The new Snapshots is built as a WP-CLI command making it much more flexible.
 
-## Install
+## Getting Started
+
+Follow the steps below to set up and use Snapshots.
+
+### 1. Install
 
 Snapshots is a WP CLI package. An environment with WP CLI enabled is required, and it's highly recommended you run Snapshots from WITHIN your dev environment (inside VM or container).
 
@@ -52,13 +56,11 @@ Alternatively, you can download the package as a zip file from the GitHub reposi
 wp package install /path/to/snapshots.zip
 ```
 
-Once installed, the package will be active and ready to use.
+### 2. Authentication
 
-## Authentication
+You must set up your AWS credentials in your local environment. Option 1 is the preferred method.
 
-Snapshots does not support authenticating with AWS by passing commands via the command line. Instead, you must set up your AWS credentials in your local environment. There are [a few methods](https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/guide_credentials.html) for setting credentials in your environment; once you do so, the WP Snapshot script will automatically detect your credentials and use them to authenticate all requests. The easiest options are outlined below.
-
-### Option 1: AWS Credentials File
+#### Option 1: AWS Credentials File (Easiest Setup Method)
 
 Create a `~/.aws/credentials` file with the following contents:
 
@@ -72,9 +74,18 @@ Depending on your setup, you may need to create the `~/.aws` directory and the `
 
 More information in [AWS documentation](https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/guide_credentials_profiles.html).
 
-### Option 2: Environment Variables
+#### Option 2: Environment Variables
 
 Set the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables. See the [AWS docs](https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/guide_credentials_environment.html) for more information.
+
+### 3. Configure
+
+You have to configure Snapshots to use a repository. Run the following command:
+```
+wp snapshots configure 10up
+```
+
+Make sure to associate Snapshots with the correct AWS profile.
 
 ## Usage
 
