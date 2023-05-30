@@ -125,7 +125,7 @@ abstract class Container {
 	 *
 	 * @throws SnapshotsException If an unknown module or service is encountered.
 	 */
-	private function get_instance_from_parameter( ReflectionParameter $parameter, ReflectionMethod $constructor ) : object|array {
+	private function get_instance_from_parameter( ReflectionParameter $parameter, ReflectionMethod $constructor ) {
 		$type = $parameter->getType();
 
 		// If the parameter is ...$args, get instances from the parent class's constructor.
