@@ -137,6 +137,18 @@ class SnapshotsConfigFromFileSystem implements SnapshotsConfigInterface {
 	}
 
 	/**
+	 * Gets the roleArn property from a repository. Defaults to ''.
+	 *
+	 * @param string $repository Repository name.
+	 * @return string $profile Profile name.
+	 */
+	public function get_repository_role_arn( string $repository = '' ) : string {
+		$settings = $this->get_repository_settings( $repository );
+
+		return $settings['roleArn'] ?? '';
+	}
+
+	/**
 	 * Gets the default repository name.
 	 *
 	 * @return ?string $repository Default repository name.

@@ -57,6 +57,14 @@ interface SnapshotsConfigInterface extends SharedService {
 	public function get_repository_profile( string $repository = '' ) : ?string;
 
 	/**
+	 * Gets the roleArn property from a repository.
+	 *
+	 * @param string $repository Repository name.
+	 * @return ?string $roleArn Role ARN string.
+	 */
+	public function get_repository_role_arn( string $repository = '' ) : ?string;
+
+	/**
 	 * Gets repositories.
 	 *
 	 * @return array
