@@ -9,6 +9,8 @@ namespace TenUp\Snapshots\Snapshots;
 
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Marshaler;
+use Aws;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 
 /**
  * Class for handling Amazon dynamodb calls
@@ -212,18 +214,34 @@ class DynamoDBConnector implements DBConnectorInterface {
 	 */
 	private function get_client( string $profile, string $region ) : DynamoDbClient {
 		$client_key = $profile . '_' . $region;
+		$role_arn = $_ENV['role_arn'];
 
 		$args = [
 			'region'  => $region,
-			'profile' => $profile,
 			'version' => '2012-08-10',
 			'csm'     => false,
 		];
 
-		// Check if the necessary AWS env vars are set; if so, the profile arg is not needed.
-		// These are the same env vars the SDK checks for in CredentialProvider.php.
-		if ( getenv( 'AWS_ACCESS_KEY_ID' ) && getenv( 'AWS_SECRET_ACCESS_KEY' ) ) {
-			unset( $args['profile'] );
+		// if role_arn has a value use STS to assume the role
+		// and pass the credential info to DynamoDbClient later on
+		if ( $role_arn != "" ) {
+			$args['roleArn'] = $role_arn;
+
+			$temporaryCredentials = $this->assumeRole($args);
+
+			if ( ! is_array( $temporaryCredentials ) ) {
+				throw new SnapshotsException( sprintf( "Failed to assume role '%s'.", $args['roleArn'] ) );
+			}
+
+			$args['credentials'] = [
+				'key'    => $temporaryCredentials['AccessKeyId'],
+				'secret' => $temporaryCredentials['SecretAccessKey'],
+				'token'  => $temporaryCredentials['SessionToken']
+			];
+		}
+
+		if ( $role_arn == "" && $profile != "" ) {
+			$args['profile'] = $profile;
 		}
 
 		if ( ! isset( $this->clients[ $client_key ] ) ) {
@@ -231,5 +249,24 @@ class DynamoDBConnector implements DBConnectorInterface {
 		}
 
 		return $this->clients[ $client_key ];
+	}
+
+	/**
+	 * Performs STS
+	 * 
+	 * @param string $role_arn AWS role_arn
+	 */
+	private function assumeRole( $connectionParameters ) : array {
+		$stsClient = new Aws\Sts\StsClient([
+			'region' => 'us-east-1',
+			'version' => '2011-06-15'
+		]);
+
+		$result = $stsClient->AssumeRole([
+					'RoleArn'         => $connectionParameters['roleArn'],
+					'RoleSessionName' => "wpsnapshots",
+		]);
+
+		return $result['Credentials'];
 	}
 }
