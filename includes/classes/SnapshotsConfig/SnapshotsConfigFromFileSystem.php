@@ -130,10 +130,10 @@ class SnapshotsConfigFromFileSystem implements SnapshotsConfigInterface {
 		$settings = $this->get_repository_settings( $repository );
 
 		if ( is_array( $settings ) ) {
-			return $settings['profile'] ?? 'default';
+			return $settings['profile'] ?? '';
 		}
 
-		return 'default';
+		return '';
 	}
 
 	/**
@@ -145,7 +145,11 @@ class SnapshotsConfigFromFileSystem implements SnapshotsConfigInterface {
 	public function get_repository_role_arn( string $repository = '' ) : string {
 		$settings = $this->get_repository_settings( $repository );
 
-		return $settings['roleArn'] ?? '';
+		if ( is_array( $settings ) ) {
+			return $settings['roleArn'] ?? '';
+		}
+
+		return '';
 	}
 
 	/**
