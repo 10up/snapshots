@@ -283,6 +283,9 @@ abstract class WPCLICommand implements Conditional, Module {
 
 		$profile = $this->config->get_repository_profile( $repository_name );
 
+		// FIXME: hack to get the role_arn available later for demo purposes
+		$_ENV['role_arn'] = $this->config->get_repository_role_arn( $repository_name );
+
 		return $profile;
 	}
 
