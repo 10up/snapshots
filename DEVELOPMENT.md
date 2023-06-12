@@ -4,8 +4,8 @@ This file includes details for developers contributing to this code base.
 
 This package follows a simple dependency-injection pattern. There are two types of components within this pattern. Both are registered in [the Plugin class](/includes/classes/Plugin.php).
 
-1. Modules: Modules are loaded on every execution. The implement the `Module` interface and include a `register` method that performs setup actions. The `register` method is called automatcically when the module is instantiated.
-2. Services: Services are loaded when they are declared as dependencies for Modules and other Services. They implement the `Service` interface. If a service should only be instantiated once and shared throughout the system, it should instead implement the `SharedService` interace.
+1. Modules: Modules are loaded on every execution. They implement the `Module` interface and include a `register` method that performs setup actions. The `register` method is called automatically when the module is instantiated.
+2. Services: Services are loaded when they are declared as dependencies for Modules and other Services. They implement the `Service` interface, but if a service should only be instantiated once and shared throughout the system, it should instead implement the `SharedService` interace.
 
 ### Declaring Dependencies
 
