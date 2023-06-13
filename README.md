@@ -20,6 +20,8 @@ A [WP-CLI](https://wp-cli.org/) based project sharing tool for WordPress. Replac
     * [download](#download)
 * [Identity Access Management](#identity-access-management)
 * [Troubleshooting](#troubleshooting)
+* [Changelog](#changelog)
+* [Contributing](#contributing)
 * [Support Level](#support-level)
 
 ## Overview
