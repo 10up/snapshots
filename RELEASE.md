@@ -9,6 +9,7 @@ Before any major or minor release, we will run through our [QA plan](https://doc
 1. Branch: Starting from `develop`, cut a release branch named `release/X.Y.Z` for your changes.
 1. Version bump: Bump the version number in `snapshots.php`.
 1. Changelog: Add/update the changelog in `CHANGELOG.md`.
+1. Credits: Update `CREDITS.md` with any new contributors.
 1. Readme updates: Make any other readme changes as necessary.
 1. Merge: Make a non-fast-forward merge from your release branch to `develop` (or merge the pull request), then do the same for `develop` into `trunk` (`git checkout trunk && git merge --no-ff develop`). `trunk` contains the stable development version.
 1. Push: Push your `trunk` branch to GitHub (e.g. `git push origin trunk`).
