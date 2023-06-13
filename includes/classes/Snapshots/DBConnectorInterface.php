@@ -20,51 +20,41 @@ interface DBConnectorInterface extends SharedService {
 	 * Searches the database.
 	 *
 	 * @param  string|array $query Search query string
-	 * @param string       $profile AWS profile.
-	 * @param  string       $repository Repository name
-	 * @param string       $region AWS region
+	 * @param array        $config AWS config
 	 * @return array
 	 */
-	public function search( $query, string $profile, string $repository, string $region ) : array;
+	public function search( $query, array $config ) : array;
 
 	/**
 	 * Get a snapshot given an id
 	 *
 	 * @param  string $id Snapshot ID
-	 * @param string $profile AWS profile.
-	 * @param  string $repository Repository name
-	 * @param string $region AWS region
+	 * @param array  $config AWS config
 	 * @return mixed
 	 */
-	public function get_snapshot( string $id, string $profile, string $repository, string $region );
+	public function get_snapshot( string $id, array $config );
 
 	/**
 	 * Create default DB tables. Only need to do this once ever for repo setup.
 	 *
-	 * @param string $profile AWS profile.
-	 * @param string $repository Repository name
-	 * @param string $region AWS region
+	 * @param array $config AWS config
 	 */
-	public function create_tables( string $profile, string $repository, string $region );
+	public function create_tables( array $config );
 
 	/**
 	 * Insert a snapshot into the DB
 	 *
 	 * @param  string $id Snapshot ID
-	 * @param string $profile AWS profile.
-	 * @param  string $repository Repository name.
-	 * @param string $region AWS region.
+	 * @param array  $config AWS config
 	 * @param array  $meta Snapshot meta.
 	 */
-	public function insert_snapshot( string $id, string $profile, string $repository, string $region, array $meta ) : void;
+	public function insert_snapshot( string $id, array $config, array $meta ) : void;
 
 	/**
 	 * Delete a snapshot given an id
 	 *
 	 * @param  string $id Snapshot ID
-	 * @param string $profile AWS profile.
-	 * @param string $repository Repository name.
-	 * @param string $region AWS region.
+	 * @param array  $config AWS config
 	 */
-	public function delete_snapshot( string $id, string $profile, string $repository, string $region ) : void;
+	public function delete_snapshot( string $id, array $config ) : void;
 }

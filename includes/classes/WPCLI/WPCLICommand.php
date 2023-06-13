@@ -272,6 +272,43 @@ abstract class WPCLICommand implements Conditional, Module {
 	}
 
 	/**
+	 * Gets the role arn from the repository.
+	 *
+	 * @param ?string $repository_name Repository name.
+	 *
+	 * @return string
+	 */
+	protected function get_role_arn( ?string $repository_name = null ) : string {
+		if ( ! $repository_name ) {
+			$repository_name = $this->get_repository_name();
+		}
+
+		$role_arn = $this->config->get_repository_role_arn( $repository_name );
+
+		return $role_arn;
+	}
+
+	/**
+	 * Get prepared AWS config
+	 *
+	 * @param ?string $repository_name Repository name.
+	 *
+	 * @return array
+	 */
+	protected function get_aws_config( ?string $repository_name = null ) : array {
+		if ( ! $repository_name ) {
+			$repository_name = $this->get_repository_name();
+		}
+
+		return [
+			'profile'    => $this->get_profile_for_repository(),
+			'repository' => $this->get_repository_name(),
+			'region'     => $this->get_region(),
+			'role_arn'   => $this->get_role_arn(),
+		];
+	}
+
+	/**
 	 * Gets the profile property from the repository.
 	 *
 	 * @return string
@@ -282,9 +319,6 @@ abstract class WPCLICommand implements Conditional, Module {
 		$repository_name = $this->get_repository_name();
 
 		$profile = $this->config->get_repository_profile( $repository_name );
-
-		// FIXME: hack to get the role_arn available later for demo purposes
-		$_ENV['role_arn'] = $this->config->get_repository_role_arn( $repository_name );
 
 		return $profile;
 	}

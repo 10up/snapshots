@@ -30,12 +30,10 @@ interface SnapshotMetaInterface extends SharedService {
 	 * Download meta from remote DB
 	 *
 	 * @param string $id Snapshot ID
-	 * @param string $profile AWS profile
-	 * @param string $repository Repository name
-	 * @param string $region AWS region
+	 * @param array  $config AWS config
 	 * @return array
 	 */
-	public function get_remote( string $id, string $profile, string $repository, string $region ) : array;
+	public function get_remote( string $id, array $config ) : array;
 
 	/**
 	 * Get local snapshot meta

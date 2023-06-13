@@ -101,7 +101,7 @@ final class Search extends WPCLICommand {
 	 * @return array
 	 */
 	private function search() {
-		return $this->db_connector->search( $this->get_search_string(), $this->get_profile_for_repository(), $this->get_repository_name(), $this->get_region() );
+		return $this->db_connector->search( $this->get_search_string(), $this->get_aws_config() );
 	}
 
 	/**

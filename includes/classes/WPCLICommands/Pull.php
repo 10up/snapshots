@@ -265,7 +265,7 @@ final class Pull extends WPCLICommand {
 		$id              = $this->get_id();
 		$repository_name = $this->get_repository_name();
 
-		$remote_meta = $this->snapshot_meta->get_remote( $id, $this->get_profile_for_repository(), $repository_name, $this->get_region() );
+		$remote_meta = $this->snapshot_meta->get_remote( $id, $this->get_aws_config() );
 		$local_meta  = $this->snapshot_meta->get_local( $id, $repository_name );
 
 		switch ( true ) {

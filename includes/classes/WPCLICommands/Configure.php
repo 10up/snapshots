@@ -35,9 +35,16 @@ final class Configure extends WPCLICommand {
 
 			$this->config->save();
 
+			$config = [
+				'profile'    => $this->get_profile(),
+				'repository' => $this->get_repository_name( true, 0 ),
+				'region'     => $this->get_region_arg(),
+				'role_arn'   => $this->get_assoc_arg( 'role_arn' ),
+			];
+
 			try {
 				$this->log( 'Testing repository connection...' );
-				$this->storage_connector->test( $this->get_profile(), $this->get_repository_name( true, 0 ), $this->get_region_arg() );
+				$this->storage_connector->test( $config );
 			} catch ( Exception $e ) {
 				wp_cli()::error( 'Your Snapshots configuration is saved, but we were unable to connect to the repository. Please check your AWS credentials.' );
 			}
@@ -86,6 +93,12 @@ final class Configure extends WPCLICommand {
 					'type'        => 'assoc',
 					'name'        => 'profile',
 					'description' => 'The AWS profile to use. Defaults to \'default\'.',
+					'optional'    => true,
+				],
+				[
+					'type'        => 'assoc',
+					'name'        => 'role_arn',
+					'description' => 'AWS role ARN. Defaults to none',
 					'optional'    => true,
 				],
 			],
@@ -170,7 +183,7 @@ final class Configure extends WPCLICommand {
 			'profile',
 			[
 
-				'prompt'  => 'Which AWS authentication profile should be used for this profile? If you are unsure, leave this blank to use the default.',
+				'prompt'  => 'Which AWS authentication profile should be used for this profile? If you are unsure, use `default`',
 				'default' => 'default',
 			]
 		);
