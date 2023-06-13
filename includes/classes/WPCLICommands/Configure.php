@@ -31,15 +31,18 @@ final class Configure extends WPCLICommand {
 			$this->set_args( $args );
 			$this->set_assoc_args( $assoc_args );
 
-			$this->config->set_repositories( $this->get_updated_repository_info() );
+			$repository_name = $this->get_repository_name( true, 0 );
+
+			$info = $this->get_updated_repository_info();
+
+			$this->config->set_repositories( $info );
 
 			$this->config->save();
-
 			$config = [
-				'profile'    => $this->get_profile(),
-				'repository' => $this->get_repository_name( true, 0 ),
-				'region'     => $this->get_region_arg(),
-				'role_arn'   => $this->get_assoc_arg( 'role_arn' ),
+				'profile'    => $info[ $repository_name ]['profile'],
+				'repository' => $repository_name,
+				'region'     => $info[ $repository_name ]['region'],
+				'role_arn'   => $info[ $repository_name ]['role_arn'],
 			];
 
 			try {
@@ -91,14 +94,14 @@ final class Configure extends WPCLICommand {
 				],
 				[
 					'type'        => 'assoc',
-					'name'        => 'profile',
-					'description' => 'The AWS profile to use. Defaults to \'default\'.',
+					'name'        => 'role_arn',
+					'description' => 'AWS role ARN. Defaults to none',
 					'optional'    => true,
 				],
 				[
 					'type'        => 'assoc',
-					'name'        => 'role_arn',
-					'description' => 'AWS role ARN. Defaults to none',
+					'name'        => 'profile',
+					'description' => 'The AWS profile to use. Defaults to \'default\'.',
 					'optional'    => true,
 				],
 			],
@@ -129,10 +132,21 @@ final class Configure extends WPCLICommand {
 			wp_cli()::confirm( 'This repository is already configured. Do you want to overwrite the existing configuration?' );
 		}
 
+		$role_arn = $this->get_role_arn_arg();
+
+		$profile = '';
+		if ( 'none' === $role_arn ) {
+			$profile  = $this->get_profile();
+			$role_arn = '';
+		}
+
+		$region   = $this->get_region_arg();
+
 		$repositories[ $repository_name ] = [
-			'region'     => $this->get_region_arg(),
+			'region'     => $region,
 			'repository' => $repository_name,
-			'profile'    => $this->get_profile(),
+			'profile'    => $profile,
+			'role_arn'   => $role_arn,
 			'user_name'  => $this->get_user_name(),
 			'user_email' => $this->get_user_email(),
 		];
@@ -185,6 +199,22 @@ final class Configure extends WPCLICommand {
 
 				'prompt'  => 'Which AWS authentication profile should be used for this profile? If you are unsure, use `default`',
 				'default' => 'default',
+			]
+		);
+	}
+
+	/**
+	 * Gets the role ARN
+	 *
+	 * @return string
+	 */
+	private function get_role_arn_arg() : ?string {
+		return $this->get_assoc_arg(
+			'role_arn',
+			[
+
+				'prompt'  => "Optionally, provide a role ARN to use for authentication. If you don't know what this, leave it blank",
+				'default' => 'none',
 			]
 		);
 	}
