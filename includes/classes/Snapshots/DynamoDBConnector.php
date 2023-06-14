@@ -242,7 +242,7 @@ class DynamoDBConnector implements DBConnectorInterface {
 	 * Performs STS
 	 *
 	 * @param array $connection_parameters Parameters for connection
-	 * @return array
+	 * @return mixed
 	 */
 	private function assume_role( $connection_parameters ) {
 		$sts_client = new Aws\Sts\StsClient(
