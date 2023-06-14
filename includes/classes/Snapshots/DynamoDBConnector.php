@@ -200,6 +200,7 @@ class DynamoDBConnector implements DBConnectorInterface {
 	 * @param array $config AWS config
 	 *
 	 * @return DynamoDbClient
+	 * @throws SnapshotsException Failed to assume ARN role
 	 */
 	private function get_client( array $config ) : DynamoDbClient {
 		$client_key = $config['profile'] . '_' . $config['region'];

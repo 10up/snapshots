@@ -219,6 +219,7 @@ class S3StorageConnector implements StorageConnectorInterface {
 	 *
 	 * @param array $config AWS config
 	 * @return S3Client
+	 * @throws SnapshotsException Failed to assume ARN role
 	 */
 	private function get_client( array $config ) : S3Client {
 		$client_key = $config['profile'] . '_' . $config['region'];

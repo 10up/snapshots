@@ -169,7 +169,7 @@ class TestDownload extends TestCase {
 	}
 
 	/** @covers ::execute */
-	public function test_execute_dl() {
+	public function test_execute() {
 		$meta = [
 			'project' => 'test-project',
 			'repository' => 'test-repository',
