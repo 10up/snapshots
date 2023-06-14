@@ -196,7 +196,7 @@ class TestDownload extends TestCase {
 
 		$mock_storage_connector->expects( $this->once() )->method( 'download_snapshot' )->with(
 			'test-id',
-			[ 'profile' => 'default', 'repository' => 'test-repo', 'region' => 'us-west-1', 'role_arn' => '' ],
+			[ 'profile' => '', 'repository' => 'test-repo', 'region' => 'us-west-1', 'role_arn' => '' ],
 			$meta
 		);
 

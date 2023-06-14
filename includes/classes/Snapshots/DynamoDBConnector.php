@@ -18,11 +18,11 @@ use TenUp\Snapshots\Exceptions\SnapshotsException;
 class DynamoDBConnector implements DBConnectorInterface {
 
 	/**
-	 * Clients keyed by region.
+	 * Client
 	 *
-	 * @var DynamoDbClient[]
+	 * @var ?DynamoDbClient
 	 */
-	private $clients = [];
+	private $client = null;
 
 	/**
 	 * Searches the database.
@@ -203,7 +203,9 @@ class DynamoDBConnector implements DBConnectorInterface {
 	 * @throws SnapshotsException Failed to assume ARN role
 	 */
 	private function get_client( array $config ) : DynamoDbClient {
-		$client_key = $config['profile'] . '_' . $config['region'];
+		if ( ! is_null( $this->client ) ) {
+			return $this->client;
+		}
 
 		$args = [
 			'region'  => $config['region'],
@@ -231,11 +233,9 @@ class DynamoDBConnector implements DBConnectorInterface {
 			$args['profile'] = $config['profile'];
 		}
 
-		if ( ! isset( $this->clients[ $client_key ] ) ) {
-			$this->clients[ $client_key ] = new DynamoDbClient( $args );
-		}
+		$this->client = new DynamoDbClient( $args );
 
-		return $this->clients[ $client_key ];
+		return $this->client;
 	}
 
 	/**

@@ -99,7 +99,6 @@ class TestPull extends TestCase {
 		$snapshot_meta_mock->method( 'get_local' )->willReturn( [] );
 
 		$this->command->set_assoc_args( [ 'repository' => 'test-repository' ] );
-		$this->command->set_assoc_args( [ 'profile' => 'default' ] );
 
 		$this->expectException( SnapshotsException::class );
 		$this->expectExceptionMessage( 'Snapshot does not exist.' );
@@ -107,7 +106,7 @@ class TestPull extends TestCase {
 		$this->set_private_property( $this->command, 'snapshot_meta', $snapshot_meta_mock );
 
 		$snapshot_meta_mock->expects( $this->once() )->method( 'get_remote' )
-			->with( 'test-id', [ 'profile' => 'default', 'repository' => 'test-repository', 'region' => 'us-west-1', 'role_arn' => '' ] );
+			->with( 'test-id', [ 'profile' => '', 'repository' => 'test-repository', 'region' => 'us-west-1', 'role_arn' => '' ] );
 		$snapshot_meta_mock->expects( $this->once() )->method( 'get_local' )
 			->with( 'test-id', 'test-repository' );
 
