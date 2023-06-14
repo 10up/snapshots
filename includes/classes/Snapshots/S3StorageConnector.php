@@ -272,7 +272,7 @@ class S3StorageConnector implements StorageConnectorInterface {
 			]
 		);
 
-		$result = $sts_client->AssumeRole(
+		$result = $sts_client->assumeRole(
 			[
 				'RoleArn'         => $connection_parameters['roleArn'],
 				'RoleSessionName' => 'wpsnapshots',

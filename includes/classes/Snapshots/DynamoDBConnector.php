@@ -252,7 +252,7 @@ class DynamoDBConnector implements DBConnectorInterface {
 			]
 		);
 
-		$result = $sts_client->AssumeRole(
+		$result = $sts_client->assumeRole(
 			[
 				'RoleArn'         => $connection_parameters['roleArn'],
 				'RoleSessionName' => 'wpsnapshots',
