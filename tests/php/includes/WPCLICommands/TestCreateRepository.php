@@ -1,7 +1,7 @@
 <?php
 /**
  * Tests covering the CreateRepository command class.
- * 
+ *
  * @package TenUp\Snapshots
  */
 
@@ -20,7 +20,7 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
  * Class TestCreateRepository
  *
  * @package TenUp\Snapshots\Tests\Commands
- * 
+ *
  * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\CreateRepository
  */
 class TestCreateRepository extends TestCase {
@@ -29,7 +29,7 @@ class TestCreateRepository extends TestCase {
 
 	/**
 	 * CreateRepository instance.
-	 * 
+	 *
 	 * @var CreateRepository
 	 */
 	private $command;
@@ -56,7 +56,7 @@ class TestCreateRepository extends TestCase {
 
 	/**
 	 * Test that the command instance extends WPCLICommand.
-	 * 
+	 *
 	 * @covers ::__construct
 	 */
 	public function test_command_instance() {
@@ -93,7 +93,7 @@ class TestCreateRepository extends TestCase {
 		$storage_connector = $this->createMock( S3StorageConnector::class );
 		$storage_connector->expects( $this->once() )
 			->method( 'create_bucket' )
-			->with( 'default', 'test-repo', 'us-west-1' );
+			->with( [ 'profile' => 'default', 'repository' => 'test-repo', 'region' => 'us-west-1', 'role_arn' => '' ] );
 
 		/**
 		 * @var MockObject $db_connector
@@ -101,7 +101,7 @@ class TestCreateRepository extends TestCase {
 		$db_connector = $this->createMock( DynamoDBConnector::class );
 		$db_connector->expects( $this->once() )
 			->method( 'create_tables' )
-			->with( 'default', 'test-repo', 'us-west-1' );
+			->with( [ 'profile' => 'default', 'repository' => 'test-repo', 'region' => 'us-west-1', 'role_arn' => '' ] );
 
 		$this->set_private_property( $this->command, 'storage_connector', $storage_connector );
 		$this->set_private_property( $this->command, 'db_connector', $db_connector );

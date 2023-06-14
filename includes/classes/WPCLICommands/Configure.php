@@ -140,7 +140,7 @@ final class Configure extends WPCLICommand {
 			$role_arn = '';
 		}
 
-		$region   = $this->get_region_arg();
+		$region = $this->get_region_arg();
 
 		$repositories[ $repository_name ] = [
 			'region'     => $region,

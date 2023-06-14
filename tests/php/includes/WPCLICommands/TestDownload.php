@@ -169,7 +169,7 @@ class TestDownload extends TestCase {
 	}
 
 	/** @covers ::execute */
-	public function test_execute() {
+	public function test_execute_dl() {
 		$meta = [
 			'project' => 'test-project',
 			'repository' => 'test-repository',
@@ -196,10 +196,8 @@ class TestDownload extends TestCase {
 
 		$mock_storage_connector->expects( $this->once() )->method( 'download_snapshot' )->with(
 			'test-id',
-			$meta,
-			'default',
-			'test-repo',
-			'us-west-1'
+			[ 'profile' => 'default', 'repository' => 'test-repo', 'region' => 'us-west-1', 'role_arn' => '' ],
+			$meta
 		);
 
 		add_filter( 'snapshots_readline', function() {

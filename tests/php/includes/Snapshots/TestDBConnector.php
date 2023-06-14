@@ -1,7 +1,7 @@
 <?php
 /**
  * Tests for the DynamoDBConnector class.
- * 
+ *
  * @package TenUp\Snapshots
  */
 
@@ -17,7 +17,7 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
  * Class TestDBConnector
  *
  * @package TenUp\Snapshots\Tests\Snapshots
- * 
+ *
  * @coversDefaultClass \TenUp\Snapshots\Snapshots\DynamoDBConnector
  */
 class TestDBConnector extends TestCase {
@@ -26,7 +26,7 @@ class TestDBConnector extends TestCase {
 
 	/**
 	 * DynamoDBConnector instance.
-	 * 
+	 *
 	 * @var DynamoDBConnector
 	 */
 	private $connector;
@@ -55,7 +55,7 @@ class TestDBConnector extends TestCase {
 
 	/** @covers ::get_client */
 	public function test_get_client() {
-		$client = $this->call_private_method( $this->connector, 'get_client', [ 'default', 'test-repo' ] );
+		$client = $this->call_private_method( $this->connector, 'get_client', [ [ 'profile' => 'default', 'repository' => 'test-repo', 'region' => 'us-west-1' ] ] );
 
 		$this->assertInstanceOf( DynamoDbClient::class, $client );
 	}
@@ -64,7 +64,7 @@ class TestDBConnector extends TestCase {
 	public function test_search_client_is_called_with_expected_args() {
 		/**
 		 * DynamoDBClient mock.
-		 * 
+		 *
 		 * @var MockObject $client
 		 */
 		$client = $this->createMock( DynamoDbClient::class );
@@ -93,14 +93,14 @@ class TestDBConnector extends TestCase {
 		);
 
 		// Call search method.
-		$this->connector->search( 'search term', 'default', 'test-repo', 'test-region' );
+		$this->connector->search( 'search term', [ 'profile' => 'default', 'repository' => 'test-repo', 'region' => 'us-west-1' ] );
 	}
 
 	/** @covers ::get_snapshot */
 	public function test_get_snapshot_client_is_called_with_expected_args() {
 		/**
 		 * DynamoDBClient mock.
-		 * 
+		 *
 		 * @var MockObject $client
 		 */
 		$client = $this->getMockBuilder( DynamoDbClient::class )
@@ -124,14 +124,14 @@ class TestDBConnector extends TestCase {
 		);
 
 		// Call get_snapshot method.
-		$this->connector->get_snapshot( 'snapshot-id', 'default', 'test-repo', 'test-region' );
+		$this->connector->get_snapshot( 'snapshot-id', [ 'profile' => 'default', 'repository' => 'test-repo', 'region' => 'us-west-1' ] );
 	}
 
 	/** @covers ::create_tables */
 	public function test_create_tables_client_is_called_with_expected_args() {
 		/**
 		 * DynamoDBClient mock.
-		 * 
+		 *
 		 * @var MockObject $client
 		 */
 		$client = $this->getMockBuilder( DynamoDbClient::class )
@@ -176,6 +176,6 @@ class TestDBConnector extends TestCase {
 		);
 
 		// Call create_tables method.
-		$this->connector->create_tables( 'default', 'test-repo', 'test-region' );
+		$this->connector->create_tables( [ 'profile' => 'default', 'repository' => 'test-repo', 'region' => 'test-region', 'role_arn' => '' ] );
 	}
 }
