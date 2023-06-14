@@ -264,7 +264,7 @@ class S3StorageConnector implements StorageConnectorInterface {
 	 * @param array $connection_parameters Parameters for connection
 	 * @return array
 	 */
-	private function assume_role( $connection_parameters ) : array {
+	private function assume_role( $connection_parameters ) {
 		$sts_client = new Aws\Sts\StsClient(
 			[
 				'region'  => 'us-east-1',
