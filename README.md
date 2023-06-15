@@ -497,10 +497,16 @@ __wp snapshots download <snapshot_id> [--repository=\<repository\>] [--include_f
 ```
 </details>
 
+    
+## Identity Access Management and Security
+    
+Snapshots is intended to store development environments. It was not meant to be a secure solution to store sensitive production data in the cloud.
 
-## Identity Access Management
-
-Snapshots relies on AWS for access management. Each snapshot is associated with a project slug. Using AWS IAM, specific users can be restricted to specific projects.
+Snapshots relies on AWS for access management. Each snapshot is associated with a project slug. Using AWS IAM, specific users can be restricted to specific projects. It is your responsibility to ensure your AWS cloud environment is properly secured.
+    
+## PII
+    
+Snapshots automatically scrubs user information when creating a snapshot. Scrubbed data only includes standard WordPress data e.g. user name, passwords, some user meta, etc. Certain plugins or custom code my store PII elsewhere. It is strongly recommended you review your project for PII (personal identifable information) before pushing snapshots to AWS.
 
 ## Troubleshooting
 
