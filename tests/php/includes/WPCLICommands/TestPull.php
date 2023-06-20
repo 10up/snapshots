@@ -106,7 +106,7 @@ class TestPull extends TestCase {
 		$this->set_private_property( $this->command, 'snapshot_meta', $snapshot_meta_mock );
 
 		$snapshot_meta_mock->expects( $this->once() )->method( 'get_remote' )
-			->with( 'test-id', 'default', 'test-repository', 'us-west-1' );
+			->with( 'test-id', [ 'profile' => '', 'repository' => 'test-repository', 'region' => 'us-west-1', 'role_arn' => '' ] );
 		$snapshot_meta_mock->expects( $this->once() )->method( 'get_local' )
 			->with( 'test-id', 'test-repository' );
 

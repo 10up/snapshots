@@ -20,24 +20,20 @@ interface StorageConnectorInterface extends SharedService {
 	/**
 	 * Download a snapshot given an id. Must specify where to download files/data
 	 *
-	 * @param  string $id Snapshot ID
+	 * @param string $id Snapshot ID
+	 * @param array  $config AWS config array
 	 * @param array  $snapshot_meta Snapshot meta.
-	 * @param string $profile AWS profile.
-	 * @param string $repository Repository name
-	 * @param string $region AWS region
 	 */
-	public function download_snapshot( string $id, array $snapshot_meta, string $profile, string $repository, string $region );
+	public function download_snapshot( string $id, array $config, array $snapshot_meta );
 
 	/**
 	 * Create Snapshots S3 bucket
 	 *
-	 * @param string $profile AWS profile.
-	 * @param string $repository Repository name.
-	 * @param string $region AWS region.
+	 * @param array $config AWS config
 	 *
 	 * @throws SnapshotsException If bucket already exists.
 	 */
-	public function create_bucket( string $profile, string $repository, string $region );
+	public function create_bucket( array $config );
 
 	/**
 	 * Gets the bucket already exists error message.
@@ -50,29 +46,23 @@ interface StorageConnectorInterface extends SharedService {
 	 * Upload a snapshot to S3
 	 *
 	 * @param  string $id Snapshot ID
-	 * @param string $profile AWS profile.
-	 * @param string $repository Repository name.
-	 * @param string $region AWS region.
+	 * @param array  $config AWS config
 	 */
-	public function put_snapshot( string $id, string $profile, string $repository, string $region ) : void;
+	public function put_snapshot( string $id, array $config ) : void;
 
 	/**
 	 * Delete a snapshot given an id
 	 *
 	 * @param  string $id Snapshot id
 	 * @param  string $project Project name
-	 * @param string $profile AWS profile.
-	 * @param  string $repository Repository name
-	 * @param  string $region AWS region
+	 * @param array  $config AWS config
 	 */
-	public function delete_snapshot( string $id, string $project, string $profile, string $repository, string $region ) : void;
+	public function delete_snapshot( string $id, string $project, array $config ) : void;
 
 	/**
 	 * Tests the user's AWS credentials.
 	 *
-	 * @param string $profile AWS profile.
-	 * @param string $repository Repository name.
-	 * @param string $region AWS region.
+	 * @param array $config AWS config
 	 */
-	public function test( string $profile, string $repository, string $region );
+	public function test( array $config );
 }

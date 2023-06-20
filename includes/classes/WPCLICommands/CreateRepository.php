@@ -30,12 +30,15 @@ final class CreateRepository extends WPCLICommand {
 			$this->set_args( $args );
 			$this->set_assoc_args( $assoc_args );
 
-			$repository_name = $this->get_repository_name( true, 0 );
-			$region          = $this->get_assoc_arg( 'region' );
-			$profile         = $this->get_assoc_arg( 'profile' );
+			$config = [
+				'repository' => $this->get_repository_name( true, 0 ),
+				'region'     => $this->get_assoc_arg( 'region' ),
+				'profile'    => $this->get_assoc_arg( 'profile' ),
+				'role_arn'   => $this->get_assoc_arg( 'role_arn' ),
+			];
 
-			$this->storage_connector->create_bucket( $profile, $repository_name, $region );
-			$this->db_connector->create_tables( $profile, $repository_name, $region );
+			$this->storage_connector->create_bucket( $config );
+			$this->db_connector->create_tables( $config );
 		} catch ( Exception $e ) {
 			wp_cli()::error( $e->getMessage() );
 		}
@@ -80,6 +83,12 @@ final class CreateRepository extends WPCLICommand {
 					'description' => 'The AWS profile to use',
 					'optional'    => true,
 					'default'     => 'default',
+				],
+				[
+					'type'        => 'assoc',
+					'name'        => 'role_arn',
+					'description' => 'The AWS role ARN to use',
+					'optional'    => true,
 				],
 			],
 			'when'      => 'before_wp_load',

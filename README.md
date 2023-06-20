@@ -18,7 +18,8 @@ A [WP-CLI](https://wp-cli.org/) based project sharing tool for WordPress. Replac
     * [delete](#delete)
     * [create](#create)
     * [download](#download)
-* [Identity Access Management](#identity-access-management)
+* [Identity Access Management and Security](#identity-access-management-and-security)
+* [PII](#pii)
 * [Troubleshooting](#troubleshooting)
 * [Changelog](#changelog)
 * [Contributing](#contributing)
@@ -103,7 +104,7 @@ Snapshots relies on AWS to store files and data. As such, you need to connect to
 
 #### Command
 
-__wp snapshots configure <repository> [--region=\<region\>] [--user_name=\<user_name\>] [--user_email=\<user_email\>]__
+__wp snapshots configure <repository> [--region=\<region\>] [--profile=\<profile\>] [--user_name=\<user_name\>] [--user_email=\<user_email\>] [--role_arn=\<role_arn\>]__
 
 <details>
 <summary>Show Arguments</summary>
@@ -121,8 +122,14 @@ __wp snapshots configure <repository> [--region=\<region\>] [--user_name=\<user_
   [--user_name=<user_name>]
     The username to use. If it's not provided, user will be prompted for it.
 
+  [--profile=<profile>]
+    AWS profile.
+
   [--user_email=<user_email>]
     The user email to use. If it's not provided, user will be prompted for it.
+
+  [--role_arn=<role_arn>]
+    Role ARN for AWS. Probably don't need this.
 ```
 </details>
 
@@ -497,10 +504,16 @@ __wp snapshots download <snapshot_id> [--repository=\<repository\>] [--include_f
 ```
 </details>
 
+    
+## Identity Access Management and Security
+    
+Snapshots is intended to store development environments. It was not meant to be a secure solution to store sensitive production data in the cloud.
 
-## Identity Access Management
-
-Snapshots relies on AWS for access management. Each snapshot is associated with a project slug. Using AWS IAM, specific users can be restricted to specific projects.
+Snapshots relies on AWS for access management. Each snapshot is associated with a project slug. Using AWS IAM, specific users can be restricted to specific projects. It is your responsibility to ensure your AWS cloud environment is properly secured.
+    
+## PII
+    
+Snapshots automatically scrubs user information when creating a snapshot. Scrubbed data only includes standard WordPress data e.g. user name, passwords, some user meta, etc. Certain plugins or custom code my store PII elsewhere. It is strongly recommended you review your project for PII (personal identifable information) before pushing snapshots to AWS.
 
 ## Troubleshooting
 
