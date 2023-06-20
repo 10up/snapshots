@@ -35,7 +35,7 @@ final class Download extends WPCLICommand {
 
 			$this->log( 'Downloading snapshot (' . $this->get_formatted_size( $meta ) . ')...' );
 
-			$this->storage_connector->download_snapshot( $this->get_id(), $meta, $this->get_profile_for_repository(), $this->get_repository_name(), $this->get_region() );
+			$this->storage_connector->download_snapshot( $this->get_id(), $this->get_aws_config(), $meta );
 			$this->snapshot_meta->save_local( $this->get_id(), $meta );
 
 			wp_cli()::success( 'Snapshot downloaded.' );
@@ -112,7 +112,7 @@ final class Download extends WPCLICommand {
 	private function get_meta() : array {
 		$id = $this->get_id();
 
-		$meta = $this->snapshot_meta->get_remote( $id, $this->get_profile_for_repository(), $this->get_repository_name(), $this->get_region() );
+		$meta = $this->snapshot_meta->get_remote( $id, $this->get_aws_config() );
 
 		if ( empty( $meta ) ) {
 			throw new SnapshotsException( 'Snapshot does not exist.' );

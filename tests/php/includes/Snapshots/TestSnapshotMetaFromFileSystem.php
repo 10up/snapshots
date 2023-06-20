@@ -97,7 +97,7 @@ class TestSnapshotMetaFromFileSystem extends TestCase {
 
 		$this->set_private_property( $this->meta, 'db', $mock_db );
 
-		$this->assertEquals( [], $this->meta->get_remote( 'test-id', 'default', 'test-repo', 'test-region' ) );
+		$this->assertEquals( [], $this->meta->get_remote( 'test-id', [ 'profile' => 'default', 'repository' => 'test-repo', 'region' => 'test-region', 'role_arn' => '' ] ) );
 	}
 
 	/** @covers ::get_remote */
@@ -116,7 +116,7 @@ class TestSnapshotMetaFromFileSystem extends TestCase {
 
 		$this->set_private_property( $this->meta, 'db', $mock_db );
 
-		$this->assertEquals( [ 'test' => 'data', 'contains_files' => true, 'contains_db' => true, 'repository' => 'test-repo' ], $this->meta->get_remote( 'test-id', 'default', 'test-repo', 'test-region' ) );
+		$this->assertEquals( [ 'test' => 'data', 'contains_files' => true, 'contains_db' => true, 'repository' => 'test-repo' ], $this->meta->get_remote( 'test-id', [ 'profile' => 'default', 'repository' => 'test-repo', 'region' => 'test-region', 'role_arn' => '' ] ) );
 	}
 
 	/** @covers ::get_remote */
@@ -135,7 +135,7 @@ class TestSnapshotMetaFromFileSystem extends TestCase {
 
 		$this->set_private_property( $this->meta, 'db', $mock_db );
 
-		$this->assertEquals( [ 'test' => 'data', 'contains_files' => false, 'contains_db' => false, 'repository' => 'test-repo' ], $this->meta->get_remote( 'test-id', 'default', 'test-repo', 'test-region' ) );
+		$this->assertEquals( [ 'test' => 'data', 'contains_files' => false, 'contains_db' => false, 'repository' => 'test-repo' ], $this->meta->get_remote( 'test-id', [ 'profile' =>'default', 'repository' =>'test-repo', 'region' => 'test-region', 'role_arn' => '' ] ) );
 	}
 
 	/** @covers ::generate */

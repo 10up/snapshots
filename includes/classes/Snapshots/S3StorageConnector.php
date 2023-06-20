@@ -10,6 +10,7 @@ namespace TenUp\Snapshots\Snapshots;
 use Aws\S3\S3Client;
 use TenUp\Snapshots\Exceptions\SnapshotsException;
 use TenUp\Snapshots\SnapshotsDirectory;
+use Aws;
 
 /**
  * Class S3StorageConnector
@@ -53,19 +54,17 @@ class S3StorageConnector implements StorageConnectorInterface {
 	/**
 	 * Download a snapshot given an id. Must specify where to download files/data
 	 *
-	 * @param  string $id Snapshot ID
+	 * @param string $id Snapshot ID
+	 * @param array  $config Config array
 	 * @param array  $snapshot_meta Snapshot meta.
-	 * @param string $profile AWS profile.
-	 * @param string $repository Repository name.
-	 * @param string $region AWS region.
 	 */
-	public function download_snapshot( string $id, array $snapshot_meta, string $profile, string $repository, string $region ) {
+	public function download_snapshot( string $id, array $config, array $snapshot_meta ) {
 		$this->snapshots_file_system->create_directory( $id );
 
 		if ( $snapshot_meta['contains_db'] ) {
-			$this->get_client( $profile, $region )->getObject(
+			$this->get_client( $config )->getObject(
 				[
-					'Bucket' => $this->get_bucket_name( $repository ),
+					'Bucket' => $this->get_bucket_name( $config['repository'] ),
 					'Key'    => $snapshot_meta['project'] . '/' . $id . '/data.sql.gz',
 					'SaveAs' => $this->snapshots_file_system->get_file_path( 'data.sql.gz', $id ),
 				]
@@ -73,9 +72,9 @@ class S3StorageConnector implements StorageConnectorInterface {
 		}
 
 		if ( $snapshot_meta['contains_files'] ) {
-			$this->get_client( $profile, $region )->getObject(
+			$this->get_client( $config )->getObject(
 				[
-					'Bucket' => $this->get_bucket_name( $repository ),
+					'Bucket' => $this->get_bucket_name( $config['repository'] ),
 					'Key'    => $snapshot_meta['project'] . '/' . $id . '/files.tar.gz',
 					'SaveAs' => $this->snapshots_file_system->get_file_path( 'files.tar.gz', $id ),
 				]
@@ -86,16 +85,14 @@ class S3StorageConnector implements StorageConnectorInterface {
 	/**
 	 * Create Snapshots S3 bucket
 	 *
-	 * @param string $profile AWS profile.
-	 * @param string $repository Repository name.
-	 * @param string $region AWS region.
+	 * @param array $config AWS config
 	 *
 	 * @throws SnapshotsException If bucket already exists.
 	 */
-	public function create_bucket( string $profile, string $repository, string $region ) {
-		$client              = $this->get_client( $profile, $region );
+	public function create_bucket( array $config ) {
+		$client              = $this->get_client( $config );
 		$list_buckets_result = $client->listBuckets();
-		$bucket_name         = $this->get_bucket_name( $repository );
+		$bucket_name         = $this->get_bucket_name( $config['repository'] );
 
 		foreach ( $list_buckets_result['Buckets'] as $bucket ) {
 			if ( $bucket_name === $bucket['Name'] ) {
@@ -106,7 +103,7 @@ class S3StorageConnector implements StorageConnectorInterface {
 		$client->createBucket(
 			[
 				'Bucket'             => $bucket_name,
-				'LocationConstraint' => $region,
+				'LocationConstraint' => $config['region'],
 			]
 		);
 	}
@@ -124,18 +121,16 @@ class S3StorageConnector implements StorageConnectorInterface {
 	 * Upload a snapshot to S3
 	 *
 	 * @param  string $id Snapshot ID
-	 * @param string $profile AWS profile.
-	 * @param string $repository Repository name.
-	 * @param string $region AWS region.
+	 * @param array  $config AWS config
 	 */
-	public function put_snapshot( string $id, string $profile, string $repository, string $region ) : void {
-		$meta   = $this->snapshot_meta->get_local( $id, $repository );
-		$client = $this->get_client( $profile, $region );
+	public function put_snapshot( string $id, array $config ) : void {
+		$meta   = $this->snapshot_meta->get_local( $id, $config['repository'] );
+		$client = $this->get_client( $config );
 
 		if ( $meta['contains_db'] && file_exists( $this->snapshots_file_system->get_file_path( 'data.sql.gz', $id ) ) ) {
 			$client->putObject(
 				[
-					'Bucket'     => $this->get_bucket_name( $repository ),
+					'Bucket'     => $this->get_bucket_name( $config['repository'] ),
 					'Key'        => $meta['project'] . '/' . $id . '/data.sql.gz',
 					'SourceFile' => realpath( $this->snapshots_file_system->get_file_path( 'data.sql.gz', $id ) ),
 					'ContentMD5' => base64_encode( md5_file( $this->snapshots_file_system->get_file_path( 'data.sql.gz', $id ), true ) ), // phpcs:ignore
@@ -146,7 +141,7 @@ class S3StorageConnector implements StorageConnectorInterface {
 		if ( $meta['contains_files'] && file_exists( $this->snapshots_file_system->get_file_path( 'files.tar.gz', $id ) ) ) {
 			$client->putObject(
 				[
-					'Bucket'     => $this->get_bucket_name( $repository ),
+					'Bucket'     => $this->get_bucket_name( $config['repository'] ),
 					'Key'        => $meta['project'] . '/' . $id . '/files.tar.gz',
 					'SourceFile' => realpath( $this->snapshots_file_system->get_file_path( 'files.tar.gz', $id ) ),
 					'ContentMD5' => base64_encode( md5_file( $this->snapshots_file_system->get_file_path( 'files.tar.gz', $id ), true ) ), // phpcs:ignore
@@ -161,7 +156,7 @@ class S3StorageConnector implements StorageConnectorInterface {
 			$client->waitUntil(
 				'ObjectExists',
 				[
-					'Bucket' => $this->get_bucket_name( $repository ),
+					'Bucket' => $this->get_bucket_name( $config['repository'] ),
 					'Key'    => $meta['project'] . '/' . $id . '/files.tar.gz',
 				]
 			);
@@ -171,7 +166,7 @@ class S3StorageConnector implements StorageConnectorInterface {
 			$client->waitUntil(
 				'ObjectExists',
 				[
-					'Bucket' => $this->get_bucket_name( $repository ),
+					'Bucket' => $this->get_bucket_name( $config['repository'] ),
 					'Key'    => $meta['project'] . '/' . $id . '/data.sql.gz',
 				]
 			);
@@ -183,14 +178,12 @@ class S3StorageConnector implements StorageConnectorInterface {
 	 *
 	 * @param  string $id Snapshot id
 	 * @param  string $project Project name
-	 * @param string $profile AWS profile.
-	 * @param  string $repository Repository name
-	 * @param  string $region AWS region
+	 * @param array  $config AWS config
 	 */
-	public function delete_snapshot( string $id, string $project, string $profile, string $repository, string $region ) : void {
-		$this->get_client( $profile, $region )->deleteObjects(
+	public function delete_snapshot( string $id, string $project, array $config ) : void {
+		$this->get_client( $config )->deleteObjects(
 			[
-				'Bucket' => $this->get_bucket_name( $repository ),
+				'Bucket' => $this->get_bucket_name( $config['repository'] ),
 				'Delete' => [
 					'Objects' => [
 						[
@@ -211,14 +204,12 @@ class S3StorageConnector implements StorageConnectorInterface {
 	/**
 	 * Tests the user's AWS credentials.
 	 *
-	 * @param string $profile AWS profile.
-	 * @param string $repository Repository name.
-	 * @param string $region AWS region.
+	 * @param array $config AWS config
 	 */
-	public function test( string $profile, string $repository, string $region ) {
-		$client = $this->get_client( $profile, $region );
+	public function test( array $config ) {
+		$client = $this->get_client( $config );
 
-		$bucket_name = $this->get_bucket_name( $repository );
+		$bucket_name = $this->get_bucket_name( $config['repository'] );
 
 		$client->listObjects( [ 'Bucket' => $bucket_name ] );
 	}
@@ -226,25 +217,38 @@ class S3StorageConnector implements StorageConnectorInterface {
 	/**
 	 * Configures the client.
 	 *
-	 * @param string $profile AWS profile.
-	 * @param string $region AWS region.
+	 * @param array $config AWS config
 	 * @return S3Client
+	 * @throws SnapshotsException Failed to assume ARN role
 	 */
-	private function get_client( string $profile, string $region ) : S3Client {
-		$client_key = $profile . '_' . $region;
+	private function get_client( array $config ) : S3Client {
+		$client_key = $config['profile'] . '_' . $config['region'];
 
 		$args = [
-			'region'    => $region,
-			'profile'   => $profile,
+			'region'    => $config['region'],
 			'signature' => 'v4',
 			'version'   => '2006-03-01',
 			'csm'       => false,
 		];
 
-		// Check if the necessary AWS env vars are set; if so, the profile arg is not needed.
-		// These are the same env vars the SDK checks for in CredentialProvider.php.
-		if ( getenv( 'AWS_ACCESS_KEY_ID' ) && getenv( 'AWS_SECRET_ACCESS_KEY' ) ) {
-			unset( $args['profile'] );
+		// if role_arn has a value use STS to assume the role
+		// and pass the credential info to S3Client later on
+		if ( ! empty( $config['role_arn'] ) ) {
+			$args['roleArn'] = $config['role_arn'];
+
+			$temp_creds = $this->assume_role( $args );
+
+			if ( ! is_array( $temp_creds ) ) {
+				throw new SnapshotsException( sprintf( "Failed to assume role '%s'.", $args['roleArn'] ) );
+			}
+
+			$args['credentials'] = [
+				'key'    => $temp_creds['AccessKeyId'],
+				'secret' => $temp_creds['SecretAccessKey'],
+				'token'  => $temp_creds['SessionToken'],
+			];
+		} elseif ( ! empty( $config['profile'] ) ) {
+			$args['profile'] = $config['profile'];
 		}
 
 		if ( ! isset( $this->clients[ $client_key ] ) ) {
@@ -252,6 +256,30 @@ class S3StorageConnector implements StorageConnectorInterface {
 		}
 
 		return $this->clients[ $client_key ];
+	}
+
+	/**
+	 * Performs STS
+	 *
+	 * @param array $connection_parameters Parameters for connection
+	 * @return mixed
+	 */
+	private function assume_role( $connection_parameters ) {
+		$sts_client = new Aws\Sts\StsClient(
+			[
+				'region'  => 'us-east-1',
+				'version' => '2011-06-15',
+			]
+		);
+
+		$result = $sts_client->assumeRole(
+			[
+				'RoleArn'         => $connection_parameters['roleArn'],
+				'RoleSessionName' => 'wpsnapshots',
+			]
+		);
+
+		return $result['Credentials'];
 	}
 
 	/**

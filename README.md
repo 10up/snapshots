@@ -104,7 +104,7 @@ Snapshots relies on AWS to store files and data. As such, you need to connect to
 
 #### Command
 
-__wp snapshots configure <repository> [--region=\<region\>] [--user_name=\<user_name\>] [--user_email=\<user_email\>]__
+__wp snapshots configure <repository> [--region=\<region\>] [--profile=\<profile\>] [--user_name=\<user_name\>] [--user_email=\<user_email\>] [--role_arn=\<role_arn\>]__
 
 <details>
 <summary>Show Arguments</summary>
@@ -122,8 +122,14 @@ __wp snapshots configure <repository> [--region=\<region\>] [--user_name=\<user_
   [--user_name=<user_name>]
     The username to use. If it's not provided, user will be prompted for it.
 
+  [--profile=<profile>]
+    AWS profile.
+
   [--user_email=<user_email>]
     The user email to use. If it's not provided, user will be prompted for it.
+
+  [--role_arn=<role_arn>]
+    Role ARN for AWS. Probably don't need this.
 ```
 </details>
 

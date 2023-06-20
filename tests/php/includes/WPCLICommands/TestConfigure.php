@@ -98,6 +98,7 @@ class TestConfigure extends TestCase {
 						'profile' => 'readline4',
 						'user_name' => 'Jane Doe',
 						'user_email' => 'jane.doe@example.com',
+						'role_arn'   => '',
 					]
 				]
 			],
@@ -153,6 +154,7 @@ class TestConfigure extends TestCase {
 					'region' => 'us-east-1',
 					'profile' => 'readline5',
 					'user_name' => 'Jane Doe',
+					'role_arn'   => '',
 					'user_email' => 'jane.doe@example.com',
 				]
 			]
@@ -201,6 +203,7 @@ class TestConfigure extends TestCase {
 			'user_name' => 'Jane Doe',
 			'user_email' => 'jane.doe@example.com',
 			'region' => 'us-east-1',
+			'role_arn' => 'none',
 			'skip_test' => true,
 		];
 	}

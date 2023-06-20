@@ -9,6 +9,8 @@ namespace TenUp\Snapshots\Snapshots;
 
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Marshaler;
+use Aws;
+use TenUp\Snapshots\Exceptions\SnapshotsException;
 
 /**
  * Class for handling Amazon dynamodb calls
@@ -16,26 +18,24 @@ use Aws\DynamoDb\Marshaler;
 class DynamoDBConnector implements DBConnectorInterface {
 
 	/**
-	 * Clients keyed by region.
+	 * Client
 	 *
-	 * @var DynamoDbClient[]
+	 * @var ?DynamoDbClient
 	 */
-	private $clients = [];
+	private $client = null;
 
 	/**
 	 * Searches the database.
 	 *
 	 * @param  string|array $query Search query string
-	 * @param string       $profile AWS profile.
-	 * @param  string       $repository Repository name
-	 * @param string       $region AWS region
+	 * @param  array        $config AWS config
 	 * @return array
 	 */
-	public function search( $query, string $profile, string $repository, string $region ) : array {
+	public function search( $query, array $config ) : array {
 		$marshaler = new Marshaler();
 
 		$args = [
-			'TableName' => 'wpsnapshots-' . $repository,
+			'TableName' => 'wpsnapshots-' . $config['repository'],
 		];
 
 		if ( ! is_array( $query ) ) {
@@ -65,7 +65,7 @@ class DynamoDBConnector implements DBConnectorInterface {
 			];
 		}
 
-		$search_scan = $this->get_client( $profile, $region )->getIterator( 'Scan', $args );
+		$search_scan = $this->get_client( $config )->getIterator( 'Scan', $args );
 
 		$instances = [];
 
@@ -80,16 +80,14 @@ class DynamoDBConnector implements DBConnectorInterface {
 	 * Get a snapshot given an id
 	 *
 	 * @param  string $id Snapshot ID
-	 * @param string $profile AWS profile.
-	 * @param string $repository Repository name.
-	 * @param string $region AWS region.
+	 * @param array  $config AWS Config
 	 * @return mixed
 	 */
-	public function get_snapshot( string $id, string $profile, string $repository, string $region ) {
-		$result = $this->get_client( $profile, $region )->getItem(
+	public function get_snapshot( string $id, array $config ) {
+		$result = $this->get_client( $config )->getItem(
 			[
 				'ConsistentRead' => true,
-				'TableName'      => 'wpsnapshots-' . $repository,
+				'TableName'      => 'wpsnapshots-' . $config['repository'],
 				'Key'            => [
 					'id' => [
 						'S' => $id,
@@ -114,13 +112,11 @@ class DynamoDBConnector implements DBConnectorInterface {
 	/**
 	 * Create default DB tables. Only need to do this once ever for repo setup.
 	 *
-	 * @param string $profile AWS profile.
-	 * @param string $repository Repository name.
-	 * @param string $region AWS region.
+	 * @param array $config AWS config
 	 */
-	public function create_tables( string $profile, string $repository, string $region ) {
-		$table_name = 'wpsnapshots-' . $repository;
-		$client     = $this->get_client( $profile, $region );
+	public function create_tables( array $config ) {
+		$table_name = 'wpsnapshots-' . $config['repository'];
+		$client     = $this->get_client( $config );
 
 		$client->createTable(
 			[
@@ -156,12 +152,10 @@ class DynamoDBConnector implements DBConnectorInterface {
 	 * Insert a snapshot into the DB
 	 *
 	 * @param  string $id Snapshot ID
-	 * @param string $profile AWS profile.
-	 * @param  string $repository Repository name.
-	 * @param string $region AWS region.
+	 * @param array  $config AWS config
 	 * @param array  $meta Snapshot meta.
 	 */
-	public function insert_snapshot( string $id, string $profile, string $repository, string $region, array $meta ) : void {
+	public function insert_snapshot( string $id, array $config, array $meta ) : void {
 		$marshaler = new Marshaler();
 
 		$snapshot_item = [
@@ -173,9 +167,9 @@ class DynamoDBConnector implements DBConnectorInterface {
 		$snapshot_item = array_merge( $snapshot_item, $meta );
 		$snapshot_json = json_encode( $snapshot_item ); // phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode
 
-		$this->get_client( $profile, $region )->putItem(
+		$this->get_client( $config )->putItem(
 			[
-				'TableName' => 'wpsnapshots-' . $repository,
+				'TableName' => 'wpsnapshots-' . $config['repository'],
 				'Item'      => $marshaler->marshalJson( $snapshot_json ),
 			]
 		);
@@ -185,14 +179,12 @@ class DynamoDBConnector implements DBConnectorInterface {
 	 * Delete a snapshot given an id
 	 *
 	 * @param  string $id Snapshot ID
-	 * @param string $profile AWS profile.
-	 * @param string $repository Repository name.
-	 * @param string $region AWS region.
+	 * @param array  $config AWS config
 	 */
-	public function delete_snapshot( string $id, string $profile, string $repository, string $region ) : void {
-		$this->get_client( $profile, $region )->deleteItem(
+	public function delete_snapshot( string $id, array $config ) : void {
+		$this->get_client( $config )->deleteItem(
 			[
-				'TableName' => 'wpsnapshots-' . $repository,
+				'TableName' => 'wpsnapshots-' . $config['repository'],
 				'Key'       => [
 					'id' => [
 						'S' => $id,
@@ -205,31 +197,68 @@ class DynamoDBConnector implements DBConnectorInterface {
 	/**
 	 * Provides the client.
 	 *
-	 * @param string $profile AWS profile.
-	 * @param string $region AWS region.
+	 * @param array $config AWS config
 	 *
 	 * @return DynamoDbClient
+	 * @throws SnapshotsException Failed to assume ARN role
 	 */
-	private function get_client( string $profile, string $region ) : DynamoDbClient {
-		$client_key = $profile . '_' . $region;
+	private function get_client( array $config ) : DynamoDbClient {
+		if ( ! is_null( $this->client ) ) {
+			return $this->client;
+		}
 
 		$args = [
-			'region'  => $region,
-			'profile' => $profile,
+			'region'  => $config['region'],
 			'version' => '2012-08-10',
 			'csm'     => false,
 		];
 
-		// Check if the necessary AWS env vars are set; if so, the profile arg is not needed.
-		// These are the same env vars the SDK checks for in CredentialProvider.php.
-		if ( getenv( 'AWS_ACCESS_KEY_ID' ) && getenv( 'AWS_SECRET_ACCESS_KEY' ) ) {
-			unset( $args['profile'] );
+		// if role_arn has a value use STS to assume the role
+		// and pass the credential info to DynamoDbClient later on
+		if ( ! empty( $config['role_arn'] ) ) {
+			$args['roleArn'] = $config['role_arn'];
+
+			$temp_creds = $this->assume_role( $args );
+
+			if ( ! is_array( $temp_creds ) ) {
+				throw new SnapshotsException( sprintf( "Failed to assume role '%s'.", $args['roleArn'] ) );
+			}
+
+			$args['credentials'] = [
+				'key'    => $temp_creds['AccessKeyId'],
+				'secret' => $temp_creds['SecretAccessKey'],
+				'token'  => $temp_creds['SessionToken'],
+			];
+		} elseif ( ! empty( $config['profile'] ) ) {
+			$args['profile'] = $config['profile'];
 		}
 
-		if ( ! isset( $this->clients[ $client_key ] ) ) {
-			$this->clients[ $client_key ] = new DynamoDbClient( $args );
-		}
+		$this->client = new DynamoDbClient( $args );
 
-		return $this->clients[ $client_key ];
+		return $this->client;
+	}
+
+	/**
+	 * Performs STS
+	 *
+	 * @param array $connection_parameters Parameters for connection
+	 * @return mixed
+	 */
+	private function assume_role( $connection_parameters ) {
+		$sts_client = new Aws\Sts\StsClient(
+			[
+				'region'  => 'us-east-1',
+				'version' => '2011-06-15',
+			]
+		);
+
+		$result = $sts_client->assumeRole(
+			[
+				'RoleArn'         => $connection_parameters['roleArn'],
+				'RoleSessionName' => 'wpsnapshots',
+			]
+		);
+
+		return $result['Credentials'];
 	}
 }

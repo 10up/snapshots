@@ -38,14 +38,14 @@ class Delete extends WPCLICommand {
 			$region          = $this->get_region();
 			$profile         = $this->get_profile_for_repository();
 
-			$snapshot = $this->db_connector->get_snapshot( $id, $profile, $repository_name, $region );
+			$snapshot = $this->db_connector->get_snapshot( $id, $this->get_aws_config() );
 
 			if ( ! $snapshot ) {
 				throw new SnapshotsException( sprintf( 'Snapshot %s not found in repository %s.', $id, $repository_name ) );
 			}
 
-			$this->storage_connector->delete_snapshot( $id, $snapshot['project'], $profile, $repository_name, $region );
-			$this->db_connector->delete_snapshot( $id, $profile, $repository_name, $region );
+			$this->storage_connector->delete_snapshot( $id, $snapshot['project'], $this->get_aws_config() );
+			$this->db_connector->delete_snapshot( $id, $this->get_aws_config() );
 
 			wp_cli()::success( sprintf( 'Snapshot %s deleted.', $id ) );
 		} catch ( Exception $e ) {
