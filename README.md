@@ -8,7 +8,6 @@ A [WP-CLI](https://wp-cli.org/) based project sharing tool for WordPress. Replac
 * [Overview](#overview)
 * [Why Replace the Old WP Snapshots?](#why-replace-the-old-wp-snapshots)
 * [Getting Started](#getting-started)
-* [Authentication](#authentication)
 * [Usage](#usage)
     * [configure](#configure)
     * [create-repository](#create-repository)
