@@ -139,11 +139,8 @@ class WPCLIDBExport implements DBExportInterface {
 		$tables = $this->wordpress_database->get_tables();
 
 		foreach ( $tables as $table ) {
-			if ( $wpdb->users === $table ) {
-				continue;
-			}
-
-			if ( $wpdb->usermeta === $table ) {
+			// These tables will be handled by the scrubber
+			if ( in_array( $table, [ $wpdb->users, $wpdb->usermeta, $wpdb->comments, $wpdb->commentmeta ], true ) ) {
 				continue;
 			}
 

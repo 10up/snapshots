@@ -13,6 +13,10 @@
   },
   "repositories": [
     {
+      "url": "https://github.com/10up/wp-scrubber.git",
+      "type": "git"
+    },
+    {
       "type": "package",
       "package": {
         "name": "wordpress/wordpress-develop",
@@ -27,12 +31,13 @@
   ],
   "require": {
     "aws/aws-sdk-php": "^3.254",
-    "jc21/clitable": "dev-master"
+    "jc21/clitable": "dev-master",
+    "10up/wp-scrubber": "^1.0.0"
   },
   "require-dev": {
     "10up/phpcs-composer": "dev-master",
     "yoast/wp-test-utils": "^1.1",
-    "wp-cli/wp-cli": "2.8.x-dev",
+    "wp-cli/wp-cli": "^2.8.1",
     "civicrm/composer-downloads-plugin": "dev-master",
     "php-stubs/wordpress-stubs": "^6.1",
     "php-stubs/wordpress-tests-stubs": "^6.1",
