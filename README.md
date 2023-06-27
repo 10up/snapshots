@@ -8,7 +8,6 @@ A [WP-CLI](https://wp-cli.org/) based project sharing tool for WordPress. Replac
 * [Overview](#overview)
 * [Why Replace the Old WP Snapshots?](#why-replace-the-old-wp-snapshots)
 * [Getting Started](#getting-started)
-* [Authentication](#authentication)
 * [Usage](#usage)
     * [configure](#configure)
     * [create-repository](#create-repository)
@@ -43,7 +42,7 @@ Follow the steps below to set up and use Snapshots.
 
 ### 1. Install
 
-Snapshots is a WP CLI package. An environment with WP CLI enabled is required, and it's highly recommended you run Snapshots from WITHIN your dev environment (inside VM or container).
+Snapshots is a WP CLI package. An environment with WP CLI enabled is required, and it's highly recommended you run Snapshots from WITHIN your dev environment. For [Local](https://localwp.com/), this means opening a shell for one of your projects.
 
 The recommended method for installing the package is directly from the GitHub repository:
 
