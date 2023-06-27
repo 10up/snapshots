@@ -1,7 +1,7 @@
 <?php
 /**
  * Tests for WPCLIDBExport.
- * 
+ *
  * @package TenUp\Snapshots
  */
 
@@ -19,9 +19,9 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class TestWPCLIDBExport
- * 
+ *
  * @package TenUp\Snapshots\Tests\WPCLICommands\Create
- * 
+ *
  * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\Create\WPCLIDBExport
  */
 class TestWPCLIDBExport extends TestCase {
@@ -30,7 +30,7 @@ class TestWPCLIDBExport extends TestCase {
 
 	/**
 	 * WPCLIDBExport instance.
-	 * 
+	 *
 	 * @var WPCLIDBExport
 	 */
 	protected $wpcli_dumper;
@@ -71,14 +71,14 @@ class TestWPCLIDBExport extends TestCase {
 	public function test_dump() {
 		/**
 		 * Trimmer mock object
-		 * 
+		 *
 		 * @var MockObject $trimmer
 		 */
 		$trimmer = $this->createMock( Trimmer::class );
 
 		/**
 		 * Scrubber mock object
-		 * 
+		 *
 		 * @var MockObject $scrubber
 		 */
 		$scrubber = $this->createMock( Scrubber::class );
@@ -111,7 +111,7 @@ class TestWPCLIDBExport extends TestCase {
 			1,
 			[
 				[
-					'db export /tenup-snapshots-tmp/test-id/data.sql --tables=wp_commentmeta,wp_comments,wp_links,wp_options,wp_postmeta,wp_posts,wp_term_relationships,wp_term_taxonomy,wp_termmeta,wp_terms,',
+					'db export /tenup-snapshots-tmp/test-id/data.sql --tables=wp_links,wp_options,wp_postmeta,wp_posts,wp_term_relationships,wp_term_taxonomy,wp_termmeta,wp_terms,',
 					[
 						'launch' => true,
 						'return' => 'all',
@@ -130,7 +130,7 @@ class TestWPCLIDBExport extends TestCase {
 
 	/**
 	 * Creates a test sql file.
-	 * 
+	 *
 	 * @param string $file_path File path.
 	 */
 	protected function create_file( $file_path ) {
