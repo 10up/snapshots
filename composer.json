@@ -13,10 +13,6 @@
   },
   "repositories": [
     {
-      "url": "https://github.com/10up/wp-scrubber.git",
-      "type": "git"
-    },
-    {
       "type": "package",
       "package": {
         "name": "wordpress/wordpress-develop",
