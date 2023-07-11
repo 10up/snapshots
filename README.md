@@ -66,7 +66,7 @@ You must set up your AWS credentials in your local environment. Option 1 is the 
 
 #### Option 1: AWS Credentials File (Easiest Setup Method)
 
-Create a `~/.aws/credentials` file with the following contents:
+Create a `~/.aws/credentials` file with the following contents (`credentials` file cannot have an extension):
 
 ```ini
 [default]
