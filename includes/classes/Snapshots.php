@@ -10,6 +10,7 @@ namespace TenUp\Snapshots;
 use TenUp\Snapshots\Infrastructure\Container;
 use TenUp\Snapshots\Log\WPCLILogger;
 use TenUp\Snapshots\Snapshots\{DynamoDBConnector, FileZipper, S3StorageConnector, SnapshotMetaFromFileSystem};
+use TenUp\Snapshots\ProgressBar\WPCLIProgressBar;
 use TenUp\Snapshots\WordPress\Database;
 use TenUp\Snapshots\WPCLI\Prompt;
 use TenUp\Snapshots\WPCLICommands\{Configure, Create, CreateRepository, Delete, Download, Pull, Push, Search};
@@ -76,6 +77,7 @@ final class Snapshots extends Container {
 			'wp_snapshots_config/wp_snapshots_config' => SnapshotsConfigFromFileSystem::class,
 			'wpcli/prompt'                            => Prompt::class,
 			'wpcli/url_replacer_factory'              => URLReplacerFactory::class,
+			'snapshots/progress_bar'                  => WPCLIProgressBar::class,
 		];
 
 		/**
