@@ -44,7 +44,7 @@ class WPCLIProgressBar implements ProgressBarInterface {
 	 * Advance the progress bar.
 	 *
 	 * @param string $key Key of the progress bar to progress.
-	 * @param int $amount Amount to advance the progress bar.
+	 * @param int    $amount Amount to advance the progress bar.
 	 *
 	 * @return void
 	 */

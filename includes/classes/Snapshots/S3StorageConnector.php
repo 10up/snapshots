@@ -84,10 +84,10 @@ class S3StorageConnector implements StorageConnectorInterface {
 					'Key'    => $snapshot_meta['project'] . '/' . $id . '/data.sql.gz',
 					'SaveAs' => $this->snapshots_file_system->get_file_path( 'data.sql.gz', $id ),
 					'@http' => [
-						'progress' => function ( $expectedDl, $dl ) {
+						'progress' => function ( $expected_dl, $dl ) {
 							$this->progress_bar->advance_progress_bar( 'db_dl', (int) $dl );
-						}
-					]
+						},
+					],
 				]
 			);
 
@@ -107,10 +107,10 @@ class S3StorageConnector implements StorageConnectorInterface {
 					'Key'    => $snapshot_meta['project'] . '/' . $id . '/files.tar.gz',
 					'SaveAs' => $this->snapshots_file_system->get_file_path( 'files.tar.gz', $id ),
 					'@http' => [
-						'progress' => function ( $expectedDl, $dl ) {
+						'progress' => function ( $expected_dl, $dl ) {
 							$this->progress_bar->advance_progress_bar( 'files_dl', (int) $dl );
-						}
-					]
+						},
+					],
 				]
 			);
 
@@ -178,10 +178,10 @@ class S3StorageConnector implements StorageConnectorInterface {
 					'SourceFile' => realpath( $this->snapshots_file_system->get_file_path( 'data.sql.gz', $id ) ),
 					'ContentMD5' => base64_encode( md5_file( $this->snapshots_file_system->get_file_path( 'data.sql.gz', $id ), true ) ), // phpcs:ignore
 					'@http' => [
-						'progress' => function ( $expectedDl, $dl, $expectedUl, $ul ) {
+						'progress' => function ( $expected_dl, $dl, $expected_ul, $ul ) {
 							$this->progress_bar->advance_progress_bar( 'db_ul', (int) $ul );
-						}
-					]
+						},
+					],
 				]
 			);
 
@@ -203,10 +203,10 @@ class S3StorageConnector implements StorageConnectorInterface {
 					'SourceFile' => realpath( $this->snapshots_file_system->get_file_path( 'files.tar.gz', $id ) ),
 					'ContentMD5' => base64_encode( md5_file( $this->snapshots_file_system->get_file_path( 'files.tar.gz', $id ), true ) ), // phpcs:ignore
 					'@http' => [
-						'progress' => function ( $expectedDl, $dl, $expectedUl, $ul ) {
+						'progress' => function ( $expected_dl, $dl, $expected_ul, $ul ) {
 							$this->progress_bar->advance_progress_bar( 'files_ul', (int) $ul );
-						}
-					]
+						},
+					],
 				]
 			);
 

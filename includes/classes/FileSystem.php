@@ -136,6 +136,7 @@ class FileSystem implements SharedService {
 			return;
 		}
 
+		// @phpstan-ignore-next-line
 		if ( is_wp_error( $result ) && 'incompatible_archive' === $result->get_error_code() && strpos( $file, '.sql.gz' ) !== false ) {
 			// Unzip with gzip.
 			$unzip_gzip = sprintf( 'gunzip -c %s > %s', escapeshellarg( $file ), escapeshellarg( snapshots_add_trailing_slash( $destination ) . basename( $file, '.gz' ) ) );
