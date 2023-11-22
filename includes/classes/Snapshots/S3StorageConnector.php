@@ -9,6 +9,7 @@ namespace TenUp\Snapshots\Snapshots;
 
 use Aws\S3\S3Client;
 use TenUp\Snapshots\Exceptions\SnapshotsException;
+use TenUp\Snapshots\ProgressBar\ProgressBarInterface;
 use TenUp\Snapshots\SnapshotsDirectory;
 use Aws;
 
@@ -41,14 +42,23 @@ class S3StorageConnector implements StorageConnectorInterface {
 	private $snapshot_meta;
 
 	/**
+	 * Progress Bar instance.
+	 *
+	 * @var ProgressBarInterface
+	 */
+	private $progress_bar;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @param SnapshotsDirectory    $snapshots_file_system SnapshotsDirectory instance.
 	 * @param SnapshotMetaInterface $snapshot_meta SnapshotMeta instance.
+	 * @param ProgressBarInterface  $progress_bar Progress bar instance.
 	 */
-	public function __construct( SnapshotsDirectory $snapshots_file_system, SnapshotMetaInterface $snapshot_meta ) {
+	public function __construct( SnapshotsDirectory $snapshots_file_system, SnapshotMetaInterface $snapshot_meta, ProgressBarInterface $progress_bar ) {
 		$this->snapshots_file_system = $snapshots_file_system;
 		$this->snapshot_meta         = $snapshot_meta;
+		$this->progress_bar          = $progress_bar;
 	}
 
 	/**
@@ -62,23 +72,49 @@ class S3StorageConnector implements StorageConnectorInterface {
 		$this->snapshots_file_system->create_directory( $id );
 
 		if ( $snapshot_meta['contains_db'] ) {
+			$this->progress_bar->create_progress_bar(
+				'db_dl',
+				sprintf( 'Downloading Database (%s)', $this->format_bytes( $snapshot_meta['db_size'] ) ),
+				$snapshot_meta['db_size']
+			);
+
 			$this->get_client( $config )->getObject(
 				[
 					'Bucket' => $this->get_bucket_name( $config['repository'] ),
 					'Key'    => $snapshot_meta['project'] . '/' . $id . '/data.sql.gz',
 					'SaveAs' => $this->snapshots_file_system->get_file_path( 'data.sql.gz', $id ),
+					'@http' => [
+						'progress' => function ( $expectedDl, $dl ) {
+							$this->progress_bar->advance_progress_bar( 'db_dl', (int) $dl );
+						}
+					]
 				]
 			);
+
+			$this->progress_bar->finish_progress_bar( 'db_dl' );
 		}
 
 		if ( $snapshot_meta['contains_files'] ) {
+			$this->progress_bar->create_progress_bar(
+				'files_dl',
+				sprintf( 'Downloading Files (%s)', $this->format_bytes( $snapshot_meta['files_size'] ) ),
+				$snapshot_meta['files_size']
+			);
+
 			$this->get_client( $config )->getObject(
 				[
 					'Bucket' => $this->get_bucket_name( $config['repository'] ),
 					'Key'    => $snapshot_meta['project'] . '/' . $id . '/files.tar.gz',
 					'SaveAs' => $this->snapshots_file_system->get_file_path( 'files.tar.gz', $id ),
+					'@http' => [
+						'progress' => function ( $expectedDl, $dl ) {
+							$this->progress_bar->advance_progress_bar( 'files_dl', (int) $dl );
+						}
+					]
 				]
 			);
+
+			$this->progress_bar->finish_progress_bar( 'files_dl' );
 		}
 	}
 
@@ -128,25 +164,53 @@ class S3StorageConnector implements StorageConnectorInterface {
 		$client = $this->get_client( $config );
 
 		if ( $meta['contains_db'] && file_exists( $this->snapshots_file_system->get_file_path( 'data.sql.gz', $id ) ) ) {
+			$filesize = filesize( $this->snapshots_file_system->get_file_path( 'data.sql.gz', $id ) );
+			$this->progress_bar->create_progress_bar(
+				'db_ul',
+				sprintf( 'Uploading Database (%s)', $this->format_bytes( $filesize ) ),
+				$filesize
+			);
+
 			$client->putObject(
 				[
 					'Bucket'     => $this->get_bucket_name( $config['repository'] ),
 					'Key'        => $meta['project'] . '/' . $id . '/data.sql.gz',
 					'SourceFile' => realpath( $this->snapshots_file_system->get_file_path( 'data.sql.gz', $id ) ),
 					'ContentMD5' => base64_encode( md5_file( $this->snapshots_file_system->get_file_path( 'data.sql.gz', $id ), true ) ), // phpcs:ignore
+					'@http' => [
+						'progress' => function ( $expectedDl, $dl, $expectedUl, $ul ) {
+							$this->progress_bar->advance_progress_bar( 'db_ul', (int) $ul );
+						}
+					]
 				]
 			);
+
+			$this->progress_bar->finish_progress_bar( 'db_ul' );
 		}
 
 		if ( $meta['contains_files'] && file_exists( $this->snapshots_file_system->get_file_path( 'files.tar.gz', $id ) ) ) {
+			$filesize = filesize( $this->snapshots_file_system->get_file_path( 'files.sql.gz', $id ) );
+			$this->progress_bar->create_progress_bar(
+				'files_ul',
+				sprintf( 'Uploading Files (%s)', $this->format_bytes( $filesize ) ),
+				$filesize
+			);
+
 			$client->putObject(
 				[
 					'Bucket'     => $this->get_bucket_name( $config['repository'] ),
 					'Key'        => $meta['project'] . '/' . $id . '/files.tar.gz',
 					'SourceFile' => realpath( $this->snapshots_file_system->get_file_path( 'files.tar.gz', $id ) ),
 					'ContentMD5' => base64_encode( md5_file( $this->snapshots_file_system->get_file_path( 'files.tar.gz', $id ), true ) ), // phpcs:ignore
+					'@http' => [
+						'progress' => function ( $expectedDl, $dl, $expectedUl, $ul ) {
+							$this->progress_bar->advance_progress_bar( 'files_ul', (int) $ul );
+						}
+					]
 				]
 			);
+
+			$this->progress_bar->finish_progress_bar( 'files_ul' );
 		}
 
 		/**
@@ -292,4 +356,16 @@ class S3StorageConnector implements StorageConnectorInterface {
 		return 'wpsnapshots-' . $repository;
 	}
 
+	/**
+	 * Formats bytes to human-readable format.
+	 *
+	 * @param int $size Size in bytes.
+	 * @param int $precision Precision.
+	 * @return string
+	 */
+	private function format_bytes( $size, $precision = 2 ) {
+		$base     = log( $size, 1024 );
+		$suffixes = array( '', 'kb', 'mb', 'g', 't' );
+		return round( pow( 1024, $base - floor( $base ) ), $precision ) . $suffixes[ floor( $base ) ];
+	}
 }
