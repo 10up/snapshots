@@ -15,6 +15,7 @@ parameters:
 	excludePaths:
 		- %currentWorkingDirectory%/includes/lib/wp-file-system-direct-shim.php
 	ignoreErrors:
+		- '#Function WP_CLI\\Utils\\make_progress_bar not found.#'
 	earlyTerminatingMethodCalls:
 		\WP_CLI:
 			- WP_CLI::error
