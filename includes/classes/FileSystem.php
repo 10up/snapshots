@@ -139,7 +139,7 @@ class FileSystem implements SharedService {
 		// @phpstan-ignore-next-line
 		if ( is_wp_error( $result ) && 'incompatible_archive' === $result->get_error_code() && strpos( $file, '.sql.gz' ) !== false ) {
 			// Unzip with gzip.
-			$unzip_gzip = sprintf( 'gunzip -c %s > %s', escapeshellarg( $file ), escapeshellarg( snapshots_add_trailing_slash( $destination ) . basename( $file, '.gz' ) ) );
+			$unzip_gzip = sprintf( 'gzip -dkf < %s > %s', escapeshellarg( $file ), escapeshellarg( snapshots_add_trailing_slash( $destination ) . basename( $file, '.gz' ) ) );
 			$result     = exec( $unzip_gzip ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.system_calls_exec
 
 			if ( false === $result ) {

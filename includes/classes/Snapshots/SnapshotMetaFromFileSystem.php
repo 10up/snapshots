@@ -189,7 +189,7 @@ class SnapshotMetaFromFileSystem extends SnapshotMeta {
 		}
 
 		if ( $args['contains_files'] ) {
-			$meta['files_size'] = $this->snapshot_files->get_file_size( 'files.zip', $id );
+			$meta['files_size'] = $this->snapshot_files->get_file_size( 'files.tar.gz', $id );
 		}
 
 		$this->save_local( $id, $meta );
