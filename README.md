@@ -520,6 +520,10 @@ Snapshots automatically scrubs user information when creating a snapshot. Scrubb
 
   A fatal error is most likely occuring when bootstrapping WordPress. Look at your error log to see what's happening. Often this happens because of a missing PHP class (Memcached) which is a result of not running Snapshots inside your environment (container or VM).
 
+* __wp snapshots fails due to requiring Github auth.__
+
+  When running wp snapshots within the site shell of a [Local](https://localwp.com/) site you may need to provide a classic Github access token with `repo` permissions. This can be created in your Github account settings. You can then either proceed to `export GITHUB_TOKEN=%token%` during the shell session before executing wp snapshot commands or add the token to your global composer configuration, see [wp package install](https://developer.wordpress.org/cli/commands/package/install) documentation for more information.
+
 ## Changelog
 
 A complete listing of all notable changes to the project are documented in [CHANGELOG.md](https://github.com/10up/snapshots/blob/trunk/CHANGELOG.md).
