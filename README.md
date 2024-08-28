@@ -522,7 +522,7 @@ Snapshots automatically scrubs user information when creating a snapshot. Scrubb
 
 * __wp snapshots fails due to requiring Github auth.__
 
-  When running wp snapshots within the site shell of a [Local](https://localwp.com/) site you may need to provide a classic Github access token with `repo` permissions. This can be created in your Github account settings. You can them either proceed to `export GITHUB_TOKEN=%token%` during the shell session before executing wp snapshot commands or add the token to your global composer configuration, see [wp package install](https://developer.wordpress.org/cli/commands/package/install) documentation for more information.
+  When running wp snapshots within the site shell of a [Local](https://localwp.com/) site you may need to provide a classic Github access token with `repo` permissions. This can be created in your Github account settings. You can then either proceed to `export GITHUB_TOKEN=%token%` during the shell session before executing wp snapshot commands or add the token to your global composer configuration, see [wp package install](https://developer.wordpress.org/cli/commands/package/install) documentation for more information.
 
 ## Changelog
 
