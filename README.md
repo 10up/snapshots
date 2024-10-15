@@ -512,7 +512,7 @@ Snapshots relies on AWS for access management. Each snapshot is associated with 
     
 ## PII
     
-Snapshots automatically scrubs user information when creating a snapshot. Scrubbed data only includes standard WordPress data e.g. user name, passwords, some user meta, etc. Certain plugins or custom code my store PII elsewhere. It is strongly recommended you review your project for PII (personal identifable information) before pushing snapshots to AWS.
+Snapshots automatically scrubs user information when creating a snapshot. Scrubbed data only includes standard WordPress data e.g. user name, passwords, some user meta, etc. Certain plugins or custom code may store PII elsewhere. It is strongly recommended you review your project for PII (personal identifable information) before pushing snapshots to AWS.
 
 ## Troubleshooting
 
