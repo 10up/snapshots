@@ -58,7 +58,17 @@ Alternatively, you can download the package as a zip file from the GitHub reposi
 wp package install /path/to/snapshots.zip
 ```
 
-Note: PHP 7.3+ is required.
+#### Windows
+
+Windows users will have to do the following to properly install and use Snapshots:
+
+* LocalWP's WP-CLI version must be 2.8.0+. The current version of LocalWP (7.1.2+6410) includes WP-CLI version 2.7.1. To update it, download the latest version of [wp-cli.phar](https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar) and replace the file in `%USERPROFILE%\AppData\Local\Programs\Local\resources\extraResources\bin\wp-cli\win32`.
+* Install `Gzip` for Windows. Download the desired package from the [GNUWin32 project page](https://gnuwin32.sourceforge.net/packages/gzip.htm) and read the [General Installation Instructions](https://gnuwin32.sourceforge.net/install.html) in order to install the package. **TL;DR** Download the binaries, extract them in a folder, and put that folder into the PATH. After adding the folder into the PATH, restart LocalWP.
+* Install `Grep` for Windows. Download the desired package from the [GNUWin32 project page](https://gnuwin32.sourceforge.net/packages/grep.htm) and read the [General Installation Instructions](https://gnuwin32.sourceforge.net/install.html) in order to install the package. **TL;DR** Download the binaries, extract them in a folder, and put that folder into the PATH. After adding the folder into the PATH, restart LocalWP.
+* Edit the LocalWP site's `wp-config.php` file and change the `DB_HOST` constant in a way to also include the port number, for example `define( 'DB_HOST', 'localhost:10005' );`. Note that this port number occasionally changes, so the value in the `wp-config.php` file has to be up-to-date for the site to be usable. No LocalWP restart is required after changing the port number in the `wp-config.php` file. The port number constant modification can be reverted, `define( 'DB_HOST', 'localhost' );`, after any snapshot-related operation.
+![image](https://github.com/10up/snapshots/assets/1268089/80325a02-e8a0-475a-9d0e-d7540f349716)
+
+**Note**: PHP 7.3+ and WP-CLI 2.8.0+ are required.
 
 ### 2. Authentication
 
