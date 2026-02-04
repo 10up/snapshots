@@ -66,7 +66,20 @@ You must set up your AWS credentials in your local environment. Option 1 is the 
 
 #### Option 1: AWS Credentials File (Easiest Setup Method)
 
-Create a `~/.aws/credentials` file with the following contents (`credentials` file cannot have an extension):
+Create a `~/.aws/config` file with the following contents (`config` file cannot have an extension):
+
+```ini
+[default]
+```
+
+Here you can insert default or other option values, like `region` to set the default region you are working against or `source_profile` if you are using role switching. For example, if you want to use `us-west-1` as your default region then your config file will contain:
+
+```init
+[default]
+region = us-west-1
+```
+
+Next, create a `~/.aws/credentials` file with the following contents (`credentials` file cannot have an extension):
 
 ```ini
 [default]
@@ -74,7 +87,9 @@ aws_access_key_id = <your-access-key-id>
 aws_secret_access_key = <your-secret-access-key>
 ```
 
-Depending on your setup, you may need to create the `~/.aws` directory and the `credentials` file inside of your local environment.
+**NOTE:** these values should not be quoted!
+
+Depending on your setup, you may need to create the `~/.aws` directory and the `config` and/or `credentials` files.
 
 More information in [AWS documentation](https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/guide_credentials_profiles.html).
 
