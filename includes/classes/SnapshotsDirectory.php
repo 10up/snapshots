@@ -294,8 +294,12 @@ class SnapshotsDirectory implements SharedService {
 	 */
 	private function get_directory( ?string $id = null ) : string {
 
-		$directory = getenv( 'TENUP_SNAPSHOTS_DIR' );
-		$directory = ! empty( $directory ) ? rtrim( $directory, '/' ) . '/' : rtrim( $_SERVER['HOME'], '/' ) . '/.wpsnapshots/';
+		$directory   = getenv( 'TENUP_SNAPSHOTS_DIR' );
+		$server_home = $_SERVER['HOME'] ?? '';
+		if ( empty( $server_home ) ) {
+			$server_home = str_replace( '\\', '/', $_SERVER['USERPROFILE'] ?? '' );
+		}
+		$directory = ! empty( $directory ) ? rtrim( $directory, '/' ) . '/' : rtrim( $server_home, '/' ) . '/.wpsnapshots/';
 
 		/**
 		 * Filters the wpsnapshots directory.
