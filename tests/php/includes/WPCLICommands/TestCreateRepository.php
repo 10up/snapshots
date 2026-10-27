@@ -93,7 +93,14 @@ class TestCreateRepository extends TestCase {
 		$storage_connector = $this->createMock( S3StorageConnector::class );
 		$storage_connector->expects( $this->once() )
 			->method( 'create_bucket' )
-			->with( [ 'profile' => 'default', 'repository' => 'test-repo', 'region' => 'us-west-1', 'role_arn' => '' ] );
+			->with(
+				[
+					'profile'    => 'default',
+					'repository' => 'test-repo',
+					'region'     => 'us-west-1',
+					'role_arn'   => '',
+				]
+			);
 
 		/**
 		 * @var MockObject $db_connector
@@ -101,7 +108,14 @@ class TestCreateRepository extends TestCase {
 		$db_connector = $this->createMock( DynamoDBConnector::class );
 		$db_connector->expects( $this->once() )
 			->method( 'create_tables' )
-			->with( [ 'profile' => 'default', 'repository' => 'test-repo', 'region' => 'us-west-1', 'role_arn' => '' ] );
+			->with(
+				[
+					'profile'    => 'default',
+					'repository' => 'test-repo',
+					'region'     => 'us-west-1',
+					'role_arn'   => '',
+				]
+			);
 
 		$this->set_private_property( $this->command, 'storage_connector', $storage_connector );
 		$this->set_private_property( $this->command, 'db_connector', $db_connector );

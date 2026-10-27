@@ -102,10 +102,10 @@ class TestPrompt extends TestCase {
 		$actual_args = $this->prompt->get_arg_or_prompt(
 			$args,
 			[
-				'key' => 'test',
+				'key'               => 'test',
 				'validate_callback' => function( $value ) {
-					return $value === 'value';
-				}
+					return 'value' === $value;
+				},
 			]
 		);
 
@@ -161,7 +161,7 @@ class TestPrompt extends TestCase {
 			'Prompt?',
 			'',
 			function( $value ) {
-				if ( $value !== 'value2' ) {
+				if ( 'value2' !== $value ) {
 					throw new SnapshotsInputValidationException( 'Invalid value' );
 				}
 
@@ -192,11 +192,11 @@ class TestPrompt extends TestCase {
 		$actual_args = $this->prompt->get_arg_or_prompt(
 			$args,
 			[
-				'key' => 'test',
+				'key'               => 'test',
 				'sanitize_callback' => function( $unfiltered_value ) use ( &$sanitize_callback_called ) {
 					$sanitize_callback_called = true;
 					return preg_replace( '/\s+/', ' ', $unfiltered_value );
-				}
+				},
 			]
 		);
 
@@ -212,11 +212,14 @@ class TestPrompt extends TestCase {
 	public function test_returns_flag_if_already_present() {
 		$args = [ 'test' => true ];
 
-		add_filter( 'snapshots_readline', function() {
-			return function() {
-				return 'Y';
-			};
-		} );
+		add_filter(
+			'snapshots_readline',
+			function() {
+				return function() {
+					return 'Y';
+				};
+			}
+		);
 
 		$this->assertEquals( true, $this->prompt->get_flag_or_prompt( $args, 'nonexistent_key', 'Prompt?', true ) );
 	}

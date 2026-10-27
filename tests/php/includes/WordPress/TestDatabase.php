@@ -22,7 +22,7 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
  */
 class TestDatabase extends TestCase {
 
-    use PrivateAccess;
+	use PrivateAccess;
 
 	/**
 	 * Database instance.
@@ -52,7 +52,7 @@ class TestDatabase extends TestCase {
 		global $wpdb;
 
 		// Insert table if it doesn't exist.
-		$wpdb->query( "CREATE TABLE IF NOT EXISTS test_table (id INT)" );
+		$wpdb->query( 'CREATE TABLE IF NOT EXISTS test_table (id INT)' );
 
 		$tables = $this->wordpress_database->get_tables();
 
@@ -66,7 +66,7 @@ class TestDatabase extends TestCase {
 		$this->assertTrue( in_array( 'test_table', $tables, true ) );
 
 		// Drop table if it exists.
-		$wpdb->query( "DROP TABLE IF EXISTS test_table" );
+		$wpdb->query( 'DROP TABLE IF EXISTS test_table' );
 	}
 
 	/**
@@ -77,7 +77,7 @@ class TestDatabase extends TestCase {
 		global $wpdb;
 
 		// Insert table without the wp_ prefix.
-		$wpdb->query( "CREATE TABLE IF NOT EXISTS test_table (id INT)" );
+		$wpdb->query( 'CREATE TABLE IF NOT EXISTS test_table (id INT)' );
 
 		$this->wordpress_database->rename_table( 'test_table', 'test_table_renamed' );
 
@@ -87,8 +87,8 @@ class TestDatabase extends TestCase {
 		$this->assertTrue( in_array( 'test_table_renamed', $tables, true ) );
 
 		// Clean up.
-		$wpdb->query( "DROP TABLE IF EXISTS test_table_renamed" );
-		$wpdb->query( "DROP TABLE IF EXISTS test_table" );
+		$wpdb->query( 'DROP TABLE IF EXISTS test_table_renamed' );
+		$wpdb->query( 'DROP TABLE IF EXISTS test_table' );
 
 	}
 

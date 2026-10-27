@@ -58,18 +58,18 @@ class TestMultisiteURLReplacer extends TestCase {
 		require_once ABSPATH . 'wp-includes/ms-site.php';
 		require_once ABSPATH . 'wp-includes/class-wp-site.php';
 
-		$plugin = new Snapshots();
+		$plugin             = new Snapshots();
 		$this->url_replacer = new MultisiteURLReplacer(
 			$plugin->get_instance( Prompt::class ),
 			$plugin->get_instance( SnapshotsDirectory::class ),
-			$plugin->get_instance( Database ::class ),
+			$plugin->get_instance( Database::class ),
 			$plugin->get_instance( WPCLILogger::class ),
 			[
 				'sites' => [
 					[
-						'blog_id' => 1,
-						'home_url'  => 'http://home-url.com',
-						'site_url'  => 'http://site-url.com'
+						'blog_id'  => 1,
+						'home_url' => 'http://home-url.com',
+						'site_url' => 'http://site-url.com',
 					],
 				],
 			],
@@ -121,9 +121,9 @@ class TestMultisiteURLReplacer extends TestCase {
 		$meta = [
 			'sites' => [
 				[
-					'blog_id' => 1,
-					'home_url'  => 'http://home-url.com',
-					'site_url'  => 'http://site-url.com'
+					'blog_id'  => 1,
+					'home_url' => 'http://home-url.com',
+					'site_url' => 'http://site-url.com',
 				],
 			],
 		];
@@ -140,17 +140,17 @@ class TestMultisiteURLReplacer extends TestCase {
 				[
 					'search-replace //home-url.com readline0 wp_commentmeta wp_comments wp_links wp_options wp_postmeta wp_posts wp_termmeta wp_usermeta wp_users --precise --skip-themes --skip-plugins --skip-packages --network',
 					[
-						'launch' => true,
+						'launch'     => true,
 						'exit_error' => false,
-						'return' => 'all',
+						'return'     => 'all',
 					],
 				],
 				[
 					'search-replace //site-url.com readline1 wp_commentmeta wp_comments wp_links wp_options wp_postmeta wp_posts wp_termmeta wp_usermeta wp_users --precise --skip-themes --skip-plugins --skip-packages --network',
 					[
-						'launch' => true,
+						'launch'     => true,
 						'exit_error' => false,
-						'return' => 'all',
+						'return'     => 'all',
 					],
 				],
 			]
@@ -161,10 +161,10 @@ class TestMultisiteURLReplacer extends TestCase {
 			2,
 			[
 				[
-					'Home URL (defaults home URL in snapshot: http://home-url.com): '
+					'Home URL (defaults home URL in snapshot: http://home-url.com): ',
 				],
 				[
-					'Site URL (defaults site URL in snapshot: http://site-url.com): '
+					'Site URL (defaults site URL in snapshot: http://site-url.com): ',
 				],
 			]
 		);
@@ -173,7 +173,7 @@ class TestMultisiteURLReplacer extends TestCase {
 	/** @covers ::domain_validator */
 	public function test_domain_validator() {
 		$invalid_domain = 'http://example.com';
-		$valid_domain = 'example.com';
+		$valid_domain   = 'example.com';
 
 		$this->assertEquals( $valid_domain, $this->call_private_method( $this->url_replacer, 'domain_validator', [ $valid_domain ] ) );
 
@@ -185,18 +185,25 @@ class TestMultisiteURLReplacer extends TestCase {
 	public function test_write_constants_to_wp_config() {
 		// Create temporary wp-config.php file.
 		$wp_config_file = '/tmp/wp-config.php';
-		file_put_contents( $wp_config_file, "<?php
+		file_put_contents(
+			$wp_config_file,
+			"<?php
 define( 'WP_HOME', 'previousurl.com' );
 define( 'SOME_OTHER_CONSTANT', 'somevalue' );
-" );
+"
+		);
 
-		$this->call_private_method( $this->url_replacer, 'write_constants_to_wp_config', [
+		$this->call_private_method(
+			$this->url_replacer,
+			'write_constants_to_wp_config',
 			[
-				'WP_SITEURL' => 'site1.com',
-				'WP_HOME' => 'site1.com',
-			],
-			$wp_config_file,
-		] );
+				[
+					'WP_SITEURL' => 'site1.com',
+					'WP_HOME'    => 'site1.com',
+				],
+				$wp_config_file,
+			]
+		);
 
 		$this->assertEquals(
 			"<?php
@@ -264,14 +271,14 @@ define( 'SOME_OTHER_CONSTANT', 'somevalue' );",
 		 */
 		$database = $this->createMock( Database::class );
 		$database->method( 'get_tables' )->willReturn(
-				[
-					'wp_2_posts',
-					'wp_2_commentmeta',
-					'wp_2_comments',
-					'wp_3_posts',
-					'wp_5_posts',
-				]
-			);
+			[
+				'wp_2_posts',
+				'wp_2_commentmeta',
+				'wp_2_comments',
+				'wp_3_posts',
+				'wp_5_posts',
+			]
+		);
 
 		$this->set_private_property( $this->url_replacer, 'wordpress_database', $database );
 

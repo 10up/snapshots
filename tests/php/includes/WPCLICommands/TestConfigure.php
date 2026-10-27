@@ -87,20 +87,20 @@ class TestConfigure extends TestCase {
 			$this->get_test_args()
 		);
 
-		$result = json_decode( file_get_contents( '/tenup-snapshots-tmp/config.json' ), true );
+		$result = json_decode( file_get_contents( $this->get_directory_path() . '/config.json' ), true );
 
 		$this->assertEquals(
 			[
 				'repositories' => [
 					'10up' => [
 						'repository' => '10up',
-						'region' => 'us-east-1',
-						'profile' => 'readline4',
-						'user_name' => 'Jane Doe',
+						'region'     => 'us-east-1',
+						'profile'    => 'readline4',
+						'user_name'  => 'Jane Doe',
 						'user_email' => 'jane.doe@example.com',
 						'role_arn'   => '',
-					]
-				]
+					],
+				],
 			],
 			$result
 		);
@@ -151,16 +151,16 @@ class TestConfigure extends TestCase {
 			'repositories' => [
 				'10up' => [
 					'repository' => '10up',
-					'region' => 'us-east-1',
-					'profile' => 'readline5',
-					'user_name' => 'Jane Doe',
+					'region'     => 'us-east-1',
+					'profile'    => 'readline5',
+					'user_name'  => 'Jane Doe',
 					'role_arn'   => '',
 					'user_email' => 'jane.doe@example.com',
-				]
-			]
+				],
+			],
 		];
 
-		file_put_contents( '/tenup-snapshots-tmp/config.json', json_encode( $config ) );
+		file_put_contents( $this->get_directory_path() . '/config.json', json_encode( $config ) );
 
 		$this->command->execute(
 			[ '10up' ],
@@ -175,7 +175,7 @@ class TestConfigure extends TestCase {
 			);
 
 		// Check that the file has the expected output.
-		$result = json_decode( file_get_contents( '/tenup-snapshots-tmp/config.json' ), true );
+		$result = json_decode( file_get_contents( $this->get_directory_path() . '/config.json' ), true );
 
 		$this->assertEquals( $config, $result );
 	}
@@ -200,11 +200,11 @@ class TestConfigure extends TestCase {
 	 */
 	private function get_test_args() {
 		return [
-			'user_name' => 'Jane Doe',
+			'user_name'  => 'Jane Doe',
 			'user_email' => 'jane.doe@example.com',
-			'region' => 'us-east-1',
-			'role_arn' => 'none',
-			'skip_test' => true,
+			'region'     => 'us-east-1',
+			'role_arn'   => 'none',
+			'skip_test'  => true,
 		];
 	}
 }

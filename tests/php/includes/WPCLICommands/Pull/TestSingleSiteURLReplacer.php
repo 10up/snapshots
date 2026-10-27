@@ -45,18 +45,18 @@ class TestSingleSiteURLReplacer extends TestCase {
 
 		$this->set_up_wp_cli_mock();
 
-		$plugin = new Snapshots();
+		$plugin             = new Snapshots();
 		$this->url_replacer = new SingleSiteURLReplacer(
 			$plugin->get_instance( Prompt::class ),
 			$plugin->get_instance( SnapshotsDirectory::class ),
-			$plugin->get_instance( Database ::class ),
+			$plugin->get_instance( Database::class ),
 			$plugin->get_instance( WPCLILogger::class ),
 			[
 				'sites' => [
 					[
-						'blog_id' => 1,
-						'home_url'  => 'http://home-url.com',
-						'site_url'  => 'http://site-url.com'
+						'blog_id'  => 1,
+						'home_url' => 'http://home-url.com',
+						'site_url' => 'http://site-url.com',
 					],
 				],
 			],
@@ -69,7 +69,7 @@ class TestSingleSiteURLReplacer extends TestCase {
 		// Drop wp_blogs if it exists.
 		global $wpdb;
 		if ( $wpdb->get_var( "SHOW TABLES LIKE 'wp_blogs'" ) === 'wp_blogs' ) {
-			$wpdb->query( "DROP TABLE wp_blogs" );
+			$wpdb->query( 'DROP TABLE wp_blogs' );
 		}
 	}
 
@@ -99,9 +99,9 @@ class TestSingleSiteURLReplacer extends TestCase {
 				[
 					'search-replace http://search.com http://replace.com table1 table2 --precise --skip-themes --skip-plugins --skip-packages',
 					[
-						'launch' => true,
+						'launch'     => true,
 						'exit_error' => false,
-						'return' => 'all',
+						'return'     => 'all',
 					],
 				],
 			]
@@ -133,17 +133,17 @@ class TestSingleSiteURLReplacer extends TestCase {
 				[
 					'search-replace http://home-url.com readline2 wp_commentmeta wp_comments wp_links wp_options wp_postmeta wp_posts wp_termmeta wp_usermeta wp_users --precise --skip-themes --skip-plugins --skip-packages',
 					[
-						'launch' => true,
+						'launch'     => true,
 						'exit_error' => false,
-						'return' => 'all',
+						'return'     => 'all',
 					],
 				],
 				[
 					'search-replace http://site-url.com readline3 wp_commentmeta wp_comments wp_links wp_options wp_postmeta wp_posts wp_termmeta wp_usermeta wp_users --precise --skip-themes --skip-plugins --skip-packages',
 					[
-						'launch' => true,
+						'launch'     => true,
 						'exit_error' => false,
-						'return' => 'all',
+						'return'     => 'all',
 					],
 				],
 			]

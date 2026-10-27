@@ -86,21 +86,21 @@ class TestWPCLIDBExport extends TestCase {
 		$this->set_private_property( $this->wpcli_dumper, 'trimmer', $trimmer );
 		$this->set_private_property( $this->wpcli_dumper, 'scrubber', $scrubber );
 
-		$test_id = 'test-id';
+		$test_id   = 'test-id';
 		$test_args = [
 			'small' => true,
 		];
 
 		$trimmer->expects( $this->once() )
 			->method( 'trim' )
-			->with(  null );
+			->with( null );
 
 		$scrubber->expects( $this->once() )
 			->method( 'scrub' )
 			->with( $test_id );
 
 		// Create test data.sql file.
-		$file_path = '/tenup-snapshots-tmp/test-id/data.sql';
+		$file_path = $this->get_directory_path() . '/test-id/data.sql';
 		$this->create_file( $file_path );
 
 		$this->wpcli_dumper->dump( $test_id, $test_args );
@@ -111,10 +111,10 @@ class TestWPCLIDBExport extends TestCase {
 			1,
 			[
 				[
-					'db export /tenup-snapshots-tmp/test-id/data.sql --tables=wp_links,wp_options,wp_postmeta,wp_posts,wp_term_relationships,wp_term_taxonomy,wp_termmeta,wp_terms,',
+					'db export ' . $this->get_directory_path() . '/test-id/data.sql --tables=wp_links,wp_options,wp_postmeta,wp_posts,wp_term_relationships,wp_term_taxonomy,wp_termmeta,wp_terms,',
 					[
-						'launch' => true,
-						'return' => 'all',
+						'launch'     => true,
+						'return'     => 'all',
 						'exit_error' => false,
 					],
 				],
@@ -125,7 +125,7 @@ class TestWPCLIDBExport extends TestCase {
 		$this->assertFalse( file_exists( $file_path ) );
 
 		// Confirm the gz file was created.
-		$this->assertTrue( file_exists( '/tenup-snapshots-tmp/test-id/data.sql.gz' ) );
+		$this->assertTrue( file_exists( $this->get_directory_path() . '/test-id/data.sql.gz' ) );
 	}
 
 	/**
