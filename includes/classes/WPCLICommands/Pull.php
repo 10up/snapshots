@@ -353,7 +353,7 @@ final class Pull extends WPCLICommand {
 
 		return $wp_version !== $this->get_meta()['wp_version'] && $this->prompt->get_flag_or_prompt(
 			$this->get_assoc_args(),
-			'update_wp',
+			'confirm_wp_version_change',
 			'This snapshot is running WordPress version ' . $this->get_meta()['wp_version'] . ', and you are running version ' . $wp_version . '. Do you want to change your version to match the snapshot?'
 		);
 	}
