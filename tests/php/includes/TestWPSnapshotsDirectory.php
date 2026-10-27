@@ -114,7 +114,7 @@ class TestSnapshotsDirectory extends TestCase {
 	 */
 	public function test_get_file_contents_throws_when_nonexistent_path() {
 		$this->expectException( SnapshotsException::class );
-		$this->expectExceptionMessage( 'Unable to read file: /tenup-snapshots-tmp/nonexistent.txt' );
+		$this->expectExceptionMessage( 'Unable to read file: ' . $this->get_directory_path() . '/nonexistent.txt' );
 
 		$this->snapshots_fs->get_file_contents( 'nonexistent.txt' );
 	}
@@ -201,7 +201,7 @@ class TestSnapshotsDirectory extends TestCase {
 	/** @covers ::get_file_lines */
 	public function test_get_file_lines_throws_when_nonexistent_path() {
 		$this->expectException( SnapshotsException::class );
-		$this->expectExceptionMessage( 'Unable to read file: /tenup-snapshots-tmp/nonexistent.txt' );
+		$this->expectExceptionMessage( 'Unable to read file: ' . $this->get_directory_path() . '/nonexistent.txt' );
 
 		$this->snapshots_fs->get_file_lines( 'nonexistent.txt' );
 	}
