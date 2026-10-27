@@ -252,9 +252,17 @@ class TestPull extends TestCase {
 		$this->assertFalse( $this->call_private_method( $this->command, 'get_should_update_wp' ) );
 	}
 
-	/** @covers ::get_should_update_wp */
+	/**
+	 * Tests that the confirm_wp_version_change flag bypasses the WP version prompt.
+	 *
+	 * @covers ::get_should_update_wp
+	 */
 	public function test_get_should_update_wp_with_confirm_flag() {
-		$remote_meta = [ 'contains_files' => true, 'contains_db' => true, 'wp_version' => '1.0' ];
+		$remote_meta = [
+			'contains_files' => true,
+			'contains_db'    => true,
+			'wp_version'     => '1.0',
+		];
 
 		/**
 		 * Mock the SnapshotMeta class.
