@@ -75,7 +75,7 @@ class TestS3StorageConnector extends TestCase {
 				[
 					'Bucket' => 'wpsnapshots-test-repo',
 					'Key'    => 'test-project/test-id/data.sql.gz',
-					'SaveAs' => '/tenup-snapshots-tmp/test-id/data.sql.gz',
+					'SaveAs' => $this->get_directory_path() . '/test-id/data.sql.gz',
 				]
 			);
 
@@ -110,7 +110,7 @@ class TestS3StorageConnector extends TestCase {
 				[
 					'Bucket' => 'wpsnapshots-test-repo',
 					'Key'    => 'test-project/test-id/files.tar.gz',
-					'SaveAs' => '/tenup-snapshots-tmp/test-id/files.tar.gz',
+					'SaveAs' => $this->get_directory_path() . '/test-id/files.tar.gz',
 				]
 			);
 
@@ -146,14 +146,14 @@ class TestS3StorageConnector extends TestCase {
 					[
 						'Bucket' => 'wpsnapshots-test-repo',
 						'Key'    => 'test-project/test-id/data.sql.gz',
-						'SaveAs' => '/tenup-snapshots-tmp/test-id/data.sql.gz',
+						'SaveAs' => $this->get_directory_path() . '/test-id/data.sql.gz',
 					],
 				],
 				[
 					[
 						'Bucket' => 'wpsnapshots-test-repo',
 						'Key'    => 'test-project/test-id/files.tar.gz',
-						'SaveAs' => '/tenup-snapshots-tmp/test-id/files.tar.gz',
+						'SaveAs' => $this->get_directory_path() . '/test-id/files.tar.gz',
 					],
 				]
 			);

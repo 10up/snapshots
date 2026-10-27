@@ -87,7 +87,7 @@ class TestConfigure extends TestCase {
 			$this->get_test_args()
 		);
 
-		$result = json_decode( file_get_contents( '/tenup-snapshots-tmp/config.json' ), true );
+		$result = json_decode( file_get_contents( $this->get_directory_path() . '/config.json' ), true );
 
 		$this->assertEquals(
 			[
@@ -160,7 +160,7 @@ class TestConfigure extends TestCase {
 			],
 		];
 
-		file_put_contents( '/tenup-snapshots-tmp/config.json', json_encode( $config ) );
+		file_put_contents( $this->get_directory_path() . '/config.json', json_encode( $config ) );
 
 		$this->command->execute(
 			[ '10up' ],
@@ -175,7 +175,7 @@ class TestConfigure extends TestCase {
 			);
 
 		// Check that the file has the expected output.
-		$result = json_decode( file_get_contents( '/tenup-snapshots-tmp/config.json' ), true );
+		$result = json_decode( file_get_contents( $this->get_directory_path() . '/config.json' ), true );
 
 		$this->assertEquals( $config, $result );
 	}
