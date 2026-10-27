@@ -252,6 +252,34 @@ class TestPull extends TestCase {
 		$this->assertFalse( $this->call_private_method( $this->command, 'get_should_update_wp' ) );
 	}
 
+	/** @covers ::get_should_update_wp */
+	public function test_get_should_update_wp_with_confirm_flag() {
+		$remote_meta = [ 'contains_files' => true, 'contains_db' => true, 'wp_version' => '1.0' ];
+
+		/**
+		 * Mock the SnapshotMeta class.
+		 *
+		 * @var MockObject $snapshot_meta_mock
+		 */
+		$snapshot_meta_mock = $this->createMock( SnapshotMeta::class );
+		$snapshot_meta_mock->method( 'get_remote' )->willReturn( $remote_meta );
+		$snapshot_meta_mock->method( 'get_local' )->willReturn( [] );
+
+		$this->set_private_property( $this->command, 'snapshot_meta', $snapshot_meta_mock );
+		$this->command->set_assoc_args(
+			[
+				'repository'                => '10up',
+				'confirm_wp_version_change' => true,
+			]
+		);
+
+		$this->assertTrue( $this->call_private_method( $this->command, 'get_should_update_wp' ) );
+
+		$this->command->set_assoc_arg( 'confirm_wp_version_change', false );
+
+		$this->assertFalse( $this->call_private_method( $this->command, 'get_should_update_wp' ) );
+	}
+
 	/** @covers ::get_skip_table_search_replace */
 	public function test_get_skip_table_search_replace() {
 		$this->command->set_assoc_args( [ 'skip_table_search_replace' => 'table1,table2' ] );
