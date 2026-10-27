@@ -94,26 +94,29 @@ class TestDownload extends TestCase {
 		$mock_snapshot_meta = $this->createMock( SnapshotMeta::class );
 		$mock_snapshot_meta->method( 'get_remote' )->willReturn(
 			[
-				'project' => 'test-project',
-				'repository' => 'test-repository',
-				'contains_db' => true,
+				'project'        => 'test-project',
+				'repository'     => 'test-repository',
+				'contains_db'    => true,
 				'contains_files' => true,
 			]
 		);
 		$this->set_private_property( $this->command, 'snapshot_meta', $mock_snapshot_meta );
 		$this->command->set_assoc_arg( 'repository', '10up' );
 
-		add_filter( 'snapshots_readline', function() {
-			return function() {
-				return 'Y';
-			};
-		} );
+		add_filter(
+			'snapshots_readline',
+			function() {
+				return function() {
+					return 'Y';
+				};
+			}
+		);
 
 		$this->assertEquals(
 			[
-				'project' => 'test-project',
-				'repository' => 'test-repository',
-				'contains_db' => true,
+				'project'        => 'test-project',
+				'repository'     => 'test-repository',
+				'contains_db'    => true,
 				'contains_files' => true,
 			],
 			$this->call_private_method( $this->command, 'get_meta' )
@@ -122,60 +125,72 @@ class TestDownload extends TestCase {
 
 	/** @covers ::get_formatted_size */
 	public function test_get_formatted_size() {
-		$this->assertEquals( '1 KB', $this->call_private_method(
-			$this->command,
-			'get_formatted_size',
-			[
+		$this->assertEquals(
+			'1 KB',
+			$this->call_private_method(
+				$this->command,
+				'get_formatted_size',
 				[
-					'size' => 1024,
-					'contains_files' => true,
-					'contains_db' => true,
+					[
+						'size'           => 1024,
+						'contains_files' => true,
+						'contains_db'    => true,
+					],
 				]
-			]
-		) );
+			)
+		);
 
-		$this->assertEquals( '1 KB', $this->call_private_method(
-			$this->command,
-			'get_formatted_size',
-			[
+		$this->assertEquals(
+			'1 KB',
+			$this->call_private_method(
+				$this->command,
+				'get_formatted_size',
 				[
-					'files_size' => 1024,
-					'db_size' => 0,
+					[
+						'files_size' => 1024,
+						'db_size'    => 0,
+					],
 				]
-			]
-		) );
+			)
+		);
 
-		$this->assertEquals( '1 KB', $this->call_private_method(
-			$this->command,
-			'get_formatted_size',
-			[
+		$this->assertEquals(
+			'1 KB',
+			$this->call_private_method(
+				$this->command,
+				'get_formatted_size',
 				[
-					'files_size' => 0,
-					'db_size' => 1024,
+					[
+						'files_size' => 0,
+						'db_size'    => 1024,
+					],
 				]
-			]
-		) );
+			)
+		);
 
-		$this->assertEquals( '2 KB', $this->call_private_method(
-			$this->command,
-			'get_formatted_size',
-			[
+		$this->assertEquals(
+			'2 KB',
+			$this->call_private_method(
+				$this->command,
+				'get_formatted_size',
 				[
-					'files_size' => 1024,
-					'db_size' => 1024,
+					[
+						'files_size' => 1024,
+						'db_size'    => 1024,
+					],
 				]
-			]
-		) );
+			)
+		);
 	}
 
 	/** @covers ::execute */
 	public function test_execute() {
 		$meta = [
-			'project' => 'test-project',
-			'repository' => 'test-repository',
-			'contains_db' => true,
+			'project'        => 'test-project',
+			'repository'     => 'test-repository',
+			'contains_db'    => true,
 			'contains_files' => true,
-			'size' => 1024,
+			'size'           => 1024,
 		];
 
 		/**
@@ -196,19 +211,27 @@ class TestDownload extends TestCase {
 
 		$mock_storage_connector->expects( $this->once() )->method( 'download_snapshot' )->with(
 			'test-id',
-			[ 'profile' => '', 'repository' => 'test-repo', 'region' => 'us-west-1', 'role_arn' => '' ],
+			[
+				'profile'    => '',
+				'repository' => 'test-repo',
+				'region'     => 'us-west-1',
+				'role_arn'   => '',
+			],
 			$meta
 		);
 
-		add_filter( 'snapshots_readline', function() {
-			return function() {
-				return 'Y';
-			};
-		} );
+		add_filter(
+			'snapshots_readline',
+			function() {
+				return function() {
+					return 'Y';
+				};
+			}
+		);
 
 		$this->command->execute( [ 'test-id' ], [ 'repository' => 'test-repo' ] );
 
 		// Confirm success message.
-		$this->get_wp_cli_mock()->assertMethodCalled( 'success', 1, [ [ 'Snapshot downloaded.' ] ]);
+		$this->get_wp_cli_mock()->assertMethodCalled( 'success', 1, [ [ 'Snapshot downloaded.' ] ] );
 	}
 }

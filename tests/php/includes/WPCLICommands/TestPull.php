@@ -106,7 +106,15 @@ class TestPull extends TestCase {
 		$this->set_private_property( $this->command, 'snapshot_meta', $snapshot_meta_mock );
 
 		$snapshot_meta_mock->expects( $this->once() )->method( 'get_remote' )
-			->with( 'test-id', [ 'profile' => '', 'repository' => 'test-repository', 'region' => 'us-west-1', 'role_arn' => '' ] );
+			->with(
+				'test-id',
+				[
+					'profile'    => '',
+					'repository' => 'test-repository',
+					'region'     => 'us-west-1',
+					'role_arn'   => '',
+				]
+			);
 		$snapshot_meta_mock->expects( $this->once() )->method( 'get_local' )
 			->with( 'test-id', 'test-repository' );
 
@@ -120,7 +128,10 @@ class TestPull extends TestCase {
 	 * @covers ::get_should_download
 	 */
 	public function test_get_meta_when_local_is_empty() {
-		$test_remote_meta = [ 'contains_files' => true, 'contains_db' => true ];
+		$test_remote_meta = [
+			'contains_files' => true,
+			'contains_db'    => true,
+		];
 
 		/**
 		 * Mock the SnapshotMeta class.
@@ -131,7 +142,12 @@ class TestPull extends TestCase {
 		$snapshot_meta_mock->method( 'get_remote' )->willReturn( $test_remote_meta );
 		$snapshot_meta_mock->method( 'get_local' )->willReturn( [] );
 
-		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository' ] );
+		$this->command->set_assoc_args(
+			[
+				'region'     => 'test-region',
+				'repository' => 'test-repository',
+			]
+		);
 
 		$this->set_private_property( $this->command, 'snapshot_meta', $snapshot_meta_mock );
 
@@ -151,7 +167,10 @@ class TestPull extends TestCase {
 	 * @covers ::get_should_download
 	 */
 	public function test_get_meta_when_remote_is_empty() {
-		$test_local_meta = [ 'contains_files' => true, 'contains_db' => true ];
+		$test_local_meta = [
+			'contains_files' => true,
+			'contains_db'    => true,
+		];
 
 		/**
 		 * Mock the SnapshotMeta class.
@@ -162,7 +181,12 @@ class TestPull extends TestCase {
 		$snapshot_meta_mock->method( 'get_remote' )->willReturn( [] );
 		$snapshot_meta_mock->method( 'get_local' )->willReturn( $test_local_meta );
 
-		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository' ] );
+		$this->command->set_assoc_args(
+			[
+				'region'     => 'test-region',
+				'repository' => 'test-repository',
+			]
+		);
 
 		$this->set_private_property( $this->command, 'snapshot_meta', $snapshot_meta_mock );
 
@@ -183,8 +207,14 @@ class TestPull extends TestCase {
 	 * @covers ::get_should_download
 	 */
 	public function test_get_meta_when_both_local_and_remote_are_not_empty() {
-		$test_local_meta = [ 'contains_files' => true, 'contains_db' => true ];
-		$test_remote_meta = [ 'contains_files' => true, 'contains_db' => true ];
+		$test_local_meta  = [
+			'contains_files' => true,
+			'contains_db'    => true,
+		];
+		$test_remote_meta = [
+			'contains_files' => true,
+			'contains_db'    => true,
+		];
 
 		/**
 		 * Mock the SnapshotMeta class.
@@ -195,7 +225,13 @@ class TestPull extends TestCase {
 		$snapshot_meta_mock->method( 'get_remote' )->willReturn( $test_remote_meta );
 		$snapshot_meta_mock->method( 'get_local' )->willReturn( $test_local_meta );
 
-		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository', 'overwrite_local_copy' => true ] );
+		$this->command->set_assoc_args(
+			[
+				'region'               => 'test-region',
+				'repository'           => 'test-repository',
+				'overwrite_local_copy' => true,
+			]
+		);
 
 		$this->set_private_property( $this->command, 'snapshot_meta', $snapshot_meta_mock );
 
@@ -211,7 +247,7 @@ class TestPull extends TestCase {
 
 	/** @covers ::set_up_meta */
 	public function test_set_up_meta_throws_when_contains_files_and_contains_db_are_not_set() {
-		$test_local_meta = [ 'id' => 'test-id' ];
+		$test_local_meta  = [ 'id' => 'test-id' ];
 		$test_remote_meta = [ 'id' => 'test-id' ];
 
 		/**
@@ -235,7 +271,11 @@ class TestPull extends TestCase {
 
 	/** @covers ::get_should_update_wp */
 	public function test_get_should_update_wp() {
-		$remote_meta = [ 'contains_files' => true, 'contains_db' => true, 'wp_version' => '5.0' ];
+		$remote_meta = [
+			'contains_files' => true,
+			'contains_db'    => true,
+			'wp_version'     => '5.0',
+		];
 
 		/**
 		 * Mock the SnapshotMeta class.
@@ -265,7 +305,12 @@ class TestPull extends TestCase {
 
 	/** @covers ::download_snapshot */
 	public function test_download_snapshot() {
-		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository' ] );
+		$this->command->set_assoc_args(
+			[
+				'region'     => 'test-region',
+				'repository' => 'test-repository',
+			]
+		);
 
 		$this->call_private_method( $this->command, 'download_snapshot' );
 
@@ -274,7 +319,12 @@ class TestPull extends TestCase {
 			1,
 			[
 				[
-					'snapshots download test-id --quiet --repository=test-repository --include_db --include_files', [ 'launch' => true, 'exit_error' => false, 'return' => 'all' ],
+					'snapshots download test-id --quiet --repository=test-repository --include_db --include_files',
+					[
+						'launch'     => true,
+						'exit_error' => false,
+						'return'     => 'all',
+					],
 				],
 			]
 		);
@@ -331,7 +381,12 @@ class TestPull extends TestCase {
 			1,
 			[
 				[
-					'db import test --quiet --skip-themes --skip-plugins --skip-packages', [ 'launch' => true, 'return' => 'all', 'exit_error' => false ],
+					'db import test --quiet --skip-themes --skip-plugins --skip-packages',
+					[
+						'launch'     => true,
+						'return'     => 'all',
+						'exit_error' => false,
+					],
 				],
 			]
 		);
@@ -349,9 +404,18 @@ class TestPull extends TestCase {
 	/** @covers ::rename_tables */
 	public function test_rename_tables() {
 		// Set up meta.
-		$test_local_meta = [ 'contains_files' => true, 'contains_db' => true, 'table_prefix' => 'test_' ];
+		$test_local_meta = [
+			'contains_files' => true,
+			'contains_db'    => true,
+			'table_prefix'   => 'test_',
+		];
 
-		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository' ] );
+		$this->command->set_assoc_args(
+			[
+				'region'     => 'test-region',
+				'repository' => 'test-repository',
+			]
+		);
 
 		$this->mock_snapshot_meta( $test_local_meta );
 
@@ -386,7 +450,12 @@ class TestPull extends TestCase {
 			1,
 			[
 				[
-					'core update --version=4.9.8 --force --quiet --skip-themes --skip-plugins --skip-packages', [ 'launch' => true, 'return' => 'all', 'exit_error' => false ]
+					'core update --version=4.9.8 --force --quiet --skip-themes --skip-plugins --skip-packages',
+					[
+						'launch'     => true,
+						'return'     => 'all',
+						'exit_error' => false,
+					],
 				],
 			]
 		);
@@ -466,7 +535,12 @@ class TestPull extends TestCase {
 			1,
 			[
 				[
-					'plugin activate snapshots --skip-themes --skip-plugins --skip-packages', [ 'launch' => true, 'return' => 'all', 'exit_error' => false ]
+					'plugin activate snapshots --skip-themes --skip-plugins --skip-packages',
+					[
+						'launch'     => true,
+						'return'     => 'all',
+						'exit_error' => false,
+					],
 				],
 			]
 		);
@@ -474,9 +548,18 @@ class TestPull extends TestCase {
 
 	/** @covers ::replace_urls */
 	public function test_replace_urls_single_site() {
-		$test_local_meta = [ 'contains_files' => true, 'contains_db' => true, 'multisite' => false ];
+		$test_local_meta = [
+			'contains_files' => true,
+			'contains_db'    => true,
+			'multisite'      => false,
+		];
 
-		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository' ] );
+		$this->command->set_assoc_args(
+			[
+				'region'     => 'test-region',
+				'repository' => 'test-repository',
+			]
+		);
 
 		$this->mock_snapshot_meta( $test_local_meta );
 
@@ -516,9 +599,20 @@ class TestPull extends TestCase {
 
 	/** @covers ::replace_urls */
 	public function test_replace_urls_multisite() {
-		$test_local_meta = [ 'contains_files' => true, 'contains_db' => true, 'multisite' => true ];
+		$test_local_meta = [
+			'contains_files' => true,
+			'contains_db'    => true,
+			'multisite'      => true,
+		];
 
-		$this->command->set_assoc_args( [ 'region' => 'test-region', 'repository' => 'test-repository', 'skip_table_search_replace' => 'table1,table2', 'main_domain' => 'test-domain' ] );
+		$this->command->set_assoc_args(
+			[
+				'region'                    => 'test-region',
+				'repository'                => 'test-repository',
+				'skip_table_search_replace' => 'table1,table2',
+				'main_domain'               => 'test-domain',
+			]
+		);
 
 		$this->mock_snapshot_meta( $test_local_meta );
 
@@ -578,7 +672,11 @@ class TestPull extends TestCase {
 
 	/** @covers ::get_site_mapping */
 	public function test_get_site_mapping_when_passed_as_string() {
-		$test_local_meta = [ 'contains_files' => true, 'contains_db' => true, 'multisite' => true ];
+		$test_local_meta = [
+			'contains_files' => true,
+			'contains_db'    => true,
+			'multisite'      => true,
+		];
 
 		$this->mock_snapshot_meta( $test_local_meta );
 
@@ -609,7 +707,11 @@ class TestPull extends TestCase {
 
 	/** @covers ::get_site_mapping */
 	public function test_get_site_mapping_when_passed_as_file() {
-		$test_local_meta = [ 'contains_files' => true, 'contains_db' => true, 'multisite' => true ];
+		$test_local_meta = [
+			'contains_files' => true,
+			'contains_db'    => true,
+			'multisite'      => true,
+		];
 
 		$this->mock_snapshot_meta( $test_local_meta );
 
@@ -643,7 +745,11 @@ class TestPull extends TestCase {
 
 	/** @covers ::get_site_mapping */
 	public function test_get_site_mapping_with_single_site() {
-		$test_local_meta = [ 'contains_files' => true, 'contains_db' => true, 'multisite' => false ];
+		$test_local_meta = [
+			'contains_files' => true,
+			'contains_db'    => true,
+			'multisite'      => false,
+		];
 
 		$to_encode = [
 			[
@@ -668,7 +774,11 @@ class TestPull extends TestCase {
 
 	/** @covers ::needs_multisite_constants_update */
 	public function test_needs_multisite_constants_update() {
-		$test_local_meta = [ 'contains_files' => true, 'contains_db' => true, 'multisite' => true ];
+		$test_local_meta = [
+			'contains_files' => true,
+			'contains_db'    => true,
+			'multisite'      => true,
+		];
 
 		$this->mock_snapshot_meta( $test_local_meta );
 
@@ -677,7 +787,11 @@ class TestPull extends TestCase {
 
 	/** @covers ::get_main_domain */
 	public function test_get_main_domain() {
-		$test_local_meta = [ 'contains_files' => true, 'contains_db' => true, 'multisite' => true ];
+		$test_local_meta = [
+			'contains_files' => true,
+			'contains_db'    => true,
+			'multisite'      => true,
+		];
 
 		$this->command->set_assoc_arg( 'main_domain', 'http://example.org' );
 
@@ -689,9 +803,9 @@ class TestPull extends TestCase {
 	/** @covers ::get_main_domain */
 	public function test_get_main_domain_from_meta() {
 		$test_local_meta = [
-			'contains_files' => true,
-			'contains_db' => true,
-			'multisite' => true,
+			'contains_files'      => true,
+			'contains_db'         => true,
+			'multisite'           => true,
 			'domain_current_site' => 'http://example.org',
 		];
 
@@ -714,8 +828,8 @@ class TestPull extends TestCase {
 	public function test_get_main_domain_from_meta_with_no_domain() {
 		$test_local_meta = [
 			'contains_files' => true,
-			'contains_db' => true,
-			'multisite' => true,
+			'contains_db'    => true,
+			'multisite'      => true,
 		];
 
 		$this->command->set_assoc_arg( 'repository', '10up' );
@@ -733,11 +847,14 @@ class TestPull extends TestCase {
 		);
 	}
 
-	private function mock_snapshot_meta( $meta = [ 'contains_files' => true, 'contains_db' => true ] ) {
+	private function mock_snapshot_meta( $meta = [
+		'contains_files' => true,
+		'contains_db'    => true,
+	] ) {
 		$meta = array_merge(
 			[
 				'contains_files' => true,
-				'contains_db' => true,
+				'contains_db'    => true,
 			],
 			$meta
 		);

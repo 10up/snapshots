@@ -1,7 +1,7 @@
 <?php
 /**
  * Tests for the WPCLILogger class.
- * 
+ *
  * @package TenUp\Snapshots
  */
 
@@ -13,13 +13,13 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Class WPCLILoggerTest
- * 
+ *
  * @package TenUp\Snapshots\Tests\Log
- * 
+ *
  * @coversDefaultClass \TenUp\Snapshots\Log\WPCLILogger
  */
 class TestWPCLILogger extends TestCase {
-	
+
 	use WPCLIMocking;
 
 	/**
@@ -45,7 +45,7 @@ class TestWPCLILogger extends TestCase {
 		$logger->log( 'warning test', 'warning' );
 		$logger->log( 'success test', 'success' );
 		$logger->log( 'info test', 'info' );
-		
+
 		$this->get_wp_cli_mock()->assertMethodCalled(
 			'line',
 			4,

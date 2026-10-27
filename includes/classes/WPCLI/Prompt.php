@@ -106,8 +106,6 @@ class Prompt implements SharedService {
 			return wp_cli()::get_flag_value( $assoc_args, $flag );
 		}
 
-		$answer = null;
-
 		/**
 		 * Filters acceptable get_flag_or_prompt_answers.
 		 *

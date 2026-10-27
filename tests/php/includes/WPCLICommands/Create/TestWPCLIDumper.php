@@ -86,14 +86,14 @@ class TestWPCLIDBExport extends TestCase {
 		$this->set_private_property( $this->wpcli_dumper, 'trimmer', $trimmer );
 		$this->set_private_property( $this->wpcli_dumper, 'scrubber', $scrubber );
 
-		$test_id = 'test-id';
+		$test_id   = 'test-id';
 		$test_args = [
 			'small' => true,
 		];
 
 		$trimmer->expects( $this->once() )
 			->method( 'trim' )
-			->with(  null );
+			->with( null );
 
 		$scrubber->expects( $this->once() )
 			->method( 'scrub' )
@@ -113,8 +113,8 @@ class TestWPCLIDBExport extends TestCase {
 				[
 					'db export /tenup-snapshots-tmp/test-id/data.sql --tables=wp_links,wp_options,wp_postmeta,wp_posts,wp_term_relationships,wp_term_taxonomy,wp_termmeta,wp_terms,',
 					[
-						'launch' => true,
-						'return' => 'all',
+						'launch'     => true,
+						'return'     => 'all',
 						'exit_error' => false,
 					],
 				],

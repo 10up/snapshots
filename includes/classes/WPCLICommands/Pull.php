@@ -586,9 +586,9 @@ final class Pull extends WPCLICommand {
 	/**
 	 * Gets the site mapping.
 	 *
-	 * @return ?array
+	 * @return array
 	 */
-	protected function get_site_mapping() : ?array {
+	protected function get_site_mapping() : array {
 		$site_mapping     = [];
 		$site_mapping_raw = $this->get_assoc_arg( 'site_mapping' );
 

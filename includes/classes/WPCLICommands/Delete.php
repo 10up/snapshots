@@ -35,8 +35,6 @@ class Delete extends WPCLICommand {
 
 			$id              = $this->get_id();
 			$repository_name = $this->get_repository_name();
-			$region          = $this->get_region();
-			$profile         = $this->get_profile_for_repository();
 
 			$snapshot = $this->db_connector->get_snapshot( $id, $this->get_aws_config() );
 

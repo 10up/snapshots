@@ -1,7 +1,7 @@
 <?php
 /**
  * Tests covering the Push command class.
- * 
+ *
  * @package TenUp\Snapshots
  */
 
@@ -17,7 +17,7 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
  * Class TestPush
  *
  * @package TenUp\Snapshots\Tests\Commands
- * 
+ *
  * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\Push
  */
 class TestPush extends TestCase {
@@ -26,7 +26,7 @@ class TestPush extends TestCase {
 
 	/**
 	 * Push instance.
-	 * 
+	 *
 	 * @var Push
 	 */
 	private $command;
@@ -54,7 +54,7 @@ class TestPush extends TestCase {
 
 	/**
 	 * Test that the command instance extends WPCLICommand.
-	 * 
+	 *
 	 * @covers ::__construct
 	 */
 	public function test_command_instance() {

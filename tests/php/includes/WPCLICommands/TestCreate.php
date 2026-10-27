@@ -119,7 +119,7 @@ class TestCreate extends TestCase {
 					'Repository Slug (letters, numbers, _, and - only):',
 				],
 				[
-					'Your name:'
+					'Your name:',
 				],
 				[
 					'Your email:',
@@ -131,8 +131,8 @@ class TestCreate extends TestCase {
 					'Project Slug (letters, numbers, _, and - only):',
 				],
 				[
-					'Saving database...'
-				]
+					'Saving database...',
+				],
 			]
 		);
 	}
@@ -169,17 +169,20 @@ class TestCreate extends TestCase {
 		$this->set_private_property( $this->command, 'dumper', $mock_dumper );
 		$this->set_private_property( $this->command, 'snapshot_meta', $mock_snapshot_meta );
 
-		$this->command->execute( [], [
-			'author_name' => 'Test Author',
-			'description' => 'Description!',
-			'author_email' => 'email@email.com',
-			'exclude' => 'files,directory/file.txt',
-			'include_db' => true,
-			'include_files' => true,
-			'repository' => 'my-repo',
-			'slug' => 'Slug3',
-			'small' => true,
-		] );
+		$this->command->execute(
+			[],
+			[
+				'author_name'   => 'Test Author',
+				'description'   => 'Description!',
+				'author_email'  => 'email@email.com',
+				'exclude'       => 'files,directory/file.txt',
+				'include_db'    => true,
+				'include_files' => true,
+				'repository'    => 'my-repo',
+				'slug'          => 'Slug3',
+				'small'         => true,
+			]
+		);
 
 		$this->get_wp_cli_mock()->assertMethodCalled(
 			'success',
@@ -189,15 +192,21 @@ class TestCreate extends TestCase {
 
 	/** @covers ::execute */
 	public function test_execute_throws_when_db_and_files_not_included() {
-		$this->command->execute( [], [ 'include_db' => false, 'include_files' => false ] );
+		$this->command->execute(
+			[],
+			[
+				'include_db'    => false,
+				'include_files' => false,
+			]
+		);
 
 		$this->get_wp_cli_mock()->assertMethodCalled(
 			'error',
 			1,
 			[
 				[
-					'You must include either the database or files in the snapshot.'
-				]
+					'You must include either the database or files in the snapshot.',
+				],
 			]
 		);
 	}
@@ -241,8 +250,11 @@ class TestCreate extends TestCase {
 		$this->set_private_property( $this->command, 'dumper', $mock_dumper );
 		$this->set_private_property( $this->command, 'snapshot_meta', $mock_snapshot_meta );
 
-		$test_id = 'test-id';
-		$test_args = ['contains_db' => true, 'contains_files' => true];
+		$test_id   = 'test-id';
+		$test_args = [
+			'contains_db'    => true,
+			'contains_files' => true,
+		];
 
 		$mock_file_zipper->expects( $this->once() )
 			->method( 'zip_files' )
@@ -254,7 +266,16 @@ class TestCreate extends TestCase {
 
 		$mock_snapshot_meta->expects( $this->once() )
 			->method( 'generate' )
-			->with( $test_id, array_merge( $test_args, [ 'db_size' => 0, 'files_size' => 0 ] ) );
+			->with(
+				$test_id,
+				array_merge(
+					$test_args,
+					[
+						'db_size'    => 0,
+						'files_size' => 0,
+					]
+				)
+			);
 
 		$this->command->create( $test_args, $test_id );
 	}
