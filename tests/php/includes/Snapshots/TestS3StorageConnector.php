@@ -9,6 +9,7 @@ namespace TenUp\Snapshots\Tests\Snapshots;
 
 use Aws\S3\S3Client;
 use TenUp\Snapshots\Exceptions\SnapshotsException;
+use TenUp\Snapshots\ProgressBar\ProgressBarInterface;
 use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Snapshots\S3StorageConnector;
 use TenUp\Snapshots\Tests\Fixtures\DirectoryFiltering;
@@ -40,6 +41,7 @@ class TestS3StorageConnector extends TestCase {
 		parent::set_up();
 
 		$this->connector = ( new Snapshots() )->get_instance( S3StorageConnector::class );
+		$this->set_private_property( $this->connector, 'progress_bar', $this->createMock( ProgressBarInterface::class ) );
 
 		$this->set_up_directory_filtering();
 	}
@@ -72,11 +74,7 @@ class TestS3StorageConnector extends TestCase {
 		$client->expects( $this->once() )
 			->method( 'getObject' )
 			->with(
-				[
-					'Bucket' => 'wpsnapshots-test-repo',
-					'Key'    => 'test-project/test-id/data.sql.gz',
-					'SaveAs' => $this->get_directory_path() . '/test-id/data.sql.gz',
-				]
+				$this->get_object_args_matcher( 'test-project/test-id/data.sql.gz', '/test-id/data.sql.gz' )
 			);
 
 		$this->set_private_property( $this->connector, 'clients', [ 'default_test-region' => $client ] );
@@ -93,6 +91,7 @@ class TestS3StorageConnector extends TestCase {
 				'contains_db'    => true,
 				'contains_files' => false,
 				'project'        => 'test-project',
+				'db_size'        => 1024,
 			]
 		);
 	}
@@ -107,11 +106,7 @@ class TestS3StorageConnector extends TestCase {
 		$client->expects( $this->once() )
 			->method( 'getObject' )
 			->with(
-				[
-					'Bucket' => 'wpsnapshots-test-repo',
-					'Key'    => 'test-project/test-id/files.tar.gz',
-					'SaveAs' => $this->get_directory_path() . '/test-id/files.tar.gz',
-				]
+				$this->get_object_args_matcher( 'test-project/test-id/files.tar.gz', '/test-id/files.tar.gz' )
 			);
 
 		$this->set_private_property( $this->connector, 'clients', [ 'default_test-region' => $client ] );
@@ -128,6 +123,7 @@ class TestS3StorageConnector extends TestCase {
 				'contains_db'    => false,
 				'contains_files' => true,
 				'project'        => 'test-project',
+				'files_size'     => 1024,
 			]
 		);
 	}
@@ -143,18 +139,10 @@ class TestS3StorageConnector extends TestCase {
 			->method( 'getObject' )
 			->withConsecutive(
 				[
-					[
-						'Bucket' => 'wpsnapshots-test-repo',
-						'Key'    => 'test-project/test-id/data.sql.gz',
-						'SaveAs' => $this->get_directory_path() . '/test-id/data.sql.gz',
-					],
+					$this->get_object_args_matcher( 'test-project/test-id/data.sql.gz', '/test-id/data.sql.gz' ),
 				],
 				[
-					[
-						'Bucket' => 'wpsnapshots-test-repo',
-						'Key'    => 'test-project/test-id/files.tar.gz',
-						'SaveAs' => $this->get_directory_path() . '/test-id/files.tar.gz',
-					],
+					$this->get_object_args_matcher( 'test-project/test-id/files.tar.gz', '/test-id/files.tar.gz' ),
 				]
 			);
 
@@ -172,6 +160,8 @@ class TestS3StorageConnector extends TestCase {
 				'contains_db'    => true,
 				'contains_files' => true,
 				'project'        => 'test-project',
+				'db_size'        => 1024,
+				'files_size'     => 1024,
 			]
 		);
 	}
@@ -251,5 +241,23 @@ class TestS3StorageConnector extends TestCase {
 		);
 
 		$this->assertInstanceOf( S3Client::class, $client );
+	}
+
+	/**
+	 * Builds a constraint matching the args passed to S3Client::getObject() for a download.
+	 *
+	 * @param string $key  Expected object key.
+	 * @param string $file Expected file path relative to the snapshots directory.
+	 * @return \PHPUnit\Framework\Constraint\Callback
+	 */
+	private function get_object_args_matcher( string $key, string $file ) {
+		return $this->callback(
+			function( $args ) use ( $key, $file ) {
+				return 'wpsnapshots-test-repo' === $args['Bucket']
+					&& $key === $args['Key']
+					&& $this->get_directory_path() . $file === $args['SaveAs']
+					&& is_callable( $args['@http']['progress'] ?? null );
+			}
+		);
 	}
 }
