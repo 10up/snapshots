@@ -71,21 +71,28 @@ class TestS3StorageConnector extends TestCase {
 
 		$client->expects( $this->once() )
 			->method( 'getObject' )
-			->with( [
-				'Bucket' => 'wpsnapshots-test-repo',
-				'Key'    => 'test-project/test-id/data.sql.gz',
-				'SaveAs' => '/tenup-snapshots-tmp/test-id/data.sql.gz',
-			] );
+			->with(
+				[
+					'Bucket' => 'wpsnapshots-test-repo',
+					'Key'    => 'test-project/test-id/data.sql.gz',
+					'SaveAs' => '/tenup-snapshots-tmp/test-id/data.sql.gz',
+				]
+			);
 
 		$this->set_private_property( $this->connector, 'clients', [ 'default_test-region' => $client ] );
 
 		$this->connector->download_snapshot(
 			'test-id',
-			[ 'profile' => 'default', 'repository' => 'test-repo', 'region' => 'test-region', 'role_arn' => '' ],
 			[
-				'contains_db' => true,
+				'profile'    => 'default',
+				'repository' => 'test-repo',
+				'region'     => 'test-region',
+				'role_arn'   => '',
+			],
+			[
+				'contains_db'    => true,
 				'contains_files' => false,
-				'project' => 'test-project',
+				'project'        => 'test-project',
 			]
 		);
 	}
@@ -99,21 +106,28 @@ class TestS3StorageConnector extends TestCase {
 
 		$client->expects( $this->once() )
 			->method( 'getObject' )
-			->with( [
-				'Bucket' => 'wpsnapshots-test-repo',
-				'Key'    => 'test-project/test-id/files.tar.gz',
-				'SaveAs' => '/tenup-snapshots-tmp/test-id/files.tar.gz',
-			] );
+			->with(
+				[
+					'Bucket' => 'wpsnapshots-test-repo',
+					'Key'    => 'test-project/test-id/files.tar.gz',
+					'SaveAs' => '/tenup-snapshots-tmp/test-id/files.tar.gz',
+				]
+			);
 
 		$this->set_private_property( $this->connector, 'clients', [ 'default_test-region' => $client ] );
 
 		$this->connector->download_snapshot(
 			'test-id',
-			[ 'profile' => 'default', 'repository' => 'test-repo', 'region' => 'test-region', 'role_arn' => '' ],
 			[
-				'contains_db' => false,
+				'profile'    => 'default',
+				'repository' => 'test-repo',
+				'region'     => 'test-region',
+				'role_arn'   => '',
+			],
+			[
+				'contains_db'    => false,
 				'contains_files' => true,
-				'project' => 'test-project',
+				'project'        => 'test-project',
 			]
 		);
 	}
@@ -133,14 +147,14 @@ class TestS3StorageConnector extends TestCase {
 						'Bucket' => 'wpsnapshots-test-repo',
 						'Key'    => 'test-project/test-id/data.sql.gz',
 						'SaveAs' => '/tenup-snapshots-tmp/test-id/data.sql.gz',
-					]
+					],
 				],
 				[
 					[
 						'Bucket' => 'wpsnapshots-test-repo',
 						'Key'    => 'test-project/test-id/files.tar.gz',
 						'SaveAs' => '/tenup-snapshots-tmp/test-id/files.tar.gz',
-					]
+					],
 				]
 			);
 
@@ -148,11 +162,16 @@ class TestS3StorageConnector extends TestCase {
 
 		$this->connector->download_snapshot(
 			'test-id',
-			[ 'profile' => 'default', 'repository' => 'test-repo', 'region' => 'test-region', 'role_arn' => '' ],
 			[
-				'contains_db' => true,
+				'profile'    => 'default',
+				'repository' => 'test-repo',
+				'region'     => 'test-region',
+				'role_arn'   => '',
+			],
+			[
+				'contains_db'    => true,
 				'contains_files' => true,
-				'project' => 'test-project',
+				'project'        => 'test-project',
 			]
 		);
 	}
@@ -167,14 +186,23 @@ class TestS3StorageConnector extends TestCase {
 
 		$client->expects( $this->once() )
 			->method( 'createBucket' )
-			->with( [
-				'Bucket' => 'wpsnapshots-test-repo',
-				'LocationConstraint' => 'test-region',
-			] );
+			->with(
+				[
+					'Bucket'             => 'wpsnapshots-test-repo',
+					'LocationConstraint' => 'test-region',
+				]
+			);
 
 		$this->set_private_property( $this->connector, 'clients', [ 'default_test-region' => $client ] );
 
-		$this->connector->create_bucket( [ 'profile' => 'default', 'repository' => 'test-repo', 'region' => 'test-region', 'role_arn' => '' ] );
+		$this->connector->create_bucket(
+			[
+				'profile'    => 'default',
+				'repository' => 'test-repo',
+				'region'     => 'test-region',
+				'role_arn'   => '',
+			]
+		);
 	}
 
 	/**
@@ -196,13 +224,31 @@ class TestS3StorageConnector extends TestCase {
 		$this->expectException( SnapshotsException::class );
 		$this->expectExceptionMessage( 'S3 bucket already exists.' );
 
-		$this->connector->create_bucket( [ 'profile' => 'default', 'repository' => 'test-repo', 'region' => 'test-region', 'role_arn' => '' ] );
+		$this->connector->create_bucket(
+			[
+				'profile'    => 'default',
+				'repository' => 'test-repo',
+				'region'     => 'test-region',
+				'role_arn'   => '',
+			]
+		);
 
 	}
 
 	/** @covers ::get_client */
 	public function test_get_client_returns_client() {
-		$client = $this->call_private_method( $this->connector, 'get_client', [ [ 'profile' => 'default', 'repository' => 'test-repo', 'region' => 'test-region', 'role_arn' => '' ] ] );
+		$client = $this->call_private_method(
+			$this->connector,
+			'get_client',
+			[
+				[
+					'profile'    => 'default',
+					'repository' => 'test-repo',
+					'region'     => 'test-region',
+					'role_arn'   => '',
+				],
+			]
+		);
 
 		$this->assertInstanceOf( S3Client::class, $client );
 	}

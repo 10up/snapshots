@@ -83,7 +83,7 @@ class S3StorageConnector implements StorageConnectorInterface {
 					'Bucket' => $this->get_bucket_name( $config['repository'] ),
 					'Key'    => $snapshot_meta['project'] . '/' . $id . '/data.sql.gz',
 					'SaveAs' => $this->snapshots_file_system->get_file_path( 'data.sql.gz', $id ),
-					'@http' => [
+					'@http'  => [
 						'progress' => function ( $expected_dl, $dl ) {
 							$this->progress_bar->advance_progress_bar( 'db_dl', (int) $dl );
 						},
@@ -106,7 +106,7 @@ class S3StorageConnector implements StorageConnectorInterface {
 					'Bucket' => $this->get_bucket_name( $config['repository'] ),
 					'Key'    => $snapshot_meta['project'] . '/' . $id . '/files.tar.gz',
 					'SaveAs' => $this->snapshots_file_system->get_file_path( 'files.tar.gz', $id ),
-					'@http' => [
+					'@http'  => [
 						'progress' => function ( $expected_dl, $dl ) {
 							$this->progress_bar->advance_progress_bar( 'files_dl', (int) $dl );
 						},
@@ -177,7 +177,7 @@ class S3StorageConnector implements StorageConnectorInterface {
 					'Key'        => $meta['project'] . '/' . $id . '/data.sql.gz',
 					'SourceFile' => realpath( $this->snapshots_file_system->get_file_path( 'data.sql.gz', $id ) ),
 					'ContentMD5' => base64_encode( md5_file( $this->snapshots_file_system->get_file_path( 'data.sql.gz', $id ), true ) ), // phpcs:ignore
-					'@http' => [
+					'@http'      => [
 						'progress' => function ( $expected_dl, $dl, $expected_ul, $ul ) {
 							$this->progress_bar->advance_progress_bar( 'db_ul', (int) $ul );
 						},
@@ -202,7 +202,7 @@ class S3StorageConnector implements StorageConnectorInterface {
 					'Key'        => $meta['project'] . '/' . $id . '/files.tar.gz',
 					'SourceFile' => realpath( $this->snapshots_file_system->get_file_path( 'files.tar.gz', $id ) ),
 					'ContentMD5' => base64_encode( md5_file( $this->snapshots_file_system->get_file_path( 'files.tar.gz', $id ), true ) ), // phpcs:ignore
-					'@http' => [
+					'@http'      => [
 						'progress' => function ( $expected_dl, $dl, $expected_ul, $ul ) {
 							$this->progress_bar->advance_progress_bar( 'files_ul', (int) $ul );
 						},
@@ -366,6 +366,6 @@ class S3StorageConnector implements StorageConnectorInterface {
 	private function format_bytes( $size, $precision = 2 ) {
 		$base     = log( $size, 1024 );
 		$suffixes = array( '', 'kb', 'mb', 'g', 't' );
-		return round( pow( 1024, $base - floor( $base ) ), $precision ) . $suffixes[ floor( $base ) ];
+		return round( pow( 1024, $base - floor( $base ) ), $precision ) . $suffixes[ (int) floor( $base ) ];
 	}
 }

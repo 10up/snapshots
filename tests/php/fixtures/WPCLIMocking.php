@@ -27,17 +27,26 @@ trait WPCLIMocking {
 	public function set_up_wp_cli_mock() {
 		$this->get_wp_cli_mock();
 
-		add_filter( 'snapshots_wpcli', function() {
-			return $this->get_wp_cli_mock();
-		} );
+		add_filter(
+			'snapshots_wpcli',
+			function() {
+				return $this->get_wp_cli_mock();
+			}
+		);
 
-		add_filter( 'snapshots_readline', function() {
-			return [ $this->get_wp_cli_mock(), 'readline' ];
-		} );
+		add_filter(
+			'snapshots_readline',
+			function() {
+				return [ $this->get_wp_cli_mock(), 'readline' ];
+			}
+		);
 
-		add_filter( 'snapshots_get_flag_or_prompt_answers', function() {
-			return null;
-		} );
+		add_filter(
+			'snapshots_get_flag_or_prompt_answers',
+			function() {
+				return null;
+			}
+		);
 	}
 
 

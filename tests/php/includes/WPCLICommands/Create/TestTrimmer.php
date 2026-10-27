@@ -58,7 +58,7 @@ class TestTrimmer extends TestCase {
 
 		$limits_filter = function() {
 			return [
-				'posts' => 10,
+				'posts'    => 10,
 				'comments' => 10,
 			];
 		};
@@ -73,10 +73,12 @@ class TestTrimmer extends TestCase {
 
 	/** @covers ::set_limits */
 	public function test_set_limits() {
-		$this->trimmer->set_limits( [
-			'posts' => 10,
-			'comments' => 10,
-		] );
+		$this->trimmer->set_limits(
+			[
+				'posts'    => 10,
+				'comments' => 10,
+			]
+		);
 
 		$this->assertEquals( 10, $this->get_private_property( $this->trimmer, 'limits' )['posts'] );
 		$this->assertEquals( 10, $this->get_private_property( $this->trimmer, 'limits' )['comments'] );
@@ -95,35 +97,45 @@ class TestTrimmer extends TestCase {
 
 		$this->trimmer->set_limits(
 			[
-				'posts' => 10,
+				'posts'    => 10,
 				'comments' => 10,
 			]
 		);
 
 		// Create a term and assign it to a post.
-		$term = $this->factory()->term->create( [
-			'taxonomy' => 'category',
-		] );
+		$term = $this->factory()->term->create(
+			[
+				'taxonomy' => 'category',
+			]
+		);
 
-		$post = $this->factory()->post->create_and_get( [
-			'post_status' => 'publish',
-			'post_type' => 'post',
-			'post_title' => 'Test post',
-		] );
+		$post = $this->factory()->post->create_and_get(
+			[
+				'post_status' => 'publish',
+				'post_type'   => 'post',
+				'post_title'  => 'Test post',
+			]
+		);
 
 		wp_set_post_terms( $post->ID, (int) $term, 'category' );
 
 		// Create 20 posts.
-		$posts = $this->factory()->post->create_many( 20, [
-			'post_status' => 'publish',
-			'post_type' => 'post',
-			'post_title' => 'Test post',
-		] );
+		$posts = $this->factory()->post->create_many(
+			20,
+			[
+				'post_status' => 'publish',
+				'post_type'   => 'post',
+				'post_title'  => 'Test post',
+			]
+		);
 
 		// Create 20 comments and assign them to the last post.
-		$comments = $this->factory()->comment->create_many( 20, [
-			'comment_post_ID' => $posts[19],
-		] );
+		$comments = $this->factory()->comment->create_many(
+			20,
+			[
+				'comment_post_ID' => $posts[19],
+			]
+		);
 
 		$this->trimmer->trim();
 
@@ -134,15 +146,25 @@ class TestTrimmer extends TestCase {
 		$this->assertEmpty( $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->posts} WHERE ID = %d", $post->ID ) ) );
 
 		// Confirm there are only 10 posts.
-		$this->assertCount( 10, get_posts( [
-			'post_type' => 'post',
-			'posts_per_page' => -1,
-		] ) );
+		$this->assertCount(
+			10,
+			get_posts(
+				[
+					'post_type'      => 'post',
+					'posts_per_page' => -1,
+				]
+			)
+		);
 
 		// Confirm there are only 10 comments.
-		$this->assertCount( 10, get_comments( [
-			'post_id' => $posts[19],
-		] ) );
+		$this->assertCount(
+			10,
+			get_comments(
+				[
+					'post_id' => $posts[19],
+				]
+			)
+		);
 
 	}
 }

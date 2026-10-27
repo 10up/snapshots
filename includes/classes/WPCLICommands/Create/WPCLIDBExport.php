@@ -86,7 +86,7 @@ class WPCLIDBExport implements DBExportInterface {
 
 		$this->snapshot_files->create_directory( $id );
 
-		$this->run_command( $id, $args );
+		$this->run_command( $id );
 
 		$this->scrub( $id );
 
@@ -121,9 +121,8 @@ class WPCLIDBExport implements DBExportInterface {
 	 * Runs the WP-CLI command to dump the database.
 	 *
 	 * @param string $id The snapshot ID.
-	 * @param array  $args The snapshot arguments.
 	 */
-	private function run_command( string $id, array $args ) {
+	private function run_command( string $id ) {
 		global $wpdb;
 
 		$result_file = $this->snapshot_files->get_file_path( 'data.sql', $id );

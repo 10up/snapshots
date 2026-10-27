@@ -1,7 +1,7 @@
 <?php
 /**
  * WPCLI Mock class
- * 
+ *
  * @package TenUp\Snapshots
  */
 
@@ -15,21 +15,21 @@ namespace TenUp\Snapshots\Tests\Fixtures;
 class WPCLIMock {
 	/**
 	 * Test case.
-	 * 
+	 *
 	 * @var object
 	 */
 	protected $test_case;
 
 	/**
 	 * Mock method calls.
-	 * 
+	 *
 	 * @var array
 	 */
-	static protected $wpcli_mock_calls = [];
+	protected static $wpcli_mock_calls = [];
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param object $test_case Test case.
 	 */
 	public function __construct( $test_case ) {
@@ -53,9 +53,9 @@ class WPCLIMock {
 
 	/**
 	 * Get the mock method calls.
-	 * 
+	 *
 	 * @param ?string $method Method name to get calls for.
-	 * 
+	 *
 	 * @return array
 	 */
 	public function get_wpcli_mock_calls( ?string $method = null ) : array {
@@ -75,7 +75,7 @@ class WPCLIMock {
 
 	/**
 	 * Tests that a method was called.
-	 * 
+	 *
 	 * @param string $method Method name.
 	 * @param int    $times  Number of times the method should have been called.
 	 * @param ?array $args   Arguments to check.
@@ -86,21 +86,21 @@ class WPCLIMock {
 
 		if ( ! is_null( $args ) ) {
 			foreach ( $args as $index => $arg ) {
-				$this->test_case->assertEquals( $arg, $calls[$index], "Method $method was called with the correct arguments." );
+				$this->test_case->assertEquals( $arg, $calls[ $index ], "Method $method was called with the correct arguments." );
 			}
 		}
 
-        return $calls;
+		return $calls;
 	}
-	
+
 	/**
 	 * Readline mock.
 	 */
 	public function readline( ...$args ) {
 		static $readline_count = 0;
-	
+
 		self::$wpcli_mock_calls['readline'][] = $args;
 
-		return 'readline' . $readline_count++;
+		return 'readline' . ( $readline_count++ );
 	}
 };

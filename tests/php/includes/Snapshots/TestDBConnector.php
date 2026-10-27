@@ -55,7 +55,17 @@ class TestDBConnector extends TestCase {
 
 	/** @covers ::get_client */
 	public function test_get_client() {
-		$client = $this->call_private_method( $this->connector, 'get_client', [ [ 'profile' => 'default', 'repository' => 'test-repo', 'region' => 'us-west-1' ] ] );
+		$client = $this->call_private_method(
+			$this->connector,
+			'get_client',
+			[
+				[
+					'profile'    => 'default',
+					'repository' => 'test-repo',
+					'region'     => 'us-west-1',
+				],
+			]
+		);
 
 		$this->assertInstanceOf( DynamoDbClient::class, $client );
 	}
@@ -77,14 +87,14 @@ class TestDBConnector extends TestCase {
 		$client->expects( $this->once() )->method( 'getIterator' )->with(
 			'Scan',
 			[
-				'TableName' => 'wpsnapshots-test-repo',
+				'TableName'           => 'wpsnapshots-test-repo',
 				'ConditionalOperator' => 'OR',
-				'ScanFilter' => [
+				'ScanFilter'          => [
 					'project' => [
 						'AttributeValueList' => [ [ 'S' => 'search term' ] ],
 						'ComparisonOperator' => 'CONTAINS',
 					],
-					'id' => [
+					'id'      => [
 						'AttributeValueList' => [ [ 'S' => 'search term' ] ],
 						'ComparisonOperator' => 'EQ',
 					],
@@ -93,7 +103,14 @@ class TestDBConnector extends TestCase {
 		);
 
 		// Call search method.
-		$this->connector->search( 'search term', [ 'profile' => 'default', 'repository' => 'test-repo', 'region' => 'us-west-1' ] );
+		$this->connector->search(
+			'search term',
+			[
+				'profile'    => 'default',
+				'repository' => 'test-repo',
+				'region'     => 'us-west-1',
+			]
+		);
 	}
 
 	/** @covers ::get_snapshot */
@@ -116,15 +133,22 @@ class TestDBConnector extends TestCase {
 		$client->expects( $this->once() )->method( 'getItem' )->with(
 			[
 				'ConsistentRead' => true,
-				'TableName' => 'wpsnapshots-test-repo',
-				'Key' => [
+				'TableName'      => 'wpsnapshots-test-repo',
+				'Key'            => [
 					'id' => [ 'S' => 'snapshot-id' ],
 				],
 			]
 		);
 
 		// Call get_snapshot method.
-		$this->connector->get_snapshot( 'snapshot-id', [ 'profile' => 'default', 'repository' => 'test-repo', 'region' => 'us-west-1' ] );
+		$this->connector->get_snapshot(
+			'snapshot-id',
+			[
+				'profile'    => 'default',
+				'repository' => 'test-repo',
+				'region'     => 'us-west-1',
+			]
+		);
 	}
 
 	/** @covers ::create_tables */
@@ -148,23 +172,23 @@ class TestDBConnector extends TestCase {
 		// Assert that client's createTable method was called with expected args.
 		$client->expects( $this->once() )->method( 'createTable' )->with(
 			[
-				'AttributeDefinitions' => [
+				'AttributeDefinitions'  => [
 					[
 						'AttributeName' => 'id',
 						'AttributeType' => 'S',
 					],
 				],
-				'KeySchema' => [
+				'KeySchema'             => [
 					[
 						'AttributeName' => 'id',
-						'KeyType' => 'HASH',
+						'KeyType'       => 'HASH',
 					],
 				],
 				'ProvisionedThroughput' => [
-					'ReadCapacityUnits' => 10,
+					'ReadCapacityUnits'  => 10,
 					'WriteCapacityUnits' => 20,
 				],
-				'TableName' => 'wpsnapshots-test-repo',
+				'TableName'             => 'wpsnapshots-test-repo',
 			]
 		);
 
@@ -176,6 +200,13 @@ class TestDBConnector extends TestCase {
 		);
 
 		// Call create_tables method.
-		$this->connector->create_tables( [ 'profile' => 'default', 'repository' => 'test-repo', 'region' => 'test-region', 'role_arn' => '' ] );
+		$this->connector->create_tables(
+			[
+				'profile'    => 'default',
+				'repository' => 'test-repo',
+				'region'     => 'test-region',
+				'role_arn'   => '',
+			]
+		);
 	}
 }

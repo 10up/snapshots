@@ -94,13 +94,13 @@ class TestConfigure extends TestCase {
 				'repositories' => [
 					'10up' => [
 						'repository' => '10up',
-						'region' => 'us-east-1',
-						'profile' => 'readline4',
-						'user_name' => 'Jane Doe',
+						'region'     => 'us-east-1',
+						'profile'    => 'readline4',
+						'user_name'  => 'Jane Doe',
 						'user_email' => 'jane.doe@example.com',
 						'role_arn'   => '',
-					]
-				]
+					],
+				],
 			],
 			$result
 		);
@@ -151,13 +151,13 @@ class TestConfigure extends TestCase {
 			'repositories' => [
 				'10up' => [
 					'repository' => '10up',
-					'region' => 'us-east-1',
-					'profile' => 'readline5',
-					'user_name' => 'Jane Doe',
+					'region'     => 'us-east-1',
+					'profile'    => 'readline5',
+					'user_name'  => 'Jane Doe',
 					'role_arn'   => '',
 					'user_email' => 'jane.doe@example.com',
-				]
-			]
+				],
+			],
 		];
 
 		file_put_contents( '/tenup-snapshots-tmp/config.json', json_encode( $config ) );
@@ -200,11 +200,11 @@ class TestConfigure extends TestCase {
 	 */
 	private function get_test_args() {
 		return [
-			'user_name' => 'Jane Doe',
+			'user_name'  => 'Jane Doe',
 			'user_email' => 'jane.doe@example.com',
-			'region' => 'us-east-1',
-			'role_arn' => 'none',
-			'skip_test' => true,
+			'region'     => 'us-east-1',
+			'role_arn'   => 'none',
+			'skip_test'  => true,
 		];
 	}
 }

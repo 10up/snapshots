@@ -24,7 +24,7 @@ use ZipArchive;
  */
 class TestFileSystem extends TestCase {
 
-    use PrivateAccess, DirectoryFiltering;
+	use PrivateAccess, DirectoryFiltering;
 
 	/**
 	 * SnapshotsDirectory instance.
@@ -65,7 +65,7 @@ class TestFileSystem extends TestCase {
 		mkdir( $directory );
 
 		for ( $i = 0; $i < 10; $i++ ) {
-			$file = $directory . '/test-' . $i . '.txt';
+			$file     = $directory . '/test-' . $i . '.txt';
 			$contents = 'This is a test file. ' . $i;
 
 			$this->filesystem->get_wp_filesystem()->put_contents( $file, $contents );
@@ -90,7 +90,7 @@ class TestFileSystem extends TestCase {
 				$directory . '/test-8.txt',
 				$directory . '/subdirectory/test-1.txt',
 				'/subdirectory/sub-subdirectory',
-				'test-6.txt'
+				'test-6.txt',
 			]
 		);
 
@@ -110,7 +110,6 @@ class TestFileSystem extends TestCase {
 		$this->assertFileExists( $directory . '/subdirectory/sub-subdirectory/test-0.txt' );
 		$this->assertFileExists( $directory . '/subdirectory/sub-subdirectory/test-1.txt' );
 
-
 		// Confirm root still exists becuase it contains excluded files.
 		$this->assertFileExists( $directory );
 
@@ -126,7 +125,7 @@ class TestFileSystem extends TestCase {
 		mkdir( $directory );
 
 		for ( $i = 0; $i < 10; $i++ ) {
-			$file = $directory . '/test-' . $i . '.txt';
+			$file     = $directory . '/test-' . $i . '.txt';
 			$contents = 'This is a test file. ' . $i;
 
 			$this->filesystem->get_wp_filesystem()->put_contents( $file, $contents );
@@ -155,7 +154,7 @@ class TestFileSystem extends TestCase {
 
 	/** @covers ::unzip_file */
 	public function test_unzip_file() {
-		$zip_file = $this->get_directory_path() . '/test.zip';
+		$zip_file              = $this->get_directory_path() . '/test.zip';
 		$destination_directory = $this->get_directory_path() . '/destination';
 
 		// Create the destination directory.
@@ -186,13 +185,13 @@ class TestFileSystem extends TestCase {
 	/** @covers ::unzip_file */
 	public function test_unzip_file_with_gzipped_sql_file() {
 		// Create an sql file.
-		$sql_file = $this->get_directory_path() . '/test.sql';
+		$sql_file   = $this->get_directory_path() . '/test.sql';
 		$sql_handle = fopen( $sql_file, 'w' );
 		fwrite( $sql_handle, 'This is a test file.' );
 		fclose( $sql_handle );
 
 		// Create a gzipped sql file.
-		$gzipped_sql_file = $this->get_directory_path() . '/test.sql.gz';
+		$gzipped_sql_file   = $this->get_directory_path() . '/test.sql.gz';
 		$gzipped_sql_handle = gzopen( $gzipped_sql_file, 'w' );
 
 		// Add the sql file to the gzipped sql file.

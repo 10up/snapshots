@@ -71,14 +71,28 @@ class TestSnapshotMetaFromFileSystem extends TestCase {
 	 * @covers ::get_local
 	 */
 	public function test_save_and_getlocal() {
-		$this->meta->save_local( 'test-id', [ 'test' => 'data', 'repository' => '10up', 'contains_files' => true ] );
+		$this->meta->save_local(
+			'test-id',
+			[
+				'test'           => 'data',
+				'repository'     => '10up',
+				'contains_files' => true,
+			]
+		);
 
 		$this->assertFileExists( $this->get_directory_path() . '/test-id/meta.json' );
 
 		$this->assertEquals( '{"test":"data","repository":"10up","contains_files":true}', file_get_contents( $this->get_directory_path() . '/test-id/meta.json' ) );
 		$this->assertGreaterThan( 0, filesize( $this->get_directory_path() . '/test-id/meta.json' ) );
 
-		$this->assertEquals( [ 'test' => 'data', 'repository' => '10up', 'contains_files' => true ], $this->meta->get_local( 'test-id', '10up' ) );
+		$this->assertEquals(
+			[
+				'test'           => 'data',
+				'repository'     => '10up',
+				'contains_files' => true,
+			],
+			$this->meta->get_local( 'test-id', '10up' )
+		);
 	}
 
 	/** @covers ::get_remote */
@@ -97,7 +111,18 @@ class TestSnapshotMetaFromFileSystem extends TestCase {
 
 		$this->set_private_property( $this->meta, 'db', $mock_db );
 
-		$this->assertEquals( [], $this->meta->get_remote( 'test-id', [ 'profile' => 'default', 'repository' => 'test-repo', 'region' => 'test-region', 'role_arn' => '' ] ) );
+		$this->assertEquals(
+			[],
+			$this->meta->get_remote(
+				'test-id',
+				[
+					'profile'    => 'default',
+					'repository' => 'test-repo',
+					'region'     => 'test-region',
+					'role_arn'   => '',
+				]
+			)
+		);
 	}
 
 	/** @covers ::get_remote */
@@ -116,7 +141,23 @@ class TestSnapshotMetaFromFileSystem extends TestCase {
 
 		$this->set_private_property( $this->meta, 'db', $mock_db );
 
-		$this->assertEquals( [ 'test' => 'data', 'contains_files' => true, 'contains_db' => true, 'repository' => 'test-repo' ], $this->meta->get_remote( 'test-id', [ 'profile' => 'default', 'repository' => 'test-repo', 'region' => 'test-region', 'role_arn' => '' ] ) );
+		$this->assertEquals(
+			[
+				'test'           => 'data',
+				'contains_files' => true,
+				'contains_db'    => true,
+				'repository'     => 'test-repo',
+			],
+			$this->meta->get_remote(
+				'test-id',
+				[
+					'profile'    => 'default',
+					'repository' => 'test-repo',
+					'region'     => 'test-region',
+					'role_arn'   => '',
+				]
+			)
+		);
 	}
 
 	/** @covers ::get_remote */
@@ -131,11 +172,33 @@ class TestSnapshotMetaFromFileSystem extends TestCase {
 			->getMock();
 
 		$mock_db->method( 'get_snapshot' )
-			->willReturn( [ 'test' => 'data', 'contains_files' => false, 'contains_db' => false ] );
+			->willReturn(
+				[
+					'test'           => 'data',
+					'contains_files' => false,
+					'contains_db'    => false,
+				]
+			);
 
 		$this->set_private_property( $this->meta, 'db', $mock_db );
 
-		$this->assertEquals( [ 'test' => 'data', 'contains_files' => false, 'contains_db' => false, 'repository' => 'test-repo' ], $this->meta->get_remote( 'test-id', [ 'profile' =>'default', 'repository' =>'test-repo', 'region' => 'test-region', 'role_arn' => '' ] ) );
+		$this->assertEquals(
+			[
+				'test'           => 'data',
+				'contains_files' => false,
+				'contains_db'    => false,
+				'repository'     => 'test-repo',
+			],
+			$this->meta->get_remote(
+				'test-id',
+				[
+					'profile'    => 'default',
+					'repository' => 'test-repo',
+					'region'     => 'test-region',
+					'role_arn'   => '',
+				]
+			)
+		);
 	}
 
 	/** @covers ::generate */
@@ -145,15 +208,15 @@ class TestSnapshotMetaFromFileSystem extends TestCase {
 		$this->meta->generate(
 			'test-id',
 			[
-				'author' => [
-					'name' => 'Test Author',
+				'author'         => [
+					'name'  => 'Test Author',
 					'email' => 'e@ma.il',
 				],
-				'repository' => 'test-repo',
-				'description' => 'Test description',
-				'project' => 'test-project',
+				'repository'     => 'test-repo',
+				'description'    => 'Test description',
+				'project'        => 'test-project',
 				'contains_files' => true,
-				'contains_db' => true,
+				'contains_db'    => true,
 			]
 		);
 
@@ -161,32 +224,32 @@ class TestSnapshotMetaFromFileSystem extends TestCase {
 
 		$this->assertEquals(
 			[
-				'author' => [
-					'name' => 'Test Author',
+				'author'               => [
+					'name'  => 'Test Author',
 					'email' => 'e@ma.il',
 				],
-				'repository' => 'test-repo',
-				'description' => 'Test description',
-				'project' => 'test-project',
-				'contains_files' => true,
-				'contains_db' => true,
-				'multisite' => false,
-				'subdomain_install' => false,
-				'domain_current_site' => false,
-				'path_current_site' => false,
+				'repository'           => 'test-repo',
+				'description'          => 'Test description',
+				'project'              => 'test-project',
+				'contains_files'       => true,
+				'contains_db'          => true,
+				'multisite'            => false,
+				'subdomain_install'    => false,
+				'domain_current_site'  => false,
+				'path_current_site'    => false,
 				'site_id_current_site' => false,
 				'blog_id_current_site' => false,
-				'wp_version' => $wp_version,
-				'sites' => [
+				'wp_version'           => $wp_version,
+				'sites'                => [
 					[
 						'site_url' => home_url(),
 						'home_url' => home_url(),
 						'blogname' => 'Test Blog',
-					]
+					],
 				],
-				'table_prefix' => 'wp_',
-				'db_size' => 0,
-				'files_size' => 0,
+				'table_prefix'         => 'wp_',
+				'db_size'              => 0,
+				'files_size'           => 0,
 			],
 			json_decode( file_get_contents( $this->get_directory_path() . '/test-id/meta.json' ), true )
 		);
@@ -199,15 +262,15 @@ class TestSnapshotMetaFromFileSystem extends TestCase {
 		$this->meta->generate(
 			'test-id-2',
 			[
-				'author' => [
-					'name' => 'Test Author',
+				'author'         => [
+					'name'  => 'Test Author',
 					'email' => 'e@ma.il',
 				],
-				'repository' => 'test-repo',
-				'description' => 'Test description',
-				'project' => 'test-project',
+				'repository'     => 'test-repo',
+				'description'    => 'Test description',
+				'project'        => 'test-project',
 				'contains_files' => true,
-				'contains_db' => true,
+				'contains_db'    => true,
 			],
 			true,
 		);
@@ -216,26 +279,26 @@ class TestSnapshotMetaFromFileSystem extends TestCase {
 
 		$this->assertEquals(
 			[
-				'author' => [
-					'name' => 'Test Author',
+				'author'               => [
+					'name'  => 'Test Author',
 					'email' => 'e@ma.il',
 				],
-				'repository' => 'test-repo',
-				'description' => 'Test description',
-				'project' => 'test-project',
-				'contains_files' => true,
-				'contains_db' => true,
-				'multisite' => true,
-				'subdomain_install' => false,
-				'domain_current_site' => false,
-				'path_current_site' => false,
+				'repository'           => 'test-repo',
+				'description'          => 'Test description',
+				'project'              => 'test-project',
+				'contains_files'       => true,
+				'contains_db'          => true,
+				'multisite'            => true,
+				'subdomain_install'    => false,
+				'domain_current_site'  => false,
+				'path_current_site'    => false,
 				'site_id_current_site' => false,
 				'blog_id_current_site' => false,
-				'wp_version' => $wp_version,
-				'sites' => [],
-				'table_prefix' => 'wp_',
-				'db_size' => 0,
-				'files_size' => 0,
+				'wp_version'           => $wp_version,
+				'sites'                => [],
+				'table_prefix'         => 'wp_',
+				'db_size'              => 0,
+				'files_size'           => 0,
 			],
 			json_decode( file_get_contents( $this->get_directory_path() . '/test-id-2/meta.json' ), true )
 		);

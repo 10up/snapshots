@@ -40,7 +40,7 @@ class TestURLReplacerFactory extends TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$plugin = new Snapshots();
+		$plugin                     = new Snapshots();
 		$this->url_replacer_factory = $plugin->get_instance( URLReplacerFactory::class );
 	}
 

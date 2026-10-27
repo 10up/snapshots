@@ -1,7 +1,7 @@
 <?php
 /**
  * Helper trait allowinga access to private and protected methods and properties.
- * 
+ *
  * @package TenUp\Snapshots
  */
 
@@ -35,7 +35,7 @@ trait PrivateAccess {
 	 *
 	 * @param object $object Object to set property on.
 	 * @param string $property Property to set.
-	 * @param mixed $value Value to set.
+	 * @param mixed  $value Value to set.
 	 */
 	public function set_private_property( $object, $property, $value ) {
 		$reflection = new ReflectionClass( $object );
@@ -49,7 +49,7 @@ trait PrivateAccess {
 	 *
 	 * @param object $object Object to call method on.
 	 * @param string $method Method to call.
-	 * @param array $args Arguments to pass to method.
+	 * @param array  $args Arguments to pass to method.
 	 * @return mixed
 	 */
 	public function call_private_method( $object, $method, array $args = [] ) {

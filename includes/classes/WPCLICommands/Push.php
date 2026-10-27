@@ -39,8 +39,6 @@ final class Push extends Create {
 		$this->log( 'Pushing snapshot to remote repository...' );
 
 		$repository_name = $this->get_repository_name();
-		$region          = $this->get_region();
-		$profile         = $this->get_profile_for_repository();
 
 		$this->storage_connector->put_snapshot( $id, $this->get_aws_config() );
 		$this->db_connector->insert_snapshot( $id, $this->get_aws_config(), $this->snapshot_meta->get_local( $id, $repository_name ) );
