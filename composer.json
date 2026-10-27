@@ -37,7 +37,7 @@
     "civicrm/composer-downloads-plugin": "dev-master",
     "php-stubs/wordpress-stubs": "^6.1",
     "php-stubs/wordpress-tests-stubs": "^6.1",
-    "php": ">=7.3",
+    "php": ">=8.1",
     "wordpress/wordpress-develop": "dev-trunk"
   },
   "scripts": {
@@ -53,6 +53,9 @@
     "allow-plugins": {
       "dealerdirect/phpcodesniffer-composer-installer": true,
       "civicrm/composer-downloads-plugin": true
+    },
+    "platform": {
+      "php": "8.1.0"
     }
   },
   "extra": {

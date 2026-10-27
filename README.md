@@ -58,7 +58,7 @@ Alternatively, you can download the package as a zip file from the GitHub reposi
 wp package install /path/to/snapshots.zip
 ```
 
-Note: PHP 7.3+ is required.
+Note: PHP 8.1+ is required.
 
 ### 2. Authentication
 
