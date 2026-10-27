@@ -550,7 +550,7 @@ final class Pull extends WPCLICommand {
 	}
 
 	/**
-	 * Creates the wpsnapshots user.
+	 * Creates the snapshots user.
 	 *
 	 * @param bool $multisite Whether this is a multisite install.
 	 */

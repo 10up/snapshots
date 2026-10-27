@@ -278,7 +278,7 @@ __wp snapshots push [<snapshot_id>] [--repository=\<repository\>] [--exclude=\<e
 
 This command pulls an existing snapshot from the repository into your current WordPress installation, replacing your database and/or `wp-content` directory entirely. The command will interactively prompt you to map URLs to be search and replaced. If the snapshot is a multisite, you will have to map URLs interactively for each blog in the network. This command will also (optionally) match your current version of WordPress with the snapshot.
 
-After pulling, you can log in as admin with the user `wpsnapshots`, password `password`.
+After pulling, you can log in as admin with the user `snapshots`, password `password`.
 
 #### Command
 
