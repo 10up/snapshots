@@ -111,7 +111,7 @@ class TestSearch extends TestCase {
 		$mock_snapshots_config = $this->createMock( SnapshotsConfigFromFileSystem::class );
 		$mock_snapshots_config->method( 'get_repository_settings' )->willReturn(
 			[
-				'region' => 'test',
+				'region'     => 'test',
 				'repository' => 'test',
 			]
 		);
@@ -142,11 +142,11 @@ class TestSearch extends TestCase {
 			[
 				[
 					[
-						'time' => $time,
+						'time'           => $time,
 						'contains_files' => 'Yes',
-						'contains_db' => 'Yes',
-						'files_size' => 123123,
-						'db_size' => 123123,
+						'contains_db'    => 'Yes',
+						'files_size'     => 123123,
+						'db_size'        => 123123,
 
 					],
 				],
@@ -164,15 +164,15 @@ class TestSearch extends TestCase {
 						'yaml',
 						[
 							$time => [
-								'ID' => '',
-								'Project' => '',
-								'Contains files' => 'Yes',
+								'ID'                => '',
+								'Project'           => '',
+								'Contains files'    => 'Yes',
 								'Contains database' => 'Yes',
-								'Description' => '',
-								'Author' => '',
-								'Size' => '240.47 KB',
-								'Multisite' => 'No',
-								'Created' => gmdate( $date_format, $time ),
+								'Description'       => '',
+								'Author'            => '',
+								'Size'              => '240.47 KB',
+								'Multisite'         => 'No',
+								'Created'           => gmdate( $date_format, $time ),
 							],
 						],
 						[

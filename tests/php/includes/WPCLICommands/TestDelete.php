@@ -1,7 +1,7 @@
 <?php
 /**
  * Tests covering the Delete command class.
- * 
+ *
  * @package TenUp\Snapshots
  */
 
@@ -17,7 +17,7 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
  * Class TestDelete
  *
  * @package TenUp\Snapshots\Tests\Commands
- * 
+ *
  * @coversDefaultClass \TenUp\Snapshots\WPCLICommands\Delete
  */
 class TestDelete extends TestCase {
@@ -26,7 +26,7 @@ class TestDelete extends TestCase {
 
 	/**
 	 * Delete instance.
-	 * 
+	 *
 	 * @var Delete
 	 */
 	private $command;
@@ -54,7 +54,7 @@ class TestDelete extends TestCase {
 
 	/**
 	 * Test that the command instance extends WPCLICommand.
-	 * 
+	 *
 	 * @covers ::__construct
 	 */
 	public function test_command_instance() {

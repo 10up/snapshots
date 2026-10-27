@@ -23,7 +23,7 @@ trait DirectoryFiltering {
 		};
 
 		// Create the directory.
-		exec( 'mkdir ' . $this->get_directory_path() );
+		exec( 'mkdir -p ' . $this->get_directory_path() );
 
 		add_filter( 'snapshots_directory', $filter_directory );
 	}
@@ -43,6 +43,6 @@ trait DirectoryFiltering {
 	 * @return string
 	 */
 	public function get_directory_path() {
-		return '/tenup-snapshots-tmp';
+		return sys_get_temp_dir() . '/tenup-snapshots-tmp';
 	}
 }

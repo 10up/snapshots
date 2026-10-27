@@ -239,7 +239,7 @@ abstract class WPCLICommand implements Conditional, Module {
 
 			$repository_name = $args[ $positional_arg_index ] ?? null;
 		} else {
-			$repository_name = $this->get_assoc_arg( 'repository' ) ?? null;
+			$repository_name = $this->get_assoc_arg( 'repository' );
 		}
 
 		if ( ! $repository_name ) {
@@ -302,7 +302,7 @@ abstract class WPCLICommand implements Conditional, Module {
 
 		return [
 			'profile'    => $this->get_profile_for_repository(),
-			'repository' => $this->get_repository_name(),
+			'repository' => $repository_name,
 			'region'     => $this->get_region(),
 			'role_arn'   => $this->get_role_arn(),
 		];
@@ -352,7 +352,7 @@ abstract class WPCLICommand implements Conditional, Module {
 		$base     = log( $size, 1024 );
 		$suffixes = [ '', 'KB', 'MB', 'GB', 'TB' ];
 
-		return round( pow( 1024, $base - floor( $base ) ), $precision ) . ' ' . $suffixes[ floor( $base ) ];
+		return round( pow( 1024, $base - floor( $base ) ), $precision ) . ' ' . $suffixes[ (int) floor( $base ) ];
 	}
 
 	/**

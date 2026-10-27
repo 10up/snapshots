@@ -4,6 +4,7 @@
  *
  * @package TenUp\Snapshots
  */
+
 namespace TenUp\Snapshots\ProgressBar;
 
 /**

@@ -26,7 +26,7 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
  */
 class TestSnapshotsDirectory extends TestCase {
 
-    use PrivateAccess, DirectoryFiltering;
+	use PrivateAccess, DirectoryFiltering;
 
 	/**
 	 * SnapshotsDirectory instance.
@@ -65,7 +65,7 @@ class TestSnapshotsDirectory extends TestCase {
 			return '/tmp';
 		};
 
-		add_filter( 'snapshots_directory',  $filter );
+		add_filter( 'snapshots_directory', $filter );
 
 		$this->assertEquals( '/tmp', $this->call_private_method( $this->snapshots_fs, 'get_directory' ) );
 
@@ -94,8 +94,8 @@ class TestSnapshotsDirectory extends TestCase {
 	 * @covers ::file_exists
 	 */
 	public function test_delete_file() {
-		$filename = 'test.txt';
-		$contents = 'This is a test file.';
+		$filename  = 'test.txt';
+		$contents  = 'This is a test file.';
 		$directory = $this->call_private_method( $this->snapshots_fs, 'get_directory' );
 
 		$this->snapshots_fs->update_file_contents( $filename, $contents );
@@ -114,7 +114,7 @@ class TestSnapshotsDirectory extends TestCase {
 	 */
 	public function test_get_file_contents_throws_when_nonexistent_path() {
 		$this->expectException( SnapshotsException::class );
-		$this->expectExceptionMessage( 'Unable to read file: /tenup-snapshots-tmp/nonexistent.txt' );
+		$this->expectExceptionMessage( 'Unable to read file: ' . $this->get_directory_path() . '/nonexistent.txt' );
 
 		$this->snapshots_fs->get_file_contents( 'nonexistent.txt' );
 	}
@@ -122,9 +122,9 @@ class TestSnapshotsDirectory extends TestCase {
 	/**
 	 * @covers ::update_file_contents
 	 */
-	function test_update_file_contents_when_appending() {
-		$filename = 'test.txt';
-		$contents = 'This is a test file.';
+	public function test_update_file_contents_when_appending() {
+		$filename  = 'test.txt';
+		$contents  = 'This is a test file.';
 		$directory = $this->call_private_method( $this->snapshots_fs, 'get_directory' );
 
 		$this->snapshots_fs->update_file_contents( $filename, $contents );
@@ -137,8 +137,8 @@ class TestSnapshotsDirectory extends TestCase {
 
 	/** @covers ::file_exists */
 	public function test_file_exists() {
-		$filename = 'test.txt';
-		$contents = 'This is a test file.';
+		$filename  = 'test.txt';
+		$contents  = 'This is a test file.';
 		$directory = $this->call_private_method( $this->snapshots_fs, 'get_directory' );
 
 		$this->snapshots_fs->update_file_contents( $filename, $contents );
@@ -192,7 +192,7 @@ class TestSnapshotsDirectory extends TestCase {
 			[
 				"This is a test file. \n",
 				"This is a second line. \n",
-				"This is a third line.",
+				'This is a third line.',
 			],
 			$this->snapshots_fs->get_file_lines( $filename )
 		);
@@ -201,7 +201,7 @@ class TestSnapshotsDirectory extends TestCase {
 	/** @covers ::get_file_lines */
 	public function test_get_file_lines_throws_when_nonexistent_path() {
 		$this->expectException( SnapshotsException::class );
-		$this->expectExceptionMessage( 'Unable to read file: /tenup-snapshots-tmp/nonexistent.txt' );
+		$this->expectExceptionMessage( 'Unable to read file: ' . $this->get_directory_path() . '/nonexistent.txt' );
 
 		$this->snapshots_fs->get_file_lines( 'nonexistent.txt' );
 	}
@@ -210,7 +210,7 @@ class TestSnapshotsDirectory extends TestCase {
 	public function test_unzip_snapshot_files() {
 		$file_zipper = ( new Snapshots() )->get_instance( FileZipper::class );
 
-		$snapshot_id = 'test-snapshot-id';
+		$snapshot_id           = 'test-snapshot-id';
 		$destination_directory = $this->get_directory_path() . '/destination';
 
 		// Create the destination directory.

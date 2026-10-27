@@ -5,4 +5,20 @@
   <rule ref="10up-Default">
   </rule>
   <rule ref="PHPCompatibilityWP" />
+
+  <!-- Test docblocks only carry @covers annotations; don't require full documentation in tests. -->
+  <rule ref="Generic.Commenting.DocComment.MissingShort">
+    <exclude-pattern>tests/*</exclude-pattern>
+  </rule>
+  <rule ref="Squiz.Commenting.FunctionComment">
+    <exclude-pattern>tests/*</exclude-pattern>
+  </rule>
+  <rule ref="Squiz.Commenting.FileComment">
+    <exclude-pattern>tests/*</exclude-pattern>
+  </rule>
+
+  <!-- Test helpers mirror PHPUnit's camelCase assertion naming. -->
+  <rule ref="WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid">
+    <exclude-pattern>tests/*</exclude-pattern>
+  </rule>
 </ruleset>

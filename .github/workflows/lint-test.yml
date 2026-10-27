@@ -39,7 +39,7 @@ jobs:
       - name: Set PHP version
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.0"
+          php-version: "8.1"
           tools: cs2pr
           coverage: none
 
@@ -72,7 +72,7 @@ jobs:
       - name: Set PHP version
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.0"
+          php-version: "8.1"
           tools: cs2pr
           coverage: none
 
@@ -111,7 +111,7 @@ jobs:
       - name: Set PHP version
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.0"
+          php-version: "8.1"
           coverage: none
 
       - name: Install dependencies

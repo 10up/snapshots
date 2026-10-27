@@ -1,9 +1,6 @@
-
-
 <?php
 /**
  * PHPUnit bootstrap file
- *
  */
 
 use Yoast\WPTestUtils\WPIntegration;
@@ -17,7 +14,7 @@ if ( ! defined( 'WP_CLI' ) ) {
 }
 
 if ( ! defined( 'WP_TESTS_CONFIG_FILE_PATH' ) && false !== getenv( 'WP_PHPUNIT__TESTS_CONFIG' ) ) {
-    define( 'WP_TESTS_CONFIG_FILE_PATH', getenv( 'WP_PHPUNIT__TESTS_CONFIG' ) );
+	define( 'WP_TESTS_CONFIG_FILE_PATH', getenv( 'WP_PHPUNIT__TESTS_CONFIG' ) );
 }
 
 require_once PROJECT_ROOT . '/vendor/autoload.php';

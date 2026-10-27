@@ -66,7 +66,7 @@ class TestFileZipper extends TestCase {
 
 		$this->tear_down_directory_filtering();
 
-		$this->file_system->get_wp_filesystem()->delete( '/tenup-snapshots-tmp', true );
+		$this->file_system->get_wp_filesystem()->delete( $this->get_directory_path(), true );
 		$this->file_system->get_wp_filesystem()->delete( '/tmp/files', true );
 		$this->file_system->get_wp_filesystem()->delete( '/tmp/wp-content', true );
 	}
@@ -83,22 +83,22 @@ class TestFileZipper extends TestCase {
 	public function test_zip_files() {
 		add_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
-		$id = 'test-id';
+		$id   = 'test-id';
 		$args = [
-			'excludes' => [],
-			'exclude_uploads' => false,
+			'excludes'             => [],
+			'exclude_uploads'      => false,
 			'include_node_modules' => false,
-			'exclude_vendor' => false,
+			'exclude_vendor'       => false,
 		];
 
 		$this->file_zipper->zip_files( $id, $args );
 
-		$this->assertFileExists( '/tenup-snapshots-tmp/test-id/files.tar.gz' );
+		$this->assertFileExists( $this->get_directory_path() . '/test-id/files.tar.gz' );
 
 		remove_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
 		// Unzip with exec and tar instead. The above will be deleted.
-		exec( 'tar -xzf /tenup-snapshots-tmp/test-id/files.tar.gz -C /tmp/files');		
+		exec( 'tar -xzf ' . $this->get_directory_path() . '/test-id/files.tar.gz -C /tmp/files' );
 
 		$this->assertFileExists( '/tmp/files/uploads/' );
 		$this->assertFileExists( '/tmp/files/uploads/test-file.txt' );
@@ -116,25 +116,25 @@ class TestFileZipper extends TestCase {
 	public function test_zip_files_with_excludes() {
 		add_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
-		$id = 'test-id-2';
+		$id   = 'test-id-2';
 		$args = [
-			'excludes' => [
+			'excludes'             => [
 				'plugins/test-file.txt',
 				'themes/test-theme',
 			],
-			'exclude_uploads' => true,
+			'exclude_uploads'      => true,
 			'include_node_modules' => false,
-			'exclude_vendor' => false,
+			'exclude_vendor'       => false,
 		];
 
 		$this->file_zipper->zip_files( $id, $args );
 
-		$this->assertFileExists( '/tenup-snapshots-tmp/test-id-2/files.tar.gz' );
+		$this->assertFileExists( $this->get_directory_path() . '/test-id-2/files.tar.gz' );
 
 		remove_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
 		// Unzip the file and check the contents.
-		exec( 'tar -xzf /tenup-snapshots-tmp/test-id-2/files.tar.gz -C /tmp/files');
+		exec( 'tar -xzf ' . $this->get_directory_path() . '/test-id-2/files.tar.gz -C /tmp/files' );
 
 		$this->assertFileDoesNotExist( '/tmp/files/uploads/' );
 		$this->assertFileDoesNotExist( '/tmp/files/uploads/test-file.txt' );
@@ -155,22 +155,22 @@ class TestFileZipper extends TestCase {
 	public function test_zip_files_with_exclude_node_modules() {
 		add_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
-		$id = 'test-id-3';
+		$id   = 'test-id-3';
 		$args = [
-			'excludes' => [],
-			'exclude_uploads' => true,
+			'excludes'             => [],
+			'exclude_uploads'      => true,
 			'include_node_modules' => false,
-			'exclude_vendor' => false,
+			'exclude_vendor'       => false,
 		];
 
 		$this->file_zipper->zip_files( $id, $args );
 
-		$this->assertFileExists( '/tenup-snapshots-tmp/test-id-3/files.tar.gz' );
+		$this->assertFileExists( $this->get_directory_path() . '/test-id-3/files.tar.gz' );
 
 		remove_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
 		// Unzip the file and check the contents.
-		exec( 'tar -xzf /tenup-snapshots-tmp/test-id-3/files.tar.gz -C /tmp/files');
+		exec( 'tar -xzf ' . $this->get_directory_path() . '/test-id-3/files.tar.gz -C /tmp/files' );
 
 		$this->assertFileDoesNotExist( '/tmp/files/plugins/test-plugin/node_modules' );
 		$this->assertFileDoesNotExist( '/tmp/files/plugins/test-plugin/node_modules/test-file.txt' );
@@ -188,22 +188,22 @@ class TestFileZipper extends TestCase {
 	public function test_zip_files_with_include_node_modules() {
 		add_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
-		$id = 'test-id-4';
+		$id   = 'test-id-4';
 		$args = [
-			'excludes' => [],
-			'exclude_uploads' => true,
+			'excludes'             => [],
+			'exclude_uploads'      => true,
 			'include_node_modules' => true,
-			'exclude_vendor' => false,
+			'exclude_vendor'       => false,
 		];
 
 		$this->file_zipper->zip_files( $id, $args );
 
-		$this->assertFileExists( '/tenup-snapshots-tmp/test-id-4/files.tar.gz' );
+		$this->assertFileExists( $this->get_directory_path() . '/test-id-4/files.tar.gz' );
 
 		remove_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
 		// Unzip the file and check the contents.
-		exec( 'tar -xzf /tenup-snapshots-tmp/test-id-4/files.tar.gz -C /tmp/files');
+		exec( 'tar -xzf ' . $this->get_directory_path() . '/test-id-4/files.tar.gz -C /tmp/files' );
 
 		$this->assertFileExists( '/tmp/files/plugins/test-plugin/node_modules' );
 		$this->assertFileExists( '/tmp/files/plugins/test-plugin/node_modules/test-file.txt' );
@@ -221,22 +221,22 @@ class TestFileZipper extends TestCase {
 	public function test_zip_files_with_include_vendor() {
 		add_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
-		$id = 'test-id-5';
+		$id   = 'test-id-5';
 		$args = [
-			'excludes' => [],
-			'exclude_uploads' => true,
+			'excludes'             => [],
+			'exclude_uploads'      => true,
 			'include_node_modules' => false,
-			'exclude_vendor' => false,
+			'exclude_vendor'       => false,
 		];
 
 		$this->file_zipper->zip_files( $id, $args );
 
-		$this->assertFileExists( '/tenup-snapshots-tmp/test-id-5/files.tar.gz' );
+		$this->assertFileExists( $this->get_directory_path() . '/test-id-5/files.tar.gz' );
 
 		remove_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
 		// Unzip the file and check the contents.
-		exec( 'tar -xzf /tenup-snapshots-tmp/test-id-5/files.tar.gz -C /tmp/files');
+		exec( 'tar -xzf ' . $this->get_directory_path() . '/test-id-5/files.tar.gz -C /tmp/files' );
 
 		$this->assertFileExists( '/tmp/files/plugins/test-plugin/vendor' );
 		$this->assertFileExists( '/tmp/files/plugins/test-plugin/vendor/test-file.txt' );
@@ -254,22 +254,22 @@ class TestFileZipper extends TestCase {
 	public function test_zip_files_with_exclude_vendor() {
 		add_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
-		$id = 'test-id-6';
+		$id   = 'test-id-6';
 		$args = [
-			'excludes' => [],
-			'exclude_uploads' => true,
+			'excludes'             => [],
+			'exclude_uploads'      => true,
 			'include_node_modules' => false,
-			'exclude_vendor' => true,
+			'exclude_vendor'       => true,
 		];
 
 		$this->file_zipper->zip_files( $id, $args );
 
-		$this->assertFileExists( '/tenup-snapshots-tmp/test-id-6/files.tar.gz' );
+		$this->assertFileExists( $this->get_directory_path() . '/test-id-6/files.tar.gz' );
 
 		remove_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
 		// Unzip the file and check the contents.
-		exec( 'tar -xzf /tenup-snapshots-tmp/test-id-6/files.tar.gz -C /tmp/files');
+		exec( 'tar -xzf ' . $this->get_directory_path() . '/test-id-6/files.tar.gz -C /tmp/files' );
 
 		$this->assertFileDoesNotExist( '/tmp/files/plugins/test-plugin/vendor' );
 		$this->assertFileDoesNotExist( '/tmp/files/plugins/test-plugin/vendor/test-file.txt' );
@@ -287,22 +287,22 @@ class TestFileZipper extends TestCase {
 
 		$this->filter_wp_content();
 
-		$id = 'test-id-7';
+		$id   = 'test-id-7';
 		$args = [
-			'excludes' => [],
-			'exclude_uploads' => false,
+			'excludes'             => [],
+			'exclude_uploads'      => false,
 			'include_node_modules' => false,
-			'exclude_vendor' => true,
+			'exclude_vendor'       => true,
 		];
 
 		$this->file_zipper->zip_files( $id, $args );
 
-		$this->assertFileExists( '/tenup-snapshots-tmp/test-id-7/files.tar.gz' );
+		$this->assertFileExists( $this->get_directory_path() . '/test-id-7/files.tar.gz' );
 
 		remove_filter( 'snapshots_wp_content_dir', [ $this, 'filter_wp_content' ] );
 
 		// Unzip the file and check the contents.
-		exec( 'tar -xzf /tenup-snapshots-tmp/test-id-7/files.tar.gz -C /tmp/files');
+		exec( 'tar -xzf ' . $this->get_directory_path() . '/test-id-7/files.tar.gz -C /tmp/files' );
 
 		// Check another file first.
 		$this->assertFileExists( '/tmp/files/uploads/test-file.txt' );
@@ -316,7 +316,7 @@ class TestFileZipper extends TestCase {
 
 	/**
 	 * Provides a file name that is 100 characters.
-	 * 
+	 *
 	 * @return string
 	 */
 	public function get_100_character_file_name() {
@@ -325,7 +325,7 @@ class TestFileZipper extends TestCase {
 
 	/**
 	 * Provides a file name that is 101 characters.
-	 * 
+	 *
 	 * @return string
 	 */
 	public function get_101_character_file_name() {

@@ -11,6 +11,7 @@ use TenUp\Snapshots\FileSystem;
 use TenUp\Snapshots\SnapshotsConfig\SnapshotsConfigFromFileSystem;
 use TenUp\Snapshots\Infrastructure\Container;
 use TenUp\Snapshots\Log\WPCLILogger;
+use TenUp\Snapshots\ProgressBar\WPCLIProgressBar;
 use TenUp\Snapshots\SnapshotsDirectory;
 use TenUp\Snapshots\Snapshots;
 use TenUp\Snapshots\Snapshots\DynamoDBConnector;
@@ -90,6 +91,7 @@ class TestContainer extends TestCase {
 			URLReplacerFactory::class,
 			WPCLIDBExport::class,
 			WPCLILogger::class,
+			WPCLIProgressBar::class,
 			SnapshotsConfigFromFileSystem::class,
 		];
 
